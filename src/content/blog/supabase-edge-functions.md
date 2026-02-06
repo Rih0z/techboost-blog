@@ -1,58 +1,73 @@
 ---
-title: "Supabase Edge Functions実践ガイド - Deno Runtimeでサーバーレスバックエンドを構築"
-description: "Supabase Edge FunctionsをDeno Runtimeで実装する完全ガイド。データベース連携、認証、CORS設定、WebSocket、外部API統合、デプロイ戦略まで実践的に解説します。"
+title: "Supabase Edge Functionsで始めるサーバーレス開発"
+description: "Supabase Edge Functionsを使用して、グローバルに高速でスケーラブルなサーバーレス関数を構築する方法を詳しく解説します。"
 pubDate: "2025-02-05"
-tags: ["supabase", "edge-functions", "deno", "serverless", "backend", "typescript"]
 ---
 
-Supabase Edge Functionsは、Deno Runtimeで動作するサーバーレス関数サービスです。グローバルエッジネットワーク上で実行され、データベースや認証との統合が簡単で、高速なバックエンドAPIを構築できます。
+Supabaseは、Firebase代替のオープンソースBaaS（Backend as a Service）として急速に人気を集めています。その中でも特に注目されているのが **Supabase Edge Functions** です。これは、Deno Deployをベースにしたサーバーレス関数実行環境で、グローバルに分散されたエッジロケーションでコードを実行できます。
 
-この記事では、Supabase Edge Functionsの基礎から実践的な実装パターン、本番運用のベストプラクティスまで網羅的に解説します。
+本記事では、Supabase Edge Functionsの特徴、セットアップ方法、実用例、ベストプラクティスについて詳しく解説します。
 
-## Supabase Edge Functionsの特徴
+## Supabase Edge Functionsとは
 
-### 他のサーバーレスとの比較
+Supabase Edge Functionsは、Denoランタイムで動作するサーバーレス関数です。世界中のエッジロケーションで実行されるため、低レイテンシーでグローバルなアプリケーションを構築できます。
 
-```typescript
-// ✅ Supabase Edge Functions
-// - Deno Runtime（セキュア、TypeScript標準）
-// - グローバルエッジ配信
-// - Supabaseデータベース直接アクセス
-// - 認証情報自動取得
-// - 無料枠: 50万リクエスト/月
+### 主な特徴
 
-// AWS Lambda比較
-// - コールドスタート高速（<100ms）
-// - 設定がシンプル
-// - Supabaseエコシステムとの統合
-```
+- **グローバル分散**: 世界中のエッジロケーションで実行
+- **Denoランタイム**: TypeScriptネイティブサポート、セキュアな実行環境
+- **Supabase統合**: データベース、認証、ストレージと簡単に連携
+- **無料枠**: 月50万リクエストまで無料
+- **低コールドスタート**: 高速な起動時間
+- **Web標準API**: Fetch API、Web Streams、Web Cryptoなど
 
-**主な利点:**
-- **Deno Runtime**: セキュアで高速、TypeScript/JSX標準対応
-- **エッジ配信**: 世界中で低レイテンシー
-- **Supabase統合**: データベース、Auth、Storageへ直接アクセス
-- **簡単デプロイ**: `supabase functions deploy` 一発
-- **ローカル開発**: `supabase start` でDocker環境
+## セットアップ
 
-## セットアップと基本構造
+### 前提条件
 
-### プロジェクト初期化
+- Node.js 18以上
+- Supabaseアカウント
+- Supabase CLI
+
+### Supabase CLIのインストール
 
 ```bash
-# Supabase CLI インストール
+# npmでインストール
 npm install -g supabase
 
-# プロジェクト初期化
+# Homebrewでインストール（macOS/Linux）
+brew install supabase/tap/supabase
+
+# 確認
+supabase --version
+```
+
+### プロジェクトの初期化
+
+```bash
+# 新しいディレクトリを作成
+mkdir my-supabase-project
+cd my-supabase-project
+
+# Supabaseプロジェクトを初期化
 supabase init
 
-# ローカルSupabase起動
+# ローカル開発環境を起動
 supabase start
+```
 
-# Edge Function作成
+### Edge Functionの作成
+
+```bash
+# 新しいEdge Functionを作成
 supabase functions new hello-world
 ```
 
-### 基本的な関数構造
+これにより、`supabase/functions/hello-world/index.ts` ファイルが作成されます。
+
+## 基本的なEdge Function
+
+### Hello World
 
 ```typescript
 // supabase/functions/hello-world/index.ts
@@ -62,639 +77,574 @@ serve(async (req) => {
   const { name } = await req.json();
 
   const data = {
-    message: `Hello ${name}!`,
+    message: `Hello ${name || 'World'}!`,
   };
 
   return new Response(
     JSON.stringify(data),
-    { headers: { "Content-Type": "application/json" } },
+    {
+      headers: { "Content-Type": "application/json" },
+      status: 200,
+    },
   );
 });
 ```
 
-### ローカルテスト
+### ローカルでのテスト
 
 ```bash
-# 関数をローカルで実行
+# Edge Functionをローカルで実行
 supabase functions serve hello-world
 
-# 別ターミナルからテスト
-curl -i --location --request POST 'http://localhost:54321/functions/v1/hello-world' \
-  --header 'Authorization: Bearer eyJhbGc...' \
-  --header 'Content-Type: application/json' \
-  --data '{"name":"世界"}'
+# 別のターミナルでテスト
+curl -X POST http://localhost:54321/functions/v1/hello-world \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Alice"}'
 ```
 
 ### デプロイ
 
 ```bash
-# プロダクション環境へデプロイ
-supabase functions deploy hello-world
+# Supabaseにログイン
+supabase login
 
-# 環境変数付きデプロイ
-supabase secrets set OPENAI_API_KEY=sk-...
+# プロジェクトをリンク
+supabase link --project-ref <your-project-ref>
+
+# デプロイ
 supabase functions deploy hello-world
 ```
 
-## データベース連携
+## Supabaseクライアントの使用
 
-### Supabase クライアントの使用
+Edge Functions内でSupabaseデータベースやサービスにアクセスできます。
+
+### データベース操作
 
 ```typescript
-// supabase/functions/get-posts/index.ts
+// supabase/functions/get-users/index.ts
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
 serve(async (req) => {
   try {
-    // リクエストからSupabaseクライアント作成
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-      {
-        global: {
-          headers: { Authorization: req.headers.get("Authorization")! },
-        },
-      }
-    );
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // データベースクエリ
-    const { data, error } = await supabaseClient
-      .from("posts")
-      .select("*")
-      .eq("published", true)
-      .order("created_at", { ascending: false })
+    // ユーザー一覧を取得
+    const { data: users, error } = await supabase
+      .from('users')
+      .select('*')
       .limit(10);
 
     if (error) throw error;
 
-    return new Response(JSON.stringify(data), {
-      headers: { "Content-Type": "application/json" },
-      status: 200,
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { "Content-Type": "application/json" },
-      status: 400,
-    });
-  }
-});
-```
-
-### Row Level Security (RLS) との統合
-
-```typescript
-// RLSポリシーがユーザーのJWTトークンに基づいて自動適用される
-serve(async (req) => {
-  const supabaseClient = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-    {
-      global: {
-        headers: { Authorization: req.headers.get("Authorization")! },
+    return new Response(
+      JSON.stringify({ users }),
+      {
+        headers: { "Content-Type": "application/json" },
+        status: 200,
       },
-    }
-  );
-
-  // ログインユーザーの投稿のみ取得（RLSで制御）
-  const { data: userPosts } = await supabaseClient
-    .from("posts")
-    .select("*")
-    .eq("author_id", req.user.id); // RLSポリシーが適用される
-
-  return new Response(JSON.stringify(userPosts), {
-    headers: { "Content-Type": "application/json" },
-  });
-});
-```
-
-### トランザクション処理
-
-```typescript
-// supabase/functions/create-order/index.ts
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-serve(async (req) => {
-  const { productId, quantity } = await req.json();
-
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "" // 管理者権限
-  );
-
-  try {
-    // トランザクション: 在庫チェック→注文作成→在庫減少
-    const { data: product, error: fetchError } = await supabase
-      .from("products")
-      .select("stock")
-      .eq("id", productId)
-      .single();
-
-    if (fetchError || product.stock < quantity) {
-      throw new Error("在庫不足");
-    }
-
-    // 注文作成
-    const { data: order, error: orderError } = await supabase
-      .from("orders")
-      .insert({
-        product_id: productId,
-        quantity,
-        status: "pending",
-      })
-      .select()
-      .single();
-
-    if (orderError) throw orderError;
-
-    // 在庫更新
-    const { error: updateError } = await supabase
-      .from("products")
-      .update({ stock: product.stock - quantity })
-      .eq("id", productId);
-
-    if (updateError) throw updateError;
-
-    return new Response(JSON.stringify(order), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
+    );
   } catch (error) {
     return new Response(
       JSON.stringify({ error: error.message }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
+      {
+        headers: { "Content-Type": "application/json" },
+        status: 400,
+      },
     );
   }
 });
 ```
 
-## 認証とセキュリティ
-
-### JWT トークン検証
+### 認証の統合
 
 ```typescript
+// supabase/functions/protected-route/index.ts
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 serve(async (req) => {
-  const authHeader = req.headers.get("Authorization");
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
+  // リクエストからJWTトークンを取得
+  const authHeader = req.headers.get('Authorization');
   if (!authHeader) {
-    return new Response(JSON.stringify({ error: "認証が必要です" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: 'Missing authorization header' }),
+      { status: 401 },
+    );
   }
 
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-    {
-      global: {
-        headers: { Authorization: authHeader },
-      },
-    }
-  );
+  const supabase = createClient(supabaseUrl, supabaseKey, {
+    global: {
+      headers: { Authorization: authHeader },
+    },
+  });
 
-  // ユーザー情報取得
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  // ユーザー認証を確認
+  const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error || !user) {
-    return new Response(JSON.stringify({ error: "無効なトークン" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized' }),
+      { status: 401 },
+    );
   }
 
-  // ユーザー情報を使った処理
-  const response = {
-    message: `こんにちは、${user.email}さん`,
-    userId: user.id,
-  };
-
-  return new Response(JSON.stringify(response), {
-    headers: { "Content-Type": "application/json" },
-  });
-});
-```
-
-### ロールベースアクセス制御
-
-```typescript
-// カスタムクレームを使ったロール確認
-serve(async (req) => {
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-    { global: { headers: { Authorization: req.headers.get("Authorization")! } } }
+  // 認証済みユーザーのデータを返す
+  return new Response(
+    JSON.stringify({
+      message: 'Protected data',
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+    }),
+    {
+      headers: { "Content-Type": "application/json" },
+      status: 200,
+    },
   );
-
-  const { data: { user } } = await supabase.auth.getUser();
-
-  // app_metadataからロール取得
-  const userRole = user?.app_metadata?.role;
-
-  if (userRole !== "admin") {
-    return new Response(JSON.stringify({ error: "管理者のみアクセス可能" }), {
-      status: 403,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  // 管理者向け処理
-  const { data } = await supabase
-    .from("admin_dashboard")
-    .select("*");
-
-  return new Response(JSON.stringify(data), {
-    headers: { "Content-Type": "application/json" },
-  });
 });
 ```
 
-### API キー認証（サービス間通信）
+## 実践例
+
+### 1. 画像リサイズAPI
 
 ```typescript
-serve(async (req) => {
-  const apiKey = req.headers.get("X-API-Key");
-
-  // 環境変数から正しいAPIキーを取得
-  const validApiKey = Deno.env.get("SERVICE_API_KEY");
-
-  if (apiKey !== validApiKey) {
-    return new Response(JSON.stringify({ error: "無効なAPIキー" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  // サービス間通信の処理
-  // ...
-});
-```
-
-## CORS 設定
-
-### 基本的なCORS対応
-
-```typescript
+// supabase/functions/resize-image/index.ts
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { Image } from "https://deno.land/x/imagescript@1.2.15/mod.ts";
 
 serve(async (req) => {
-  // プリフライトリクエスト対応
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  try {
+    const { imageUrl, width, height } = await req.json();
+
+    // 画像を取得
+    const response = await fetch(imageUrl);
+    const imageBuffer = await response.arrayBuffer();
+
+    // 画像をリサイズ
+    const image = await Image.decode(new Uint8Array(imageBuffer));
+    const resized = image.resize(width, height);
+    const encoded = await resized.encodeJPEG(80);
+
+    // Supabase Storageに保存
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    );
+
+    const fileName = `resized-${Date.now()}.jpg`;
+    const { data, error } = await supabase.storage
+      .from('images')
+      .upload(fileName, encoded, {
+        contentType: 'image/jpeg',
+      });
+
+    if (error) throw error;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('images')
+      .getPublicUrl(fileName);
+
+    return new Response(
+      JSON.stringify({ url: publicUrl }),
+      {
+        headers: { "Content-Type": "application/json" },
+        status: 200,
+      },
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500 },
+    );
+  }
+});
+```
+
+### 2. Stripe Webhookハンドラ
+
+```typescript
+// supabase/functions/stripe-webhook/index.ts
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import Stripe from "https://esm.sh/stripe@14.10.0?target=deno";
+
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
+  apiVersion: '2023-10-16',
+});
+
+const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')!;
+
+serve(async (req) => {
+  const signature = req.headers.get('stripe-signature');
+
+  if (!signature) {
+    return new Response('Missing signature', { status: 400 });
   }
 
   try {
-    const { data } = await req.json();
+    const body = await req.text();
 
-    // 処理...
+    // Webhookイベントを検証
+    const event = stripe.webhooks.constructEvent(
+      body,
+      signature,
+      webhookSecret
+    );
 
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    );
+
+    // イベントタイプに応じて処理
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+
+        // データベースを更新
+        await supabase
+          .from('subscriptions')
+          .insert({
+            user_id: session.client_reference_id,
+            stripe_customer_id: session.customer,
+            stripe_subscription_id: session.subscription,
+            status: 'active',
+          });
+
+        break;
+      }
+
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object;
+
+        // サブスクリプションをキャンセル
+        await supabase
+          .from('subscriptions')
+          .update({ status: 'canceled' })
+          .eq('stripe_subscription_id', subscription.id);
+
+        break;
+      }
+    }
+
+    return new Response(
+      JSON.stringify({ received: true }),
+      { status: 200 },
+    );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 400 },
+    );
   }
 });
 ```
 
-### 特定オリジンのみ許可
+### 3. メール送信API
 
 ```typescript
-const allowedOrigins = [
-  "https://example.com",
-  "https://app.example.com",
-];
+// supabase/functions/send-email/index.ts
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')!;
 
 serve(async (req) => {
-  const origin = req.headers.get("Origin");
+  try {
+    const { to, subject, html } = await req.json();
 
-  const corsHeaders = allowedOrigins.includes(origin ?? "")
-    ? {
-        "Access-Control-Allow-Origin": origin,
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "authorization, content-type",
-      }
-    : {};
+    // Resend APIを使用してメール送信
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: 'noreply@yourdomain.com',
+        to: [to],
+        subject,
+        html,
+      }),
+    });
 
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error);
+    }
+
+    const data = await response.json();
+
+    return new Response(
+      JSON.stringify({ success: true, id: data.id }),
+      {
+        headers: { "Content-Type": "application/json" },
+        status: 200,
+      },
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500 },
+    );
   }
-
-  // 処理...
-
-  return new Response(JSON.stringify({ data: "..." }), {
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
 });
 ```
 
-## 外部API統合
-
-### OpenAI API統合例
+### 4. OpenAI統合
 
 ```typescript
 // supabase/functions/ai-chat/index.ts
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-serve(async (req) => {
-  const { message } = await req.json();
-
-  // OpenAI API呼び出し
-  const openaiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${Deno.env.get("OPENAI_API_KEY")}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-4",
-      messages: [{ role: "user", content: message }],
-    }),
-  });
-
-  const aiData = await openaiResponse.json();
-  const reply = aiData.choices[0].message.content;
-
-  // 会話履歴をSupabaseに保存
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-  );
-
-  await supabase.from("chat_history").insert({
-    user_message: message,
-    ai_response: reply,
-    created_at: new Date().toISOString(),
-  });
-
-  return new Response(JSON.stringify({ reply }), {
-    headers: { "Content-Type": "application/json" },
-  });
-});
-```
-
-### Stripe決済統合
-
-```typescript
-// supabase/functions/create-checkout/index.ts
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@14.0.0";
-
-const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", {
-  apiVersion: "2023-10-16",
-});
-
-serve(async (req) => {
-  const { priceId, successUrl, cancelUrl } = await req.json();
-
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    payment_method_types: ["card"],
-    line_items: [
-      {
-        price: priceId,
-        quantity: 1,
-      },
-    ],
-    success_url: successUrl,
-    cancel_url: cancelUrl,
-  });
-
-  return new Response(JSON.stringify({ url: session.url }), {
-    headers: { "Content-Type": "application/json" },
-  });
-});
-```
-
-## ストリーミングレスポンス
-
-### Server-Sent Events (SSE)
-
-```typescript
-// supabase/functions/stream-data/index.ts
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-serve(async (req) => {
-  const stream = new ReadableStream({
-    async start(controller) {
-      const encoder = new TextEncoder();
-
-      for (let i = 1; i <= 10; i++) {
-        const message = `data: ${JSON.stringify({ count: i })}\n\n`;
-        controller.enqueue(encoder.encode(message));
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
-
-      controller.close();
-    },
-  });
-
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      "Connection": "keep-alive",
-    },
-  });
-});
-```
-
-### OpenAI ストリーミング
-
-```typescript
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-serve(async (req) => {
-  const { prompt } = await req.json();
-
-  const openaiStream = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${Deno.env.get("OPENAI_API_KEY")}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
-      stream: true,
-    }),
-  });
-
-  // ストリームをそのまま返す
-  return new Response(openaiStream.body, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-    },
-  });
-});
-```
-
-## エラーハンドリングとロギング
-
-### 包括的エラーハンドリング
-
-```typescript
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-class AppError extends Error {
-  constructor(public statusCode: number, message: string) {
-    super(message);
-  }
-}
+const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')!;
 
 serve(async (req) => {
   try {
-    const { userId } = await req.json();
+    const { message, userId } = await req.json();
 
-    if (!userId) {
-      throw new AppError(400, "userIdが必要です");
-    }
-
-    // 処理...
-
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { "Content-Type": "application/json" },
+    // OpenAI APIを呼び出し
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful assistant.',
+          },
+          {
+            role: 'user',
+            content: message,
+          },
+        ],
+      }),
     });
-  } catch (error) {
-    console.error("エラー発生:", error);
 
-    const statusCode = error instanceof AppError ? error.statusCode : 500;
-    const message = error instanceof AppError
-      ? error.message
-      : "内部サーバーエラー";
+    const data = await response.json();
+    const reply = data.choices[0].message.content;
+
+    // 会話履歴を保存
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    );
+
+    await supabase.from('chat_history').insert({
+      user_id: userId,
+      message,
+      reply,
+    });
 
     return new Response(
-      JSON.stringify({ error: message }),
+      JSON.stringify({ reply }),
       {
-        status: statusCode,
         headers: { "Content-Type": "application/json" },
-      }
+        status: 200,
+      },
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500 },
     );
   }
 });
 ```
 
-### 構造化ロギング
+## CORS設定
 
-```typescript
-// ロガーユーティリティ
-const logger = {
-  info: (message: string, meta = {}) => {
-    console.log(JSON.stringify({ level: "info", message, ...meta, timestamp: new Date().toISOString() }));
-  },
-  error: (message: string, error: Error, meta = {}) => {
-    console.error(JSON.stringify({
-      level: "error",
-      message,
-      error: error.message,
-      stack: error.stack,
-      ...meta,
-      timestamp: new Date().toISOString(),
-    }));
-  },
-};
-
-serve(async (req) => {
-  const requestId = crypto.randomUUID();
-
-  logger.info("リクエスト受信", {
-    requestId,
-    method: req.method,
-    url: req.url,
-  });
-
-  try {
-    // 処理...
-
-    logger.info("リクエスト成功", { requestId });
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    logger.error("リクエスト失敗", error, { requestId });
-    throw error;
-  }
-});
-```
-
-## パフォーマンス最適化
-
-### レスポンスキャッシュ
+Edge Functionsでは、CORSヘッダーを手動で設定する必要があります。
 
 ```typescript
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-serve(async (req) => {
-  // 5分間キャッシュ
-  const response = new Response(JSON.stringify({ data: "..." }), {
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "public, max-age=300",
-    },
-  });
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
 
-  return response;
+serve(async (req) => {
+  // プリフライトリクエストへの対応
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  try {
+    // メイン処理
+    const data = { message: 'Hello' };
+
+    return new Response(
+      JSON.stringify(data),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      },
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      },
+    );
+  }
 });
 ```
 
-### 並列処理
+## 環境変数の管理
+
+```bash
+# ローカル環境変数の設定
+supabase secrets set MY_SECRET_KEY=your-secret-value --env-file .env.local
+
+# 本番環境への設定
+supabase secrets set MY_SECRET_KEY=your-secret-value
+```
+
+`.env.local` ファイル:
+
+```
+OPENAI_API_KEY=sk-...
+STRIPE_SECRET_KEY=sk_test_...
+RESEND_API_KEY=re_...
+```
+
+## クライアントからの呼び出し
+
+### JavaScriptクライアント
+
+```typescript
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  'https://your-project.supabase.co',
+  'your-anon-key'
+);
+
+// Edge Functionを呼び出し
+const { data, error } = await supabase.functions.invoke('hello-world', {
+  body: { name: 'Alice' },
+});
+
+if (error) {
+  console.error('Error:', error);
+} else {
+  console.log('Response:', data);
+}
+```
+
+### 認証付きリクエスト
+
+```typescript
+// ユーザーがログインしている場合、自動的にJWTトークンが送信される
+const { data, error } = await supabase.functions.invoke('protected-route');
+```
+
+## ベストプラクティス
+
+### 1. エラーハンドリング
 
 ```typescript
 serve(async (req) => {
-  // 複数のAPI呼び出しを並列実行
-  const [userData, postsData, statsData] = await Promise.all([
-    supabase.from("users").select("*").eq("id", userId).single(),
-    supabase.from("posts").select("*").eq("author_id", userId),
-    supabase.rpc("get_user_stats", { user_id: userId }),
-  ]);
+  try {
+    // メイン処理
+    const result = await performOperation();
 
-  return new Response(
-    JSON.stringify({
-      user: userData.data,
-      posts: postsData.data,
-      stats: statsData.data,
-    }),
-    { headers: { "Content-Type": "application/json" } }
-  );
+    return new Response(
+      JSON.stringify({ success: true, data: result }),
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error('Error:', error);
+
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error.message,
+      }),
+      { status: 500 },
+    );
+  }
 });
+```
+
+### 2. タイムアウト設定
+
+```typescript
+// タイムアウト付きのfetch
+const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+try {
+  const response = await fetch(url, {
+    signal: controller.signal,
+  });
+  clearTimeout(timeoutId);
+} catch (error) {
+  if (error.name === 'AbortError') {
+    // タイムアウト処理
+  }
+}
+```
+
+### 3. パフォーマンス最適化
+
+```typescript
+// 並列処理
+const [users, posts, comments] = await Promise.all([
+  supabase.from('users').select('*'),
+  supabase.from('posts').select('*'),
+  supabase.from('comments').select('*'),
+]);
+
+// キャッシング
+const cacheKey = `user-${userId}`;
+const cached = await kv.get(cacheKey);
+
+if (cached) {
+  return new Response(JSON.stringify(cached), { status: 200 });
+}
+
+const data = await fetchUserData(userId);
+await kv.set(cacheKey, data, { ex: 3600 }); // 1時間キャッシュ
 ```
 
 ## まとめ
 
-Supabase Edge Functionsは以下のシナリオで特に優れています:
+Supabase Edge Functionsは、グローバルに分散されたサーバーレス関数を簡単に構築できる強力なツールです。Denoランタイムによる高速な実行、TypeScriptネイティブサポート、Supabaseエコシステムとのシームレスな統合により、モダンなバックエンド開発を効率化できます。
 
-**最適なユースケース:**
-- Supabase使用プロジェクトのバックエンドAPI
-- 認証が必要なサーバーサイド処理
-- 外部API統合（OpenAI、Stripe等）
-- Webhookエンドポイント
-- データベーストリガー後処理
-- 画像処理・変換
-- リアルタイムストリーミング
+**主な利点**:
+- グローバルエッジでの低レイテンシー実行
+- TypeScriptネイティブサポート
+- Supabaseとの統合が容易
+- 無料枠が充実
 
-**ベストプラクティス:**
-- 環境変数で機密情報を管理
-- RLSポリシーと組み合わせてセキュリティ強化
-- CORS設定を適切に行う
-- エラーハンドリングと構造化ロギング
-- Deno標準ライブラリを活用
-- ローカル開発で十分テスト
+**注意点**:
+- Deno特有の制約（Node.jsモジュールの一部が未対応）
+- コールドスタートの可能性
+- 実行時間の制限
 
-Supabase Edge Functionsにより、フルスタックアプリケーションをSupabaseエコシステム内で完結させることができ、インフラ管理の負担を大幅に削減できます。
+Supabase Edge Functionsを活用して、スケーラブルで高速なアプリケーションを構築してみてください。
+
+## 参考リンク
+
+- [Supabase Edge Functions公式ドキュメント](https://supabase.com/docs/guides/functions)
+- [Deno公式サイト](https://deno.land/)
+- [Supabase Examples](https://github.com/supabase/supabase/tree/master/examples/edge-functions)
