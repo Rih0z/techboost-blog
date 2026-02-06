@@ -1,617 +1,279 @@
 ---
-title: 'CSS :has()セレクタ応用テクニック - 親要素セレクション完全ガイド'
-description: 'CSS :has()擬似クラスの実践的な使い方を徹底解説。親要素のスタイリング、フォームバリデーション、動的レイアウト、アコーディオン実装など即戦力テクニック集。'
-pubDate: '2025-02-06'
-tags: ['CSS', 'Frontend', 'Web Design', 'CSS Selectors', 'Modern CSS']
+title: "CSS :has()セレクタ高度なテクニック集 - 親要素セレクタで実現する次世代のスタイリング"
+description: "CSS :has()疑似クラスを使った高度なスタイリングテクニックを解説。親要素の選択、状態に応じたスタイル変更、フォームバリデーション、レイアウト制御など実践的な活用法を紹介します。"
+pubDate: "2025-02-06"
 ---
 
-CSS `:has()` 擬似クラスは、「親セレクタ」として長年待ち望まれていた機能です。2024年以降、全モダンブラウザでサポートされ、JavaScriptなしで複雑なUIパターンを実装できるようになりました。
+# CSS :has()セレクタ高度なテクニック集
 
-## :has()セレクタとは
+CSS `:has()` 疑似クラスは、長年待ち望まれていた「親要素セレクタ」を実現する革命的な機能です。2023年末から主要ブラウザで全面サポートされ、JavaScriptなしで実現できるインタラクティブなUIの幅が大きく広がりました。
 
-`:has()` は、**特定の子要素や兄弟要素を持つ要素**を選択できる擬似クラスです。
+## :has()の基本
 
-### 基本構文
+`:has()` は、指定した条件を満たす子要素または後続要素を持つ要素を選択します。
 
 ```css
-/* 子要素にimgを持つdivを選択 */
+/* 画像を含むdiv要素 */
 div:has(img) {
   border: 2px solid blue;
 }
 
-/* チェックされたinputを持つlabelを選択 */
-label:has(input:checked) {
-  background-color: lightgreen;
+/* チェックされたinputを含むform */
+form:has(input:checked) {
+  background: #e8f5e9;
+}
+
+/* 子要素がない（空の）要素 */
+div:not(:has(*)) {
+  display: none;
 }
 ```
 
 ### ブラウザサポート
 
-- Chrome 105+ (2022年8月)
-- Safari 15.4+ (2022年3月)
-- Firefox 121+ (2023年12月)
-- Edge 105+ (2022年9月)
-
-全モダンブラウザで利用可能です。
-
-## 親要素のスタイリング
-
-### 子要素に応じたスタイル変更
-
 ```css
-/* 画像を含むカードに余白を追加 */
-.card:has(img) {
-  padding: 20px;
-}
-
-/* 画像がない場合は余白なし */
-.card:not(:has(img)) {
-  padding: 0;
-}
-
-/* 複数の画像を持つギャラリー */
-.card:has(img):has(img ~ img) {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-```
-
-### ホバー時の親要素スタイル
-
-```css
-/* 子要素ホバー時に親をスタイル */
-.parent:has(.child:hover) {
-  background-color: #f0f0f0;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-/* カードのボタンホバー時にカード全体を強調 */
-.card:has(button:hover) {
-  transform: scale(1.02);
-  transition: transform 0.2s;
-}
-```
-
-```html
-<div class="parent">
-  <div class="child">Hover me</div>
-</div>
-```
-
-### フォーカス時のコンテナスタイル
-
-```css
-/* 入力フォーカス時にフォームグループをハイライト */
-.form-group:has(input:focus),
-.form-group:has(textarea:focus) {
-  background-color: #e3f2fd;
-  border-left: 3px solid #2196F3;
-  padding-left: 17px;
-}
-
-/* フォーカスされた入力のラベルを強調 */
-label:has(+ input:focus) {
-  color: #2196F3;
-  font-weight: bold;
-}
-```
-
-## フォームバリデーション
-
-### カスタムバリデーションスタイル
-
-```css
-/* 無効な入力を持つフォームグループ */
-.form-group:has(input:invalid) {
-  border-left: 3px solid #f44336;
-  background-color: #ffebee;
-}
-
-/* 有効な入力を持つフォームグループ */
-.form-group:has(input:valid) {
-  border-left: 3px solid #4CAF50;
-  background-color: #e8f5e9;
-}
-
-/* エラーメッセージを表示 */
-.form-group:has(input:invalid)::after {
-  content: "入力内容を確認してください";
-  color: #f44336;
-  font-size: 0.875rem;
-  display: block;
-  margin-top: 4px;
-}
-```
-
-```html
-<div class="form-group">
-  <label>メールアドレス</label>
-  <input type="email" required>
-</div>
-```
-
-### チェックボックス・ラジオボタンのスタイリング
-
-```css
-/* チェックされたラベル */
-label:has(input[type="checkbox"]:checked) {
-  background-color: #4CAF50;
-  color: white;
-  font-weight: bold;
-}
-
-/* 未チェックのラベル */
-label:has(input[type="checkbox"]:not(:checked)) {
-  background-color: #f5f5f5;
-  color: #666;
-}
-
-/* ラジオボタン選択時のカードスタイル */
-.option-card:has(input[type="radio"]:checked) {
-  border: 2px solid #2196F3;
-  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
-}
-```
-
-```html
-<label class="option-card">
-  <input type="radio" name="plan" value="basic">
-  <span>Basic Plan - $9/month</span>
-</label>
-```
-
-### リアルタイムフォームバリデーション
-
-```css
-/* パスワード強度インジケーター */
-.password-field:has(input[minlength="8"]:valid) .strength-meter::before {
-  content: "強い";
-  background: linear-gradient(90deg, #4CAF50 0%, #4CAF50 100%);
-}
-
-.password-field:has(input[minlength="6"]:valid) .strength-meter::before {
-  content: "普通";
-  background: linear-gradient(90deg, #FFC107 0%, #FFC107 66%);
-}
-
-.password-field:has(input:invalid) .strength-meter::before {
-  content: "弱い";
-  background: linear-gradient(90deg, #f44336 0%, #f44336 33%);
-}
-
-.strength-meter::before {
-  display: block;
-  height: 4px;
-  border-radius: 2px;
-  transition: all 0.3s;
-}
-```
-
-## 動的レイアウト
-
-### 子要素の数に応じたレイアウト
-
-```css
-/* 1つの子要素の場合 */
-.grid:has(.item:only-child) {
-  grid-template-columns: 1fr;
-}
-
-/* 2つの子要素の場合 */
-.grid:has(.item:first-child:nth-last-child(2)) {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-/* 3つ以上の子要素の場合 */
-.grid:has(.item:first-child:nth-last-child(n+3)) {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-/* 4つ以上の場合はさらに細分化 */
-.grid:has(.item:first-child:nth-last-child(n+4)) {
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-}
-```
-
-### 空状態の表示
-
-```css
-/* 子要素がない場合にメッセージを表示 */
-.list:not(:has(li))::before {
-  content: "項目がありません";
-  display: block;
-  padding: 40px;
-  text-align: center;
-  color: #999;
-  font-style: italic;
-}
-
-/* データがある場合はメッセージを非表示 */
-.list:has(li)::before {
-  display: none;
-}
-```
-
-### 条件付きヘッダー表示
-
-```css
-/* テーブルにデータがある場合のみヘッダーを表示 */
-table:has(tbody tr) thead {
-  display: table-header-group;
-}
-
-table:not(:has(tbody tr)) thead {
-  display: none;
-}
-
-/* データがない場合のメッセージ */
-table:not(:has(tbody tr))::after {
-  content: "データがありません";
-  display: block;
-  padding: 20px;
-  text-align: center;
-}
-```
-
-## アコーディオン実装
-
-### CSSのみのアコーディオン
-
-```html
-<div class="accordion">
-  <input type="checkbox" id="section1" class="accordion-toggle">
-  <label for="section1" class="accordion-header">Section 1</label>
-  <div class="accordion-content">
-    <p>Content for section 1</p>
-  </div>
-</div>
-```
-
-```css
-/* アコーディオンの基本スタイル */
-.accordion {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.accordion-toggle {
-  display: none;
-}
-
-.accordion-header {
-  display: block;
-  padding: 16px;
-  background-color: #f5f5f5;
-  cursor: pointer;
-  user-select: none;
-  position: relative;
-}
-
-/* 矢印アイコン */
-.accordion-header::after {
-  content: "▼";
-  position: absolute;
-  right: 16px;
-  transition: transform 0.3s;
-}
-
-/* コンテンツの非表示 */
-.accordion-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
-
-/* チェックされた時のスタイル */
-.accordion:has(.accordion-toggle:checked) .accordion-header {
-  background-color: #2196F3;
-  color: white;
-}
-
-.accordion:has(.accordion-toggle:checked) .accordion-header::after {
-  transform: rotate(180deg);
-}
-
-.accordion:has(.accordion-toggle:checked) .accordion-content {
-  max-height: 500px;
-  padding: 16px;
-  transition: max-height 0.5s ease-in;
-}
-```
-
-## タブインターフェース
-
-```html
-<div class="tabs">
-  <input type="radio" name="tab" id="tab1" checked>
-  <label for="tab1">Tab 1</label>
-  <div class="tab-content">Content 1</div>
-
-  <input type="radio" name="tab" id="tab2">
-  <label for="tab2">Tab 2</label>
-  <div class="tab-content">Content 2</div>
-
-  <input type="radio" name="tab" id="tab3">
-  <label for="tab3">Tab 3</label>
-  <div class="tab-content">Content 3</div>
-</div>
-```
-
-```css
-.tabs {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.tabs input[type="radio"] {
-  display: none;
-}
-
-.tabs label {
-  padding: 12px;
-  background-color: #f5f5f5;
-  text-align: center;
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-}
-
-/* アクティブなタブ */
-.tabs:has(#tab1:checked) label[for="tab1"],
-.tabs:has(#tab2:checked) label[for="tab2"],
-.tabs:has(#tab3:checked) label[for="tab3"] {
-  background-color: white;
-  border-bottom-color: #2196F3;
-  font-weight: bold;
-}
-
-.tab-content {
-  display: none;
-  grid-column: 1 / -1;
-  padding: 20px;
-}
-
-/* アクティブなコンテンツを表示 */
-.tabs:has(#tab1:checked) .tab-content:nth-of-type(2),
-.tabs:has(#tab2:checked) .tab-content:nth-of-type(4),
-.tabs:has(#tab3:checked) .tab-content:nth-of-type(6) {
-  display: block;
-}
-```
-
-## カード選択UI
-
-```css
-/* 選択可能なカード */
-.card-selector {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-}
-
+/* フォールバック付きの使用例 */
 .card {
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
-  cursor: pointer;
-  transition: all 0.3s;
+  padding: 1rem;
 }
 
-.card input[type="radio"] {
+/* :has()が使える場合のみ適用 */
+@supports selector(:has(*)) {
+  .card:has(.card-image) {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+  }
+}
+```
+
+## 実践的なテクニック
+
+### 1. フォームバリデーションのビジュアルフィードバック
+
+```css
+/* 必須フィールドが空の場合、親フォームに警告表示 */
+form:has(input[required]:invalid) {
+  border-left: 4px solid #f44336;
+}
+
+/* すべてのフィールドが有効な場合 */
+form:has(input[required]):not(:has(input[required]:invalid)) {
+  border-left: 4px solid #4caf50;
+}
+
+/* 特定のフィールドが入力されたら、次のセクションを表示 */
+.form-section {
   display: none;
 }
 
-/* 選択されたカード */
-.card:has(input:checked) {
-  border-color: #2196F3;
-  background-color: #e3f2fd;
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+form:has(#email:valid) .form-section.step-2 {
+  display: block;
 }
 
-/* チェックマークアイコン */
-.card:has(input:checked)::before {
-  content: "✓";
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #2196F3;
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
+/* チェックボックスの状態で送信ボタンを有効化 */
+.submit-section {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+form:has(#terms:checked) .submit-section {
+  opacity: 1;
+  pointer-events: auto;
 }
 ```
+
+実際のHTML例:
 
 ```html
-<div class="card-selector">
-  <label class="card">
-    <input type="radio" name="plan" value="basic">
-    <h3>Basic</h3>
-    <p>$9/month</p>
-  </label>
-  <label class="card">
-    <input type="radio" name="plan" value="pro">
-    <h3>Pro</h3>
-    <p>$29/month</p>
-  </label>
-</div>
+<form>
+  <div>
+    <label for="email">Email (required)</label>
+    <input type="email" id="email" required>
+  </div>
+
+  <div class="form-section step-2">
+    <label for="phone">Phone</label>
+    <input type="tel" id="phone">
+  </div>
+
+  <div class="submit-section">
+    <label>
+      <input type="checkbox" id="terms">
+      I agree to the terms
+    </label>
+    <button type="submit">Submit</button>
+  </div>
+</form>
 ```
 
-## ドロップダウンメニュー
+### 2. 動的なカードレイアウト
 
 ```css
-/* メニューコンテナ */
-.menu {
+/* 画像のある/なしで自動的にレイアウト変更 */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card:has(img) {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-areas: "image content";
+}
+
+.card:has(img) img {
+  grid-area: image;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card:has(img) .card-content {
+  grid-area: content;
+}
+
+/* 動画を含む場合はフルワイド */
+.card:has(video) {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "video"
+    "content";
+}
+
+/* 複数画像がある場合はギャラリー表示 */
+.card:has(img:nth-of-type(2)) {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-areas: none;
+}
+
+.card:has(img:nth-of-type(2)) .card-content {
+  grid-column: 1 / -1;
+}
+```
+
+### 3. ナビゲーションとメニューの状態管理
+
+```css
+/* ドロップダウンメニュー */
+.dropdown {
   position: relative;
 }
 
-.menu-toggle {
+.dropdown-menu {
   display: none;
-}
-
-.menu-button {
-  padding: 10px 20px;
-  background-color: #2196F3;
-  color: white;
-  cursor: pointer;
-  user-select: none;
-  border-radius: 4px;
-}
-
-/* ドロップダウン */
-.dropdown {
   position: absolute;
   top: 100%;
   left: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s;
 }
 
-/* チェックされた時にドロップダウンを表示 */
-.menu:has(.menu-toggle:checked) .dropdown {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-/* ボタンのスタイル変更 */
-.menu:has(.menu-toggle:checked) .menu-button {
-  background-color: #1976D2;
-}
-```
-
-```html
-<div class="menu">
-  <input type="checkbox" id="menu1" class="menu-toggle">
-  <label for="menu1" class="menu-button">Menu</label>
-  <div class="dropdown">
-    <a href="#">Item 1</a>
-    <a href="#">Item 2</a>
-    <a href="#">Item 3</a>
-  </div>
-</div>
-```
-
-## パフォーマンス考慮
-
-### 効率的なセレクタ
-
-```css
-/* Good: 具体的なセレクタ */
-.form:has(input:invalid) {
-  border-color: red;
-}
-
-/* Avoid: 広範囲すぎるセレクタ */
-body:has(*:invalid) {
-  /* 全要素を検査するため低速 */
-}
-```
-
-### 適切な使い分け
-
-```css
-/* Good: 子要素の直接チェック */
-.card:has(> img) {
-  padding: 20px;
-}
-
-/* Avoid: 深いネスト */
-.container:has(.wrapper:has(.card:has(img))) {
-  /* 複雑すぎて読みにくい */
-}
-```
-
-## ブラウザサポート確認
-
-```css
-/* フォールバック */
-@supports not selector(:has(*)) {
-  /* :has()非対応ブラウザ向けスタイル */
-  .card-with-image {
-    padding: 20px;
-  }
-}
-
-/* :has()対応ブラウザのみ */
-@supports selector(:has(*)) {
-  .card:has(img) {
-    padding: 20px;
-  }
-}
-```
-
-## 実用例：ショッピングカート
-
-```css
-/* カートが空の場合 */
-.cart:not(:has(.cart-item)) .cart-empty-message {
+/* ホバー時にメニュー表示（親要素に適用） */
+.dropdown:has(.dropdown-toggle:hover) .dropdown-menu,
+.dropdown:has(.dropdown-menu:hover) .dropdown-menu {
   display: block;
 }
 
-.cart:has(.cart-item) .cart-empty-message {
+/* アクティブなリンクを含むナビゲーション */
+nav:has(a.active) {
+  border-bottom: 2px solid #1976d2;
+}
+
+/* サブメニューを持つ項目にアイコン追加 */
+.nav-item:has(.submenu)::after {
+  content: "▼";
+  margin-left: 0.5rem;
+  font-size: 0.8em;
+}
+
+/* 展開されたメニュー項目をハイライト */
+.nav-item:has(.submenu:hover) {
+  background: #f5f5f5;
+}
+```
+
+### 4. テーブルのインタラクティブ制御
+
+```css
+/* チェックボックスが選択された行をハイライト */
+tr:has(input[type="checkbox"]:checked) {
+  background: #e3f2fd;
+  font-weight: 600;
+}
+
+/* 少なくとも1行が選択されている場合、一括操作ツールバーを表示 */
+.bulk-actions {
   display: none;
 }
 
-/* カート内にアイテムがある場合のみチェックアウトボタンを表示 */
-.cart:has(.cart-item) .checkout-button {
-  display: block;
+table:has(input[type="checkbox"]:checked) ~ .bulk-actions {
+  display: flex;
 }
 
-.cart:not(:has(.cart-item)) .checkout-button {
-  display: none;
+/* すべての行が選択されている場合 */
+table:has(thead input[type="checkbox"]:checked):not(:has(tbody input[type="checkbox"]:not(:checked))) {
+  border: 2px solid #4caf50;
 }
 
-/* セール商品を含むカートをハイライト */
-.cart:has(.cart-item.sale) {
-  border: 2px solid #f44336;
+/* ソート可能な列のヘッダー */
+th:has(button.sort) {
+  cursor: pointer;
+  user-select: none;
 }
 
-.cart:has(.cart-item.sale)::before {
-  content: "セール商品が含まれています";
-  background-color: #f44336;
-  color: white;
-  padding: 8px;
-  display: block;
+th:has(button.sort[aria-sort="ascending"])::after {
+  content: " ▲";
+}
+
+th:has(button.sort[aria-sort="descending"])::after {
+  content: " ▼";
+}
+```
+
+### 5. モーダルとダイアログの制御
+
+```css
+/* モーダルが開いている時、背景をブロック */
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
+/* モーダルのバックドロップ */
+body:has(dialog[open])::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+}
+
+/* 複数のモーダルがある場合、最新のものを最前面に */
+dialog[open]:has(~ dialog[open]) {
+  z-index: 1000;
+}
+
+dialog[open]:not(:has(~ dialog[open])) {
+  z-index: 1001;
+}
+
+/* エラーメッセージを含むモーダル */
+dialog:has(.error-message) {
+  border-color: #f44336;
+}
+
+dialog:has(.error-message) header {
+  background: #ffebee;
+  color: #c62828;
 }
 ```
 
 ## まとめ
 
-`:has()` セレクタにより、以下が可能になりました。
+CSS `:has()` 疑似クラスは、従来JavaScriptが必要だった多くのインタラクティブなUIパターンを、純粋なCSSで実装可能にしました。主な利点は以下の通りです。
 
-**主な用途**:
-- 親要素のスタイリング
-- フォームバリデーション
-- 動的レイアウト調整
-- CSSのみのインタラクティブUI
+- **パフォーマンス向上**: JavaScriptの実行を削減
+- **保守性向上**: ロジックとスタイルの分離
+- **アクセシビリティ**: ブラウザネイティブの動作
+- **シンプルな実装**: 複雑な状態管理が不要
 
-**メリット**:
-- JavaScriptが不要
-- パフォーマンス向上
-- コード量削減
-- 保守性向上
-
-**注意点**:
-- 複雑なセレクタは避ける
-- パフォーマンスを考慮
-- フォールバックを用意
-
-`:has()` はモダンCSSの必須スキルです。ぜひマスターしてください。
-
-**参考リンク**:
-- [MDN: :has()](https://developer.mozilla.org/en-US/docs/Web/CSS/:has)
-- [Can I use: :has()](https://caniuse.com/css-has)
-- [CSS :has() Interactive Examples](https://ishadeed.com/article/css-has-guide/)
+ただし、複雑すぎるセレクタはパフォーマンスに影響するため、適切なバランスを保つことが重要です。`:has()` を効果的に活用して、よりインタラクティブで保守性の高いWebアプリケーションを構築しましょう。
