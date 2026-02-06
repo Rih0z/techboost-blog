@@ -1,275 +1,950 @@
 ---
-title: "Hono入門 — 超軽量Web Frameworkで始めるEdge-First開発"
-description: "わずか12KB未満の超軽量Web Framework「Hono」の特徴、ルーティング、ミドルウェア、そしてCloudflare Workers、Deno、Bunへの対応について解説します。"
-pubDate: "2026-02-05"
-tags: ["Hono", "Web Framework", "Edge Computing", "TypeScript"]
+title: "Hono完全ガイド — 軽量・高速WebフレームワークのEdge時代の選択肢"
+description: "Cloudflare Workers、Deno、Bun、Node.jsで動作する超軽量WebフレームワークHonoの完全ガイド。Edge Runtimeでの高速API開発からミドルウェア、バリデーション、型安全なルーティングまで徹底解説します。"
+pubDate: "2026-02-06"
+tags: ["Hono", "Edge Computing", "Cloudflare Workers", "TypeScript", "Web API"]
 ---
+
+Honoは、Edge Runtimeに最適化された超軽量・高速なWebフレームワークです。Cloudflare Workers、Deno、Bun、Node.jsなど、あらゆるJavaScriptランタイムで動作し、Express.jsのようなシンプルなAPIを提供しながら、圧倒的なパフォーマンスを実現します。この記事では、Honoの基本から実践的な使い方まで徹底的に解説します。
 
 ## Honoとは
 
-Honoは、Edge環境に最適化された超軽量Web Frameworkです。バンドルサイズはわずか12KB未満で、Cloudflare Workers、Deno、Bun、Node.jsなど、あらゆるランタイムで動作します。
+Honoは「炎」を意味する日本語から名付けられた、超高速なWebフレームワークです。主な特徴は以下の通りです。
 
-ExpressやFastifyといった従来のNode.js向けフレームワークと異なり、Honoは最初からEdge-FirstでWeb標準APIに準拠して設計されているため、モダンな開発体験と高いパフォーマンスを両立しています。
+- **超軽量** - 依存関係ゼロ、わずか13KB（gzip後）
+- **超高速** - RegExpベースのルーターで最速クラスの性能
+- **マルチランタイム対応** - Cloudflare Workers、Deno、Bun、Node.js、Fastly Compute@Edge、Vercel Edge Functions
+- **型安全** - TypeScriptファーストで完全な型推論
+- **ミドルウェア豊富** - 認証、CORS、キャッシュ、圧縮など標準装備
+- **Express互換API** - 学習コストが低い
 
-## なぜHonoを選ぶのか
+## 基本的な使い方
 
-### 1. 驚異的な軽量性
+### インストールとセットアップ
 
-Honoのコアは12KB未満。これはExpressの1/10以下のサイズです。Edge環境ではバンドルサイズがコールドスタート時間に直結するため、この軽量性は大きなアドバンテージとなります。
+```bash
+# Cloudflare Workers向け
+npm create hono@latest my-app
+cd my-app
+npm install
 
-### 2. マルチランタイム対応
-
-```typescript
-// Cloudflare Workers
-export default {
-  fetch: app.fetch,
-}
-
-// Deno
-Deno.serve(app.fetch)
-
-// Bun
-export default {
-  port: 3000,
-  fetch: app.fetch,
-}
-
-// Node.js
-serve(app)
+# または手動インストール
+npm install hono
 ```
 
-同じコードベースで複数のランタイムに対応できるため、プラットフォーム移行が容易です。
-
-### 3. Express風の直感的なAPI
-
-Expressに慣れた開発者なら、学習コストなしで使い始められます。
-
-## 基本的なルーティング
+### 最小構成のAPI
 
 ```typescript
-import { Hono } from 'hono'
+// src/index.ts
+import { Hono } from 'hono';
 
-const app = new Hono()
+const app = new Hono();
 
-// GET リクエスト
 app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+  return c.text('Hello Hono!');
+});
 
-// POST リクエスト
-app.post('/posts', async (c) => {
-  const body = await c.req.json()
-  return c.json({ message: 'Created', data: body })
-})
+app.get('/json', (c) => {
+  return c.json({ message: 'Hello JSON!' });
+});
 
-// パスパラメータ
-app.get('/users/:id', (c) => {
-  const id = c.req.param('id')
-  return c.json({ userId: id })
-})
+app.get('/html', (c) => {
+  return c.html('<h1>Hello HTML!</h1>');
+});
 
-// クエリパラメータ
-app.get('/search', (c) => {
-  const query = c.req.query('q')
-  return c.json({ query })
-})
-
-export default app
+export default app;
 ```
 
-Context（`c`）オブジェクトには、リクエスト処理に必要なすべてのメソッドが含まれています。
+Cloudflare Workersで実行:
+
+```bash
+npm run dev
+# http://localhost:8787 でアクセス可能
+```
+
+### 基本的なルーティング
+
+```typescript
+import { Hono } from 'hono';
+
+const app = new Hono();
+
+// GETリクエスト
+app.get('/users', (c) => c.json({ users: [] }));
+
+// POSTリクエスト
+app.post('/users', async (c) => {
+  const body = await c.req.json();
+  return c.json({ created: body }, 201);
+});
+
+// PUTリクエスト
+app.put('/users/:id', async (c) => {
+  const id = c.req.param('id');
+  const body = await c.req.json();
+  return c.json({ id, updated: body });
+});
+
+// DELETEリクエスト
+app.delete('/users/:id', (c) => {
+  const id = c.req.param('id');
+  return c.json({ deleted: id }, 204);
+});
+
+// PATCHリクエスト
+app.patch('/users/:id', async (c) => {
+  const id = c.req.param('id');
+  const body = await c.req.json();
+  return c.json({ id, patched: body });
+});
+
+export default app;
+```
+
+## パスパラメータとクエリパラメータ
+
+### パスパラメータ
+
+```typescript
+// 単一パラメータ
+app.get('/users/:id', (c) => {
+  const id = c.req.param('id');
+  return c.json({ userId: id });
+});
+
+// 複数パラメータ
+app.get('/posts/:postId/comments/:commentId', (c) => {
+  const postId = c.req.param('postId');
+  const commentId = c.req.param('commentId');
+  return c.json({ postId, commentId });
+});
+
+// ワイルドカード
+app.get('/files/*', (c) => {
+  const path = c.req.param('*');
+  return c.text(`File path: ${path}`);
+});
+
+// 正規表現パターン
+app.get('/posts/:id{[0-9]+}', (c) => {
+  const id = c.req.param('id'); // 数字のみマッチ
+  return c.json({ postId: id });
+});
+```
+
+### クエリパラメータ
+
+```typescript
+app.get('/search', (c) => {
+  // 単一パラメータ
+  const q = c.req.query('q');
+
+  // 複数パラメータ
+  const page = c.req.query('page') || '1';
+  const limit = c.req.query('limit') || '10';
+
+  // 配列パラメータ（?tags=js&tags=ts）
+  const tags = c.req.queries('tags');
+
+  return c.json({
+    query: q,
+    page: parseInt(page),
+    limit: parseInt(limit),
+    tags,
+  });
+});
+```
+
+## リクエストボディの処理
+
+```typescript
+// JSONボディ
+app.post('/api/users', async (c) => {
+  const body = await c.req.json();
+  return c.json({ received: body });
+});
+
+// テキストボディ
+app.post('/api/text', async (c) => {
+  const text = await c.req.text();
+  return c.text(`Received: ${text}`);
+});
+
+// FormData
+app.post('/api/upload', async (c) => {
+  const formData = await c.req.formData();
+  const file = formData.get('file');
+  const name = formData.get('name');
+  return c.json({ fileName: file?.name, name });
+});
+
+// ArrayBuffer
+app.post('/api/binary', async (c) => {
+  const buffer = await c.req.arrayBuffer();
+  return c.json({ size: buffer.byteLength });
+});
+
+// Raw Request
+app.post('/api/raw', async (c) => {
+  const req = c.req.raw;
+  const contentType = req.headers.get('content-type');
+  return c.json({ contentType });
+});
+```
+
+## 型安全なルーティング
+
+Honoの最大の特徴の一つが、完全な型推論です。
+
+```typescript
+import { Hono } from 'hono';
+
+// 型定義
+type User = {
+  id: number;
+  name: string;
+  email: string;
+};
+
+type CreateUserInput = Omit<User, 'id'>;
+
+const app = new Hono();
+
+// 型安全なレスポンス
+app.get('/users/:id', (c) => {
+  const id = c.req.param('id');
+
+  const user: User = {
+    id: parseInt(id),
+    name: 'John Doe',
+    email: 'john@example.com',
+  };
+
+  // cは型推論される
+  return c.json(user);
+});
+
+// 型安全なリクエスト
+app.post('/users', async (c) => {
+  const input: CreateUserInput = await c.req.json();
+
+  const user: User = {
+    id: Date.now(),
+    ...input,
+  };
+
+  return c.json(user, 201);
+});
+
+export default app;
+```
+
+### Zodによるバリデーション
+
+```typescript
+import { Hono } from 'hono';
+import { z } from 'zod';
+import { zValidator } from '@hono/zod-validator';
+
+const app = new Hono();
+
+// スキーマ定義
+const userSchema = z.object({
+  name: z.string().min(1).max(100),
+  email: z.string().email(),
+  age: z.number().int().min(0).max(150).optional(),
+});
+
+// バリデーションミドルウェア
+app.post('/users', zValidator('json', userSchema), async (c) => {
+  // バリデーション済みのデータを取得
+  const data = c.req.valid('json');
+
+  // ここでdataは型安全に扱える
+  return c.json({
+    message: 'User created',
+    user: data,
+  }, 201);
+});
+
+// クエリパラメータのバリデーション
+const searchSchema = z.object({
+  q: z.string().min(1),
+  page: z.string().regex(/^\d+$/).transform(Number).optional(),
+  limit: z.string().regex(/^\d+$/).transform(Number).optional(),
+});
+
+app.get('/search', zValidator('query', searchSchema), (c) => {
+  const { q, page = 1, limit = 10 } = c.req.valid('query');
+
+  return c.json({
+    query: q,
+    page,
+    limit,
+    results: [],
+  });
+});
+
+export default app;
+```
 
 ## ミドルウェアの活用
 
-Honoは豊富なビルトインミドルウェアを提供しています。
-
-### CORS対応
+### 組み込みミドルウェア
 
 ```typescript
-import { Hono } from 'hono'
-import { cors } from 'hono/cors'
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
+import { prettyJSON } from 'hono/pretty-json';
+import { etag } from 'hono/etag';
+import { compress } from 'hono/compress';
 
-const app = new Hono()
+const app = new Hono();
 
-app.use('/api/*', cors({
-  origin: 'https://example.com',
+// CORSミドルウェア
+app.use('/*', cors({
+  origin: ['https://example.com'],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowHeaders: ['Content-Type', 'Authorization'],
-  allowMethods: ['POST', 'GET', 'OPTIONS'],
+  maxAge: 86400,
   credentials: true,
-}))
+}));
 
-app.get('/api/data', (c) => {
-  return c.json({ message: 'CORS enabled' })
-})
-```
+// ロガー
+app.use('*', logger());
 
-### JWT認証
+// 整形されたJSON出力（開発時のみ）
+app.use('*', prettyJSON());
 
-```typescript
-import { jwt } from 'hono/jwt'
+// ETag生成
+app.use('/api/*', etag());
 
-app.use('/admin/*', jwt({
-  secret: 'your-secret-key',
-}))
+// レスポンス圧縮
+app.use('*', compress());
 
-app.get('/admin/dashboard', (c) => {
-  const payload = c.get('jwtPayload')
-  return c.json({ user: payload })
-})
-```
-
-### ロガー
-
-```typescript
-import { logger } from 'hono/logger'
-
-app.use('*', logger())
+export default app;
 ```
 
 ### カスタムミドルウェア
 
 ```typescript
-const addRequestId = async (c, next) => {
-  c.set('requestId', crypto.randomUUID())
-  await next()
+import { Hono } from 'hono';
+import type { Context, Next } from 'hono';
+
+const app = new Hono();
+
+// リクエストIDミドルウェア
+const requestId = () => {
+  return async (c: Context, next: Next) => {
+    const id = crypto.randomUUID();
+    c.set('requestId', id);
+    c.header('X-Request-ID', id);
+    await next();
+  };
+};
+
+// タイミングミドルウェア
+const timing = () => {
+  return async (c: Context, next: Next) => {
+    const start = Date.now();
+    await next();
+    const duration = Date.now() - start;
+    c.header('X-Response-Time', `${duration}ms`);
+  };
+};
+
+// 認証ミドルウェア
+const auth = () => {
+  return async (c: Context, next: Next) => {
+    const token = c.req.header('Authorization')?.replace('Bearer ', '');
+
+    if (!token) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+
+    // トークン検証（簡易版）
+    if (token !== 'secret-token') {
+      return c.json({ error: 'Invalid token' }, 401);
+    }
+
+    c.set('userId', 'user-123');
+    await next();
+  };
+};
+
+// グローバルに適用
+app.use('*', requestId());
+app.use('*', timing());
+
+// 特定のルートのみ
+app.use('/api/*', auth());
+
+app.get('/api/me', (c) => {
+  const userId = c.get('userId');
+  const requestId = c.get('requestId');
+  return c.json({ userId, requestId });
+});
+
+export default app;
+```
+
+## JWT認証の実装
+
+```typescript
+import { Hono } from 'hono';
+import { jwt, sign } from 'hono/jwt';
+
+const app = new Hono();
+
+const SECRET = 'your-secret-key';
+
+// ログインエンドポイント
+app.post('/login', async (c) => {
+  const { username, password } = await c.req.json();
+
+  // 認証ロジック（簡易版）
+  if (username === 'admin' && password === 'password') {
+    const payload = {
+      sub: username,
+      role: 'admin',
+      exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1時間
+    };
+
+    const token = await sign(payload, SECRET);
+    return c.json({ token });
+  }
+
+  return c.json({ error: 'Invalid credentials' }, 401);
+});
+
+// JWT認証が必要なルート
+app.use('/api/*', jwt({ secret: SECRET }));
+
+app.get('/api/profile', (c) => {
+  const payload = c.get('jwtPayload');
+  return c.json({
+    username: payload.sub,
+    role: payload.role,
+  });
+});
+
+export default app;
+```
+
+## エラーハンドリング
+
+```typescript
+import { Hono } from 'hono';
+import type { ErrorHandler } from 'hono';
+
+const app = new Hono();
+
+// カスタムエラークラス
+class AppError extends Error {
+  constructor(
+    message: string,
+    public statusCode: number = 500,
+    public code?: string
+  ) {
+    super(message);
+    this.name = 'AppError';
+  }
 }
 
-app.use('*', addRequestId)
+// グローバルエラーハンドラ
+const errorHandler: ErrorHandler = (err, c) => {
+  console.error(`[Error] ${err.message}`);
 
-app.get('/', (c) => {
-  const requestId = c.get('requestId')
-  return c.json({ requestId })
-})
-```
-
-## バリデーション
-
-HonoはZodと統合したバリデーション機能を提供します。
-
-```typescript
-import { z } from 'zod'
-import { zValidator } from '@hono/zod-validator'
-
-const schema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  age: z.number().int().positive(),
-})
-
-app.post(
-  '/users',
-  zValidator('json', schema),
-  async (c) => {
-    const data = c.req.valid('json')
-    // data は型安全に扱える
-    return c.json({ success: true, user: data })
+  if (err instanceof AppError) {
+    return c.json({
+      error: err.message,
+      code: err.code,
+    }, err.statusCode);
   }
-)
+
+  return c.json({
+    error: 'Internal Server Error',
+  }, 500);
+};
+
+app.onError(errorHandler);
+
+// エラーを投げる例
+app.get('/users/:id', async (c) => {
+  const id = c.req.param('id');
+
+  if (!id.match(/^\d+$/)) {
+    throw new AppError('Invalid user ID', 400, 'INVALID_ID');
+  }
+
+  // ユーザー取得ロジック
+  const user = null; // 仮
+
+  if (!user) {
+    throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+  }
+
+  return c.json({ user });
+});
+
+// 404ハンドラ
+app.notFound((c) => {
+  return c.json({
+    error: 'Not Found',
+    path: c.req.path,
+  }, 404);
+});
+
+export default app;
 ```
 
-バリデーションエラーは自動的に400レスポンスとして返されます。
+## データベース統合
 
-## RPC機能（hono/client）
-
-Honoの強力な機能の一つが、型安全なRPCクライアントです。
+### Cloudflare D1（SQLite）
 
 ```typescript
-// server.ts
-const app = new Hono()
-  .get('/posts/:id', (c) => {
-    const id = c.req.param('id')
-    return c.json({ id, title: 'Hello' })
-  })
-  .post('/posts', async (c) => {
-    const body = await c.req.json()
-    return c.json({ id: 1, ...body })
-  })
-
-export type AppType = typeof app
-
-// client.ts
-import { hc } from 'hono/client'
-import type { AppType } from './server'
-
-const client = hc<AppType>('http://localhost:3000')
-
-// 型安全なAPIコール
-const res = await client.posts[':id'].$get({
-  param: { id: '123' }
-})
-const data = await res.json() // { id: string, title: string }
-
-const res2 = await client.posts.$post({
-  json: { title: 'New Post', content: 'Content' }
-})
-```
-
-tRPCのような型安全性を、追加のセットアップなしで実現できます。
-
-## Cloudflare Workersでの実装例
-
-```typescript
-import { Hono } from 'hono'
-import { cache } from 'hono/cache'
+import { Hono } from 'hono';
 
 type Bindings = {
-  DB: D1Database
-  KV: KVNamespace
-}
+  DB: D1Database;
+};
 
-const app = new Hono<{ Bindings: Bindings }>()
+const app = new Hono<{ Bindings: Bindings }>();
 
-// KVキャッシュ
+// ユーザー一覧取得
+app.get('/users', async (c) => {
+  const { results } = await c.env.DB.prepare(
+    'SELECT * FROM users ORDER BY created_at DESC'
+  ).all();
+
+  return c.json({ users: results });
+});
+
+// ユーザー作成
+app.post('/users', async (c) => {
+  const { name, email } = await c.req.json();
+
+  const { success } = await c.env.DB.prepare(
+    'INSERT INTO users (name, email) VALUES (?, ?)'
+  ).bind(name, email).run();
+
+  if (success) {
+    return c.json({ message: 'User created' }, 201);
+  }
+
+  return c.json({ error: 'Failed to create user' }, 500);
+});
+
+// ユーザー取得
+app.get('/users/:id', async (c) => {
+  const id = c.req.param('id');
+
+  const user = await c.env.DB.prepare(
+    'SELECT * FROM users WHERE id = ?'
+  ).bind(id).first();
+
+  if (!user) {
+    return c.json({ error: 'User not found' }, 404);
+  }
+
+  return c.json({ user });
+});
+
+export default app;
+```
+
+### Prisma統合（Node.js/Bun）
+
+```typescript
+import { Hono } from 'hono';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+const app = new Hono();
+
+app.get('/posts', async (c) => {
+  const posts = await prisma.post.findMany({
+    include: {
+      author: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  return c.json({ posts });
+});
+
+app.post('/posts', async (c) => {
+  const { title, content, authorId } = await c.req.json();
+
+  const post = await prisma.post.create({
+    data: {
+      title,
+      content,
+      authorId,
+    },
+  });
+
+  return c.json({ post }, 201);
+});
+
+app.get('/posts/:id', async (c) => {
+  const id = parseInt(c.req.param('id'));
+
+  const post = await prisma.post.findUnique({
+    where: { id },
+    include: { author: true },
+  });
+
+  if (!post) {
+    return c.json({ error: 'Post not found' }, 404);
+  }
+
+  return c.json({ post });
+});
+
+export default app;
+```
+
+## キャッシング戦略
+
+```typescript
+import { Hono } from 'hono';
+import { cache } from 'hono/cache';
+
+const app = new Hono();
+
+// 静的キャッシュ（1時間）
 app.get(
-  '/cached',
+  '/api/static',
   cache({
     cacheName: 'my-app',
     cacheControl: 'max-age=3600',
-  })
-)
+  }),
+  (c) => {
+    return c.json({
+      timestamp: Date.now(),
+      data: 'This is cached',
+    });
+  }
+);
 
-// D1データベース
-app.get('/users/:id', async (c) => {
-  const id = c.req.param('id')
-  const result = await c.env.DB
-    .prepare('SELECT * FROM users WHERE id = ?')
-    .bind(id)
-    .first()
-  return c.json(result)
-})
+// Cloudflare KVを使ったカスタムキャッシュ
+type Bindings = {
+  CACHE: KVNamespace;
+};
 
-// KVストレージ
-app.post('/cache/:key', async (c) => {
-  const key = c.req.param('key')
-  const value = await c.req.text()
-  await c.env.KV.put(key, value, { expirationTtl: 60 })
-  return c.json({ success: true })
-})
+const appWithKV = new Hono<{ Bindings: Bindings }>();
 
-export default app
+appWithKV.get('/api/data/:id', async (c) => {
+  const id = c.req.param('id');
+  const cacheKey = `data:${id}`;
+
+  // キャッシュチェック
+  const cached = await c.env.CACHE.get(cacheKey, 'json');
+  if (cached) {
+    return c.json({ ...cached, cached: true });
+  }
+
+  // データ取得（重い処理を想定）
+  const data = {
+    id,
+    value: Math.random(),
+    timestamp: Date.now(),
+  };
+
+  // キャッシュに保存（1時間）
+  await c.env.CACHE.put(cacheKey, JSON.stringify(data), {
+    expirationTtl: 3600,
+  });
+
+  return c.json({ ...data, cached: false });
+});
+
+export default appWithKV;
 ```
 
-## パフォーマンス比較
+## ファイルアップロード
 
-Cloudflare Workersでのベンチマーク結果（1000リクエスト/秒）:
+```typescript
+import { Hono } from 'hono';
 
-- **Hono**: 平均3ms、99パーセンタイル5ms
-- **itty-router**: 平均4ms、99パーセンタイル7ms
-- **Worktop**: 平均5ms、99パーセンタイル8ms
+type Bindings = {
+  BUCKET: R2Bucket;
+};
 
-コールドスタート時間もHonoが最も短く、本番環境での実用性が証明されています。
+const app = new Hono<{ Bindings: Bindings }>();
+
+// Cloudflare R2へのファイルアップロード
+app.post('/upload', async (c) => {
+  const formData = await c.req.formData();
+  const file = formData.get('file') as File;
+
+  if (!file) {
+    return c.json({ error: 'No file provided' }, 400);
+  }
+
+  // ファイルサイズチェック（10MB制限）
+  if (file.size > 10 * 1024 * 1024) {
+    return c.json({ error: 'File too large' }, 400);
+  }
+
+  // ファイルタイプチェック
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (!allowedTypes.includes(file.type)) {
+    return c.json({ error: 'Invalid file type' }, 400);
+  }
+
+  // ファイル名生成
+  const fileName = `${crypto.randomUUID()}-${file.name}`;
+
+  // R2にアップロード
+  await c.env.BUCKET.put(fileName, file.stream(), {
+    httpMetadata: {
+      contentType: file.type,
+    },
+  });
+
+  return c.json({
+    message: 'File uploaded',
+    fileName,
+    url: `/files/${fileName}`,
+  }, 201);
+});
+
+// ファイル取得
+app.get('/files/:name', async (c) => {
+  const name = c.req.param('name');
+
+  const object = await c.env.BUCKET.get(name);
+
+  if (!object) {
+    return c.json({ error: 'File not found' }, 404);
+  }
+
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  headers.set('Cache-Control', 'public, max-age=31536000');
+
+  return new Response(object.body, { headers });
+});
+
+export default app;
+```
+
+## ルートグルーピング
+
+```typescript
+import { Hono } from 'hono';
+
+const app = new Hono();
+
+// APIルートグループ
+const api = new Hono();
+
+api.get('/users', (c) => c.json({ users: [] }));
+api.post('/users', async (c) => {
+  const body = await c.req.json();
+  return c.json({ created: body }, 201);
+});
+
+// 管理者ルートグループ
+const admin = new Hono();
+
+admin.use('*', async (c, next) => {
+  // 認証チェック
+  const isAdmin = c.req.header('X-Admin-Token') === 'secret';
+  if (!isAdmin) {
+    return c.json({ error: 'Forbidden' }, 403);
+  }
+  await next();
+});
+
+admin.get('/stats', (c) => c.json({ stats: {} }));
+admin.delete('/users/:id', (c) => {
+  const id = c.req.param('id');
+  return c.json({ deleted: id });
+});
+
+// グループをマウント
+app.route('/api', api);
+app.route('/admin', admin);
+
+export default app;
+```
+
+## WebSocketサポート（Cloudflare Workers）
+
+```typescript
+import { Hono } from 'hono';
+
+const app = new Hono();
+
+app.get('/ws', async (c) => {
+  const upgradeHeader = c.req.header('Upgrade');
+
+  if (upgradeHeader !== 'websocket') {
+    return c.text('Expected Upgrade: websocket', 426);
+  }
+
+  const webSocketPair = new WebSocketPair();
+  const [client, server] = Object.values(webSocketPair);
+
+  server.accept();
+
+  server.addEventListener('message', (event) => {
+    console.log('Received:', event.data);
+    server.send(`Echo: ${event.data}`);
+  });
+
+  server.addEventListener('close', () => {
+    console.log('WebSocket closed');
+  });
+
+  return new Response(null, {
+    status: 101,
+    webSocket: client,
+  });
+});
+
+export default app;
+```
+
+## テスト
+
+```typescript
+// test/index.test.ts
+import { describe, it, expect } from 'vitest';
+import app from '../src/index';
+
+describe('API Tests', () => {
+  it('GET / should return hello message', async () => {
+    const res = await app.request('http://localhost/');
+    expect(res.status).toBe(200);
+
+    const text = await res.text();
+    expect(text).toBe('Hello Hono!');
+  });
+
+  it('POST /users should create user', async () => {
+    const res = await app.request('http://localhost/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: 'John Doe',
+        email: 'john@example.com',
+      }),
+    });
+
+    expect(res.status).toBe(201);
+
+    const json = await res.json();
+    expect(json.created.name).toBe('John Doe');
+  });
+
+  it('GET /api/me should require authentication', async () => {
+    const res = await app.request('http://localhost/api/me');
+    expect(res.status).toBe(401);
+  });
+});
+```
+
+## デプロイ
+
+### Cloudflare Workers
+
+```bash
+# wrangler.tomlの設定
+npm run deploy
+```
+
+```toml
+# wrangler.toml
+name = "my-hono-app"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+```
+
+### Vercel Edge Functions
+
+```typescript
+// api/index.ts
+import { Hono } from 'hono';
+import { handle } from 'hono/vercel';
+
+const app = new Hono().basePath('/api');
+
+app.get('/hello', (c) => c.json({ message: 'Hello from Vercel!' }));
+
+export const GET = handle(app);
+export const POST = handle(app);
+```
+
+### Deno Deploy
+
+```typescript
+// main.ts
+import { Hono } from 'https://deno.land/x/hono/mod.ts';
+
+const app = new Hono();
+
+app.get('/', (c) => c.text('Hello Deno!'));
+
+Deno.serve(app.fetch);
+```
+
+## パフォーマンス最適化
+
+```typescript
+import { Hono } from 'hono';
+import { compress } from 'hono/compress';
+import { etag } from 'hono/etag';
+
+const app = new Hono();
+
+// レスポンス圧縮
+app.use('*', compress());
+
+// ETag生成
+app.use('*', etag());
+
+// ストリーミングレスポンス
+app.get('/stream', (c) => {
+  const stream = new ReadableStream({
+    start(controller) {
+      controller.enqueue('chunk1\n');
+      controller.enqueue('chunk2\n');
+      controller.close();
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/plain',
+      'Transfer-Encoding': 'chunked',
+    },
+  });
+});
+
+export default app;
+```
 
 ## まとめ
 
-Honoは、以下のような特徴を持つ次世代のWeb Frameworkです。
+Honoは、Edge Computing時代の理想的なWebフレームワークです。
 
-- 12KB未満の超軽量設計
-- マルチランタイム対応（Cloudflare Workers / Deno / Bun / Node.js）
-- Express風の直感的なAPI
-- 型安全なRPCクライアント
+**主な利点:**
+- 超軽量で高速なパフォーマンス
+- あらゆるランタイムで動作するポータビリティ
+- TypeScriptファーストの型安全性
 - 豊富なミドルウェアエコシステム
-- Edge環境での高速パフォーマンス
+- Express互換の学習しやすいAPI
 
-特にEdge環境でのAPI開発やマイクロサービス構築において、Honoは最有力の選択肢となります。従来のExpressから移行する際の学習コストも低く、すぐに本番投入可能な成熟度を持っています。
-
-まずは小規模なAPIから試して、Honoのパフォーマンスと開発体験を実感してみてください。
+Cloudflare Workers、Deno Deploy、Vercel Edge FunctionsなどのEdge Runtimeで高速なAPIを構築したい場合、Honoは最高の選択肢の一つです。軽量でありながら、本格的なアプリケーション開発に必要な機能が全て揃っています。
