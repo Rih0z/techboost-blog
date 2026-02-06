@@ -1,13 +1,18 @@
 ---
-title: "Playwright完全ガイド — モダンE2Eテストの実践手法"
-description: "Playwrightを使ったE2Eテストの完全ガイド。セットアップ、ロケーター戦略、Auto-waiting、Visual Regression、CI/CD統合まで実践的に解説します。"
-pubDate: "2026-02-05"
-tags: ["Playwright", "Testing", "E2E", "Automation"]
+title: "Playwrightで始めるE2Eテスト実践ガイド"
+description: "Microsoft製のモダンE2EテスティングフレームワークPlaywrightで、信頼性の高いブラウザ自動テストを構築。並列実行、複数ブラウザ対応、デバッグツールなど充実の機能を解説"
+pubDate: "2025-02-06"
 ---
+
+# Playwrightで始めるE2Eテスト実践ガイド
+
+Webアプリケーションの品質保証において、E2E（End-to-End）テストは不可欠です。**Playwright** は、Microsoftが開発した次世代のブラウザ自動化フレームワークで、信頼性が高く高速なE2Eテストを実現します。
+
+本記事では、Playwrightの基本から実践的なテスト戦略まで、詳しく解説します。
 
 ## Playwrightとは
 
-Playwrightは、Microsoftが開発したモダンなブラウザ自動化・E2Eテストフレームワークです。Chromium、Firefox、WebKitの3つのブラウザエンジンをサポートします。
+Playwrightは、Chromium、Firefox、WebKitをサポートする統一APIを提供するブラウザ自動化ツールです。
 
 ### Seleniumとの違い
 
