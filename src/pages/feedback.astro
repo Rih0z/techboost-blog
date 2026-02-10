@@ -1,0 +1,238 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BaseHead from '../components/BaseHead.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="ja">
+	<head>
+		<BaseHead title={`フィードバック - ${SITE_TITLE}`} description="TechBoostへのご意見・ご要望・記事のリクエストをお寄せください。" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<article>
+				<div class="prose">
+					<h1>フィードバック</h1>
+					<p class="subtitle">
+						TechBoostへのご意見・ご要望・記事のリクエストをお聞かせください。<br />
+						いただいたフィードバックは定期的にレビューし、改善に反映いたします。
+					</p>
+
+					<form id="feedback-form" class="feedback-form">
+						<div class="form-group">
+							<label>フィードバックの種類</label>
+							<div class="type-buttons">
+								<button type="button" class="type-btn active" data-type="article">記事リクエスト</button>
+								<button type="button" class="type-btn" data-type="improvement">改善提案</button>
+								<button type="button" class="type-btn" data-type="bug">不具合報告</button>
+								<button type="button" class="type-btn" data-type="other">その他</button>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="message">内容 <span class="required">*</span></label>
+							<textarea id="message" name="message" rows="6" required placeholder="ご意見・ご要望をお聞かせください"></textarea>
+						</div>
+
+						<div class="form-group">
+							<label for="email">メールアドレス（任意）</label>
+							<input type="email" id="email" name="email" placeholder="返信が必要な場合はご記入ください" />
+						</div>
+
+						<button type="submit" class="submit-btn">フィードバックを送信</button>
+					</form>
+
+					<div id="thank-you" class="thank-you" style="display:none;">
+						<div class="check-icon">&#10004;</div>
+						<h2>ありがとうございます</h2>
+						<p>メールクライアントが開きます。内容を確認して送信してください。</p>
+						<button id="reset-btn" class="submit-btn">新しいフィードバックを送る</button>
+					</div>
+
+					<div class="contact-alt">
+						<h2>その他のお問い合わせ方法</h2>
+						<ul>
+							<li>メール: <a href="mailto:info@ezark.co.jp">info@ezark.co.jp</a></li>
+							<li>X/Twitter: <a href="https://x.com/Ezark_ct" target="_blank" rel="noopener noreferrer">@Ezark_ct</a></li>
+							<li>運営: <a href="https://ezark-consulting.com" target="_blank" rel="noopener noreferrer">イザークコンサルティング株式会社</a></li>
+						</ul>
+					</div>
+				</div>
+			</article>
+		</main>
+		<Footer />
+		<script>
+			const typeLabels: Record<string, string> = {
+				article: "記事リクエスト",
+				improvement: "改善提案",
+				bug: "不具合報告",
+				other: "その他",
+			};
+			let selectedType = "article";
+
+			document.querySelectorAll(".type-btn").forEach((btn) => {
+				btn.addEventListener("click", () => {
+					document.querySelectorAll(".type-btn").forEach((b) => b.classList.remove("active"));
+					btn.classList.add("active");
+					selectedType = (btn as HTMLElement).dataset.type || "other";
+					const textarea = document.getElementById("message") as HTMLTextAreaElement;
+					if (selectedType === "article") {
+						textarea.placeholder = "どのようなテーマの記事が読みたいですか？";
+					} else if (selectedType === "bug") {
+						textarea.placeholder = "どのページで、どのような問題が発生しましたか？";
+					} else {
+						textarea.placeholder = "ご意見・ご要望をお聞かせください";
+					}
+				});
+			});
+
+			document.getElementById("feedback-form")?.addEventListener("submit", (e) => {
+				e.preventDefault();
+				const message = (document.getElementById("message") as HTMLTextAreaElement).value;
+				const email = (document.getElementById("email") as HTMLInputElement).value;
+				const subject = encodeURIComponent(`[TechBoost ${typeLabels[selectedType]}] フィードバック`);
+				const body = encodeURIComponent(
+					`【種別】${typeLabels[selectedType]}\n\n【内容】\n${message}\n\n【連絡先】${email || "未記入"}\n\n---\nTechBoost フィードバックフォームから送信`
+				);
+				window.open(`mailto:info@ezark.co.jp?subject=${subject}&body=${body}`);
+				(document.getElementById("feedback-form") as HTMLElement).style.display = "none";
+				(document.getElementById("thank-you") as HTMLElement).style.display = "block";
+			});
+
+			document.getElementById("reset-btn")?.addEventListener("click", () => {
+				(document.getElementById("feedback-form") as HTMLElement).style.display = "block";
+				(document.getElementById("thank-you") as HTMLElement).style.display = "none";
+				(document.getElementById("message") as HTMLTextAreaElement).value = "";
+				(document.getElementById("email") as HTMLInputElement).value = "";
+			});
+		</script>
+		<style>
+			.subtitle {
+				color: rgb(var(--gray));
+				font-size: 0.95em;
+			}
+			.feedback-form {
+				margin: 2em 0;
+			}
+			.form-group {
+				margin-bottom: 1.5em;
+			}
+			.form-group label {
+				display: block;
+				font-weight: 700;
+				margin-bottom: 0.5em;
+				font-size: 0.95em;
+			}
+			.required {
+				color: #e53e3e;
+			}
+			.type-buttons {
+				display: flex;
+				gap: 0.5em;
+				flex-wrap: wrap;
+			}
+			.type-btn {
+				padding: 0.5em 1em;
+				border: 2px solid rgb(var(--gray-light));
+				border-radius: 8px;
+				background: white;
+				color: rgb(var(--gray-dark));
+				cursor: pointer;
+				font-size: 0.85em;
+				font-weight: 600;
+				transition: all 0.2s;
+			}
+			.type-btn:hover {
+				border-color: var(--accent);
+			}
+			.type-btn.active {
+				background: var(--accent);
+				color: white;
+				border-color: var(--accent);
+			}
+			textarea, input[type="email"] {
+				width: 100%;
+				padding: 0.75em 1em;
+				border: 2px solid rgb(var(--gray-light));
+				border-radius: 8px;
+				font-size: 0.95em;
+				font-family: inherit;
+				line-height: 1.6;
+				transition: border-color 0.2s;
+				box-sizing: border-box;
+			}
+			textarea:focus, input[type="email"]:focus {
+				outline: none;
+				border-color: var(--accent);
+			}
+			textarea {
+				resize: vertical;
+				min-height: 120px;
+			}
+			.submit-btn {
+				display: block;
+				width: 100%;
+				padding: 0.75em;
+				background: var(--accent);
+				color: white;
+				border: none;
+				border-radius: 8px;
+				font-size: 1em;
+				font-weight: 700;
+				cursor: pointer;
+				transition: opacity 0.2s;
+			}
+			.submit-btn:hover {
+				opacity: 0.9;
+			}
+			.thank-you {
+				text-align: center;
+				padding: 3em 0;
+			}
+			.check-icon {
+				font-size: 3em;
+				color: var(--accent);
+				margin-bottom: 0.5em;
+			}
+			.thank-you h2 {
+				margin-bottom: 0.5em;
+			}
+			.thank-you p {
+				color: rgb(var(--gray));
+				margin-bottom: 2em;
+			}
+			.thank-you .submit-btn {
+				width: auto;
+				display: inline-block;
+				padding: 0.75em 2em;
+			}
+			.contact-alt {
+				margin-top: 3em;
+				padding: 1.5em;
+				background: rgba(var(--gray-light), 30%);
+				border-radius: 12px;
+			}
+			.contact-alt h2 {
+				font-size: 1.1em;
+				margin-top: 0;
+				margin-bottom: 0.75em;
+			}
+			.contact-alt ul {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+			.contact-alt li {
+				margin-bottom: 0.5em;
+				font-size: 0.9em;
+				color: rgb(var(--gray));
+			}
+			.contact-alt a {
+				color: var(--accent);
+			}
+		</style>
+	</body>
+</html>
