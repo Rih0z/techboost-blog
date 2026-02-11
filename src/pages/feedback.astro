@@ -1,0 +1,209 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<html lang="ja">
+	<head>
+		<BaseHead title={`Feedback - ${SITE_TITLE}`} description="TechBoostへのフィードバックをお寄せください" />
+		<style>
+			main {
+				width: 720px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 2em 1em;
+			}
+			h1 {
+				text-align: center;
+				margin-bottom: 0.5em;
+			}
+			.subtitle {
+				text-align: center;
+				color: rgb(var(--gray));
+				margin-bottom: 2em;
+			}
+			form {
+				display: flex;
+				flex-direction: column;
+				gap: 1.2em;
+			}
+			label {
+				font-weight: 600;
+				margin-bottom: 0.3em;
+				display: block;
+			}
+			.type-buttons {
+				display: flex;
+				gap: 0.5em;
+				flex-wrap: wrap;
+			}
+			.type-btn {
+				padding: 0.5em 1em;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 8px;
+				background: white;
+				cursor: pointer;
+				font-size: 0.9em;
+			}
+			.type-btn.active {
+				background: rgb(var(--accent));
+				color: white;
+				border-color: rgb(var(--accent));
+			}
+			textarea, input[type="email"] {
+				width: 100%;
+				padding: 0.8em;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 8px;
+				font-size: 1em;
+				font-family: inherit;
+			}
+			textarea {
+				min-height: 120px;
+				resize: vertical;
+			}
+			.checkbox-row {
+				display: flex;
+				align-items: center;
+				gap: 0.5em;
+			}
+			button[type="submit"] {
+				padding: 0.8em 2em;
+				background: rgb(var(--accent));
+				color: white;
+				border: none;
+				border-radius: 8px;
+				font-size: 1em;
+				cursor: pointer;
+			}
+			button[type="submit"]:hover {
+				opacity: 0.9;
+			}
+			button[type="submit"]:disabled {
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+			.success {
+				text-align: center;
+				padding: 2em;
+				border: 1px solid green;
+				border-radius: 8px;
+				background: #f0fff0;
+			}
+			.error {
+				color: red;
+				text-align: center;
+			}
+			.links {
+				text-align: center;
+				margin-top: 2em;
+				padding-top: 1em;
+				border-top: 1px solid rgb(var(--gray-light));
+			}
+			.links a {
+				color: rgb(var(--accent));
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Feedback</h1>
+			<p class="subtitle">TechBoostをより良くするためのご意見をお聞かせください</p>
+
+			<div id="feedback-form">
+				<form id="form">
+					<div>
+						<label>Type</label>
+						<div class="type-buttons">
+							<button type="button" class="type-btn active" data-type="feature">New Feature</button>
+							<button type="button" class="type-btn" data-type="improvement">Improvement</button>
+							<button type="button" class="type-btn" data-type="bug">Bug Report</button>
+							<button type="button" class="type-btn" data-type="other">Other</button>
+						</div>
+					</div>
+
+					<div>
+						<label for="message">Message *</label>
+						<textarea id="message" required placeholder="What would you like to tell us?"></textarea>
+					</div>
+
+					<div>
+						<label for="email">Email (optional)</label>
+						<input type="email" id="email" placeholder="your@email.com" />
+					</div>
+
+					<div class="checkbox-row" id="notify-row" style="display:none">
+						<input type="checkbox" id="notify" />
+						<label for="notify" style="font-weight:normal;margin:0">Notify me when this is addressed</label>
+					</div>
+
+					<button type="submit" id="submit-btn">Send Feedback</button>
+					<p class="error" id="error" style="display:none">Failed to send. Please try again.</p>
+				</form>
+			</div>
+
+			<div id="success" class="success" style="display:none">
+				<h2>Thank you!</h2>
+				<p>Your feedback has been received.</p>
+				<button onclick="location.reload()" style="margin-top:1em;padding:0.5em 1em;border-radius:8px;border:1px solid rgb(var(--gray-light));background:white;cursor:pointer;">Send another</button>
+			</div>
+
+			<div class="links">
+				<p>Want to vote on upcoming features? <a href="https://usedevtools.com/vote">Visit the Feature Board</a></p>
+			</div>
+		</main>
+		<Footer />
+
+		<script is:inline>
+			let selectedType = 'feature';
+
+			document.querySelectorAll('.type-btn').forEach(btn => {
+				btn.addEventListener('click', () => {
+					document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+					btn.classList.add('active');
+					selectedType = btn.dataset.type;
+				});
+			});
+
+			document.getElementById('email').addEventListener('input', (e) => {
+				document.getElementById('notify-row').style.display = e.target.value ? 'flex' : 'none';
+			});
+
+			document.getElementById('form').addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const btn = document.getElementById('submit-btn');
+				btn.disabled = true;
+				btn.textContent = 'Sending...';
+				document.getElementById('error').style.display = 'none';
+
+				try {
+					const res = await fetch('https://usedevtools.com/api/feedback', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							type: selectedType,
+							message: document.getElementById('message').value,
+							email: document.getElementById('email').value || null,
+							notify: document.getElementById('notify').checked,
+							source: 'techboost',
+						}),
+					});
+
+					if (res.ok) {
+						document.getElementById('feedback-form').style.display = 'none';
+						document.getElementById('success').style.display = 'block';
+					} else {
+						throw new Error('Failed');
+					}
+				} catch {
+					document.getElementById('error').style.display = 'block';
+					btn.disabled = false;
+					btn.textContent = 'Send Feedback';
+				}
+			});
+		</script>
+	</body>
+</html>
