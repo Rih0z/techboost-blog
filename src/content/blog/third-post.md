@@ -1,16 +1,255 @@
 ---
-title: 'Third post'
-description: 'Lorem ipsum dolor sit amet'
-pubDate: 'Jul 22 2022'
+title: 'Next.js App Routerの使い方 — Server ComponentsとClient Componentsの違い'
+description: 'Next.js 13以降のApp Routerを徹底解説。Server ComponentsとClient Componentsの使い分け、データフェッチ、Server Actionsまで。'
+pubDate: 'Feb 12 2026'
 heroImage: '../../assets/blog-placeholder-2.jpg'
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
+Next.js 13で導入されたApp Routerは、Reactのサーバーコンポーネントを活用した新しいルーティングシステムです。この記事では、App Routerの基本から実践的なパターンまでを解説します。
 
-Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc. Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra massa massa ultricies mi.
+## ファイルベースルーティング
 
-Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
+App Routerでは、`app/`ディレクトリ内のフォルダ構造がそのままURLになります。
 
-Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id cursus metus aliquam eleifend mi.
+```
+app/
+├── page.tsx          → /
+├── about/
+│   └── page.tsx      → /about
+├── blog/
+│   ├── page.tsx      → /blog
+│   └── [slug]/
+│       └── page.tsx  → /blog/hello-world
+├── layout.tsx        → 全ページ共通レイアウト
+└── loading.tsx       → ローディングUI
+```
 
-Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
+### 特殊ファイル
+
+| ファイル | 役割 |
+|---------|------|
+| `page.tsx` | ページのUI |
+| `layout.tsx` | 共有レイアウト（再レンダリングされない） |
+| `loading.tsx` | Suspenseベースのローディング |
+| `error.tsx` | エラーバウンダリ |
+| `not-found.tsx` | 404ページ |
+
+## Server Components vs Client Components
+
+App Routerの最大の特徴は、**デフォルトでServer Components**であることです。
+
+### Server Components（デフォルト）
+
+```tsx
+// app/posts/page.tsx — Server Component（デフォルト）
+async function PostsPage() {
+  // サーバーサイドで直接データベースにアクセスできる
+  const posts = await db.post.findMany();
+
+  return (
+    <ul>
+      {posts.map(post => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  );
+}
+
+export default PostsPage;
+```
+
+**Server Componentsのメリット**:
+- データベースに直接アクセス可能
+- APIキーなどの秘密情報をクライアントに露出しない
+- JavaScriptバンドルサイズが減る（クライアントに送信されない）
+- 初期表示が高速
+
+### Client Components
+
+```tsx
+'use client'; // この宣言が必要
+
+import { useState } from 'react';
+
+export default function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>カウント: {count}</p>
+      <button onClick={() => setCount(count + 1)}>+1</button>
+    </div>
+  );
+}
+```
+
+**Client Componentsが必要な場面**:
+- `useState`, `useEffect` などのReact Hooksを使う
+- ブラウザAPI（`window`, `document`）にアクセスする
+- イベントリスナー（`onClick`, `onChange`）を使う
+- `useRouter`などのクライアントサイドナビゲーション
+
+### 使い分けの判断基準
+
+| 要件 | Server | Client |
+|------|--------|--------|
+| データフェッチ | ○ | △（useEffect経由） |
+| データベース直接アクセス | ○ | × |
+| インタラクティブUI | × | ○ |
+| ブラウザAPI | × | ○ |
+| Hooks | × | ○ |
+| 秘密情報の保持 | ○ | × |
+
+## データフェッチ
+
+Server Componentsでは、`async/await`で直接データを取得できます。
+
+```tsx
+// app/users/page.tsx
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+async function UsersPage() {
+  const res = await fetch('https://api.example.com/users', {
+    next: { revalidate: 3600 }, // 1時間キャッシュ
+  });
+  const users: User[] = await res.json();
+
+  return (
+    <div>
+      <h1>ユーザー一覧</h1>
+      {users.map(user => (
+        <div key={user.id}>
+          <h2>{user.name}</h2>
+          <p>{user.email}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default UsersPage;
+```
+
+### キャッシュ戦略
+
+```tsx
+// 静的: ビルド時に1回だけ取得
+fetch(url, { cache: 'force-cache' });
+
+// 動的: リクエストのたびに取得
+fetch(url, { cache: 'no-store' });
+
+// 時間ベース: 指定秒後に再検証
+fetch(url, { next: { revalidate: 60 } });
+```
+
+## Server Actions
+
+Server Actionsは、フォーム送信やデータ変更をサーバーサイドで処理する仕組みです。
+
+```tsx
+// app/contact/page.tsx
+async function ContactPage() {
+  async function submitForm(formData: FormData) {
+    'use server';
+
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const message = formData.get('message') as string;
+
+    // データベースに保存
+    await db.contact.create({
+      data: { name, email, message },
+    });
+  }
+
+  return (
+    <form action={submitForm}>
+      <input name="name" placeholder="お名前" required />
+      <input name="email" type="email" placeholder="メール" required />
+      <textarea name="message" placeholder="メッセージ" required />
+      <button type="submit">送信</button>
+    </form>
+  );
+}
+
+export default ContactPage;
+```
+
+### Client ComponentからServer Actionを呼ぶ
+
+```tsx
+// actions.ts
+'use server';
+
+export async function addTodo(title: string) {
+  await db.todo.create({ data: { title } });
+}
+```
+
+```tsx
+// components/TodoForm.tsx
+'use client';
+
+import { useState } from 'react';
+import { addTodo } from './actions';
+
+export function TodoForm() {
+  const [title, setTitle] = useState('');
+
+  return (
+    <form action={async () => {
+      await addTodo(title);
+      setTitle('');
+    }}>
+      <input
+        value={title}
+        onChange={e => setTitle(e.target.value)}
+        placeholder="新しいTodo"
+      />
+      <button type="submit">追加</button>
+    </form>
+  );
+}
+```
+
+## レイアウトとテンプレート
+
+```tsx
+// app/layout.tsx — ルートレイアウト
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="ja">
+      <body>
+        <header>
+          <nav>ナビゲーション</nav>
+        </header>
+        <main>{children}</main>
+        <footer>フッター</footer>
+      </body>
+    </html>
+  );
+}
+```
+
+レイアウトはページ遷移時に**再レンダリングされません**。状態が保持されるため、ナビゲーションが高速になります。
+
+## まとめ
+
+| 機能 | 説明 | ポイント |
+|------|------|---------|
+| App Router | ファイルベースルーティング | `app/`ディレクトリ構造 = URL |
+| Server Components | サーバーで実行 | デフォルト。DBアクセス可、バンドルサイズ削減 |
+| Client Components | ブラウザで実行 | `'use client'`宣言。Hooks・イベント使用時 |
+| Server Actions | サーバー側の処理 | `'use server'`宣言。フォーム送信・データ変更 |
+| レイアウト | 共有UI | 再レンダリングされず状態保持 |
+
+App Routerを使いこなすことで、パフォーマンスに優れ、開発体験も良いWebアプリケーションを構築できます。

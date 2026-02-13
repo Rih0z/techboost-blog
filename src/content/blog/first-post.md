@@ -1,16 +1,154 @@
 ---
-title: 'First post'
-description: 'Lorem ipsum dolor sit amet'
-pubDate: 'Jul 08 2022'
+title: 'React Hooksを完全理解する — useState, useEffect, useCallbackの実践ガイド'
+description: 'React Hooksの基本から実践的なパターンまで。useState, useEffect, useCallback, useMemoの使い方を具体的なコード例で解説。'
+pubDate: 'Feb 10 2026'
 heroImage: '../../assets/blog-placeholder-3.jpg'
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
+React Hooksは、関数コンポーネントで状態管理や副作用を扱うための仕組みです。この記事では、最も使用頻度の高い4つのHooksを実践的なコード例で解説します。
 
-Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc. Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra massa massa ultricies mi.
+## useState — 状態管理の基本
 
-Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
+`useState`は最もシンプルなHookです。コンポーネント内で状態を保持し、更新できます。
 
-Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id cursus metus aliquam eleifend mi.
+```tsx
+import { useState } from 'react';
 
-Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>カウント: {count}</p>
+      <button onClick={() => setCount(count + 1)}>+1</button>
+      <button onClick={() => setCount(prev => prev - 1)}>-1</button>
+    </div>
+  );
+}
+```
+
+### よくあるパターン: オブジェクト状態の更新
+
+```tsx
+const [user, setUser] = useState({ name: '', email: '' });
+
+// スプレッド構文で部分更新
+const updateName = (name: string) => {
+  setUser(prev => ({ ...prev, name }));
+};
+```
+
+**注意**: `setUser({ name: '太郎' })` とすると、`email`が消えます。必ずスプレッド構文で既存のプロパティを保持してください。
+
+## useEffect — 副作用の管理
+
+`useEffect`は、レンダリング後に実行される副作用（API呼び出し、DOM操作、タイマーなど）を管理します。
+
+```tsx
+import { useEffect, useState } from 'react';
+
+function UserProfile({ userId }: { userId: string }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/users/${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        setUser(data);
+        setLoading(false);
+      });
+  }, [userId]); // userIdが変わるたびに再実行
+
+  if (loading) return <p>読み込み中...</p>;
+  return <div>{user?.name}</div>;
+}
+```
+
+### 依存配列のルール
+
+| 依存配列 | 実行タイミング |
+|---------|-------------|
+| `[]` | マウント時に1回だけ |
+| `[dep1, dep2]` | dep1またはdep2が変わるたびに |
+| なし | 毎回のレンダリング後（非推奨） |
+
+### クリーンアップ関数
+
+タイマーやイベントリスナーは、コンポーネントのアンマウント時にクリーンアップが必要です。
+
+```tsx
+useEffect(() => {
+  const timer = setInterval(() => {
+    console.log('tick');
+  }, 1000);
+
+  // クリーンアップ: コンポーネント破棄時に実行
+  return () => clearInterval(timer);
+}, []);
+```
+
+## useCallback — 関数のメモ化
+
+`useCallback`は、依存配列が変わらない限り同じ関数参照を返します。子コンポーネントへのprops渡しで不要な再レンダリングを防ぎます。
+
+```tsx
+import { useCallback, useState } from 'react';
+
+function TodoList() {
+  const [todos, setTodos] = useState<string[]>([]);
+
+  // todosが変わるたびに新しい関数を生成
+  const addTodo = useCallback((text: string) => {
+    setTodos(prev => [...prev, text]);
+  }, []); // setTodosは安定しているので依存不要
+
+  return <TodoForm onAdd={addTodo} />;
+}
+```
+
+### いつ使うべきか
+
+- `React.memo`でラップされた子コンポーネントにコールバックを渡す場合
+- `useEffect`の依存配列に関数を含める場合
+- 高コストな計算を含む処理を安定した参照で渡したい場合
+
+## useMemo — 計算結果のメモ化
+
+`useMemo`は、高コストな計算結果をキャッシュします。
+
+```tsx
+import { useMemo, useState } from 'react';
+
+function FilteredList({ items }: { items: Item[] }) {
+  const [query, setQuery] = useState('');
+
+  // itemsまたはqueryが変わった時だけ再計算
+  const filtered = useMemo(() => {
+    return items.filter(item =>
+      item.name.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [items, query]);
+
+  return (
+    <>
+      <input value={query} onChange={e => setQuery(e.target.value)} />
+      <ul>
+        {filtered.map(item => <li key={item.id}>{item.name}</li>)}
+      </ul>
+    </>
+  );
+}
+```
+
+## まとめ
+
+| Hook | 用途 | ポイント |
+|------|------|---------|
+| `useState` | 状態管理 | オブジェクト更新時はスプレッド構文 |
+| `useEffect` | 副作用 | 依存配列とクリーンアップを忘れずに |
+| `useCallback` | 関数メモ化 | React.memoとセットで使う |
+| `useMemo` | 計算メモ化 | 高コストな計算にのみ使用 |
+
+Hooksを正しく使いこなすことで、パフォーマンスが高く保守しやすいReactアプリケーションを構築できます。

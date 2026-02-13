@@ -1,214 +1,239 @@
 ---
-title: 'Markdown Style Guide'
-description: 'Here is a sample of some basic Markdown syntax that can be used when writing Markdown content in Astro.'
-pubDate: 'Jun 19 2024'
+title: 'Git/GitHub実践ガイド — チーム開発で使えるブランチ戦略とPRワークフロー'
+description: 'Gitの基本操作からGitHub Flow、プルリクエストの書き方まで。チーム開発の現場で使える実践的なワークフローを解説。'
+pubDate: 'Feb 09 2026'
 heroImage: '../../assets/blog-placeholder-1.jpg'
 ---
 
-Here is a sample of some basic Markdown syntax that can be used when writing Markdown content in Astro.
+Gitはソースコード管理の標準ツールですが、チーム開発では適切なブランチ戦略とワークフローが重要です。この記事では、実務で使えるGitの知識を解説します。
 
-## Headings
+## 基本操作のおさらい
 
-The following HTML `<h1>`—`<h6>` elements represent six levels of section headings. `<h1>` is the highest section level while `<h6>` is the lowest.
+```bash
+# リポジトリの作成
+git init
 
-# H1
+# ファイルをステージング
+git add index.html        # 個別ファイル
+git add src/              # ディレクトリ
+git add -A                # すべて
 
-## H2
+# コミット
+git commit -m "feat: ログインページを追加"
 
-### H3
+# リモートにプッシュ
+git push origin main
+```
 
-#### H4
+## コミットメッセージの書き方
 
-##### H5
+良いコミットメッセージは、**何をしたか**と**なぜしたか**が一目で分かります。
 
-###### H6
+### Conventional Commits
 
-## Paragraph
+```
+<type>: <description>
 
-Xerum, quo qui aut unt expliquam qui dolut labo. Aque venitatiusda cum, voluptionse latur sitiae dolessi aut parist aut dollo enim qui voluptate ma dolestendit peritin re plis aut quas inctum laceat est volestemque commosa as cus endigna tectur, offic to cor sequas etum rerum idem sintibus eiur? Quianimin porecus evelectur, cum que nis nust voloribus ratem aut omnimi, sitatur? Quiatem. Nam, omnis sum am facea corem alique molestrunt et eos evelece arcillit ut aut eos eos nus, sin conecerem erum fuga. Ri oditatquam, ad quibus unda veliamenimin cusam et facea ipsamus es exerum sitate dolores editium rerore eost, temped molorro ratiae volorro te reribus dolorer sperchicium faceata tiustia prat.
+[optional body]
+```
 
-Itatur? Quiatae cullecum rem ent aut odis in re eossequodi nonsequ idebis ne sapicia is sinveli squiatum, core et que aut hariosam ex eat.
+| type | 用途 |
+|------|------|
+| `feat` | 新機能 |
+| `fix` | バグ修正 |
+| `docs` | ドキュメント変更 |
+| `style` | フォーマット変更（動作に影響なし） |
+| `refactor` | リファクタリング |
+| `test` | テストの追加・修正 |
+| `chore` | ビルド・ツール設定など |
 
-## Images
+### 良い例 / 悪い例
 
-### Syntax
+```bash
+# 良い例
+git commit -m "feat: ユーザープロフィール画像のアップロード機能を追加"
+git commit -m "fix: ログインフォームで空のメールアドレスが送信される問題を修正"
+
+# 悪い例
+git commit -m "修正"
+git commit -m "update"
+git commit -m "いろいろ変更"
+```
+
+## GitHub Flow
+
+GitHub Flowは、シンプルで実践的なブランチ戦略です。
+
+```
+main ─────────────────────────────────────────→
+  │                                    ↑
+  └─── feature/login ─── commit ─── PR → merge
+```
+
+### ワークフロー
+
+```bash
+# 1. mainブランチから新しいブランチを作成
+git checkout main
+git pull origin main
+git checkout -b feature/user-profile
+
+# 2. 作業してコミット
+git add .
+git commit -m "feat: ユーザープロフィールページを追加"
+
+# 3. リモートにプッシュ
+git push origin feature/user-profile
+
+# 4. GitHubでPull Requestを作成
+
+# 5. レビュー後、mainにマージ
+
+# 6. ローカルのmainを更新
+git checkout main
+git pull origin main
+git branch -d feature/user-profile
+```
+
+### ブランチ命名規則
+
+| 種類 | 命名 | 例 |
+|------|------|---|
+| 機能 | `feature/機能名` | `feature/user-auth` |
+| バグ修正 | `fix/バグ内容` | `fix/login-redirect` |
+| ホットフィックス | `hotfix/内容` | `hotfix/payment-error` |
+| リリース | `release/バージョン` | `release/v1.2.0` |
+
+## プルリクエストの書き方
+
+良いPRは、レビューアが**素早く理解してレビューできる**ように書かれています。
+
+### PRテンプレート
 
 ```markdown
-![Alt text](./full/or/relative/path/of/image)
+## 概要
+<!-- 何をしたか、なぜしたか -->
+
+ユーザープロフィールページを追加しました。
+ユーザーが自分の情報を確認・編集できるようになります。
+
+## 変更内容
+- プロフィール表示ページ（/profile）の追加
+- プロフィール編集フォームの実装
+- アバター画像アップロード機能
+
+## テスト方法
+1. ログイン後、ヘッダーのアイコンをクリック
+2. プロフィール情報が表示されることを確認
+3. 「編集」ボタンから情報を変更できることを確認
+
+## スクリーンショット
+<!-- UIの変更がある場合は画像を添付 -->
 ```
 
-### Output
+### PRのベストプラクティス
 
-![blog placeholder](../../assets/blog-placeholder-about.jpg)
+1. **小さく保つ** — 1PR = 1つの変更。300行以内が理想
+2. **タイトルは具体的に** — 「fix: ログインフォームのバリデーションエラーを修正」
+3. **WIP（作業中）PRを活用** — 早めにフィードバックをもらう
+4. **セルフレビュー** — 提出前に自分でdiffを確認
 
-## Blockquotes
+## よく使うGitコマンド
 
-The blockquote element represents content that is quoted from another source, optionally with a citation which must be within a `footer` or `cite` element, and optionally with in-line changes such as annotations and abbreviations.
+### ブランチ操作
 
-### Blockquote without attribution
+```bash
+# ブランチ一覧
+git branch           # ローカル
+git branch -r        # リモート
+git branch -a        # すべて
 
-#### Syntax
+# ブランチ作成と切り替え
+git checkout -b feature/new-feature
 
-```markdown
-> Tiam, ad mint andaepu dandae nostion secatur sequo quae.  
-> **Note** that you can use _Markdown syntax_ within a blockquote.
+# ブランチ削除
+git branch -d feature/old-feature    # マージ済みのみ
+git branch -D feature/old-feature    # 強制削除
 ```
 
-#### Output
+### 差分の確認
 
-> Tiam, ad mint andaepu dandae nostion secatur sequo quae.  
-> **Note** that you can use _Markdown syntax_ within a blockquote.
+```bash
+# ワーキングディレクトリの変更
+git diff
 
-### Blockquote with attribution
+# ステージング済みの変更
+git diff --staged
 
-#### Syntax
+# 特定のコミット間の差分
+git diff HEAD~3..HEAD
 
-```markdown
-> Don't communicate by sharing memory, share memory by communicating.<br>
-> — <cite>Rob Pike[^1]</cite>
+# ファイル名のみ表示
+git diff --name-only
 ```
 
-#### Output
+### 履歴の確認
 
-> Don't communicate by sharing memory, share memory by communicating.<br>
-> — <cite>Rob Pike[^1]</cite>
+```bash
+# コミット履歴
+git log --oneline
 
-[^1]: The above quote is excerpted from Rob Pike's [talk](https://www.youtube.com/watch?v=PAAkCSZUG1c) during Gopherfest, November 18, 2015.
+# グラフ表示
+git log --oneline --graph --all
 
-## Tables
-
-### Syntax
-
-```markdown
-| Italics   | Bold     | Code   |
-| --------- | -------- | ------ |
-| _italics_ | **bold** | `code` |
+# 特定ファイルの履歴
+git log --follow -p -- src/App.tsx
 ```
 
-### Output
+### 取り消し操作
 
-| Italics   | Bold     | Code   |
-| --------- | -------- | ------ |
-| _italics_ | **bold** | `code` |
+```bash
+# 直前のコミットを修正（メッセージ変更）
+git commit --amend -m "新しいメッセージ"
 
-## Code Blocks
+# ステージングを取り消し
+git restore --staged file.txt
 
-### Syntax
+# ワーキングディレクトリの変更を取り消し
+git restore file.txt
 
-we can use 3 backticks ``` in new line and write snippet and close with 3 backticks on new line and to highlight language specific syntax, write one word of language name after first 3 backticks, for eg. html, javascript, css, markdown, typescript, txt, bash
-
-````markdown
-```html
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Example HTML5 Document</title>
-  </head>
-  <body>
-    <p>Test</p>
-  </body>
-</html>
-```
-````
-
-### Output
-
-```html
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Example HTML5 Document</title>
-  </head>
-  <body>
-    <p>Test</p>
-  </body>
-</html>
+# 特定のコミットまで戻す（履歴は保持）
+git revert HEAD
 ```
 
-## List Types
+## .gitignore の設定
 
-### Ordered List
+プロジェクトごとに適切な`.gitignore`を設定しましょう。
 
-#### Syntax
+```gitignore
+# Node.js
+node_modules/
+dist/
+.next/
 
-```markdown
-1. First item
-2. Second item
-3. Third item
+# 環境変数
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ログ
+*.log
 ```
 
-#### Output
+## まとめ
 
-1. First item
-2. Second item
-3. Third item
+| トピック | ポイント |
+|---------|---------|
+| コミットメッセージ | Conventional Commits形式で具体的に |
+| ブランチ戦略 | GitHub Flow: main + featureブランチ |
+| PR | 小さく、具体的に、テスト方法を記載 |
+| .gitignore | 環境変数・node_modules・IDEファイルを除外 |
 
-### Unordered List
-
-#### Syntax
-
-```markdown
-- List item
-- Another item
-- And another item
-```
-
-#### Output
-
-- List item
-- Another item
-- And another item
-
-### Nested list
-
-#### Syntax
-
-```markdown
-- Fruit
-  - Apple
-  - Orange
-  - Banana
-- Dairy
-  - Milk
-  - Cheese
-```
-
-#### Output
-
-- Fruit
-  - Apple
-  - Orange
-  - Banana
-- Dairy
-  - Milk
-  - Cheese
-
-## Other Elements — abbr, sub, sup, kbd, mark
-
-### Syntax
-
-```markdown
-<abbr title="Graphics Interchange Format">GIF</abbr> is a bitmap image format.
-
-H<sub>2</sub>O
-
-X<sup>n</sup> + Y<sup>n</sup> = Z<sup>n</sup>
-
-Press <kbd>CTRL</kbd> + <kbd>ALT</kbd> + <kbd>Delete</kbd> to end the session.
-
-Most <mark>salamanders</mark> are nocturnal, and hunt for insects, worms, and other small creatures.
-```
-
-### Output
-
-<abbr title="Graphics Interchange Format">GIF</abbr> is a bitmap image format.
-
-H<sub>2</sub>O
-
-X<sup>n</sup> + Y<sup>n</sup> = Z<sup>n</sup>
-
-Press <kbd>CTRL</kbd> + <kbd>ALT</kbd> + <kbd>Delete</kbd> to end the session.
-
-Most <mark>salamanders</mark> are nocturnal, and hunt for insects, worms, and other small creatures.
+Gitの正しい使い方を身につけることで、チーム開発がスムーズになり、コードの品質も向上します。
