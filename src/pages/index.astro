@@ -1,48 +1,284 @@
 ---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const latestPosts = posts.slice(0, 3);
+const olderPosts = posts.slice(3, 9);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="ja">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			.hero {
+				text-align: center;
+				padding: 3rem 1rem 2rem;
+				max-width: 720px;
+				margin: 0 auto;
+			}
+			.hero h1 {
+				font-size: 2.5rem;
+				margin: 0 0 0.5rem;
+				background: linear-gradient(135deg, #2337ff, #764ba2);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+			}
+			.hero .tagline {
+				font-size: 1.15rem;
+				color: rgb(var(--gray));
+				margin: 0 0 1.5rem;
+				line-height: 1.6;
+			}
+			.section-title {
+				font-size: 1.5rem;
+				margin: 2rem 0 1rem;
+				padding-bottom: 0.5rem;
+				border-bottom: 2px solid rgb(var(--accent));
+				display: inline-block;
+			}
+			.latest-posts {
+				max-width: 960px;
+				margin: 0 auto;
+				padding: 0 1rem;
+			}
+			.featured {
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 1.5rem;
+				margin-bottom: 2rem;
+			}
+			.featured-card {
+				display: flex;
+				gap: 1.5rem;
+				background: white;
+				border-radius: 12px;
+				overflow: hidden;
+				box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+				transition: transform 0.2s, box-shadow 0.2s;
+				text-decoration: none;
+				color: inherit;
+			}
+			.featured-card:hover {
+				transform: translateY(-3px);
+				box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+			}
+			.featured-card img {
+				width: 280px;
+				height: 180px;
+				object-fit: cover;
+				flex-shrink: 0;
+			}
+			.featured-card .card-content {
+				padding: 1.25rem;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+			}
+			.featured-card h3 {
+				margin: 0 0 0.5rem;
+				font-size: 1.2rem;
+				line-height: 1.4;
+				color: rgb(var(--black));
+			}
+			.featured-card .desc {
+				margin: 0 0 0.5rem;
+				font-size: 0.9rem;
+				color: rgb(var(--gray));
+				line-height: 1.5;
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
+			.featured-card .date {
+				margin: 0;
+				font-size: 0.85rem;
+				color: rgb(var(--gray));
+			}
+			.older-grid {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 1.5rem;
+				margin-bottom: 2rem;
+			}
+			.older-card {
+				display: block;
+				background: white;
+				border-radius: 12px;
+				overflow: hidden;
+				box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+				transition: transform 0.2s, box-shadow 0.2s;
+				text-decoration: none;
+				color: inherit;
+			}
+			.older-card:hover {
+				transform: translateY(-3px);
+				box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+			}
+			.older-card img {
+				width: 100%;
+				height: 140px;
+				object-fit: cover;
+			}
+			.older-card .card-content {
+				padding: 1rem;
+			}
+			.older-card h4 {
+				margin: 0 0 0.5rem;
+				font-size: 1rem;
+				line-height: 1.4;
+				color: rgb(var(--black));
+			}
+			.older-card .date {
+				margin: 0;
+				font-size: 0.8rem;
+				color: rgb(var(--gray));
+			}
+			.view-all {
+				text-align: center;
+				margin: 2rem 0 3rem;
+			}
+			.view-all a {
+				display: inline-block;
+				padding: 0.75rem 2rem;
+				background: rgb(var(--accent));
+				color: white;
+				text-decoration: none;
+				border-radius: 8px;
+				font-weight: bold;
+				transition: opacity 0.2s;
+			}
+			.view-all a:hover {
+				opacity: 0.85;
+			}
+			.features {
+				max-width: 960px;
+				margin: 0 auto 3rem;
+				padding: 0 1rem;
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 1.5rem;
+			}
+			.feature-box {
+				text-align: center;
+				padding: 1.5rem;
+				background: white;
+				border-radius: 12px;
+				box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+			}
+			.feature-box .icon {
+				font-size: 2.5rem;
+				margin-bottom: 0.75rem;
+			}
+			.feature-box h3 {
+				margin: 0 0 0.5rem;
+				font-size: 1.1rem;
+			}
+			.feature-box p {
+				margin: 0;
+				font-size: 0.9rem;
+				color: rgb(var(--gray));
+				line-height: 1.5;
+			}
+			@media (max-width: 720px) {
+				.hero h1 {
+					font-size: 1.8rem;
+				}
+				.featured-card {
+					flex-direction: column;
+				}
+				.featured-card img {
+					width: 100%;
+					height: 180px;
+				}
+				.older-grid {
+					grid-template-columns: 1fr;
+				}
+				.features {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+			<section class="hero">
+				<h1>TechBoost</h1>
+				<p class="tagline">
+					Ezark Consulting が運営するエンジニア向け技術ブログ。<br/>
+					Web開発・プログラミング・DevOps の実践的なノウハウを発信しています。
+				</p>
+			</section>
+
+			<section class="latest-posts">
+				<h2 class="section-title">最新の記事</h2>
+				<div class="featured">
+					{latestPosts.map((post) => (
+						<a href={`/blog/${post.id}/`} class="featured-card">
+							{post.data.heroImage && (
+								<Image width={560} height={360} src={post.data.heroImage} alt="" />
+							)}
+							<div class="card-content">
+								<h3>{post.data.title}</h3>
+								<p class="desc">{post.data.description}</p>
+								<p class="date"><FormattedDate date={post.data.pubDate} /></p>
+							</div>
+						</a>
+					))}
+				</div>
+
+				{olderPosts.length > 0 && (
+					<>
+						<h2 class="section-title">その他の記事</h2>
+						<div class="older-grid">
+							{olderPosts.map((post) => (
+								<a href={`/blog/${post.id}/`} class="older-card">
+									{post.data.heroImage && (
+										<Image width={400} height={280} src={post.data.heroImage} alt="" />
+									)}
+									<div class="card-content">
+										<h4>{post.data.title}</h4>
+										<p class="date"><FormattedDate date={post.data.pubDate} /></p>
+									</div>
+								</a>
+							))}
+						</div>
+					</>
+				)}
+
+				<div class="view-all">
+					<a href="/blog">すべての記事を見る</a>
+				</div>
+			</section>
+
+			<section class="features">
+				<div class="feature-box">
+					<div class="icon">💻</div>
+					<h3>実践的なコード</h3>
+					<p>コピペで使えるサンプルコードと、現場で役立つベストプラクティスを紹介します。</p>
+				</div>
+				<div class="feature-box">
+					<div class="icon">🔧</div>
+					<h3>無料ツール</h3>
+					<p><a href="https://usedevtools.com" style="color: rgb(var(--accent));">DevToolBox</a> で開発者向けの無料ツールを公開中。CSS変換、JSON整形、OGPプレビューなど。</p>
+				</div>
+				<div class="feature-box">
+					<div class="icon">📚</div>
+					<h3>チートシート</h3>
+					<p><a href="https://ezark-devtools.booth.pm/" style="color: rgb(var(--accent));">BOOTH</a> で実務に使えるチートシートを販売中。React、Python、Docker など。</p>
+				</div>
+			</section>
 		</main>
 		<Footer />
 	</body>
