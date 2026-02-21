@@ -2065,3 +2065,16 @@ FastAPIのドキュメントは非常に充実しており（fastapi.tiangolo.co
 ---
 
 *関連記事: [SQLAlchemy 2.0完全ガイド](/blog/drizzle-orm-guide) / [Dockerコンテナ本番運用](/blog/docker-complete-guide) / [JWT認証完全解説](/blog/jwt-authentication-complete-guide)*
+
+---
+
+## スキルアップ・キャリアアップのおすすめリソース
+
+FastAPIのスキルはバックエンド・AI API開発の両面で高く評価される。次のキャリアステップに役立ててほしい。
+
+### 転職・キャリアアップ
+- **[レバテックキャリア](https://levtech.jp)** — ITエンジニア専門の転職エージェント。PythonバックエンドエンジニアやAI APIの開発案件が豊富。年収600万円以上の求人多数。無料相談可能。
+- **[Findy](https://findy-job.com)** — GitHubのPython・FastAPIプロジェクトが評価対象。スカウト型でリモート求人が充実。バックエンド・MLエンジニアへの転職に人気。
+
+### オンライン学習
+- **[Udemy](https://www.udemy.com)** — FastAPI・Pydantic v2・SQLAlchemyを組み合わせた実践的なAPIサーバー構築コースが充実。Docker・AWS連携まで含めた本番対応のコースも多い。セール時は大幅割引。

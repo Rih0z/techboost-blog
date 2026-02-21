@@ -3265,3 +3265,17 @@ AWS LambdaとサーバーレスAPIの開発では、ローカルテストとデ�
 - [DynamoDB ベストプラクティス](https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/best-practices.html)
 - [Lambda Power Tuning](https://github.com/alexcasalboni/aws-lambda-power-tuning)
 - [AWS X-Ray SDK for Node.js](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-nodejs.html)
+
+---
+
+## スキルアップ・キャリアアップのおすすめリソース
+
+AWSとサーバーレスのスキルは、クラウド時代のエンジニアとして必須の武器となる。
+
+### 転職・キャリアアップ
+- **[レバテックキャリア](https://levtech.jp)** — ITエンジニア専門の転職エージェント。AWSの実務経験があるエンジニアは高単価案件が多い。AWS認定資格と組み合わせると年収アップに直結。無料相談可能。
+- **[Findy](https://findy-job.com)** — GitHubのAWS CDK・SAMプロジェクトが評価対象。スカウト型でクラウドエンジニア・バックエンドエンジニアの求人が充実。
+
+### オンライン学習
+- **[Udemy](https://www.udemy.com)** — AWS認定試験（SAA・DVA・SAP）対策から実践的なサーバーレスアーキテクチャ構築まで幅広いコースが揃う。AWS公式講師によるコースも充実。セール時は90%オフになることも。
+- **[Coursera](https://www.coursera.org)** — AWSとGoogleのクラウド公式コースを受講可能。AWS Certified Developer認定証の取得でキャリアの証明ができる。

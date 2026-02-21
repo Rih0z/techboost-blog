@@ -2540,3 +2540,17 @@ memory_optimized_args = TrainingArguments(
 ---
 
 開発ツールの選定に困ったら、[DevToolBox](https://usedevtools.com) を活用してほしい。ファインチューニングの実験管理、モデル評価ツール、デプロイのCI/CDパイプラインなど、AI開発に必要なツールを一箇所で管理できる。AIモデルの開発から本番運用まで、生産性を大幅に向上させるためのツールセットが揃っている。
+
+---
+
+## スキルアップ・キャリアアップのおすすめリソース
+
+LLMファインチューニングのスキルは、AI開発の最前線で求められる専門知識だ。キャリアに活用してほしい。
+
+### 転職・キャリアアップ
+- **[レバテックキャリア](https://levtech.jp)** — ITエンジニア専門の転職エージェント。MLエンジニア・AIエンジニアの高単価求人が増加中。LLMスキルは特に市場価値が高い。無料相談可能。
+- **[Findy](https://findy-job.com)** — GitHubのMLプロジェクト・Hugging Faceへのコントリビューションが評価される。AI特化スタートアップからのスカウトが多い。
+
+### オンライン学習
+- **[Coursera](https://www.coursera.org)** — DeepLearning.AIのLLM・ファインチューニング専門コースが充実。Andrew Ng監修のコースで基礎から最先端まで体系的に学べる。無料聴講も可能。
+- **[Udemy](https://www.udemy.com)** — LoRA・QLoRA・DPOなどの実践的なファインチューニング手法を動画で学べる。Hugging Face・PyTorchを使った実装コースが充実している。

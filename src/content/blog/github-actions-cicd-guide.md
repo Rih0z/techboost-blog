@@ -905,3 +905,16 @@ CI/CDパイプラインの構築はソフトウェア開発の品質と速度を
 ---
 
 なお、GitHub Actionsのワークフロー実行履歴の確認、YAML構文の検証、環境変数の管理といった作業には、[DevToolBox](https://usedevtools.com)のYAML Validator・Env Manager・Base64 Encoderなどのツールが役立ちます。YAMLのインデントエラーはCI失敗の主要原因のひとつなので、事前に検証する習慣をつけておくと開発効率が上がります。
+
+---
+
+## スキルアップ・キャリアアップのおすすめリソース
+
+GitHub ActionsとCI/CDのスキルは、DevOpsエンジニア・SREとして市場価値を高める核心スキルだ。
+
+### 転職・キャリアアップ
+- **[レバテックキャリア](https://levtech.jp)** — ITエンジニア専門の転職エージェント。DevOps・SREエンジニアの高単価求人が充実。CI/CDの実績はポートフォリオとして有力。無料相談可能。
+- **[Findy](https://findy-job.com)** — GitHubのワークフロー実績が直接評価対象。スカウト型でDevOps・インフラエンジニア求人が多い。リモート・フルフレックスの求人が充実。
+
+### オンライン学習
+- **[Udemy](https://www.udemy.com)** — GitHub Actions・Terraform・ArgoCD等を組み合わせたCI/CDパイプライン構築コースが充実。実際のプロジェクトを通じて本番対応のスキルが身につく。セール時は大幅割引。

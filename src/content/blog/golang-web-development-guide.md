@@ -3297,3 +3297,16 @@ Go開発の生産性を上げるには、適切なツールセットが欠かせ
 - [golang-jwt/jwt](https://github.com/golang-jwt/jwt)
 - [gorilla/websocket](https://github.com/gorilla/websocket)
 - [DevToolBox — 開発者向けツール集](https://usedevtools.com)
+
+---
+
+## スキルアップ・キャリアアップのおすすめリソース
+
+Go言語のスキルはバックエンド・クラウドインフラ領域で非常に高く評価される。キャリアアップに活用してほしい。
+
+### 転職・キャリアアップ
+- **[レバテックキャリア](https://levtech.jp)** — ITエンジニア専門の転職エージェント。GoエンジニアはAPI開発・マイクロサービス・インフラ領域で高単価案件が豊富。無料相談可能。
+- **[Findy](https://findy-job.com)** — GitHubのGoプロジェクトが評価対象。スカウト型でスタートアップ・大手Tech企業からのオファーが届きやすい。リモート求人が充実。
+
+### オンライン学習
+- **[Udemy](https://www.udemy.com)** — Go言語の入門から応用（Gin・gRPC・マイクロサービス）まで実践コースが充実。現場で使われるパターンを体系的に習得できる。セール時は90%オフになることも。

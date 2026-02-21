@@ -521,3 +521,16 @@ App Routerは学習コストが高いですが、適切に使いこなせばパ�
 ---
 
 *UI改善に役立つツールとして、[DevToolBoxのカラーコントラストチェッカー](https://usedevtools.com/color-contrast)（WCAG準拠確認）や[CSS単位変換ツール](https://usedevtools.com/css-unit)も活用してみてください。*
+
+---
+
+## スキルアップ・キャリアアップのおすすめリソース
+
+Next.js App Routerのスキルを活かして、さらなるキャリアアップを目指したい方へ。
+
+### 転職・キャリアアップ
+- **[レバテックキャリア](https://levtech.jp)** — ITエンジニア専門の転職エージェント。Next.js案件は国内でも急増中。フルスタックエンジニアとしての市場価値を高めやすい。無料相談可能。
+- **[Findy](https://findy-job.com)** — GitHubスキル偏差値でNext.jsの実力をアピール。スカウト型でリモート・高単価の求人が多い。
+
+### オンライン学習
+- **[Udemy](https://www.udemy.com)** — Next.js App RouterやServer Actionsに特化した最新コースが充実。実践的なプロジェクト構築を通じて習得できる。セール時は大幅割引。

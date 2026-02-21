@@ -3654,3 +3654,16 @@ Flutterアプリの開発において、**DevToolBox（https://usedevtools.com�
 
 Flutterは急速に進化しており、Impellerレンダリングエンジンの安定化・WebAssembly対応・AI機能との統合など、2026年も新機能が続々と追加されている。公式ブログ（medium.com/flutter）やFlutter公式YouTubeチャンネルを定期的にチェックして、最新情報を把握しておくことを推奨する。
 
+
+---
+
+## スキルアップ・キャリアアップのおすすめリソース
+
+Flutterのクロスプラットフォーム開発スキルは、モバイルアプリ市場で高く評価される。
+
+### 転職・キャリアアップ
+- **[レバテックキャリア](https://levtech.jp)** — ITエンジニア専門の転職エージェント。Flutterエンジニアの求人は増加中。iOS・Android両対応できる人材は希少で高単価案件も多い。無料相談可能。
+- **[Findy](https://findy-job.com)** — GitHubのFlutterプロジェクトが評価対象。スカウト型でモバイル・クロスプラットフォーム開発の求人が届きやすい。リモート求人が充実。
+
+### オンライン学習
+- **[Udemy](https://www.udemy.com)** — Flutter・Dart入門から応用（Riverpod・Firebase・BLoC）まで実践コースが充実。実際のアプリ開発を通じてスキルを習得できる。セール時は大幅割引。

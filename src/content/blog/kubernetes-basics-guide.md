@@ -1507,3 +1507,17 @@ Kubernetes運用を日常的に行うエンジニアは、ぜひブックマー�
 ---
 
 *本記事で紹介したYAMLマニフェストはすべてKubernetes v1.29以降で動作確認しています。バージョンによってAPIが異なる場合があるため、公式ドキュメント（[kubernetes.io](https://kubernetes.io/docs/)）も合わせて参照してください。*
+
+---
+
+## スキルアップ・キャリアアップのおすすめリソース
+
+Kubernetesのスキルはクラウドネイティブ時代の必須要件になりつつある。キャリアアップに活用してほしい。
+
+### 転職・キャリアアップ
+- **[レバテックキャリア](https://levtech.jp)** — ITエンジニア専門の転職エージェント。Kubernetes・クラウド案件は高単価で、SRE・インフラエンジニアの転職に強い。無料相談可能。
+- **[Findy](https://findy-job.com)** — GitHubのKubernetes関連プロジェクトが評価対象。スカウト型でリモート求人が充実。DevOpsエンジニアへの転職に人気のサービス。
+
+### オンライン学習
+- **[Udemy](https://www.udemy.com)** — KubernetesのCKA（認定Kubernetesアドミニストレーター）試験対策コースが充実。ハンズオンラボ付きで実践力が身につく。セール時は大幅割引。
+- **[Coursera](https://www.coursera.org)** — Google Cloud・AWS公式のKubernetes関連コースを受講可能。認定証取得でポートフォリオに追加できる。

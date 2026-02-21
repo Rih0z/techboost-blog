@@ -2048,3 +2048,16 @@ React 19は、Reactエコシステムの成熟を示す重要なリリースだ�
 - [React Compiler Docs](https://react.dev/learn/react-compiler)
 - [Next.js 15 Documentation](https://nextjs.org/docs)
 - [DevToolBox - Developer Utilities](https://usedevtools.com)
+
+---
+
+## スキルアップ・キャリアアップのおすすめリソース
+
+React 19の新機能を習得し、次のキャリアステップへ進む際に役立つリソースを紹介する。
+
+### 転職・キャリアアップ
+- **[レバテックキャリア](https://levtech.jp)** — ITエンジニア専門の転職エージェント。React・Next.js案件は常に旺盛で、年収600万円以上の求人も多い。無料相談可能。
+- **[Findy](https://findy-job.com)** — GitHubスキル偏差値でReactの実力をアピール。スカウト型でリモート求人が充実しており、フロントエンドエンジニアに人気のサービス。
+
+### オンライン学習
+- **[Udemy](https://www.udemy.com)** — React・Next.jsの実践コースが豊富。App RouterやServer Actionsを扱った最新コースも続々登場している。セール時は90%オフになることも。
