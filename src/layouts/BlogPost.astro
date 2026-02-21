@@ -9,11 +9,33 @@ import Header from '../components/Header.astro';
 type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description: description,
+  datePublished: pubDate.toISOString(),
+  dateModified: (updatedDate ?? pubDate).toISOString(),
+  author: {
+    '@type': 'Organization',
+    name: 'イザークコンサルティング株式会社',
+    url: 'https://ezark-consulting.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'TechBoost',
+    url: 'https://techboostblog.com',
+  },
+  image: heroImage ? new URL(heroImage.src, 'https://techboostblog.com').href : 'https://techboostblog.com/blog-placeholder-1.jpg',
+};
 ---
 
 <html lang="ja">
 	<head>
 		<BaseHead title={title} description={description} />
+		<!-- Article構造化データ（SEO強化） -->
+		<script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
 		<style>
 			main {
 				width: calc(100% - 2em);
@@ -52,6 +74,54 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.last-updated-on {
 				font-style: italic;
 			}
+		.article-cta {
+			margin-top: 3rem;
+			padding: 1.5rem;
+			background: rgba(var(--gray-light), 0.4);
+			border-radius: 8px;
+		}
+		.article-cta h3 {
+			margin: 0 0 1rem;
+			font-size: 1.1rem;
+			color: rgb(var(--gray-dark));
+		}
+		.cta-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 1rem;
+			margin-bottom: 1rem;
+		}
+		@media (max-width: 600px) {
+			.cta-grid { grid-template-columns: 1fr; }
+		}
+		.cta-card {
+			display: flex;
+			flex-direction: column;
+			gap: 0.4rem;
+			padding: 1rem;
+			border-radius: 6px;
+			text-decoration: none;
+			border: 1px solid rgba(var(--gray), 0.3);
+			transition: box-shadow 0.15s;
+		}
+		.cta-card:hover {
+			box-shadow: 0 2px 12px rgba(var(--gray), 0.25);
+		}
+		.cta-devtoolbox { background: #f0f4ff; }
+		.cta-booth { background: #fff4f0; }
+		.cta-card strong {
+			font-size: 0.95rem;
+			color: rgb(var(--black));
+		}
+		.cta-card span {
+			font-size: 0.82rem;
+			color: rgb(var(--gray));
+		}
+		.cta-note {
+			font-size: 0.85rem;
+			color: rgb(var(--gray));
+			margin: 0;
+		}
 		</style>
 	</head>
 
@@ -78,6 +148,24 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 						<hr />
 					</div>
 					<slot />
+					<!-- 記事末尾CTA: BOOTH / DevToolBox / note -->
+					<div class="article-cta">
+						<hr />
+						<h3>関連リソース</h3>
+						<div class="cta-grid">
+							<a href="https://usedevtools.com" class="cta-card cta-devtoolbox" target="_blank" rel="noopener noreferrer">
+								<strong>DevToolBox</strong>
+								<span>無料オンライン開発ツール19種類。ブラウザで即使える。</span>
+							</a>
+							<a href="https://ezark-devtools.booth.pm" class="cta-card cta-booth" target="_blank" rel="noopener noreferrer">
+								<strong>BOOTH — プロンプト集・チートシート</strong>
+								<span>実践で使えるAIプロンプト集・開発チートシートを販売中（¥490〜）</span>
+							</a>
+						</div>
+						<p class="cta-note">
+							<a href="https://note.com/ezark_consulting" target="_blank" rel="noopener noreferrer">note</a> では実践的なノウハウ記事を発信しています。
+						</p>
+					</div>
 				</div>
 			</article>
 		</main>
