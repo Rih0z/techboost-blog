@@ -3,6 +3,7 @@ title: 'TypeScript 5.x完全ガイド：最新機能と実践テクニック'
 description: 'TypeScript 5.0〜5.xの全新機能を徹底解説。Decorators・const型パラメータ・satisfies演算子・using宣言・Infer Extends・Variadic Tuple Types・Template Literal Types実践まで解説'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/blog-placeholder-3.jpg'
+tags: ['TypeScript', 'JavaScript', 'Frontend']
 ---
 
 TypeScript 5.0は2023年3月にリリースされ、ECMAScript標準Decoratorsの実装・const型パラメータ・satisfies演算子など、開発体験を大きく向上させる機能が多数追加されました。その後5.1・5.2・5.3・5.4・5.5と矢継ぎ早にアップデートが続き、2026年現在のTypeScript 5.xシリーズは言語としての成熟度が格段に上がっています。

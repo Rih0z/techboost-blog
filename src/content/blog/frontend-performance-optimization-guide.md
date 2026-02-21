@@ -3,6 +3,7 @@ title: 'フロントエンドパフォーマンス最適化完全ガイド2026�
 description: 'フロントエンドパフォーマンス最適化を徹底解説。Core Web Vitals・LCP/CLS/FID・コード分割・画像最適化・キャッシュ戦略・Critical CSS・Preloading・Service Worker・Bundle分析まで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/blog-placeholder-3.jpg'
+tags: ['Performance', 'Frontend', 'Lighthouse']
 ---
 
 フロントエンドのパフォーマンスは、ユーザー体験とビジネス指標に直結する。Googleの調査によれば、ページの読み込みが1秒遅くなるごとにコンバージョン率が約7%低下し、モバイルユーザーの53%は3秒以上かかるサイトを離脱する。2026年現在、Core Web Vitalsはランキングシグナルとして確立しており、Lighthouse 100点の達成は競合との差別化において重要な意味を持つ。

@@ -2,6 +2,7 @@
 title: 'Core Web Vitals完全攻略 -- Lighthouseスコア90超えを実現するパフォーマンス最適化の実践手法'
 description: 'Core Web Vitalsの3指標（LCP・INP・CLS）を体系的に理解し、Lighthouseスコア90以上を達成するための具体的な最適化手法を解説。画像最適化、レンダリング戦略、JavaScript削減まで、実装コード付きで実践的に学べる。'
 pubDate: '2026-02-20'
+tags: ['Core Web Vitals', 'Performance', 'SEO']
 ---
 
 Webサイトのパフォーマンスは、ユーザー体験とSEOの両面で決定的な影響力を持つ。Googleは2021年からCore Web Vitalsをランキング要因に組み込み、2024年3月にはFIDをINPに置き換えるなど、指標の精度を継続的に高めている。

@@ -3,6 +3,7 @@ title: 'Core Web Vitals完全ガイド — LighthouseスコアをAll 90+にす�
 description: 'LCP・INP・CLSの計測方法から、Next.js・画像・フォント・JavaScript最適化まで。Lighthouseスコアを90点台に引き上げる具体的な手法を解説。'
 pubDate: '2026-02-19'
 heroImage: '../../assets/blog-placeholder-1.jpg'
+tags: ['Core Web Vitals', 'Performance', 'SEO']
 ---
 
 GoogleのCore Web VitalsはWebサイトのユーザー体験を数値化する指標群で、SEOランキングにも直接影響します。本記事では、LCP・INP・CLSの基本から、実際にLighthouseスコアを90点台に引き上げるための具体的な最適化手法を解説します。

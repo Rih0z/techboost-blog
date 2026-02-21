@@ -3,6 +3,7 @@ title: 'Docker入門 — コンテナ化で開発環境を統一する'
 description: 'Dockerの基本概念からDockerfile作成、docker-composeまで。チーム全員が同じ環境で開発できるようになる。'
 pubDate: '2026-02-14'
 heroImage: '../../assets/blog-placeholder-5.jpg'
+tags: ['Docker', 'DevOps']
 ---
 
 Dockerは、アプリケーションをコンテナという軽量な仮想環境で動かすためのプラットフォームです。本記事では、Dockerの基本概念から実践的な使い方、docker-composeによる複数コンテナの管理まで、詳しく解説します。

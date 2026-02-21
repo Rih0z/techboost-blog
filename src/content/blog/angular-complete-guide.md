@@ -3,6 +3,7 @@ title: 'Angular完全ガイド2026：モダンWebアプリケーション開発�
 description: 'Angularの基本から応用まで完全解説。コンポーネント・サービス・RxJS・Angular Signals・Standalone Components・NgRx・テストまで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/blog-placeholder-1.jpg'
+tags: ['Angular', 'TypeScript', 'Frontend']
 ---
 
 Angularは、Googleが開発・メンテナンスするエンタープライズグレードのフロントエンドフレームワークである。ReactやVueとは異なり、ルーティング・フォーム・HTTPクライアント・状態管理まで揃った「フルフレームワーク」として設計されており、大規模チームでの開発に強みを持つ。

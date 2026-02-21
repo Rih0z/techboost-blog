@@ -3,6 +3,7 @@ title: 'Deno 2.0完全ガイド：次世代JavaScript/TypeScriptランタイム'
 description: 'Deno 2.0の新機能を徹底解説。Node.js互換性・npm対応・パッケージマネージャー・Fresh・Deno Deploy・テスト・セキュリティモデルまで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/blog-placeholder-2.jpg'
+tags: ['Deno', 'JavaScript', 'Runtime']
 ---
 
 Deno 2.0は2024年10月にリリースされた、JavaScript/TypeScriptランタイムの新世代を代表する実装です。Node.jsの設計上の問題点を根本から解決しつつ、Node.jsエコシステムとの完全な互換性を実現した本バージョンは、バックエンド開発のあり方を大きく変える可能性を秘めています。本記事では、Deno 2.0の全機能を実践的なコード例とともに徹底的に解説します。

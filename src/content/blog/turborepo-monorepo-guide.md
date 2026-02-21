@@ -3,6 +3,7 @@ title: 'Turborepo完全ガイド — モノレポ構築・共有パッケージ�
 description: 'Turborepoでモノレポを構築する実践ガイド。ワークスペース設定・共有UIコンポーネント・共有設定・タスクパイプライン・リモートキャッシュ・GitHub Actions統合まで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/blog-placeholder-4.jpg'
+tags: ['Monorepo', 'Turborepo', 'DevOps']
 ---
 
 モノレポは複数のアプリケーションやパッケージを単一リポジトリで管理するアーキテクチャだ。Vercel が開発した **Turborepo** は、このモノレポ運用を劇的に高速化するビルドシステムである。タスクの並列実行・インクリメンタルキャッシュ・リモートキャッシュを組み合わせ、大規模なコードベースでも CI ビルドを数分から数秒に短縮できる。

@@ -3,6 +3,7 @@ title: 'PostgreSQL パフォーマンス最適化完全ガイド — インデ�
 description: 'PostgreSQLのパフォーマンスを最大化する実践ガイド。インデックス設計・EXPLAIN ANALYZE・N+1問題・コネクションプール・パーティショニング・設定チューニングをSQL例付きで解説。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/blog-placeholder-4.jpg'
+tags: ['PostgreSQL', 'Database', 'Backend']
 ---
 
 PostgreSQL は世界で最も広く使われるオープンソースRDBMSの一つだ。機能の豊富さと拡張性においてMySQLを凌駕する場面も多く、特にJSONB・フルテキスト検索・パーティショニング・ウィンドウ関数などの高度な機能は他のデータベースにはない強みを持つ。

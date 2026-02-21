@@ -3,6 +3,7 @@ title: 'AWS Lambda・サーバーレス完全ガイド2026：クラウドネイ�
 description: 'AWS Lambdaとサーバーレスアーキテクチャを徹底解説。API Gateway・DynamoDB・SQS・EventBridge・SAM・Serverless Framework・CDK・コールドスタート対策・コスト最適化まで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/blog-placeholder-1.jpg'
+tags: ['AWS Lambda', 'Serverless', 'AWS']
 ---
 
 サーバーレスアーキテクチャは、現代のクラウドネイティブ開発において最も重要なパラダイムシフトのひとつだ。AWS Lambdaを中心としたサーバーレスエコシステムは、インフラ管理の煩雑さを排除し、開発者がビジネスロジックに集中できる環境を提供する。本記事では、AWS Lambdaの基礎から本番運用まで、実践的なコード例を交えて網羅的に解説する。

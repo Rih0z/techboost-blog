@@ -3,6 +3,7 @@ title: 'CSS Container Queries完全ガイド：モダンCSSレスポンシブデ
 description: 'CSS Container Queriesの基本から応用まで徹底解説。@container・コンテナサイズ・スタイルクエリ・CSS Nesting・:has()・CSS Layers・CSS Cascade Layersまで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/blog-placeholder-2.jpg'
+tags: ['CSS', 'Frontend', 'レスポンシブ']
 ---
 
 CSS Container Queriesは、Webレイアウト設計における長年の課題を解決する画期的な機能です。従来のメディアクエリが「ビューポートのサイズ」に基づいてスタイルを切り替えていたのに対し、Container Queriesは「親コンテナのサイズ」に応じてコンポーネントのスタイルを動的に変更できます。この記事では、Container Queriesの基礎から応用まで、モダンCSSの最新機能とあわせて徹底的に解説します。

@@ -3,6 +3,7 @@ title: 'Redis実践ガイド — キャッシュ・セッション・Pub/Sub・R
 description: 'Redisを実務で使い倒す実践ガイド。キャッシュ戦略・セッション管理・Pub/Sub・Rate Limiting・分散ロック・キュー実装をNode.js/TypeScriptコード付きで解説。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/blog-placeholder-5.jpg'
+tags: ['Redis', 'Database', 'Backend']
 ---
 
 Redisはインメモリデータストアとして広く知られているが、単なる「高速なキャッシュ層」以上の存在だ。セッション管理、リアルタイム通信、Rate Limiting、分散ロック、ジョブキューと、モダンなWebアーキテクチャに欠かせない多様な役割を担う。本記事では、Node.js/TypeScript環境でRedisを実務レベルで使い倒すための実装パターンを体系的に解説する。

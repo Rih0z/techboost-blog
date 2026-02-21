@@ -3,6 +3,7 @@ title: 'APIテスト完全ガイド2026：Vitest・Supertest・Hoppscotch・k6�
 description: 'APIテストの理論から実践まで徹底解説。Unit Test・Integration Test・E2E Test・Vitest・Supertest・Hoppscotch・Thunder Client・k6負荷テスト・OpenAPIテスト自動化まで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/blog-placeholder-5.jpg'
+tags: ['API', 'Testing', 'Backend']
 ---
 
 APIテストは現代のソフトウェア開発において欠かせない品質保証の柱である。マイクロサービスアーキテクチャが主流になり、フロントエンドとバックエンドが分離した開発スタイルが普及した今、APIの信頼性を担保することはプロダクトの成否を左右する。本記事では、APIテストの理論的基盤から最新ツールの実践的な使い方まで、2026年現在のベストプラクティスを体系的に解説する。
