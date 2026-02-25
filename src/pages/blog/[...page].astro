@@ -18,6 +18,18 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 const { page } = Astro.props;
 const posts = page.data;
 
+// Popular tags (top 12 by frequency) — computed once on page 1
+const allPosts = await getCollection('blog');
+const tagCount = new Map<string, number>();
+allPosts.forEach((post) => {
+	(post.data.tags ?? []).forEach((tag: string) => {
+		tagCount.set(tag, (tagCount.get(tag) ?? 0) + 1);
+	});
+});
+const topTags = Array.from(tagCount.entries())
+	.sort((a, b) => b[1] - a[1])
+	.slice(0, 12);
+
 const pageTitle = page.currentPage === 1
 	? SITE_TITLE
 	: `${SITE_TITLE} - ページ ${page.currentPage}`;
@@ -163,11 +175,89 @@ const pageNums = buildPageNums(page.currentPage, page.lastPage);
 				font-size: 0.85rem;
 				color: rgb(var(--gray));
 			}
+			/* Popular tags filter */
+			.popular-tags {
+				margin-bottom: 2rem;
+				padding: 1rem 1.25rem;
+				background: rgb(var(--gray-light));
+				border-radius: 8px;
+			}
+			.popular-tags-label {
+				font-size: 0.8rem;
+				font-weight: 600;
+				color: rgb(var(--gray));
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				margin-bottom: 0.75rem;
+			}
+			.popular-tags-list {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+			}
+			.popular-tag-chip {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.25rem;
+				padding: 0.25rem 0.75rem;
+				border-radius: 999px;
+				background: white;
+				border: 1px solid rgb(var(--gray-light));
+				color: rgb(var(--black));
+				text-decoration: none;
+				font-size: 0.8rem;
+				font-weight: 500;
+				transition: background 0.15s, color 0.15s, border-color 0.15s;
+			}
+			.popular-tag-chip:hover {
+				background: rgb(var(--accent));
+				border-color: rgb(var(--accent));
+				color: white;
+			}
+			.popular-tag-count {
+				font-size: 0.7rem;
+				opacity: 0.6;
+			}
+			/* Tag chips on cards */
+			.card-tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.3rem;
+				margin-top: 0.4rem;
+			}
+			.card-tag {
+				display: inline-block;
+				padding: 0.15rem 0.5rem;
+				border-radius: 999px;
+				background: rgb(var(--gray-light));
+				color: rgb(var(--gray));
+				font-size: 0.7rem;
+				font-weight: 500;
+				text-decoration: none;
+				transition: background 0.15s, color 0.15s;
+			}
+			.card-tag:hover {
+				background: rgb(var(--accent));
+				color: white;
+			}
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
+			{page.currentPage === 1 && topTags.length > 0 && (
+				<div class="popular-tags">
+					<p class="popular-tags-label">人気タグ</p>
+					<div class="popular-tags-list">
+						{topTags.map(([tag, count]) => (
+							<a href={`/blog/tag/${encodeURIComponent(tag)}`} class="popular-tag-chip">
+								#{tag}
+								<span class="popular-tag-count">{count}</span>
+							</a>
+						))}
+					</div>
+				</div>
+			)}
 			<section>
 				<ul>
 					{
@@ -182,6 +272,15 @@ const pageNums = buildPageNums(page.currentPage, page.lastPage);
 										<FormattedDate date={post.data.pubDate} />
 									</p>
 								</a>
+								{post.data.tags && post.data.tags.length > 0 && (
+									<div class="card-tags">
+										{(post.data.tags as string[]).slice(0, 3).map((tag) => (
+											<a href={`/blog/tag/${encodeURIComponent(tag)}`} class="card-tag">
+												#{tag}
+											</a>
+										))}
+									</div>
+								)}
 							</li>
 						))
 					}
