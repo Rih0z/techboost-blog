@@ -2,7 +2,7 @@
 title: 'Vue.js 3 + TypeScript実践ガイド — Composition APIで型安全なアプリを構築'
 description: 'Vue.js 3のComposition APIとTypeScriptを組み合わせた実践的な開発手法を解説。ref/reactive・computed・watch・コンポーネント設計・Pinia状態管理・Vue Router・Vueuse・パフォーマンス最適化まで実践コード付きで網羅。'
 pubDate: '2026-02-20'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/vuejs3-typescript-guide.jpg'
 tags: ['Vue.js', 'TypeScript', 'Composition API', 'Pinia', 'フロントエンド']
 ---
 

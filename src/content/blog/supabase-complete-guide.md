@@ -2,7 +2,7 @@
 title: 'Supabase完全ガイド — PostgreSQL・認証・Storage・Realtime・Edge Functions'
 description: 'SupabaseでFirebase代替のバックエンドを構築する完全ガイド。PostgreSQL・Row Level Security・認証（Magic Link/OAuth）・Storage・Realtime・Edge Functions・Next.js統合まで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/thumbnails/supabase-complete-guide.jpg'
 tags: ['Supabase', 'PostgreSQL', 'Firebase', 'TypeScript', 'バックエンド']
 ---
 

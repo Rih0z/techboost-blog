@@ -2,7 +2,7 @@
 title: 'Playwright完全ガイド — E2Eテスト・クロスブラウザ・Visual Regression・CI/CD統合'
 description: 'PlaywrightでE2Eテストを構築する完全ガイド。ページオブジェクトモデル・APIモッキング・認証状態保存・Visual Regression・パラレルテスト・GitHub Actions統合まで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/playwright-e2e-testing-guide.jpg'
 tags: ['Playwright', 'E2Eテスト', 'TypeScript', 'テスト', 'CI/CD']
 ---
 

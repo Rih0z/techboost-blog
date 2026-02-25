@@ -2,7 +2,7 @@
 title: 'Terraform完全ガイド — Infrastructure as Code・AWS/GCP・モジュール化・CI/CD'
 description: 'TerraformでInfrastructure as Codeを実践する完全ガイド。HCL構文・プロバイダー設定・リソース管理・変数・モジュール・Terraform Cloud・GitHub Actions統合・AWS/GCP実践例まで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+heroImage: '../../assets/thumbnails/terraform-iac-guide.jpg'
 tags: ['Terraform', 'IaC', 'AWS', 'DevOps', 'クラウド']
 ---
 

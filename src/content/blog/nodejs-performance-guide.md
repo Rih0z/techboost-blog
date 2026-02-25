@@ -2,7 +2,7 @@
 title: 'Node.jsパフォーマンス最適化完全ガイド — プロファイリング・メモリ・クラスタリング・Worker Threads'
 description: 'Node.jsアプリのパフォーマンスを最大化する実践ガイド。V8プロファイリング・メモリリーク検出・イベントループ監視・クラスタリング・Worker Threads・ストリーム最適化・APM導入まで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-5.jpg'
+heroImage: '../../assets/thumbnails/nodejs-performance-guide.jpg'
 tags: ['Node.js', 'パフォーマンス', 'TypeScript', 'Worker Threads', '最適化']
 ---
 

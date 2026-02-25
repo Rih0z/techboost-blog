@@ -2,7 +2,7 @@
 title: 'Stripe決済統合完全ガイド2026：WebサービスへのSaaS課金実装'
 description: 'Stripeの決済実装を徹底解説。Checkout・Payment Intents・Subscriptions・Webhooks・Stripe Elements・Next.js統合・定期課金SaaS実装・不正検知まで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/stripe-payment-integration-guide.jpg'
 tags: ['Stripe', 'Payment', 'Backend']
 ---
 

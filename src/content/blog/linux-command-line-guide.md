@@ -2,7 +2,7 @@
 title: 'Linux・コマンドライン完全ガイド：開発者が必ず知るべきシェル操作'
 description: 'Linuxコマンドラインとシェルスクリプトを徹底解説。ファイル操作・プロセス管理・ネットワーク・sed/awk・bash scripting・zsh・tmux・vim・systemd・cron・セキュリティまで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/thumbnails/linux-command-line-guide.jpg'
 tags: ['Linux', 'CLI', 'DevOps']
 ---
 

@@ -2,7 +2,7 @@
 title: 'LangChain完全ガイド — LLMアプリ開発・RAG・エージェント・LangGraph実装'
 description: 'LangChainでLLMアプリを構築する完全ガイド。Chain・LCEL・RAG（PDF/Web）・Memory・Tool Calling・エージェント・LangGraph・LangSmith監視まで TypeScript/Python実装例付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/langchain-ai-app-guide.jpg'
 tags: ['LangChain', 'AI', 'RAG', 'LLM', 'TypeScript']
 ---
 

@@ -2,7 +2,7 @@
 title: 'TanStack Query完全ガイド — サーバー状態管理・キャッシュ・無限スクロール・楽観的更新'
 description: 'TanStack Query（React Query v5）でサーバー状態を完全管理する実践ガイド。useQuery・useMutation・キャッシュ戦略・無限スクロール・楽観的更新・Prefetching・Next.js RSC統合・テストまで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/tanstack-query-guide.jpg'
 tags: ['TanStack Query', 'React Query', 'React', 'TypeScript', 'サーバー状態管理']
 ---
 

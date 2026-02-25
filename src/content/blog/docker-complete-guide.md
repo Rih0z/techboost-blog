@@ -2,7 +2,7 @@
 title: 'Docker完全ガイド — コンテナ・イメージ・Compose・本番運用まで'
 description: 'Dockerの基礎から本番環境での運用まで完全解説。コンテナ・イメージ・Dockerfile最適化・Docker Compose・マルチステージビルド・セキュリティベストプラクティスをコード例付きで網羅。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/docker-complete-guide.jpg'
 ---
 
 現代のソフトウェア開発において、Dockerはほぼすべての現場で使われるインフラの標準ツールとなった。「自分のマシンでは動くのに本番で動かない」という古典的な問題を根本から解決し、開発・テスト・本番の環境差異をゼロにする。

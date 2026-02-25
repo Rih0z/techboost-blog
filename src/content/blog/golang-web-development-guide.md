@@ -2,7 +2,7 @@
 title: 'Go言語Webアプリケーション開発完全ガイド2026'
 description: 'Go言語によるWeb開発を徹底解説。net/http・Gin・Echo・Fiber・GORM・JWT認証・WebSocket・マイクロサービス・Docker・デプロイまで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-5.jpg'
+heroImage: '../../assets/thumbnails/golang-web-development-guide.jpg'
 tags: ['Go', 'Backend', 'Performance']
 ---
 

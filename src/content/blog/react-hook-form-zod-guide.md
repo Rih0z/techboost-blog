@@ -2,7 +2,7 @@
 title: 'React Hook Form + Zod 完全ガイド — 型安全なフォームバリデーション実装'
 description: 'React Hook FormとZodを組み合わせた型安全なフォームバリデーションの実装方法を徹底解説。基本から応用まで実践的なコード例付き。'
 pubDate: '2026-02-21'
-heroImage: '/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/react-hook-form-zod-guide.jpg'
 tags: ['React', 'TypeScript', 'Form', 'Validation', 'Zod']
 ---
 

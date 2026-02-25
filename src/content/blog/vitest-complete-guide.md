@@ -2,7 +2,7 @@
 title: 'Vitest 完全ガイド — Jest移行から実践的テスト設計まで'
 description: 'VitestによるJavaScript/TypeScriptテストの完全解説。Jestからの移行ガイド、React Testing Library統合、カバレッジ、MSW、スナップショットテストを網羅。'
 pubDate: '2026-02-21'
-heroImage: '/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/vitest-complete-guide.jpg'
 tags: ['Testing', 'Vitest', 'TypeScript', 'React', 'Jest']
 ---
 

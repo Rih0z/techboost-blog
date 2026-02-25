@@ -2,7 +2,7 @@
 title: 'SvelteKit完全ガイド — Svelte 5・Runes・SSR/SSG・フルスタック開発'
 description: 'SvelteKitでフルスタックアプリを構築する完全ガイド。Svelte 5のRunes（$state・$derived・$effect）・ルーティング・Server Load・Form Actions・認証・デプロイまで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/sveltekit-complete-guide.jpg'
 tags: ['SvelteKit', 'Svelte', 'TypeScript', 'フロントエンド', 'フルスタック']
 ---
 

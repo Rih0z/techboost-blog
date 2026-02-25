@@ -2,7 +2,7 @@
 title: 'JavaScript・TypeScriptデザインパターン完全ガイド：実践的なソフトウェア設計'
 description: 'JavaScript/TypeScriptでのデザインパターンを徹底解説。GoFパターン（生成・構造・振る舞い）・関数型パターン・Reactパターン・DIコンテナ・SOLID原則・Clean Architectureまで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/design-patterns-javascript-guide.jpg'
 ---
 
 デザインパターンはソフトウェア開発における再利用可能な解決策の集合であり、特定の設計問題に対して実績のあるアプローチを提供する。JavaScript・TypeScriptの世界でこれらのパターンを習得することは、保守性が高く拡張しやすいコードを書くための基礎となる。本記事では、GoFの23パターンから始まり、関数型パターン、Reactコンポーネントパターン、そしてClean ArchitectureやDDDまで、実践的なTypeScriptコード例とともに徹底解説する。

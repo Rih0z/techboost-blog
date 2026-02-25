@@ -2,7 +2,7 @@
 title: 'Nuxt.js 3完全ガイド：Vue.js製フルスタックフレームワーク'
 description: 'Nuxt.js 3の基本から応用まで完全解説。SSR・SSG・ISR・Nitroエンジン・Composables・Pinia・Nuxt UI・APIルート・デプロイまで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/thumbnails/nuxtjs3-complete-guide.jpg'
 ---
 
 Nuxt.js 3はVue.jsをベースとしたフルスタックフレームワークであり、現代のWebアプリケーション開発における強力な選択肢のひとつとなっている。サーバーサイドレンダリング（SSR）・静的サイト生成（SSG）・APIルート・Composablesなど、生産性を高める機能が標準で備わっている。本記事では、Nuxt.js 3の全体像から実践的な実装パターンまでを体系的に解説する。

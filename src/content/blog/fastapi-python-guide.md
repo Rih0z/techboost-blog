@@ -2,7 +2,7 @@
 title: 'FastAPI完全ガイド — 高速Python APIフレームワーク・型安全・非同期・本番運用'
 description: 'FastAPIで高速なPython APIを構築する完全ガイド。Pydantic v2・依存性注入・認証（JWT/OAuth2）・非同期処理・SQLAlchemy統合・テスト・Dockerデプロイまで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/fastapi-python-guide.jpg'
 tags: ['FastAPI', 'Python', 'API', '非同期', 'バックエンド']
 ---
 

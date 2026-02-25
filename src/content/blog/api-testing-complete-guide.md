@@ -2,7 +2,7 @@
 title: 'APIテスト完全ガイド2026：Vitest・Supertest・Hoppscotch・k6による品質保証'
 description: 'APIテストの理論から実践まで徹底解説。Unit Test・Integration Test・E2E Test・Vitest・Supertest・Hoppscotch・Thunder Client・k6負荷テスト・OpenAPIテスト自動化まで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-5.jpg'
+heroImage: '../../assets/thumbnails/api-testing-complete-guide.jpg'
 tags: ['API', 'Testing', 'Backend']
 ---
 

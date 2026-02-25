@@ -2,7 +2,7 @@
 title: 'Vite完全ガイド — 超高速ビルドツールでモダン開発環境を構築する'
 description: 'Viteによる高速開発環境の構築を完全解説。HMR・プラグインシステム・ライブラリモード・環境変数・最適化・マルチページアプリ・SSR対応をコード例付きで網羅。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+heroImage: '../../assets/thumbnails/vite-build-tool-guide.jpg'
 tags: ['Vite', 'TypeScript', 'ビルドツール', 'フロントエンド', 'React']
 ---
 

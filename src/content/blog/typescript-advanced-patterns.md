@@ -2,7 +2,7 @@
 title: 'TypeScript実践パターン集 — 型安全なコードを書くための高度テクニック20選'
 description: 'TypeScriptの高度な型テクニックを実践的なパターンで解説。条件型、マップ型、テンプレートリテラル型、Branded Types、Discriminated Unions、型推論の活用法など、実務で差がつく20のパターンをコード例付きで紹介。'
 pubDate: '2026-02-20'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/typescript-advanced-patterns.jpg'
 tags: ['TypeScript', '型安全', 'ジェネリクス', 'フロントエンド', '実践']
 ---
 

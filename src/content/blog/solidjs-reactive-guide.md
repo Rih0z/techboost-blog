@@ -2,7 +2,7 @@
 title: 'Solid.js完全ガイド — 超高速リアクティブUIフレームワーク・SolidStart・TypeScript'
 description: 'Solid.jsで高パフォーマンスなリアクティブUIを構築する完全ガイド。Signal・Store・Resource・createEffect・SolidStart（SSR/SSG）・Reactからの移行・パフォーマンス比較まで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-5.jpg'
+heroImage: '../../assets/thumbnails/solidjs-reactive-guide.jpg'
 tags: ['Solid.js', 'TypeScript', 'リアクティブ', 'SolidStart', 'フロントエンド']
 ---
 

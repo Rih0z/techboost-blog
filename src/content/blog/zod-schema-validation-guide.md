@@ -2,7 +2,7 @@
 title: 'Zod完全ガイド — TypeScript型安全バリデーション・フォーム・API・環境変数管理'
 description: 'ZodでTypeScript型安全なバリデーションを完全実装する実践ガイド。スキーマ定義・変換・リファイン・react-hook-form統合・tRPC・環境変数バリデーション・カスタムエラーメッセージまで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-5.jpg'
+heroImage: '../../assets/thumbnails/zod-schema-validation-guide.jpg'
 tags: ['Zod', 'TypeScript', 'バリデーション', 'React', 'API']
 ---
 

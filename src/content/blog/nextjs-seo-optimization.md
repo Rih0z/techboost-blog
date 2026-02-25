@@ -2,7 +2,7 @@
 title: 'Next.js SEO最適化完全ガイド — Metadata API・構造化データ・Core Web Vitals'
 description: 'Next.js App RouterでSEOを完全最適化する実践ガイド。Metadata API・OpenGraph・構造化データ・サイトマップ・robots.txt・Core Web Vitals改善・動的OGP画像生成まで網羅。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/nextjs-seo-optimization.jpg'
 ---
 
 現代のWebアプリケーション開発において、SEO（検索エンジン最適化）は避けて通れない課題だ。Next.jsのApp Routerは、SEOに必要なあらゆる機能を標準で備えており、適切に設定すれば**Lighthouse SEOスコア100**を達成できる。

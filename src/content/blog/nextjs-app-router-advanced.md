@@ -2,7 +2,7 @@
 title: 'Next.js App Router 実践ガイド — Server Actions・Streaming・キャッシュ戦略を完全制覇'
 description: 'Next.js 14のApp Routerを実務レベルで使いこなすための完全ガイド。Server Actions、Streaming、Suspense、Route Handlers、キャッシュ制御、PPR（Partial Prerendering）まで実践的なコード例で解説。'
 pubDate: '2026-02-20'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/nextjs-app-router-advanced.jpg'
 tags: ['Next.js', 'App Router', 'React', 'TypeScript', 'Server Actions']
 ---
 

@@ -2,7 +2,7 @@
 title: 'Angular完全ガイド2026：モダンWebアプリケーション開発の決定版'
 description: 'Angularの基本から応用まで完全解説。コンポーネント・サービス・RxJS・Angular Signals・Standalone Components・NgRx・テストまで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+heroImage: '../../assets/thumbnails/angular-complete-guide.jpg'
 tags: ['Angular', 'TypeScript', 'Frontend']
 ---
 

@@ -2,7 +2,7 @@
 title: 'Vercel完全ガイド2026：Next.js・フロントエンドデプロイの決定版'
 description: 'Vercelの全機能を徹底解説。自動デプロイ・プレビュー環境・Edge Functions・Analytics・Speed Insights・Blob・Postgres・KV・AI SDK・カスタムドメインまで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/thumbnails/vercel-deployment-guide.jpg'
 tags: ['Vercel', 'Deployment', 'DevOps']
 ---
 

@@ -2,7 +2,7 @@
 title: 'WebRTC完全ガイド：ブラウザでリアルタイム通信を実現する'
 description: 'WebRTCの仕組みから実装まで徹底解説。ビデオ通話・音声通話・データチャネル・シグナリング・STUN/TURN・Simple-peer・メディアサーバーまで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/webrtc-realtime-guide.jpg'
 tags: ['WebRTC', 'リアルタイム', 'Frontend']
 ---
 

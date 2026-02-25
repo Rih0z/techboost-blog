@@ -2,7 +2,7 @@
 title: 'Redis実践ガイド — キャッシュ・セッション・Pub/Sub・Rate Limiting完全実装'
 description: 'Redisを実務で使い倒す実践ガイド。キャッシュ戦略・セッション管理・Pub/Sub・Rate Limiting・分散ロック・キュー実装をNode.js/TypeScriptコード付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-5.jpg'
+heroImage: '../../assets/thumbnails/redis-practical-guide.jpg'
 tags: ['Redis', 'Database', 'Backend']
 ---
 

@@ -2,7 +2,7 @@
 title: 'pnpm完全ガイド — 高速パッケージ管理・Workspace・モノレポ・npm/yarn移行'
 description: 'pnpmで高速・効率的なパッケージ管理を実現する完全ガイド。Symlink node_modules・ハードリンク仕組み・Workspace設定・モノレポ管理・Catalog・npm/yarn移行手順・CI/CD最適化まで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/pnpm-workspace-guide.jpg'
 tags: ['pnpm', 'パッケージ管理', 'モノレポ', 'Node.js', 'JavaScript']
 ---
 

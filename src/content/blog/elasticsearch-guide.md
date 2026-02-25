@@ -2,7 +2,7 @@
 title: 'Elasticsearch完全ガイド — 全文検索・Node.js統合・Kibana・パフォーマンスチューニング'
 description: 'Elasticsearchで高速全文検索を実装する完全ガイド。インデックス設計・マッピング・クエリDSL・Aggregation・Node.js統合・Kibana・オートコンプリート・ベクトル検索まで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/thumbnails/elasticsearch-guide.jpg'
 tags: ['Elasticsearch', '全文検索', 'Node.js', 'TypeScript', 'Kibana']
 ---
 

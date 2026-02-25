@@ -2,7 +2,7 @@
 title: 'Tailwind CSS v4完全ガイド — 新機能・CSS-first設定・パフォーマンス向上'
 description: 'Tailwind CSS v4の新機能を完全解説。CSS-first設定（@theme・@variant・@utility）・新デザイントークン・コンテナクエリ・3Dトランスフォーム・v3からの移行手順まで実装例付きで網羅。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/tailwind-css-v4-guide.jpg'
 tags: ['Tailwind CSS', 'CSS', 'フロントエンド', 'v4', 'デザイン']
 ---
 

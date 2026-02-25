@@ -2,7 +2,7 @@
 title: 'Zustand完全ガイド — React状態管理の決定版（TypeScript・Middleware・テスト）'
 description: 'ZustandによるReact状態管理を完全解説。基本的な使い方からimmer・devtools・persist middleware・スライスパターン・Jotaiとの比較・テスト戦略まで実装例付きで網羅。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/zustand-state-management.jpg'
 ---
 
 Reactアプリケーションの規模が大きくなると、コンポーネント間の状態共有が複雑になる。`useState` と `useContext` だけでは管理しきれなくなったとき、多くの開発者が状態管理ライブラリの導入を検討する。

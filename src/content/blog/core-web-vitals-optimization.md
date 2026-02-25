@@ -2,7 +2,7 @@
 title: 'Core Web Vitals完全ガイド — LighthouseスコアをAll 90+にする実践的最適化手法'
 description: 'LCP・INP・CLSの計測方法から、Next.js・画像・フォント・JavaScript最適化まで。Lighthouseスコアを90点台に引き上げる具体的な手法を解説。'
 pubDate: '2026-02-19'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+heroImage: '../../assets/thumbnails/core-web-vitals-optimization.jpg'
 tags: ['Core Web Vitals', 'Performance', 'SEO']
 ---
 

@@ -2,7 +2,7 @@
 title: 'ESLint 9 Flat Config 完全ガイド — 新設定システムへの移行と実践設定'
 description: 'ESLint 9の新しいFlat Config（eslint.config.js）への移行ガイド。TypeScript、React、Next.js、Prettierとの統合設定を実例で解説。'
 pubDate: 'Feb 21 2026'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/eslint9-flat-config-guide.jpg'
 tags: ['ESLint', 'TypeScript', 'Linting', 'JavaScript', 'DevTool']
 ---
 

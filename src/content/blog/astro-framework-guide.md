@@ -2,7 +2,7 @@
 title: 'Astro完全ガイド — Islands Architecture・Content Collections・SSG/SSR・デプロイ'
 description: 'Astroフレームワークを完全解説。Islands Architecture・.astroコンポーネント・Content Collections・React/Vue統合・View Transitions・SSG/SSR・Vercelデプロイまで実装例付きで網羅。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/thumbnails/astro-framework-guide.jpg'
 tags: ['Astro', 'SSG', 'Islands Architecture', 'TypeScript', 'フロントエンド']
 ---
 

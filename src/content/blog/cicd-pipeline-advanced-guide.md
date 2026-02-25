@@ -2,7 +2,7 @@
 title: 'CI/CDパイプライン完全ガイド — GitHub Actions上級・マトリックスビルド・セキュリティ・デプロイ自動化'
 description: 'GitHub Actions上級テクニックを完全解説。Reusable Workflows・マトリックスビルド・セクレット管理・OIDC・Docker Layer Caching・Kubernetes自動デプロイ・コスト最適化まで実装例付きで網羅。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-5.jpg'
+heroImage: '../../assets/thumbnails/cicd-pipeline-advanced-guide.jpg'
 tags: ['GitHub Actions', 'CI/CD', 'DevOps', 'Docker', 'Kubernetes']
 ---
 

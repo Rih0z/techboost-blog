@@ -2,7 +2,7 @@
 title: 'GraphQL完全ガイド — Apollo Server・TypeScript・N+1解決・認証まで'
 description: 'GraphQLをTypeScriptで実装する完全ガイド。スキーマ設計・Resolver・DataLoader（N+1解決）・認証・ページネーション・Apollo Client・コード生成まで実装例付きで網羅。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+heroImage: '../../assets/thumbnails/graphql-complete-guide.jpg'
 ---
 
 GraphQLはFacebookが2012年に社内開発し、2015年にオープンソース化したAPIクエリ言語だ。RESTが抱える「オーバーフェッチ」「アンダーフェッチ」という根本的な問題を解決し、クライアントが必要なデータを正確に要求できる柔軟性を提供する。本記事ではApollo Server 4とTypeScriptを使い、実務で必要なすべての技術要素を実装例とともに徹底解説する。

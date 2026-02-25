@@ -2,7 +2,7 @@
 title: 'Tailwind CSS実践ガイド — 効率的なスタイリングと設計パターン完全解説'
 description: 'Tailwind CSS v4の新機能から実践的なコンポーネント設計まで徹底解説。カスタムテーマ設定・レスポンシブ・ダークモード・アニメーション・CVA（Class Variance Authority）を使ったコンポーネント設計・パフォーマンス最適化まで実践コード付き。'
 pubDate: '2026-02-20'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/tailwind-css-practical-guide.jpg'
 tags: ['Tailwind CSS', 'CSS', 'React', 'コンポーネント設計', 'フロントエンド']
 ---
 

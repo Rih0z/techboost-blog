@@ -2,7 +2,7 @@
 title: 'AIコーディングツール完全ガイド — GitHub Copilot・Cursor・Claude Code比較と活用法'
 description: 'AIコーディングツールを完全活用する実践ガイド。GitHub Copilot・Cursor・Claude Code・Continue.devの機能比較・効果的なプロンプト技法・エージェントモード・コードレビュー・テスト生成・チーム導入まで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-5.jpg'
+heroImage: '../../assets/thumbnails/ai-coding-tools-guide.jpg'
 tags: ['AI', 'GitHub Copilot', 'Cursor', 'Claude Code', '開発効率化']
 ---
 

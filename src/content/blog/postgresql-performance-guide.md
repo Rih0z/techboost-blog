@@ -2,7 +2,7 @@
 title: 'PostgreSQL パフォーマンス最適化完全ガイド — インデックス・クエリチューニング・設定'
 description: 'PostgreSQLのパフォーマンスを最大化する実践ガイド。インデックス設計・EXPLAIN ANALYZE・N+1問題・コネクションプール・パーティショニング・設定チューニングをSQL例付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/thumbnails/postgresql-performance-guide.jpg'
 tags: ['PostgreSQL', 'Database', 'Backend']
 ---
 

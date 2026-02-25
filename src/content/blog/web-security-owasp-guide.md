@@ -2,7 +2,7 @@
 title: 'Webセキュリティ完全ガイド — OWASP Top 10・XSS・CSRF・SQLi・CSP実装'
 description: 'Webアプリケーションセキュリティを完全解説。OWASP Top 10・XSS/CSRF防御・SQLインジェクション・認証セキュリティ・CSP・HTTPS設定・セキュリティヘッダー・脆弱性スキャンまで実装例付きで網羅。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-5.jpg'
+heroImage: '../../assets/thumbnails/web-security-owasp-guide.jpg'
 tags: ['セキュリティ', 'OWASP', 'XSS', 'CSRF', 'Node.js']
 ---
 

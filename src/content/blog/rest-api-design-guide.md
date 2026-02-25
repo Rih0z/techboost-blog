@@ -2,7 +2,7 @@
 title: 'REST API設計ベストプラクティス — 保守性の高いAPIを設計・実装する完全ガイド'
 description: 'RESTful API設計の基本原則から実践的なベストプラクティスまで徹底解説。URLルーティング・HTTPメソッド・ステータスコード・認証・バージョニング・エラーレスポンス・ページネーション・OpenAPI仕様書まで実践コード付き。'
 pubDate: '2026-02-20'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+heroImage: '../../assets/thumbnails/rest-api-design-guide.jpg'
 tags: ['REST API', 'API設計', 'Node.js', 'Express', 'TypeScript']
 ---
 

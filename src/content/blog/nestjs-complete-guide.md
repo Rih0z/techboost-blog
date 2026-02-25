@@ -2,7 +2,7 @@
 title: 'NestJS完全ガイド：TypeScript対応エンタープライズNode.jsフレームワーク'
 description: 'NestJSの基本から応用まで完全解説。モジュール・コントローラー・サービス・依存性注入・Guard・Interceptor・WebSocket・マイクロサービス対応まで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/thumbnails/nestjs-complete-guide.jpg'
 tags: ['NestJS', 'TypeScript', 'Backend']
 ---
 

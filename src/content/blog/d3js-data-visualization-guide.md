@@ -2,7 +2,7 @@
 title: 'D3.js完全ガイド — データビジュアライゼーション・インタラクティブグラフ・React統合'
 description: 'D3.jsでインタラクティブなデータビジュアライゼーションを構築する完全ガイド。SVG・スケール・軸・棒グラフ・折れ線グラフ・散布図・地図・React統合・アニメーションまで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+heroImage: '../../assets/thumbnails/d3js-data-visualization-guide.jpg'
 tags: ['D3.js', 'データビジュアライゼーション', 'SVG', 'TypeScript', 'React']
 ---
 

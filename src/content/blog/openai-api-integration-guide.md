@@ -2,7 +2,7 @@
 title: 'OpenAI API実践ガイド — ChatGPT統合・ストリーミング・Function Calling・RAG実装'
 description: 'OpenAI APIをNode.js/TypeScriptで実装する実践ガイド。Chat Completions・ストリーミング・Function Calling・Embeddings・RAG（Retrieval-Augmented Generation）・コスト管理・レート制限対策まで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/openai-api-integration-guide.jpg'
 tags: ['OpenAI', 'ChatGPT', 'AI', 'TypeScript', 'RAG']
 ---
 

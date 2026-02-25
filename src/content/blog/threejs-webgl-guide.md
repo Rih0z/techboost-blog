@@ -2,7 +2,7 @@
 title: 'Three.js完全ガイド — 3Dグラフィックス・WebGL・アニメーション・React Three Fiber'
 description: 'Three.jsで3DウェブグラフィックスをJavaScript/TypeScriptで実装する完全ガイド。Scene・Camera・Renderer・Geometry・Material・Light・Shadow・Animation・React Three Fiber（R3F）まで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/thumbnails/threejs-webgl-guide.jpg'
 tags: ['Three.js', 'WebGL', '3D', 'React Three Fiber', 'JavaScript']
 ---
 

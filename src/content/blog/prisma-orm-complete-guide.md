@@ -2,7 +2,7 @@
 title: 'Prisma ORM完全ガイド — スキーマ設計・マイグレーション・クエリ・本番運用'
 description: 'Prisma ORMを完全解説。スキーマ定義・マイグレーション管理・型安全クエリ・リレーション・トランザクション・接続プール・本番最適化をTypeScriptコード付きで網羅。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/prisma-orm-complete-guide.jpg'
 tags: ['Prisma', 'ORM', 'TypeScript', 'PostgreSQL', 'データベース']
 ---
 

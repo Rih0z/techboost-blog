@@ -2,7 +2,7 @@
 title: 'React Hooksを完全理解する — useState, useEffect, useCallbackの実践ガイド'
 description: 'React Hooksの基本から実践的なパターンまで。useState, useEffect, useCallback, useMemoの使い方を具体的なコード例で解説。'
 pubDate: 'Feb 10 2026'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/first-post.jpg'
 ---
 
 React Hooksは、関数コンポーネントで状態管理や副作用を扱うための仕組みです。この記事では、最も使用頻度の高い4つのHooksを実践的なコード例で解説します。

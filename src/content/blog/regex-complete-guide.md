@@ -2,7 +2,7 @@
 title: '正規表現（Regex）完全ガイド — JavaScriptで使えるパターン50選と実践例'
 description: '正規表現の基礎から応用まで徹底解説。JavaScript/TypeScriptでよく使うパターン50選、メールバリデーション・URL解析・ログ解析など実務で使える実践例を豊富なコード付きで紹介。'
 pubDate: '2026-02-20'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/regex-complete-guide.jpg'
 tags: ['正規表現', 'Regex', 'JavaScript', 'TypeScript', 'バリデーション']
 ---
 

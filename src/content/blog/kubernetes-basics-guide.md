@@ -2,7 +2,7 @@
 title: 'Kubernetes入門完全ガイド — Pod・Service・Deployment・Ingress・本番運用'
 description: 'Kubernetesの基礎から本番運用まで完全解説。Pod・ReplicaSet・Deployment・Service・Ingress・ConfigMap・Secret・HPA・Helm・GitOps実践をYAML例付きで網羅。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+heroImage: '../../assets/thumbnails/kubernetes-basics-guide.jpg'
 tags: ['Kubernetes', 'Docker', 'DevOps', 'インフラ', 'クラウド']
 ---
 

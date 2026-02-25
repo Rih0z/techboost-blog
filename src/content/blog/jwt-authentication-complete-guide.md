@@ -2,7 +2,7 @@
 title: 'JWT認証の仕組みと実装ガイド — セキュアなWebアプリ認証を構築する'
 description: 'JWTの構造と仕組みを徹底解説。Node.js/Next.jsでのJWT認証実装、リフレッシュトークン戦略、セキュリティベストプラクティス、よくある脆弱性と対策まで網羅した完全ガイド。'
 pubDate: '2026-02-20'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/thumbnails/jwt-authentication-complete-guide.jpg'
 tags: ['JWT', '認証', 'セキュリティ', 'Node.js', 'Next.js']
 ---
 

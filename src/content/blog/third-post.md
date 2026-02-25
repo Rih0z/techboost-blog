@@ -2,7 +2,7 @@
 title: 'Next.js App Routerの使い方 — Server ComponentsとClient Componentsの違い'
 description: 'Next.js 13以降のApp Routerを徹底解説。Server ComponentsとClient Componentsの使い分け、データフェッチ、Server Actionsまで。'
 pubDate: 'Feb 12 2026'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/thumbnails/third-post.jpg'
 ---
 
 Next.js 13で導入されたApp Routerは、Reactのサーバーコンポーネントを活用した新しいルーティングシステムです。この記事では、App Routerの基本から実践的なパターンまでを解説します。

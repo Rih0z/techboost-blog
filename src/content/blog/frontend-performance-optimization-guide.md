@@ -2,7 +2,7 @@
 title: 'フロントエンドパフォーマンス最適化完全ガイド2026：Lighthouse 100点への道'
 description: 'フロントエンドパフォーマンス最適化を徹底解説。Core Web Vitals・LCP/CLS/FID・コード分割・画像最適化・キャッシュ戦略・Critical CSS・Preloading・Service Worker・Bundle分析まで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/frontend-performance-optimization-guide.jpg'
 tags: ['Performance', 'Frontend', 'Lighthouse']
 ---
 

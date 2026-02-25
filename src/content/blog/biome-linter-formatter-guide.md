@@ -2,7 +2,7 @@
 title: 'Biome完全ガイド — ESLint + Prettierを置き換える超高速Rustベースツール'
 description: 'BiomeでESLint + Prettierを置き換える完全ガイド。biome.json設定・リント規則・フォーマット・インポート整理・VSCode統合・CI/CD・既存プロジェクト移行・パフォーマンス比較まで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/biome-linter-formatter-guide.jpg'
 tags: ['Biome', 'ESLint', 'Prettier', 'TypeScript', '開発ツール']
 ---
 

@@ -2,7 +2,7 @@
 title: 'MongoDB完全ガイド — Node.js・Mongoose・集計パイプライン・インデックス・Atlas'
 description: 'MongoDBをNode.js/TypeScriptで使いこなす完全ガイド。ドキュメント設計・Mongoose・CRUD・集計パイプライン・インデックス最適化・トランザクション・MongoDB Atlas・時系列コレクションまで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/mongodb-nodejs-guide.jpg'
 tags: ['MongoDB', 'Node.js', 'Mongoose', 'TypeScript', 'データベース']
 ---
 

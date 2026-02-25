@@ -2,7 +2,7 @@
 title: 'tRPC完全ガイド — フルスタック型安全API開発（Next.js + TypeScript）'
 description: 'tRPCでエンドツーエンドの型安全APIを構築する完全ガイド。Router定義・Procedure・Middleware・Zod validation・Next.js統合・React Query・無限スクロールまで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/thumbnails/trpc-complete-guide.jpg'
 tags: ['tRPC', 'TypeScript', 'Next.js', 'API', 'React Query']
 ---
 

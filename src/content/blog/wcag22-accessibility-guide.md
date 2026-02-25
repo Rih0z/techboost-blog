@@ -2,7 +2,7 @@
 title: 'WCAG 2.2準拠ガイド — Webアクセシビリティ実装の完全手引き'
 description: 'WCAG 2.2の新基準を含む全達成基準を解説。React/Next.jsでのアクセシブルなコンポーネント実装、ARIAラベル、カラーコントラスト、フォーカス管理など実践的なコード例で学ぶ完全ガイド。'
 pubDate: '2026-02-20'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+heroImage: '../../assets/thumbnails/wcag22-accessibility-guide.jpg'
 tags: ['アクセシビリティ', 'WCAG', 'ARIA', 'React', 'Next.js']
 ---
 
