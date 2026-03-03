@@ -2,7 +2,7 @@
 title: 'GitHub Actions完全ガイド2026 — CI/CDとワークフロー自動化'
 description: 'GitHub Actionsの完全ガイド。CI/CD、ワークフロー、デプロイ自動化、セキュリティ対策まで実践的に解説します。'
 pubDate: 'Feb 05 2026'
-tags: ['GitHub Actions', 'CI/CD', 'DevOps', 'Automation', 'Deployment']
+tags: ['GitHub Actions', 'CICD', 'DevOps', 'Automation', 'Deployment']
 ---
 
 GitHub Actionsは、GitHubに統合されたCI/CD（継続的インテグレーション/継続的デリバリー）プラットフォームです。2026年現在、多くの開発チームがGitHub Actionsを使ってビルド、テスト、デプロイを自動化しています。この記事では、GitHub Actionsの全機能を実践的に解説します。

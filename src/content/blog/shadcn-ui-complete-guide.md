@@ -3,7 +3,7 @@ title: 'shadcn/ui完全ガイド — Radix UI・Tailwind CSSで作るモダンUI
 description: 'shadcn/uiを使ったReactコンポーネント開発の完全ガイド。インストール・コンポーネント追加・カスタマイズ・テーマ・フォーム（react-hook-form + zod）・データテーブル・アクセシビリティまで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/shadcn-ui-complete-guide.jpg'
-tags: ['shadcn/ui', 'React', 'Tailwind CSS', 'TypeScript', 'UIコンポーネント']
+tags: ['shadcn-ui', 'React', 'Tailwind CSS', 'TypeScript', 'UIコンポーネント']
 ---
 
 ## はじめに

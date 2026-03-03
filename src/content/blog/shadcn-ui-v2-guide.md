@@ -2,7 +2,7 @@
 title: 'shadcn/ui v2完全ガイド2026 - 最新変更点、新コンポーネント、テーマシステム、CLI改善、カスタマイズ徹底解説'
 description: 'shadcn/ui v2の全機能を完全網羅。変更点、新コンポーネント、テーマシステム、CLI改善、カスタマイズまで実践的に解説します'
 pubDate: 'Feb 05 2026'
-tags: ['shadcn/ui', 'React', 'UI', 'Tailwind CSS']
+tags: ['shadcn-ui', 'React', 'UI', 'Tailwind CSS']
 ---
 
 # shadcn/ui v2完全ガイド2026

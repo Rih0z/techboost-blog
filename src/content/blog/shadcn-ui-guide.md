@@ -2,7 +2,7 @@
 title: "shadcn/ui完全ガイド - モダンUIコンポーネントの作り方"
 description: "shadcn/uiの基礎から実践まで徹底解説。セットアップ、主要コンポーネント、テーマカスタマイズ、react-hook-form/Zodとの連携、ダークモード対応を完全網羅。"
 pubDate: "2026-02-05"
-tags: ["shadcn/ui", "React", "Tailwind CSS", "UI", "Next.js"]
+tags: ["shadcn-ui", "React", "Tailwind CSS", "UI", "Next.js"]
 ---
 
 ## はじめに

@@ -2,7 +2,7 @@
 title: 'Dagger CI/CD実践ガイド - コンテナベースパイプライン構築'
 description: 'Daggerを使ったコンテナベースCI/CD構築を実践的に解説。TypeScript SDK、ポータブルCI、マルチプラットフォームビルド、GitHub Actions統合を習得'
 pubDate: '2025-02-06'
-tags: ['Dagger', 'CI/CD', 'Docker', 'TypeScript', 'DevOps']
+tags: ['Dagger', 'CICD', 'Docker', 'TypeScript', 'DevOps']
 ---
 
 # Dagger CI/CD実践ガイド - コンテナベースパイプライン構築

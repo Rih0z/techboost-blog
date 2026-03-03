@@ -2,7 +2,7 @@
 title: "Vercel v0でAI駆動のUI開発 — 2026年最新ガイド"
 description: "プロンプトからReactコンポーネントを自動生成するVercel v0の使い方、効果的なプロンプト、shadcn/uiとの連携、実践的なベストプラクティスを徹底解説"
 pubDate: "2026-02-05"
-tags: ["Vercel", "AI", "React", "v0", "shadcn/ui", "Tailwind CSS"]
+tags: ["Vercel", "AI", "React", "v0", "shadcn-ui", "Tailwind CSS"]
 ---
 
 # Vercel v0でAI駆動のUI開発 — 2026年最新ガイド

@@ -3,7 +3,7 @@ title: "Neonブランチングデータベース: Git的ワークフローでPos
 description: "Neonのデータベースブランチング機能を使って、Gitのようにデータベースをブランチ管理する方法を解説。開発からステージング、本番環境までのシームレスなワークフローを実現します。"
 pubDate: "2025-08-03"
 updatedDate: "2025-08-03"
-tags: ["Neon", "PostgreSQL", "データベース", "DevOps", "CI/CD"]
+tags: ["Neon", "PostgreSQL", "データベース", "DevOps", "CICD"]
 category: "Development"
 ---
 

@@ -2,7 +2,7 @@
 title: 'CSS @starting-style応用ガイド'
 description: 'CSS @starting-styleを使った表示時アニメーションの実践的な実装方法。ダイアログ、ポップオーバー、トースト通知、モーダルなどの自然なアニメーションパターンを解説します。'
 pubDate: 'Feb 06 2026'
-tags: ['CSS', 'アニメーション', 'UI/UX', 'Web標準', 'フロントエンド']
+tags: ['CSS', 'アニメーション', 'UI-UX', 'Web標準', 'フロントエンド']
 ---
 
 # CSS @starting-style応用ガイド

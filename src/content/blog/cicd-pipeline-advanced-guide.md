@@ -3,7 +3,7 @@ title: 'CI/CDパイプライン完全ガイド — GitHub Actions上級・マト
 description: 'GitHub Actions上級テクニックを完全解説。Reusable Workflows・マトリックスビルド・セクレット管理・OIDC・Docker Layer Caching・Kubernetes自動デプロイ・コスト最適化まで実装例付きで網羅。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/cicd-pipeline-advanced-guide.jpg'
-tags: ['GitHub Actions', 'CI/CD', 'DevOps', 'Docker', 'Kubernetes']
+tags: ['GitHub Actions', 'CICD', 'DevOps', 'Docker', 'Kubernetes']
 ---
 
 GitHub Actionsの基本を習得した後、次のステップは「本番レベルのCI/CDパイプライン設計」です。本記事では、Reusable Workflowsによるコード再利用からOIDCキーレス認証、Docker Layer Caching、Kubernetes自動デプロイ、カナリアリリース、セキュリティスキャン、コスト最適化まで、実務で直接使える上級テクニックを網羅的に解説します。

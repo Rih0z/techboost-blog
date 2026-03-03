@@ -2,7 +2,7 @@
 title: "GitHub ActionsでモノレポのCI/CDを構築する実践テクニック"
 description: "モノレポ環境でのGitHub Actions活用法を徹底解説。パス指定トリガー、マトリックスビルド、キャッシュ戦略、Changesetsによる自動リリースまで網羅します。"
 pubDate: "2026-02-05"
-tags: ["GitHub Actions", "CI/CD", "Monorepo", "DevOps"]
+tags: ["GitHub Actions", "CICD", "Monorepo", "DevOps"]
 ---
 
 ## モノレポCI/CDの課題
