@@ -2,7 +2,6 @@
 title: 'freee vs マネーフォワード徹底比較2026：エンジニア・フリーランスに最適な会計ソフトは？'
 description: 'freee会計とマネーフォワードクラウド確定申告を料金・UI・API連携・確定申告機能など7つの観点で徹底比較。エンジニア・フリーランス視点で最適な会計ソフトを解説します。'
 pubDate: 'Mar 05 2026'
-heroImage: '../../assets/blog-placeholder-4.jpg'
 tags: ['確定申告', 'freee', 'フリーランス', '会計', 'キャリア']
 ---
 
