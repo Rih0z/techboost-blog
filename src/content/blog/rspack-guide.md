@@ -2,7 +2,7 @@
 title: 'Rspack完全ガイド - Rust製高速バンドラーでwebpackから移行'
 description: 'Rspackの基礎から実践まで徹底解説。Rust製高速バンドラー、webpack互換API、10倍高速ビルド、マイグレーション方法、プラグイン対応、Next.js/React/Vue統合を完全網羅。'
 pubDate: 'Feb 05 2026'
-tags: ['Rspack', 'Bundler', 'Webpack', 'Build Tools', 'Rust']
+tags: ['Rspack', 'Bundler', 'Webpack', 'Build Tools', 'Rust', 'プログラミング']
 ---
 
 # Rspack完全ガイド

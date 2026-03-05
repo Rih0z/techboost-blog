@@ -2,7 +2,7 @@
 title: "Turso データベース入門ガイド"
 description: "Turso（libSQL）の特徴と使い方を解説。エッジで動作する分散SQLiteデータベースを活用した高速なアプリケーション開発"
 pubDate: "2025-02-05"
-tags: ["Turso", "libSQL", "Database", "SQLite", "Edge"]
+tags: ["Turso", "libSQL", "Database", "SQLite", "Edge", "インフラ"]
 ---
 
 Tursoは、SQLiteをベースにしたエッジ対応の分散データベースです。libSQLという拡張されたSQLiteフォークを使用し、グローバルに分散されたデータベースをローカルのSQLiteと同じように扱えます。

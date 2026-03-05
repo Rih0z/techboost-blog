@@ -3,7 +3,7 @@ title: "Deno KV実践ガイド: グローバル分散キーバリューストア
 description: "Deno KVの基本から、グローバル分散、リアルタイム同期、トランザクション、セカンダリインデックスまで、実践的な活用方法を解説します。"
 pubDate: "2025-09-28"
 updatedDate: "2025-09-28"
-tags: ["Deno", "Deno KV", "データベース", "Key-Value Store", "分散システム"]
+tags: ["Deno", "Deno KV", "データベース", "Key-Value Store", "分散システム", "プログラミング"]
 category: "Backend"
 ---
 

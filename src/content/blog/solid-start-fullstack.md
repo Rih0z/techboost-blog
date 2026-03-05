@@ -2,7 +2,7 @@
 title: 'SolidStart フルスタックフレームワーク入門'
 description: 'SolidStartでフルスタックアプリを構築。Fine-grained Reactivity、サーバー関数、ファイルベースルーティング、API Routes、認証実装まで実例で解説'
 pubDate: '2025-02-06'
-tags: ['SolidStart', 'SolidJS', 'フルスタック', 'SSR', 'サーバー関数']
+tags: ['SolidStart', 'SolidJS', 'フルスタック', 'SSR', 'サーバー関数', 'プログラミング']
 ---
 
 # SolidStart フルスタックフレームワーク入門

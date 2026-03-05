@@ -2,7 +2,7 @@
 title: 'ローカルファースト開発完全ガイド2026 - CRDT、同期エンジン、ElectricSQL、PowerSync、LiveStore徹底比較'
 description: 'CRDT、同期エンジン、オフライン対応の実装から、ElectricSQL、PowerSync、LiveStoreの比較まで。ローカルファースト開発の決定版ガイド'
 pubDate: 'Feb 05 2026'
-tags: ['ローカルファースト', 'CRDT', 'オフライン', 'ElectricSQL', 'データベース']
+tags: ['ローカルファースト', 'CRDT', 'オフライン', 'ElectricSQL', 'データベース', 'プログラミング']
 ---
 
 # ローカルファースト開発完全ガイド2026

@@ -2,6 +2,7 @@
 title: '【2026年最新】ChatGPT vs Claude 徹底比較 - エンジニアが選ぶべきAIはどっち？'
 description: 'ChatGPTとClaudeを10個の観点で徹底比較。コーディング、文章作成、データ分析など、用途別のおすすめを現役エンジニアが解説。'
 pubDate: 'Feb 01 2026'
+tags: ['プログラミング']
 ---
 
 AIアシスタントの二大巨頭、ChatGPT（OpenAI）とClaude（Anthropic）。どちらを使うべきか迷っているエンジニアのために、10個の観点で徹底比較します。

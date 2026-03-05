@@ -2,6 +2,7 @@
 title: "Kubernetes Gateway API完全ガイド"
 description: "次世代のKubernetesルーティング、Gateway APIの概念から実装まで徹底解説"
 pubDate: "2025-02-05"
+tags: ['インフラ']
 ---
 
 Kubernetes Gateway APIは、従来のIngressを置き換える次世代のルーティングAPIです。より表現力が高く、ロールベースで、ベンダー拡張にも対応した設計になっています。本記事では、Gateway APIの基本概念から実践的な実装例、TLS設定、トラフィック分割まで徹底的に解説します。

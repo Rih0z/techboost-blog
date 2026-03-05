@@ -2,7 +2,7 @@
 title: 'Cloudflare Workers AI完全ガイド2026 - エッジAI推論、LLM、画像生成、テキスト分類、RAG構築'
 description: 'Cloudflare Workers AIでエッジAI推論を実装。LLM、画像生成、テキスト分類、埋め込み、RAG構築の実践的な方法を徹底解説'
 pubDate: 'Feb 05 2026'
-tags: ['Cloudflare', 'AI', 'エッジコンピューティング', 'LLM']
+tags: ['Cloudflare', 'AI', 'エッジコンピューティング', 'LLM', 'プログラミング']
 ---
 
 # Cloudflare Workers AI完全ガイド2026

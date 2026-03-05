@@ -2,7 +2,7 @@
 title: "CI/CDベストプラクティス2026 — GitHub Actions, GitLab CI, CircleCI"
 description: "CI/CDパイプライン設計の最新ベストプラクティス。GitHub Actions, GitLab CI, CircleCIの比較、キャッシュ戦略、セキュリティ、デプロイ戦略まで徹底解説。"
 pubDate: "2026-02-05"
-tags: ["CICD", "GitHub Actions", "GitLab CI", "DevOps", "自動化"]
+tags: ["CICD", "GitHub Actions", "GitLab CI", "DevOps", "自動化", "インフラ"]
 ---
 
 ## CI/CDとは

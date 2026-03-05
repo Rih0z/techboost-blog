@@ -2,6 +2,7 @@
 title: 'Edge Runtime実践ガイド - 次世代のサーバーレス実行環境'
 description: 'Edge Runtimeの基本概念から、Vercel Edge Functions、Cloudflare Workers、Deno Deployまで、各プラットフォームの特徴・パフォーマンス比較・実践的なユースケースを網羅的に解説します。'
 pubDate: 'Feb 05 2026'
+tags: ['インフラ']
 ---
 
 # Edge Runtime実践ガイド - 次世代のサーバーレス実行環境

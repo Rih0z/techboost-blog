@@ -3,7 +3,7 @@ title: 'CSS アニメーション完全ガイド — transition・keyframes・sc
 description: 'CSSアニメーションを完全マスターする実践ガイド。transition・animation・@keyframes・CSS Custom Properties・Scroll-Driven Animations・View Transitions API・パフォーマンス最適化まで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/css-animations-guide.jpg'
-tags: ['CSS', 'アニメーション', 'フロントエンド', 'パフォーマンス', 'Web API']
+tags: ['CSS', 'アニメーション', 'フロントエンド', 'パフォーマンス', 'Web API', 'プログラミング']
 ---
 
 CSSアニメーションは、現代のWebにおいて「ただ動く」ものではなく、ユーザーの認知負荷を下げ、状態変化を直感的に伝え、ブランドの個性を表現するための重要な設計言語だ。しかし「とりあえずtransitionを書けばいい」という段階から抜け出せていないエンジニアは多い。

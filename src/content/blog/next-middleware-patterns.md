@@ -4,7 +4,7 @@ description: 'Next.js Middlewareの高度な設計パターン、マルチテナ
 pubDate: '2025-09-03'
 updatedDate: '2025-09-03'
 category: 'フレームワーク'
-tags: ['Next.js', 'Middleware', 'Edge', 'セキュリティ', 'パフォーマンス']
+tags: ['Next.js', 'Middleware', 'Edge', 'セキュリティ', 'パフォーマンス', 'プログラミング']
 ---
 
 # Next.js Middleware設計パターン

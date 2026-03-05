@@ -2,7 +2,7 @@
 title: 'Rspackバンドル最適化実践ガイド'
 description: 'RspackでのTree Shaking、Code Splitting、SWC設定を活用した実践的なバンドル最適化手法と、Webpack互換性の完全ガイド'
 pubDate: 2025-02-05
-tags: ['Rspack', 'Bundle Optimization', 'Tree Shaking', 'Code Splitting', 'SWC', 'Webpack', 'Performance']
+tags: ['Rspack', 'Bundle Optimization', 'Tree Shaking', 'Code Splitting', 'SWC', 'Webpack', 'Performance', 'プログラミング']
 ---
 
 Rspackは、Rustで書かれた高速なWebバンドラーとして、Webpackとの互換性を保ちながら圧倒的なビルド速度を実現します。本記事では、Rspackを使った実践的なバンドル最適化手法について解説します。

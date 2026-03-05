@@ -2,7 +2,7 @@
 title: 'CSS @propertyルール活用ガイド'
 description: 'CSS @propertyによるカスタムプロパティの型定義、初期値設定、アニメーション対応の実践的な使い方を完全解説'
 pubDate: 2025-02-05
-tags: ['CSS', '@property', 'Custom Properties', 'CSS Variables', 'Animation', 'Modern CSS']
+tags: ['CSS', '@property', 'Custom Properties', 'CSS Variables', 'Animation', 'Modern CSS', 'プログラミング']
 ---
 
 CSS `@property` ルールは、カスタムプロパティ（CSS変数）に型情報を与え、より強力で予測可能なスタイリングを実現する機能です。本記事では、`@property` の実践的な使い方について詳しく解説します。

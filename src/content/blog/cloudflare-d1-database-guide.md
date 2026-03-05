@@ -2,7 +2,7 @@
 title: 'Cloudflare D1データベース実践ガイド: SQLite at Edgeのパフォーマンスとスケーリング戦略'
 description: 'Cloudflare D1の高度な使い方を解説。データベース設計、インデックス最適化、バッチ処理、Workers連携パターン、本番運用のベストプラクティスまで実践的に網羅'
 pubDate: '2025-02-05'
-tags: ['Cloudflare D1', 'SQLite', 'Edge Computing', 'Workers', 'パフォーマンス最適化', 'データベース設計']
+tags: ['Cloudflare D1', 'SQLite', 'Edge Computing', 'Workers', 'パフォーマンス最適化', 'データベース設計', 'インフラ']
 ---
 
 # Cloudflare D1データベース実践ガイド: SQLite at Edgeのパフォーマンスとスケーリング戦略

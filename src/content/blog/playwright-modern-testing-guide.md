@@ -3,7 +3,7 @@ title: "Playwright完全ガイド2026: E2Eテスト・ブラウザ自動化・CI
 description: "Playwrightを使ったモダンなE2Eテストの完全ガイド。セットアップからページオブジェクトモデル、並列実行、ビジュアルリグレッションテスト、CI/CD統合まで実践的に解説します。"
 pubDate: "2026-02-06"
 category: "Testing"
-tags: ["Playwright", "E2E Testing", "Testing", "Automation", "CICD"]
+tags: ["Playwright", "E2E Testing", "Testing", "Automation", "CICD", "プログラミング"]
 ---
 
 Playwrightは、Microsoft開発の次世代ブラウザ自動化ツールです。本記事では、E2Eテストの基礎からCI/CD統合、ビジュアルリグレッションテストまで、Playwrightの全機能を実践的に解説します。

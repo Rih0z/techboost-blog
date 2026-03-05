@@ -2,7 +2,7 @@
 title: "Turborepo完全ガイド — モノレポ開発を10倍高速化する"
 description: "Turborepoを使ったモノレポ開発の完全ガイド。パイプライン設計、キャッシング戦略、リモートキャッシュ、pnpm workspaces連携まで実践的に解説します。"
 pubDate: "2026-02-05"
-tags: ["Turborepo", "Monorepo", "ビルドツール", "開発効率化"]
+tags: ["Turborepo", "Monorepo", "ビルドツール", "開発効率化", "プログラミング"]
 ---
 
 ## Turborepoとは

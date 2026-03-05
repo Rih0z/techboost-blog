@@ -2,6 +2,7 @@
 title: 'GraphQL Yogaサーバー構築ガイド - モダンなGraphQL開発'
 description: 'GraphQL Yogaを使った完全なサーバー構築ガイド。セットアップからスキーマ定義、リゾルバー実装、サブスクリプション、認証・認可まで実践的に解説'
 pubDate: 'Feb 05 2026'
+tags: ['インフラ']
 ---
 
 # GraphQL Yogaサーバー構築ガイド

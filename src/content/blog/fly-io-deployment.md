@@ -2,7 +2,7 @@
 title: "Fly.io デプロイメント実践ガイド - モダンアプリケーションの高速デプロイ"
 description: "Fly.ioを使った効率的なアプリケーションデプロイ方法を解説。Docker、データベース、スケーリングまで実践的なノウハウを紹介します。"
 pubDate: "2025-02-05"
-tags: ["devops", "deployment", "flyio", "infrastructure"]
+tags: ["devops", "deployment", "flyio", "infrastructure", "インフラ"]
 ---
 
 Fly.io は、グローバル分散型のアプリケーションプラットフォームで、シンプルなコマンド一つで世界中にアプリケーションをデプロイできます。この記事では、Fly.io の基本から実践的な使い方まで詳しく解説します。

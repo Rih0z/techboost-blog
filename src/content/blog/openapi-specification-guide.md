@@ -3,7 +3,7 @@ title: "OpenAPI仕様書完全ガイド: REST APIドキュメント自動生成"
 description: "OpenAPI Specification（旧Swagger）を使ったAPI設計からドキュメント自動生成まで徹底解説。2026年最新のOpenAPI 3.1対応の実践ガイドです。"
 pubDate: "2025-02-05"
 category: "Backend"
-tags: ["OpenAPI", "Swagger", "API", "REST", "Documentation"]
+tags: ["OpenAPI", "Swagger", "API", "REST", "Documentation", "プログラミング"]
 ---
 
 REST APIを開発する際、ドキュメント作成と保守は常に課題です。OpenAPI Specification（OAS）を使えば、API仕様を標準フォーマットで記述し、ドキュメント生成からクライアントコード生成まで自動化できます。本記事では、2026年最新のOpenAPI 3.1を使った実践的なAPI設計を解説します。

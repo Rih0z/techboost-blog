@@ -2,6 +2,7 @@
 title: "Railway.appでアプリを簡単デプロイ - モダンなPaaS完全ガイド"
 description: "Railway.appを使った簡単なアプリケーションデプロイ方法を解説。GitHubとの連携、データベース設定、環境変数管理、カスタムドメイン設定まで実践的に紹介します。"
 pubDate: "2025-02-05"
+tags: ['プログラミング']
 ---
 
 # Railway.appでアプリを簡単デプロイ

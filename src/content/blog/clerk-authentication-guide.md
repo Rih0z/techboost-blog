@@ -2,6 +2,7 @@
 title: "Clerkで始める次世代認証・ユーザー管理"
 description: "Clerk を使った最新の認証・ユーザー管理の実装方法を徹底解説。Next.js、React、Remix での実装例からカスタマイズまで完全網羅"
 pubDate: "2025-02-05"
+tags: ['プログラミング']
 ---
 
 ## Clerkとは

@@ -2,7 +2,7 @@
 title: "sqlc入門：GoでType-SafeなSQLクエリを実現する方法"
 description: "sqlcを使ってGoアプリケーションで型安全なSQL操作を実現する方法を解説。生SQLの柔軟性とORMの型安全性を両立させる実践ガイドです。"
 pubDate: "2025-02-06"
-tags: ["Go", "SQL", "sqlc", "Database", "Type Safety"]
+tags: ["Go", "SQL", "sqlc", "Database", "Type Safety", "プログラミング"]
 ---
 
 # sqlc入門：GoでType-SafeなSQLクエリを実現する方法

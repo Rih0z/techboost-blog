@@ -3,7 +3,7 @@ title: 'Inngest実践ガイド: サーバーレスワークフローとバック
 description: 'Inngestを使った複雑なワークフロー、リトライ戦略、スケジューリング、イベント駆動処理の実装方法を、実践的なユースケースと共に解説します。'
 pubDate: '2025-07-08'
 updatedDate: '2025-07-08'
-tags: ['Inngest', 'Serverless', 'Workflows', 'Background Jobs', 'Event-Driven']
+tags: ['Inngest', 'Serverless', 'Workflows', 'Background Jobs', 'Event-Driven', 'インフラ']
 category: 'backend'
 ---
 

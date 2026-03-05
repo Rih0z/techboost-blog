@@ -2,7 +2,7 @@
 title: 'Biome完全ガイド - Rust製高速リンター＆フォーマッターの決定版'
 description: 'BiomeでESLint/Prettierから移行する方法を徹底解説。高速リント、フォーマット、設定方法、CI統合、VSCode統合、モノレポ対応まで網羅的に学ぼう。'
 pubDate: 'Feb 05 2026'
-tags: ['Biome', 'Linter', 'Formatter', 'Rust', 'DevTools']
+tags: ['Biome', 'Linter', 'Formatter', 'Rust', 'DevTools', 'プログラミング']
 ---
 
 # Biome完全ガイド - Rust製高速リンター＆フォーマッターの決定版

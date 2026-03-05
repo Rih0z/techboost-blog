@@ -2,6 +2,7 @@
 title: "PocketBaseで5分でバックエンド構築 - オールインワンBaaS入門"
 description: "たった1つの実行ファイルで完結するバックエンド「PocketBase」の完全ガイド。認証、リアルタイムDB、ファイルストレージ、管理画面を爆速でセットアップし、Next.jsやSvelteと連携する方法を解説します。"
 pubDate: "2025-02-06"
+tags: ['プログラミング']
 ---
 
 # PocketBaseで5分でバックエンド構築

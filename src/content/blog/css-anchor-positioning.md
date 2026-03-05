@@ -2,7 +2,7 @@
 title: "CSS Anchor Positioning入門 — ツールチップとポップオーバーの新常識"
 description: "CSS Anchor Positioning APIの基本、anchor()関数、position-area、@position-try、Popover API連携による実践的なツールチップ・ポップオーバー実装を解説します。"
 pubDate: "2026-02-05"
-tags: ["CSS", "Anchor Positioning", "Popover", "Web Standards", "UI"]
+tags: ["CSS", "Anchor Positioning", "Popover", "Web Standards", "UI", "プログラミング"]
 ---
 
 ## CSS Anchor Positioningとは

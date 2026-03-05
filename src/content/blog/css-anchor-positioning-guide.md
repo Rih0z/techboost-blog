@@ -4,7 +4,7 @@ description: 'CSS Anchor Positioning APIの実践的な活用方法、複雑なU
 pubDate: '2025-10-07'
 updatedDate: '2025-10-07'
 category: 'CSS'
-tags: ['CSS', 'Anchor Positioning', 'UI', 'アクセシビリティ', 'アニメーション']
+tags: ['CSS', 'Anchor Positioning', 'UI', 'アクセシビリティ', 'アニメーション', 'プログラミング']
 ---
 
 # CSS Anchor Positioning実践

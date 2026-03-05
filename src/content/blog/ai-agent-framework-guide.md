@@ -2,7 +2,7 @@
 title: 'AIエージェントフレームワーク完全比較ガイド2026 - LangChain、LlamaIndex、CrewAI、AutoGPT、Claude Code SDK徹底解説'
 description: 'LangChain、LlamaIndex、CrewAI、AutoGPT、Claude Code SDKを徹底比較。AIエージェント開発のフレームワーク選定からユースケース別実装まで完全解説'
 pubDate: 'Feb 05 2026'
-tags: ['AI', 'LangChain', 'LlamaIndex', 'CrewAI', 'AutoGPT']
+tags: ['AI', 'LangChain', 'LlamaIndex', 'CrewAI', 'AutoGPT', 'プログラミング']
 ---
 
 # AIエージェントフレームワーク完全比較ガイド2026

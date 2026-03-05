@@ -2,7 +2,7 @@
 title: 'Lucia Auth → Better Authへの移行ガイド：認証ライブラリの選択肢'
 description: 'Lucia Authの非推奨化を受けて、Better AuthやAuth.jsへの移行パス、セッション管理の実装、各ライブラリの比較を詳しく解説します。'
 pubDate: 'Feb 05 2026'
-tags: ['Lucia Auth', 'Better Auth', 'Auth.js', '認証', 'Next.js', 'セッション管理']
+tags: ['Lucia Auth', 'Better Auth', 'Auth.js', '認証', 'Next.js', 'セッション管理', 'プログラミング']
 ---
 
 # Lucia Auth → Better Authへの移行ガイド：認証ライブラリの選択肢

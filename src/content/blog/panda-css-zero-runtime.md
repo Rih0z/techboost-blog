@@ -2,7 +2,7 @@
 title: "Panda CSS入門 — ゼロランタイムCSS-in-JSの実力を検証"
 description: "Panda CSSはビルド時にスタイルを抽出するゼロランタイムCSS-in-JS。パターン・レシピ・テーマ設定からTailwindとの比較まで実践的に解説します。"
 pubDate: "2026-02-05"
-tags: ["Panda CSS", "CSS-in-JS", "Styling", "Performance"]
+tags: ["Panda CSS", "CSS-in-JS", "Styling", "Performance", "プログラミング"]
 ---
 
 ## Panda CSSとは

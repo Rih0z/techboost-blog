@@ -3,7 +3,7 @@ title: "ローカルLLM開発環境構築完全ガイド - Ollama, llama.cpp, LM
 description: "ローカルでLLMを動かす環境を構築する完全ガイド。Ollama、llama.cpp、LM Studioの比較から、モデル選択、API統合、RAG実装まで実践的に解説。"
 pubDate: "2025-02-05"
 category: "AI"
-tags: ["LLM", "Ollama", "llama.cpp", "AI", "Local Development"]
+tags: ["LLM", "Ollama", "llama.cpp", "AI", "Local Development", "プログラミング"]
 ---
 
 ## はじめに

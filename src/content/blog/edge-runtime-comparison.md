@@ -2,7 +2,7 @@
 title: "エッジランタイム徹底比較 — Cloudflare Workers vs Vercel Edge vs Deno Deploy"
 description: "主要エッジランタイムの特徴、制限、パフォーマンス、料金体系を徹底比較。ユースケース別のおすすめプラットフォームと実装例を紹介します。"
 pubDate: "2026-02-05"
-tags: ["Edge Computing", "Cloudflare Workers", "Vercel", "Deno Deploy", "Serverless"]
+tags: ["Edge Computing", "Cloudflare Workers", "Vercel", "Deno Deploy", "Serverless", "インフラ"]
 ---
 
 エッジコンピューティングは、サーバーレスアーキテクチャの次のステップとして急速に普及しています。この記事では、主要なエッジランタイムであるCloudflare Workers、Vercel Edge Functions、Deno Deployを徹底比較し、それぞれの特徴と最適なユースケースを解説します。

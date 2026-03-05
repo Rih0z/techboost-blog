@@ -2,7 +2,7 @@
 title: 'Neon Serverless PostgreSQL完全ガイド'
 description: 'Neon Serverless PostgreSQLでデータベースを構築。ブランチング、オートスケーリング、エッジ接続、Prisma/Drizzle連携を実例とともに徹底解説'
 pubDate: '2025-02-06'
-tags: ['Neon', 'PostgreSQL', 'Serverless', 'Database', 'Prisma', 'Drizzle']
+tags: ['Neon', 'PostgreSQL', 'Serverless', 'Database', 'Prisma', 'Drizzle', 'インフラ']
 ---
 
 # Neon Serverless PostgreSQL完全ガイド

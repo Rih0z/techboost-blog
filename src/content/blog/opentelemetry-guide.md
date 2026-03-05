@@ -2,7 +2,7 @@
 title: 'OpenTelemetry入門ガイド - 分散トレーシングとオブザーバビリティの標準'
 description: 'OpenTelemetryの基礎から実践まで徹底解説。分散トレーシング、メトリクス収集、ログ統合、JavaScript/TypeScript SDK、Next.js/Node.js統合、実運用のベストプラクティスを完全網羅。'
 pubDate: 'Feb 05 2026'
-tags: ['OpenTelemetry', 'Observability', 'Tracing', 'Monitoring', 'Node.js']
+tags: ['OpenTelemetry', 'Observability', 'Tracing', 'Monitoring', 'Node.js', 'プログラミング']
 ---
 
 # OpenTelemetry入門ガイド

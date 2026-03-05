@@ -2,7 +2,7 @@
 title: 'PocketBaseでバックエンドを爆速構築 - 2026年版完全ガイド'
 description: 'たった1つのバイナリで動く次世代BaaS、PocketBaseを徹底解説。インストールからリアルタイムDB、認証、ファイルストレージ、本番デプロイまで完全網羅。'
 pubDate: 'Feb 05 2026'
-tags: ['PocketBase', 'Backend', 'BaaS', 'Database', 'Realtime']
+tags: ['PocketBase', 'Backend', 'BaaS', 'Database', 'Realtime', 'インフラ']
 ---
 
 PocketBaseは、たった1つの実行ファイルで動く超軽量バックエンドです。Firebase/Supabaseのようなリアルタイムデータベース、認証、ストレージを、Go言語のシングルバイナリとして提供します。2026年現在、個人開発からスタートアップまで幅広く採用されています。

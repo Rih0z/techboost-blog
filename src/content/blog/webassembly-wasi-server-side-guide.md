@@ -3,7 +3,7 @@ title: 'WebAssembly WASI完全ガイド：サーバーサイドWasmの実践【2
 description: 'WASI（WebAssembly System Interface）の基本からサーバーサイド実践まで完全解説。wasmtime・wasmer環境構築、RustでのWASIアプリ開発、ファイルシステム・ソケットアクセス、Cloudflare Workers・WasmEdge・Fastlyクラウド実行まで、日本語で体系的に学ぶ。'
 pubDate: 'Feb 21 2026'
 heroImage: '../../assets/thumbnails/webassembly-wasi-server-side-guide.jpg'
-tags: ['WebAssembly', 'WASI', 'Rust', 'サーバーサイド', 'Cloudflare Workers']
+tags: ['WebAssembly', 'WASI', 'Rust', 'サーバーサイド', 'Cloudflare Workers', 'プログラミング']
 ---
 
 WebAssembly（Wasm）はブラウザ内の高速実行環境として広く知られているが、2024〜2025年にかけてその活躍の舞台は急速にサーバーサイドへと広がった。その鍵となるのが **WASI（WebAssembly System Interface）** だ。WASIはWasmモジュールがOSのリソース（ファイルシステム・ネットワーク・環境変数）に安全にアクセスするための標準インターフェースであり、「ブラウザ外でのWasm実行」を可能にする基盤技術である。

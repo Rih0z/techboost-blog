@@ -3,7 +3,7 @@ title: 'Node.js Worker Threads実践: CPU集約タスクの並列処理'
 description: 'Node.js Worker Threadsを使ったCPU集約タスクの並列処理を実践的に解説。マルチスレッドプログラミングの基礎、ワーカープール実装、パフォーマンス最適化テクニックを紹介します。'
 pubDate: 2025-10-12
 updatedDate: 2025-10-12
-tags: ['nodejs', 'worker-threads', 'performance', 'concurrency', 'backend']
+tags: ['nodejs', 'worker-threads', 'performance', 'concurrency', 'backend', 'プログラミング']
 category: 'backend'
 ---
 

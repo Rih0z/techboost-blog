@@ -2,7 +2,7 @@
 title: 'Puppeteer完全ガイド：ヘッドレスブラウザ自動化の決定版'
 description: 'Puppeteerを使ったWebスクレイピング、自動テスト、PDF生成を徹底解説。実践的なパターンとアンチ検出テクニックまで完全網羅'
 pubDate: 'Feb 05 2026'
-tags: ['Puppeteer', 'スクレイピング', 'Node.js', '自動化', 'テスト', 'PDF生成']
+tags: ['Puppeteer', 'スクレイピング', 'Node.js', '自動化', 'テスト', 'PDF生成', 'プログラミング']
 ---
 
 # Puppeteer完全ガイド：ヘッドレスブラウザ自動化の決定版

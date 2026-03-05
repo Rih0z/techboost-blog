@@ -2,6 +2,7 @@
 title: '【初心者向け】Next.js + Vercel で無料Webアプリを公開する完全ガイド'
 description: 'Next.jsで作ったWebアプリをVercelに無料でデプロイする方法を、ゼロから丁寧に解説。環境構築からデプロイ、カスタムドメイン設定まで。'
 pubDate: 'Feb 04 2026'
+tags: ['プログラミング']
 ---
 
 Next.jsで作ったWebアプリを、Vercelの無料プランで世界に公開する方法を解説します。費用は完全にゼロです。

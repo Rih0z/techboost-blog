@@ -2,7 +2,7 @@
 title: "Web Components完全ガイド2026 — フレームワーク非依存のUI部品"
 description: "Web Componentsの基本技術（Custom Elements、Shadow DOM、HTML Templates、Declarative Shadow DOM）からLit 3.x活用まで、実践的に解説します。"
 pubDate: "2026-02-05"
-tags: ["Web Components", "Custom Elements", "Shadow DOM", "Lit", "標準技術"]
+tags: ["Web Components", "Custom Elements", "Shadow DOM", "Lit", "標準技術", "プログラミング"]
 ---
 
 Web Componentsは、フレームワークに依存しない再利用可能なUI部品を作成するための標準技術です。2026年では、すべてのモダンブラウザで完全にサポートされ、実用性が大幅に向上しました。

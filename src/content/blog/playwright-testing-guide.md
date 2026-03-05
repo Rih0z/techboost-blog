@@ -2,6 +2,7 @@
 title: "Playwrightで始めるE2Eテスト実践ガイド"
 description: "Microsoft製のモダンE2EテスティングフレームワークPlaywrightで、信頼性の高いブラウザ自動テストを構築。並列実行、複数ブラウザ対応、デバッグツールなど充実の機能を解説"
 pubDate: "2025-02-06"
+tags: ['プログラミング']
 ---
 
 # Playwrightで始めるE2Eテスト実践ガイド

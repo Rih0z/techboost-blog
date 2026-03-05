@@ -2,7 +2,7 @@
 title: "CSS Popover API 活用ガイド - JavaScriptなしで実装するモダンなポップオーバー"
 description: "CSS Popover APIを使用してJavaScriptなしでポップオーバーを実装する方法を解説。基本的な使い方からアクセシビリティ対応まで実践的に学びます。"
 pubDate: "2025-02-05"
-tags: ["CSS", "Web API", "HTML", "アクセシビリティ"]
+tags: ["CSS", "Web API", "HTML", "アクセシビリティ", "プログラミング"]
 ---
 
 ## CSS Popover APIとは

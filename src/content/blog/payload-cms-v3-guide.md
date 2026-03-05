@@ -2,6 +2,7 @@
 title: "Payload CMS v3完全ガイド - Next.js統合とTypeScript完全対応"
 description: "Payload CMS v3の新機能を徹底解説。Next.js App Routerとの完全統合、TypeScript型生成、ローカルAPI、バージョン管理など、最新機能を使った実践的なヘッドレスCMS構築方法を紹介します。"
 pubDate: "2025-02-05"
+tags: ['プログラミング']
 ---
 
 ## Payload CMS v3とは

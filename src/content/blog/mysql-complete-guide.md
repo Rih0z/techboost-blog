@@ -3,7 +3,7 @@ title: 'MySQL完全ガイド2026：データベース設計から最適化まで
 description: 'MySQLの基本から応用まで完全解説。SQL基礎・テーブル設計・インデックス最適化・トランザクション・レプリケーション・パーティショニング・Node.js/Python連携・Docker設定まで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/mysql-complete-guide.jpg'
-tags: ['MySQL', 'Database', 'Backend']
+tags: ['MySQL', 'Database', 'Backend', 'インフラ']
 ---
 
 MySQLは世界で最も広く使われているオープンソースのリレーショナルデータベース管理システム（RDBMS）だ。WordPress・Laravel・Drupalなど主要なWebフレームワークのデフォルトデータベースとして採用されており、Facebook・Twitter・YouTube・Airbnbなど大規模サービスの根幹を支えてきた実績がある。

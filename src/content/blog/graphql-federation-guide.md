@@ -2,7 +2,7 @@
 title: "GraphQL Federation入門 — マイクロサービスのスキーマ統合"
 description: "Apollo Federation 2でマイクロサービスのGraphQLスキーマを統合する方法を解説。サブグラフ設計、ゲートウェイ構築、エンティティ解決、パフォーマンス最適化まで実践的にガイドします。"
 pubDate: "2026-02-05"
-tags: ["GraphQL", "Apollo Federation", "マイクロサービス", "API", "分散システム"]
+tags: ["GraphQL", "Apollo Federation", "マイクロサービス", "API", "分散システム", "プログラミング"]
 ---
 
 GraphQL Federationは、複数のGraphQLサービスを統合して1つの統一されたGraphQLスキーマを提供する技術です。この記事では、Apollo Federation 2を使ったマイクロサービスアーキテクチャの実装方法を解説します。

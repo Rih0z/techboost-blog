@@ -2,7 +2,7 @@
 title: 'Nuxt 4完全ガイド - Nitro v3とVue 3.5で進化した最新フレームワーク'
 description: 'Nuxt 4の新機能を徹底解説。Nitro v3統合、Vue 3.5対応、サーバーコンポーネント、パフォーマンス改善など、アップグレード方法から実践的な使い方まで完全ガイド'
 pubDate: 'Feb 05 2026'
-tags: ['Nuxt', 'Vue', 'SSR', 'フロントエンド']
+tags: ['Nuxt', 'Vue', 'SSR', 'フロントエンド', 'プログラミング']
 ---
 
 # Nuxt 4完全ガイド - Nitro v3とVue 3.5で進化した最新フレームワーク

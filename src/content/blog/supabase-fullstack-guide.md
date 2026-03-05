@@ -2,7 +2,7 @@
 title: 'Supabaseフルスタック開発完全ガイド — 認証・DB・ストレージ・リアルタイム機能を徹底解説'
 description: 'Supabaseの全機能を徹底解説。PostgreSQL、認証、ストレージ、リアルタイム、Edge Functionsまで、実践的なコード例とともに完全網羅。Next.js 15との統合パターンやベストプラクティスも紹介します。'
 pubDate: '2025-02-06'
-tags: ['Supabase', 'PostgreSQL', 'Backend', 'Authentication', 'Database']
+tags: ['Supabase', 'PostgreSQL', 'Backend', 'Authentication', 'Database', 'インフラ']
 ---
 
 Supabaseは「オープンソース版Firebase」として急成長しているBaaS（Backend as a Service）プラットフォームです。2026年現在、Next.js、Remix、SvelteKitなど主要フレームワークとの統合が充実し、フルスタック開発の定番ツールとなっています。

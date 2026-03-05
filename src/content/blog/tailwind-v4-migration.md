@@ -2,7 +2,7 @@
 title: 'Tailwind CSS v4移行完全ガイド — 新機能とブレイキングチェンジ対策'
 description: 'Tailwind CSS v4の全貌を徹底解説。Oxide Engine、Container Queries、CSS変数ベース設定、@themeディレクティブなど新機能と、v3からの移行手順、ブレイキングチェンジ対策を実践的に紹介します。'
 pubDate: '2025-02-06'
-tags: ['Tailwind CSS', 'CSS', 'Frontend', 'Migration']
+tags: ['Tailwind CSS', 'CSS', 'Frontend', 'Migration', 'プログラミング']
 ---
 
 Tailwind CSS v4が2024年末にアルファ版としてリリースされ、2026年現在では安定版として多くのプロジェクトで採用されています。パフォーマンスの大幅向上、設定の簡素化、新機能の追加など、v3からの進化は劇的です。

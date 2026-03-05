@@ -2,12 +2,7 @@
 title: "Docker + Kubernetes本番運用ガイド2026：最小構成から始めるコンテナ化"
 description: "Dockerコンテナ化とKubernetesによる本番運用を実践的に解説。最小構成から始めてスケールするための設計パターン、セキュリティベストプラクティス、CI/CD連携まで網羅。"
 pubDate: "2026-03-15"
-tags:
-  - "Docker"
-  - "Kubernetes"
-  - "インフラ"
-  - "DevOps"
-  - "クラウド"
+tags: ["Docker", "Kubernetes", "インフラ", "DevOps", "クラウド"]
 ---
 
 ## Dockerがなぜ2026年も必須なのか

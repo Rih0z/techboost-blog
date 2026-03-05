@@ -3,6 +3,7 @@ title: 'Git/GitHub実践ガイド — チーム開発で使えるブランチ戦
 description: 'Gitの基本操作からGitHub Flow、プルリクエストの書き方まで。チーム開発の現場で使える実践的なワークフローを解説。'
 pubDate: 'Feb 09 2026'
 heroImage: '../../assets/thumbnails/markdown-style-guide.jpg'
+tags: ['プログラミング']
 ---
 
 Gitはソースコード管理の標準ツールですが、チーム開発では適切なブランチ戦略とワークフローが重要です。この記事では、実務で使えるGitの知識を解説します。

@@ -2,7 +2,7 @@
 title: "Tauri 2.0 デスクトップアプリ開発完全ガイド - Rust + Web技術で作る次世代アプリ"
 description: "TauriでRustとWeb技術を組み合わせた軽量・高速・安全なクロスプラットフォームデスクトップアプリケーション開発を学びます。環境構築から本番リリースまで徹底解説。"
 pubDate: "2025-02-05"
-tags: ["tauri", "rust", "desktop", "electron", "cross-platform"]
+tags: ["tauri", "rust", "desktop", "electron", "cross-platform", "プログラミング"]
 ---
 
 ## Tauriとは

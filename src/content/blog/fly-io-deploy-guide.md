@@ -2,7 +2,7 @@
 title: 'Fly.ioでグローバルデプロイ - 2026年版実践ガイド'
 description: 'エッジコンピューティング時代のデプロイプラットフォームFly.ioを徹底解説。無料枠から本番運用、スケーリング、マルチリージョン展開まで完全網羅。'
 pubDate: 'Feb 05 2026'
-tags: ['Fly.io', 'Deploy', 'Edge Computing', 'DevOps', 'Infrastructure']
+tags: ['Fly.io', 'Deploy', 'Edge Computing', 'DevOps', 'Infrastructure', 'インフラ']
 ---
 
 Fly.ioは、世界中のエッジロケーションにアプリケーションをデプロイできる次世代プラットフォームです。2026年現在、Vercel/Netlifyの代替として、さらにはHerokuの後継として多くの開発者に選ばれています。本記事では、Fly.ioの魅力と実践的な使い方を徹底解説します。

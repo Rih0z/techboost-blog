@@ -2,7 +2,7 @@
 title: "Rust + WebAssemblyでフロントエンド高速化 — 実践入門ガイド"
 description: "RustとWebAssemblyを組み合わせてフロントエンドを高速化。wasm-pack、wasm-bindgen、JavaScript連携、画像処理・暗号化の実装例を紹介します。"
 pubDate: "2026-02-05"
-tags: ["Rust", "WebAssembly", "WASM", "Performance"]
+tags: ["Rust", "WebAssembly", "WASM", "Performance", "プログラミング"]
 ---
 
 ## なぜRust + WebAssembly?

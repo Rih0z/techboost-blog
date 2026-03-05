@@ -2,7 +2,7 @@
 title: "Wrangler CLI完全ガイド：Cloudflare Workersの開発・デプロイ効率化"
 description: "Wrangler CLIを使ったCloudflare Workersの開発からデプロイまでの完全ガイド。効率的なワークフロー構築とベストプラクティスを解説します。"
 pubDate: "2025-02-06"
-tags: ["Cloudflare", "Wrangler", "CLI", "Serverless", "DevOps"]
+tags: ["Cloudflare", "Wrangler", "CLI", "Serverless", "DevOps", "インフラ"]
 ---
 
 # Wrangler CLI完全ガイド：Cloudflare Workersの開発・デプロイ効率化

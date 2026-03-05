@@ -3,7 +3,7 @@ title: 'Playwrightビジュアルリグレッションテスト: スクリーン
 description: 'Playwrightのビジュアルリグレッションテスト機能を使い、スクリーンショット比較でUIの意図しない変更を自動検出する方法を実践的に解説します。'
 pubDate: '2025-07-22'
 updatedDate: '2025-07-22'
-tags: ['Playwright', 'Testing', 'Visual Regression', 'E2E', 'UI Testing']
+tags: ['Playwright', 'Testing', 'Visual Regression', 'E2E', 'UI Testing', 'プログラミング']
 category: 'testing'
 ---
 

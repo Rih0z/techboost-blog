@@ -2,7 +2,7 @@
 title: "htmx実践ガイド - JavaScriptを書かずに実現するモダンWeb開発の新常識"
 description: "htmxを使ってJavaScriptフレームワークなしでSPAライクな体験を実現する実践ガイド。HATEOAS、部分更新、楽観的UI、WebSocketsの活用法を豊富なコード例とともに解説。"
 pubDate: "2025-02-06"
-tags: ["htmx", "html", "hypermedia", "backend", "progressive-enhancement"]
+tags: ["htmx", "html", "hypermedia", "backend", "progressive-enhancement", "プログラミング"]
 ---
 
 htmxは「JavaScriptを書かずにモダンなWebアプリを作る」という革新的なアプローチを提供するライブラリです。HTML属性だけでAJAX、CSS Transitions、WebSockets、Server-Sent Eventsを扱えます。

@@ -2,7 +2,7 @@
 title: "エッジコンピューティング入門2026 - Cloudflare Workers実践ガイド"
 description: "エッジコンピューティングの基礎から、Cloudflare Workers、Deno Deploy、Vercel Edge Functionsの比較、実装例まで徹底解説。2026年のエッジ開発完全ガイドです。"
 pubDate: "2026-02-05"
-tags: ["エッジコンピューティング", "Cloudflare Workers", "サーバーレス", "パフォーマンス"]
+tags: ["エッジコンピューティング", "Cloudflare Workers", "サーバーレス", "パフォーマンス", "プログラミング"]
 ---
 
 ## はじめに

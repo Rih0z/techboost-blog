@@ -2,7 +2,7 @@
 title: 'ElectricSQL: ローカルファーストアプリケーション同期フレームワーク入門'
 description: 'ElectricSQLでローカルファーストアプリを構築。PostgreSQL同期、オフライン対応、CRDT競合解決、リアクティブクエリの実装方法を実例とともに徹底解説'
 pubDate: '2025-02-06'
-tags: ['ElectricSQL', 'PostgreSQL', 'オフライン', 'CRDT', 'ローカルファースト']
+tags: ['ElectricSQL', 'PostgreSQL', 'オフライン', 'CRDT', 'ローカルファースト', 'プログラミング']
 ---
 
 # ElectricSQL: ローカルファーストアプリケーション同期フレームワーク入門

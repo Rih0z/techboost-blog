@@ -2,6 +2,7 @@
 title: "Honoで始めるエッジフレームワーク開発 - 超軽量で高速なWebアプリケーション"
 description: "Cloudflare WorkersやDeno、Bun対応の超軽量Webフレームワーク「Hono」の実践ガイド。エッジコンピューティングで高速なAPIとWebアプリを構築する方法を解説します。"
 pubDate: "2025-02-06"
+tags: ['プログラミング']
 ---
 
 # Honoで始めるエッジフレームワーク開発

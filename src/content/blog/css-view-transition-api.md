@@ -2,6 +2,7 @@
 title: "View Transition APIでページ遷移アニメーション"
 description: "モダンブラウザの新機能View Transition APIを使って、ネイティブアプリのようなスムーズなページ遷移とアニメーションを実装する完全ガイド"
 pubDate: "2025-02-06"
+tags: ['プログラミング']
 ---
 
 # View Transition APIでページ遷移アニメーション

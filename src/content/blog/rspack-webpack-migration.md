@@ -2,6 +2,7 @@
 title: 'RspackでWebpackプロジェクトを高速化する完全移行ガイド'
 description: 'Webpack から Rspack への段階的な移行手順と、実際のパフォーマンス比較結果を詳しく解説します。互換性を保ちながら、ビルド時間を最大10倍高速化しましょう。'
 pubDate: 'Feb 05 2026'
+tags: ['プログラミング']
 ---
 
 # RspackでWebpackプロジェクトを高速化する完全移行ガイド

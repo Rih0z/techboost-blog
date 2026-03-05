@@ -2,7 +2,7 @@
 title: 'Fresh完全ガイド - DenoのWebフレームワークで高速開発'
 description: 'Fresh（Deno）の基本からIslands Architecture、ルーティング、ミドルウェア、Deno Deployまで。Deno上のモダンWebフレームワークを徹底解説。'
 pubDate: 'Feb 05 2026'
-tags: ['Fresh', 'Deno', 'Web Framework', 'Islands Architecture']
+tags: ['Fresh', 'Deno', 'Web Framework', 'Islands Architecture', 'プログラミング']
 ---
 
 # Fresh完全ガイド - DenoのWebフレームワークで高速開発

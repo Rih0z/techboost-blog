@@ -3,12 +3,7 @@ title: "Next.js 15 App Router完全ガイド2026：Server Actions・Partial Prer
 description: "Next.js 15の新機能を実践的に解説。Server Actionsのフォーム処理・Partial Prerendering（PPR）・Turbopack・React 19統合の使い方とベストプラクティス。"
 pubDate: "2026-03-10"
 heroImage: '../../assets/thumbnails/nextjs15-app-router-complete-guide-2026.jpg'
-tags:
-  - "Next.js 15"
-  - "App Router"
-  - "Server Actions"
-  - "React 19"
-  - "PPR"
+tags: ["Next.js 15", "App Router", "Server Actions", "React 19", "PPR", "プログラミング"]
 ---
 
 ## Next.js 15の主要変更点

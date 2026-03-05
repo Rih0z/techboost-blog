@@ -2,7 +2,7 @@
 title: "Tauri v2でデスクトップアプリ開発 — Electron代替の決定版"
 description: "Tauri v2の新機能、プロジェクト作成、IPC通信、マルチプラットフォームビルド、プラグインシステムを解説。軽量で安全なデスクトップアプリを開発しましょう。"
 pubDate: "2026-02-05"
-tags: ["Tauri", "Desktop App", "Rust", "Electron Alternative"]
+tags: ["Tauri", "Desktop App", "Rust", "Electron Alternative", "プログラミング"]
 ---
 
 ## Tauriとは

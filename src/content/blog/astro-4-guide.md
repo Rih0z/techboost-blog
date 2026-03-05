@@ -2,7 +2,7 @@
 title: "Astro 4完全ガイド - コンテンツコレクションとアイランドアーキテクチャで構築する次世代Webサイト"
 description: "Astro 4の新機能であるコンテンツコレクション、アイランドアーキテクチャ、ビューTransitions APIを使った高速で保守性の高いWebサイト構築の実践ガイド。ブログ、ドキュメントサイト、コーポレートサイトの実装例も紹介。"
 pubDate: "2025-02-06"
-tags: ["astro", "frontend", "performance", "ssg", "content-collections"]
+tags: ["astro", "frontend", "performance", "ssg", "content-collections", "プログラミング"]
 ---
 
 Astro 4は、静的サイト生成（SSG）とコンテンツ管理の分野で革新的なフレームワークです。**コンテンツコレクション**と**アイランドアーキテクチャ**により、パフォーマンスと開発者体験を両立させた次世代のWebサイト構築を実現します。

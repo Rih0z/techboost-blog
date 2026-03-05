@@ -2,6 +2,7 @@
 title: "Render.comでアプリをデプロイする完全ガイド - 無料枠から本番運用まで"
 description: "Render.comでWebアプリ、API、静的サイト、データベースをデプロイ。GitHub連携、環境変数、カスタムドメイン、自動デプロイ、料金プラン、Vercel/Herokuとの比較まで完全解説"
 pubDate: "2025-02-05"
+tags: ['インフラ']
 ---
 
 # Render.comでアプリをデプロイする完全ガイド

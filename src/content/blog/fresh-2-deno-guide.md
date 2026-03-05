@@ -2,6 +2,7 @@
 title: "Fresh 2.0 Denoフレームワーク完全ガイド"
 description: "Fresh 2.0の新機能、Islands Architecture、Deno Deployとの連携まで徹底解説"
 pubDate: "2025-02-05"
+tags: ['プログラミング']
 ---
 
 Fresh 2.0は、Denoエコシステムにおける次世代Webフレームワークとして大きな注目を集めています。本記事では、Fresh 2.0の新機能からIslands Architectureの実践的な使い方、Deno Deployとの連携、パフォーマンス最適化まで、完全に解説します。

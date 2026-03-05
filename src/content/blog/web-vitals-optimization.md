@@ -3,7 +3,7 @@ title: "Core Web Vitals最適化実践ガイド2026"
 description: "GoogleのCore Web Vitalsを改善してSEOとユーザー体験を向上させる実践的な手法を解説。LCP、INP、CLSの最適化テクニックを具体例とともに紹介します。"
 pubDate: "2025-02-05"
 category: "Performance"
-tags: ["Web Vitals", "Performance", "SEO", "UX", "Optimization"]
+tags: ["Web Vitals", "Performance", "SEO", "UX", "Optimization", "プログラミング"]
 ---
 
 GoogleのCore Web Vitalsは、SEOランキングとユーザー体験に直接影響する重要な指標です。2024年のINP導入を経て、2026年現在、これらの指標はさらに重要性を増しています。本記事では、LCP、INP、CLSを実践的に改善する手法を解説します。

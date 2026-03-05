@@ -2,6 +2,7 @@
 title: "Supabase Edge Functionsで始めるサーバーレス開発"
 description: "Supabase Edge Functionsを使用して、グローバルに高速でスケーラブルなサーバーレス関数を構築する方法を詳しく解説します。"
 pubDate: "2025-02-05"
+tags: ['インフラ']
 ---
 
 Supabaseは、Firebase代替のオープンソースBaaS（Backend as a Service）として急速に人気を集めています。その中でも特に注目されているのが **Supabase Edge Functions** です。これは、Deno Deployをベースにしたサーバーレス関数実行環境で、グローバルに分散されたエッジロケーションでコードを実行できます。

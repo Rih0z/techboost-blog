@@ -2,7 +2,7 @@
 title: "エッジファンクション徹底比較 - Vercel vs Cloudflare vs Deno Deploy"
 description: "Vercel Edge Functions、Cloudflare Workers、Deno Deployを詳細比較。パフォーマンス、価格、DX、制約を実測データと実装例で解説します。"
 pubDate: "2025-02-05"
-tags: ["エッジコンピューティング", "Vercel", "Cloudflare", "Deno", "サーバーレス"]
+tags: ["エッジコンピューティング", "Vercel", "Cloudflare", "Deno", "サーバーレス", "インフラ"]
 ---
 
 ## はじめに

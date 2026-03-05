@@ -2,6 +2,7 @@
 title: "Waku RSCフレームワーク入門 - 軽量React Server Componentsの実装"
 description: "Waku軽量React Server Componentsフレームワークの完全ガイド。セットアップ、ルーティング、サーバーコンポーネントとクライアントコンポーネントの使い分け、Vercelへのデプロイ方法を解説します。"
 pubDate: "2025-02-05"
+tags: ['プログラミング']
 ---
 
 Wakuは、React Server Components（RSC）を中心に設計された軽量でミニマルなフレームワークです。Next.jsよりもシンプルで、RSCの本質的な機能に焦点を当てています。

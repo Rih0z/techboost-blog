@@ -2,7 +2,7 @@
 title: "Vercel AI SDKでストリーミングAIチャットを実装する【完全ガイド】"
 description: "Vercel AI SDK 4.xを使ったストリーミングAIチャットの実装方法を徹底解説。useChat、ツール呼び出し、RAG統合まで実践的に網羅します。"
 pubDate: "2026-02-05"
-tags: ["Vercel", "AI SDK", "OpenAI", "Streaming", "RAG"]
+tags: ["Vercel", "AI SDK", "OpenAI", "Streaming", "RAG", "プログラミング"]
 ---
 
 ## Vercel AI SDKとは

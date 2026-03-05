@@ -2,7 +2,7 @@
 title: 'Go言語Context完全ガイド: キャンセル・タイムアウト・値の伝播'
 description: 'Go言語のcontextパッケージを徹底解説。WithCancel、WithTimeout、WithValueの使い方、伝播パターン、ベストプラクティスを実例コード付きで説明します。'
 pubDate: 'Feb 05 2025'
-tags: ['Go', 'Golang', 'Context', 'Concurrency', 'BestPractices']
+tags: ['Go', 'Golang', 'Context', 'Concurrency', 'BestPractices', 'プログラミング']
 ---
 
 Go言語の`context`パッケージは、ゴルーチン間でキャンセル信号、デッドライン、リクエストスコープの値を伝播するための標準的な仕組みです。Web APIやデータベースアクセスで必須の知識です。

@@ -2,7 +2,7 @@
 title: 'APIレートリミティング実装ガイド2026 - トークンバケット、スライディングウィンドウ、Redis実装、Express/Hono対応'
 description: 'APIレートリミティングの実装を完全解説。トークンバケット、スライディングウィンドウ、Redis実装、Express/Hono対応まで実践的に紹介'
 pubDate: 'Feb 05 2026'
-tags: ['API', 'セキュリティ', 'Redis', 'Node.js']
+tags: ['API', 'セキュリティ', 'Redis', 'Node.js', 'インフラ']
 ---
 
 # APIレートリミティング実装ガイド2026

@@ -2,6 +2,7 @@
 title: 'モノレポ管理ツール徹底比較：Turborepo vs Nx - 2026年版'
 description: 'Turborepo と Nx を実際のプロジェクトで比較。セットアップ手順、パフォーマンス、開発者体験（DX）、スケーラビリティなど、あらゆる観点から両ツールを詳しく解説します。'
 pubDate: 'Feb 05 2026'
+tags: ['プログラミング']
 ---
 
 # モノレポ管理ツール徹底比較：Turborepo vs Nx - 2026年版

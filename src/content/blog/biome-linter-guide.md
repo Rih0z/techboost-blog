@@ -2,7 +2,7 @@
 title: 'Biome（旧Rome）で高速リント＆フォーマット - ESLint/Prettierの代替ツール'
 description: 'Biomeの導入方法、設定、ESLint/Prettierからの移行手順を徹底解説。高速で統一されたコード品質管理を実現する次世代ツールチェインの使い方。'
 pubDate: 'Feb 05 2026'
-tags: ['Biome', 'Linter', 'Formatter']
+tags: ['Biome', 'Linter', 'Formatter', 'プログラミング']
 ---
 
 # Biome（旧Rome）で高速リント＆フォーマット - ESLint/Prettierの代替ツール

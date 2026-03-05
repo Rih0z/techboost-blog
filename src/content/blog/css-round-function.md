@@ -2,6 +2,7 @@
 title: "CSS round()関数でピクセルパーフェクトなレイアウトを実現する"
 description: "CSS Values and Units Module Level 4で導入されたround()関数を使えば、計算結果を指定した間隔に丸めることができます。レスポンシブデザインやグリッドレイアウトで威力を発揮します。"
 pubDate: "2025-02-05"
+tags: ['プログラミング']
 ---
 
 ## CSS round()関数とは

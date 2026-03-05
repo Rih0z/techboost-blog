@@ -2,7 +2,7 @@
 title: 'Supabase完全ガイド2026 — Firebase代替のオープンソースBaaS'
 description: 'Supabaseの完全ガイド。PostgreSQL、認証、ストレージ、リアルタイム機能を網羅。Firebaseからの移行方法や実践的な使い方を詳しく解説します。'
 pubDate: 'Feb 05 2026'
-tags: ['Supabase', 'BaaS', 'PostgreSQL', 'Backend', 'Database']
+tags: ['Supabase', 'BaaS', 'PostgreSQL', 'Backend', 'Database', 'インフラ']
 ---
 
 Supabaseは「オープンソース版Firebase」として急速に普及しているBaaS（Backend as a Service）プラットフォームです。PostgreSQLベースのデータベース、認証、ストレージ、リアルタイム機能を提供し、2026年現在、多くの開発者に支持されています。この記事では、Supabaseの全機能を実践的に解説します。

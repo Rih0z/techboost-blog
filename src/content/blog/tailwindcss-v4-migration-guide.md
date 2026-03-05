@@ -3,7 +3,7 @@ title: 'Tailwind CSS v4 完全移行ガイド【2026年版】'
 description: 'Tailwind CSS v4の新機能と破壊的変更を解説。v3からv4への移行手順、@theme変数、CSS-firstアプローチ、Vite/Next.js対応まで網羅。'
 pubDate: '2026-02-22'
 heroImage: '../../assets/thumbnails/tailwindcss-v4-migration-guide.jpg'
-tags: ['tailwindcss', 'css', 'frontend', 'migration']
+tags: ['tailwindcss', 'css', 'frontend', 'migration', 'プログラミング']
 ---
 
 Tailwind CSS v4は既存の `tailwind.config.js` を廃止し、CSS ファイル自体で設定を完結させる「CSS-first」アーキテクチャに移行した。v3プロジェクトを v4 に移行する際、設定ファイルの書き方・クラス名・プラグイン API がすべて変わるため、チームとして体系的な移行計画が必要になる。

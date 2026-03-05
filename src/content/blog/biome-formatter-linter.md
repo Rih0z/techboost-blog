@@ -2,7 +2,7 @@
 title: "Biome統合フォーマッター・リンター完全ガイド - Prettier/ESLintからの移行と高速化"
 description: "BiomeによるPrettier/ESLint統合の完全ガイド。インストール、設定、移行手順、CI/CD統合、VSCode設定、パフォーマンス比較まで実践的に解説します。"
 pubDate: "2025-02-05"
-tags: ["biome", "linter", "formatter", "prettier", "eslint", "tooling", "dx"]
+tags: ["biome", "linter", "formatter", "prettier", "eslint", "tooling", "dx", "プログラミング"]
 ---
 
 Biomeは、PrettierとESLintを統合した次世代のツールチェーンです。Rustで書かれており、**従来のツールと比べて最大100倍高速**に動作します。2024年にv1.0がリリースされ、本番環境での使用が推奨されるレベルに到達しました。

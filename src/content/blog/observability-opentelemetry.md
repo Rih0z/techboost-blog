@@ -2,7 +2,7 @@
 title: "OpenTelemetryで始めるオブザーバビリティ入門【実践ガイド】"
 description: "OpenTelemetryの概念、トレース・メトリクス・ログの統合、Node.jsアプリへの導入方法、Grafana/Jaeger連携の実践的な解説です。"
 pubDate: "2026-02-05"
-tags: ["OpenTelemetry", "Observability", "Monitoring", "Node.js", "DevOps"]
+tags: ["OpenTelemetry", "Observability", "Monitoring", "Node.js", "DevOps", "プログラミング"]
 ---
 
 ## オブザーバビリティとは

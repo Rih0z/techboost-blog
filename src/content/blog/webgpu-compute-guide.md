@@ -2,7 +2,7 @@
 title: 'WebGPU Compute Shader入門ガイド: ブラウザでGPU並列計算を実現'
 description: 'WebGPU Compute Shaderの完全ガイド。GPU計算、WGSL言語、パイプライン構築、バッファ管理、並列処理の実装パターンを実践的に解説'
 pubDate: 2025-02-05
-tags: ['WebGPU', 'GPU', 'WGSL', 'Compute Shader', '並列計算']
+tags: ['WebGPU', 'GPU', 'WGSL', 'Compute Shader', '並列計算', 'プログラミング']
 ---
 
 # WebGPU Compute Shader入門ガイド: ブラウザでGPU並列計算を実現

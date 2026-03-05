@@ -2,7 +2,7 @@
 title: 'Neon PostgreSQL完全ガイド - サーバーレスDBで次世代開発'
 description: 'Neon PostgreSQLの基本からブランチング、自動スケーリング、Drizzle ORM連携、Next.jsアプリ構築まで。サーバーレスPostgreSQLを徹底解説。'
 pubDate: 'Feb 05 2026'
-tags: ['Neon', 'PostgreSQL', 'サーバーレス', 'データベース']
+tags: ['Neon', 'PostgreSQL', 'サーバーレス', 'データベース', 'インフラ']
 ---
 
 # Neon PostgreSQL完全ガイド - サーバーレスDBで次世代開発

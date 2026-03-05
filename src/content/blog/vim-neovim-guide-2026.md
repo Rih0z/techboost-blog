@@ -2,7 +2,7 @@
 title: "Vim/Neovim入門2026 — エンジニア必須のテキストエディタ"
 description: "Vim/Neovimの基本操作から実践まで。モード、移動、編集、Neovimの特徴とLua設定、おすすめプラグイン、VS Code Vim拡張との比較を徹底解説。"
 pubDate: "2026-02-05"
-tags: ["Vim", "Neovim", "エディタ", "開発環境", "効率化"]
+tags: ["Vim", "Neovim", "エディタ", "開発環境", "効率化", "プログラミング"]
 ---
 
 ## Vimとは

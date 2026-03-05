@@ -2,6 +2,7 @@
 title: 'Next.js 15 完全ガイド — App Router・Server Actions・最新機能まとめ'
 description: 'Next.js 15の新機能を完全網羅。App Router、Server Actions、Partial Prerendering、Turbopackなど、2026年の最新機能を実践的なコード例とともに解説します。React Server Componentsの活用法も詳しく紹介。'
 pubDate: 'Feb 05 2026'
+tags: ['プログラミング']
 ---
 
 Next.js 15が2024年10月にリリースされ、2026年現在ではReactフレームワークのデファクトスタンダードとして完全に定着しました。この記事では、Next.js 15の主要機能を実践的なコード例とともに完全解説します。

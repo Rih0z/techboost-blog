@@ -2,6 +2,7 @@
 title: "CSS interpolate-sizeでアニメーション可能な高さ - auto値のスムーズな遷移を実現"
 description: "CSS interpolate-sizeプロパティを使って、height: autoやwidth: autoをアニメーション可能にする方法を解説。これまで困難だったコンテンツサイズの自動調整とスムーズな遷移を両立できます。"
 pubDate: "2025-02-05"
+tags: ['プログラミング']
 ---
 
 # CSS interpolate-sizeでアニメーション可能な高さ

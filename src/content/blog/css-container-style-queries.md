@@ -2,7 +2,7 @@
 title: 'CSS Container Style Queries実践ガイド'
 description: '@container style()を使ったスタイルベースのコンテナクエリ。コンポーネントテーマ切替、条件付きスタイリング、デザインシステムへの応用を実例で解説'
 pubDate: '2025-02-06'
-tags: ['CSS', 'Container Queries', 'Style Queries', 'Design System']
+tags: ['CSS', 'Container Queries', 'Style Queries', 'Design System', 'プログラミング']
 ---
 
 # CSS Container Style Queries実践ガイド

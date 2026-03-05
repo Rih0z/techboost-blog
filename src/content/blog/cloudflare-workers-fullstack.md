@@ -2,7 +2,7 @@
 title: "Cloudflare Workersフルスタック開発ガイド - D1・R2・KV活用"
 description: "Cloudflare WorkersでフルスタックWebアプリを構築する実践ガイド。D1データベース、R2ストレージ、KVストア、Durable Objectsを活用したエッジコンピューティング開発を徹底解説します。"
 pubDate: "2025-02-06"
-tags: ["Cloudflare Workers", "D1", "R2", "KV", "エッジコンピューティング", "フルスタック", "サーバーレス"]
+tags: ["Cloudflare Workers", "D1", "R2", "KV", "エッジコンピューティング", "フルスタック", "サーバーレス", "インフラ"]
 ---
 
 # Cloudflare Workersフルスタック開発ガイド - D1・R2・KV活用

@@ -3,7 +3,7 @@ title: 'PocketBase実践ガイド: リアルタイムバックエンドの構築
 description: 'PocketBaseを使ったリアルタイムアプリケーションの構築方法を実践的に解説。認証、ファイルストレージ、リアルタイムサブスクリプション、カスタムエンドポイント、本番運用まで網羅。'
 pubDate: 'Oct 22 2025'
 updatedDate: 'Oct 22 2025'
-tags: ['PocketBase', 'Backend', 'SQLite', 'Realtime', 'Go']
+tags: ['PocketBase', 'Backend', 'SQLite', 'Realtime', 'Go', 'プログラミング']
 category: 'Backend'
 ---
 

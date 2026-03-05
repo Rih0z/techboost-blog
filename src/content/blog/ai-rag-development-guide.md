@@ -2,7 +2,7 @@
 title: 'RAG（検索拡張生成）開発実践ガイド - 精度の高いAIチャットボット構築【2026年版】'
 description: 'Retrieval-Augmented Generation（RAG）の基礎から実装まで。ベクトルDB選定、埋め込み生成、チャンク戦略など、実践的なRAGシステムの作り方を解説します。'
 pubDate: 'Feb 05 2026'
-tags: ['RAG', 'AI', 'LLM']
+tags: ['RAG', 'AI', 'LLM', 'プログラミング']
 ---
 
 RAG（Retrieval-Augmented Generation：検索拡張生成）は、大規模言語モデル（LLM）に外部知識を与えることで、より正確で最新の情報を含む回答を生成する技術です。

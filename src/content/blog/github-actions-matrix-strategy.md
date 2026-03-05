@@ -2,7 +2,7 @@
 title: "GitHub Actions Matrix Strategy活用術：効率的な並列テストとCI/CD"
 description: "GitHub ActionsのMatrix Strategyを使った並列テスト実行とCI/CDパイプライン最適化の実践ガイド。複数環境でのテストを効率化します。"
 pubDate: "2025-02-06"
-tags: ["GitHub Actions", "CICD", "DevOps", "Testing", "Automation"]
+tags: ["GitHub Actions", "CICD", "DevOps", "Testing", "Automation", "インフラ"]
 ---
 
 # GitHub Actions Matrix Strategy活用術：効率的な並列テストとCI/CD

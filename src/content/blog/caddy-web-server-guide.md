@@ -2,6 +2,7 @@
 title: "Caddy Webサーバー完全ガイド - 自動HTTPS対応のモダンサーバー"
 description: "Caddyは自動HTTPS対応のモダンWebサーバー。Caddyfile設定、リバースプロキシ、Let's Encrypt自動証明書、Docker連携まで徹底解説します。"
 pubDate: "2025-02-06"
+tags: ['インフラ']
 ---
 
 **Caddy**は、自動HTTPS対応を特徴とするモダンなWebサーバーです。設定が簡単で、Let's Encryptによる証明書の自動取得・更新機能を標準搭載しています。

@@ -2,7 +2,7 @@
 title: 'モノレポツール完全比較2026 - Turborepo、Nx、pnpm、Lerna、Moonを徹底検証'
 description: 'モノレポ管理ツールの決定版ガイド。Turborepo、Nx、pnpm Workspace、Lerna、Moonを機能・パフォーマンス・DXで徹底比較。プロジェクトに最適なツール選定をサポート。'
 pubDate: 'Feb 05 2026'
-tags: ['モノレポ', 'Turborepo', 'Nx']
+tags: ['モノレポ', 'Turborepo', 'Nx', 'プログラミング']
 ---
 
 # モノレポツール完全比較2026

@@ -2,6 +2,7 @@
 title: "Cloudflare Workers AIでエッジAI推論 - サーバーレスで機械学習モデルを実行する"
 description: "Cloudflare Workers AIを使ってエッジ環境で機械学習モデルを実行する方法を徹底解説。テキスト生成、画像認識、音声処理など多彩なAIモデルをサーバーレスで利用できます。"
 pubDate: "2025-02-05"
+tags: ['インフラ']
 ---
 
 # Cloudflare Workers AIでエッジAI推論

@@ -2,6 +2,7 @@
 title: "OpenTelemetryで始める分散トレーシング - 完全実装ガイド"
 description: "OpenTelemetryを使った分散トレーシングの導入から実践まで。Node.js、Next.js、Cloudflare Workers環境での実装方法、メトリクス収集、ログ統合を詳しく解説します。"
 pubDate: "2025-02-05"
+tags: ['プログラミング']
 ---
 
 OpenTelemetry（OTel）は、分散システムのオブザーバビリティを実現するためのオープンソース標準です。トレース、メトリクス、ログを統一的に扱い、ベンダーロックインを回避できます。

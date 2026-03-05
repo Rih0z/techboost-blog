@@ -2,7 +2,7 @@
 title: "Vite 6の新機能完全解説 — Environment APIとパフォーマンス改善"
 description: "Vite 6の革新的な新機能を徹底解説。Environment API、CSS Lightning、ビルド最適化、Rolldown統合の進捗、v5からの移行ガイドまで網羅します。"
 pubDate: "2026-02-05"
-tags: ["Vite", "Frontend", "Build Tool", "Performance", "Web Development"]
+tags: ["Vite", "Frontend", "Build Tool", "Performance", "Web Development", "プログラミング"]
 ---
 
 ## Vite 6 概要

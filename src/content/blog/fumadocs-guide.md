@@ -2,7 +2,7 @@
 title: 'Fumadocs完全ガイド - Next.jsベースの最新ドキュメントフレームワーク'
 description: 'Fumadocsの使い方を徹底解説。Next.js App Router対応、MDX統合、全文検索、テーマカスタマイズなど、美しいドキュメントサイトを構築する方法'
 pubDate: 'Feb 05 2026'
-tags: ['Fumadocs', 'Next.js', 'ドキュメント', 'MDX']
+tags: ['Fumadocs', 'Next.js', 'ドキュメント', 'MDX', 'プログラミング']
 ---
 
 # Fumadocs完全ガイド - Next.jsベースの最新ドキュメントフレームワーク

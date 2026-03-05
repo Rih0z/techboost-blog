@@ -2,7 +2,7 @@
 title: "フロントエンドテスト戦略2026 — テストピラミッドの実践"
 description: "モダンフロントエンド開発におけるテスト戦略の完全ガイド。Vitest、Testing Library、Playwright、Storybookを組み合わせた実践的なテストピラミッドとMSWによるAPIモックを解説します。"
 pubDate: "2026-02-05"
-tags: ["Testing", "Vitest", "Playwright", "Storybook", "フロントエンド"]
+tags: ["Testing", "Vitest", "Playwright", "Storybook", "フロントエンド", "プログラミング"]
 ---
 
 ## フロントエンドテストの課題

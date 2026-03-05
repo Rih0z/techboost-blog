@@ -3,7 +3,7 @@ title: 'AI Function Calling実践ガイド: LLMとツール連携でインテリ
 description: 'OpenAI、Anthropic Claude、Geminiなど主要LLMのFunction Calling機能を活用したインテリジェントアプリケーション開発ガイド。実装パターン、エラーハンドリング、ベストプラクティスを詳しく解説します。'
 pubDate: 2025-05-28
 updatedDate: 2025-05-28
-tags: ['AI', 'Function Calling', 'OpenAI', 'Claude', 'LLM']
+tags: ['AI', 'Function Calling', 'OpenAI', 'Claude', 'LLM', 'プログラミング']
 category: 'ai'
 ---
 

@@ -2,7 +2,7 @@
 title: "Zedエディタ完全ガイド2026 - Rust製の次世代高速コードエディタ"
 description: "Zedエディタを徹底解説。Rust製の超高速レスポンス、AI統合（GPT-4/Claude）、コラボレーション機能、マルチカーソル、拡張機能、VS Codeからの移行方法まで完全網羅。"
 pubDate: "2025-02-06"
-tags: ["zed", "editor", "rust", "ai", "productivity", "developer-tools"]
+tags: ["zed", "editor", "rust", "ai", "productivity", "developer-tools", "プログラミング"]
 ---
 
 Zedは、Atomエディタの元開発チームが作る**次世代コードエディタ**です。Rust製で驚異的な速度を実現し、AI統合、リアルタイムコラボレーション、洗練されたUIを備えています。

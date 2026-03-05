@@ -2,7 +2,7 @@
 title: "Rust Axum Webフレームワーク入門"
 description: "RustのモダンなWebフレームワークAxumを使った高速で型安全なAPI開発の基礎から実践まで解説します"
 pubDate: "2025-02-05"
-tags: ["rust", "axum", "web-framework", "backend"]
+tags: ["rust", "axum", "web-framework", "backend", "プログラミング"]
 ---
 
 Axumは、tokioエコシステム上に構築されたRustのWebフレームワークです。型安全性、パフォーマンス、開発者体験を重視した設計で、モダンなWeb APIの構築に最適です。本記事では、Axumの基礎から実践的な使い方まで詳しく解説します。

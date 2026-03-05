@@ -2,7 +2,7 @@
 title: 'Elixir Phoenix LiveView入門ガイド: リアルタイムUIをサーバーサイドで実装'
 description: 'Phoenix LiveViewの完全ガイド。リアルタイムUI、サーバーサイドレンダリング、フォーム処理、WebSocket通信、最適化テクニックまで実践的に解説'
 pubDate: 2025-02-05
-tags: ['Elixir', 'Phoenix', 'LiveView', 'リアルタイム', 'WebSocket']
+tags: ['Elixir', 'Phoenix', 'LiveView', 'リアルタイム', 'WebSocket', 'インフラ']
 ---
 
 # Elixir Phoenix LiveView入門ガイド: リアルタイムUIをサーバーサイドレンダリングで実現

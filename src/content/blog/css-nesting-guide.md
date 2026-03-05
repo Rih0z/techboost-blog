@@ -2,7 +2,7 @@
 title: 'CSSネスティング完全ガイド - ネイティブCSS Nesting、&セレクタ、@scope実践'
 description: 'CSSネスティングの完全ガイド。ネイティブCSS Nesting構文、&セレクタ、@scopeルール、Sassからの移行方法、実践的なパターンを詳しく解説。'
 pubDate: 'Feb 05 2026'
-tags: ['CSS', 'Frontend', 'Web']
+tags: ['CSS', 'Frontend', 'Web', 'プログラミング']
 ---
 
 # CSSネスティング完全ガイド

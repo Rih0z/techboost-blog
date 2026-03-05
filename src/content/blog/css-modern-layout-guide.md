@@ -2,6 +2,7 @@
 title: 'CSSモダンレイアウト完全ガイド — Flexbox・Grid・Container Queries'
 description: '2026年のCSSレイアウト技術を完全網羅。Flexbox、CSS Grid、Container Queries、Subgridなど、モダンなレスポンシブレイアウトを実現するための実践的なテクニックとコード例を詳しく解説します。'
 pubDate: 'Feb 05 2026'
+tags: ['プログラミング']
 ---
 
 CSSのレイアウト技術は過去10年で劇的に進化しました。floatやposition: absoluteを駆使していた時代は終わり、2026年現在では、Flexbox、CSS Grid、Container Queriesを使えば、ほぼすべてのレイアウトを簡潔に実装できます。この記事では、モダンCSSレイアウトの完全ガイドを提供します。

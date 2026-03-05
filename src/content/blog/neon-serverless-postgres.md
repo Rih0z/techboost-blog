@@ -2,7 +2,7 @@
 title: "Neon入門 — サーバーレスPostgreSQLで始めるモダンデータベース"
 description: "Neonはサーバーレス設計のPostgreSQLサービス。ブランチング機能、自動スケール、モダンなORMとの統合方法を実践的に解説します。"
 pubDate: "2026-02-05"
-tags: ["Neon", "PostgreSQL", "Serverless", "Database"]
+tags: ["Neon", "PostgreSQL", "Serverless", "Database", "インフラ"]
 ---
 
 ## Neonとは何か

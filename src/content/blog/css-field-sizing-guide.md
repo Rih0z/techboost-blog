@@ -2,6 +2,7 @@
 title: "CSS field-sizing プロパティ完全ガイド - 入力欄を自動リサイズ"
 description: "CSS field-sizingプロパティを使ったinput、textarea、selectの自動サイズ調整方法を解説。ブラウザサポート状況とフォールバック方法も紹介します。"
 pubDate: "2025-02-06"
+tags: ['プログラミング']
 ---
 
 CSS `field-sizing` プロパティは、フォーム要素を**コンテンツに応じて自動的にリサイズ**できる新しいCSSプロパティです。これまでJavaScriptが必要だった動的なサイズ調整が、CSSだけで実現できるようになります。

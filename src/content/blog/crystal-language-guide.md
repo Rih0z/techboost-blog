@@ -2,6 +2,7 @@
 title: "Crystal言語入門 - Rubyライクな構文で高速動作するコンパイル言語"
 description: "Rubyのような美しい構文とC言語並みの高速性を兼ね備えたCrystal言語の基礎から実践まで解説します。型推論、マクロ、並行処理など、Crystalの魅力を徹底ガイド。"
 pubDate: "2025-02-05"
+tags: ['プログラミング']
 ---
 
 ## Crystal言語とは

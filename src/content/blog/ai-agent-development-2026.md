@@ -2,7 +2,7 @@
 title: "AIエージェント開発入門2026 - Claude MCP・LangChain・マルチエージェントの実践ガイド"
 description: "2026年最新のAIエージェント開発手法を徹底解説。Claude MCP、LangChain、CrewAI、RAG、マルチエージェントシステムまで、実装例付きで学べる完全ガイドです。"
 pubDate: "2026-02-05"
-tags: ["AI", "LLM", "エージェント", "Claude", "LangChain"]
+tags: ["AI", "LLM", "エージェント", "Claude", "LangChain", "プログラミング"]
 ---
 
 ## はじめに

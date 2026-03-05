@@ -3,7 +3,7 @@ title: "API バージョニング戦略: REST/GraphQLのバージョン管理ベ
 description: "REST APIとGraphQL APIのバージョニング戦略を徹底比較。URL、ヘッダー、クエリパラメータ、スキーマベースなど各手法の実装例と運用ノウハウを解説します。"
 pubDate: "2025-10-22"
 updatedDate: "2025-10-22"
-tags: ["API", "バージョニング", "REST", "GraphQL", "アーキテクチャ"]
+tags: ["API", "バージョニング", "REST", "GraphQL", "アーキテクチャ", "プログラミング"]
 category: "Backend"
 ---
 

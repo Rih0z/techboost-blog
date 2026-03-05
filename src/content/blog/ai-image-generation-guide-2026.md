@@ -2,7 +2,7 @@
 title: "AI画像生成完全ガイド2026 — Stable Diffusion, DALL-E, Midjourney"
 description: "AI画像生成の最新ガイド。Stable Diffusion, DALL-E, Midjourneyの比較、プロンプトエンジニアリング、API活用法、商用利用のライセンスまで徹底解説。"
 pubDate: "2026-02-05"
-tags: ["AI", "画像生成", "Stable Diffusion", "DALL-E", "Midjourney"]
+tags: ["AI", "画像生成", "Stable Diffusion", "DALL-E", "Midjourney", "プログラミング"]
 ---
 
 ## AI画像生成の現状（2026年）

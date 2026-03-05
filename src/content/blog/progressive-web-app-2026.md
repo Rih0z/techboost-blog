@@ -2,7 +2,7 @@
 title: "PWA開発ガイド2026年版 — Service WorkerからWeb Push通知まで"
 description: "Progressive Web Appの最新開発手法を解説。Workbox活用、Web Push API、Background Sync、ファイルシステムアクセス、インストール体験の最適化まで実践的にガイドします。"
 pubDate: "2026-02-05"
-tags: ["PWA", "Service Worker", "Web Push", "Workbox", "オフライン"]
+tags: ["PWA", "Service Worker", "Web Push", "Workbox", "オフライン", "プログラミング"]
 ---
 
 Progressive Web App（PWA）は、ネイティブアプリのような体験をWebで実現する技術です。この記事では、2026年時点の最新PWA開発手法を実践的に解説します。

@@ -2,7 +2,7 @@
 title: "Deno Fresh フレームワーク入門"
 description: "Deno Fresh フレームワークの特徴と使い方を解説。Islands Architectureによる高速なWebアプリケーション開発を実現"
 pubDate: "2025-02-05"
-tags: ["Deno", "Fresh", "WebFramework", "IslandsArchitecture"]
+tags: ["Deno", "Fresh", "WebFramework", "IslandsArchitecture", "プログラミング"]
 ---
 
 Deno Freshは、Deno向けの次世代Webフレームワークです。Islands Architecture、ゼロビルド構成、エッジでの実行など、モダンなWeb開発の課題を解決する設計が特徴です。

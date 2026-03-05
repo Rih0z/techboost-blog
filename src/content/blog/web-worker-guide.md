@@ -2,6 +2,7 @@
 title: 'Web Worker実践ガイド - ブラウザで並列処理を実現する'
 description: 'Web Workerの基本から実践まで徹底解説。メッセージパッシング、SharedWorker、Service Workerとの違い、パフォーマンス改善の実例まで、フロントエンドの並列処理をマスター'
 pubDate: 'Feb 05 2026'
+tags: ['プログラミング']
 ---
 
 # Web Worker実践ガイド

@@ -2,7 +2,7 @@
 title: "Auth.js v5（旧NextAuth）完全ガイド - 認証実装の最新ベストプラクティス"
 description: "Auth.js v5の新機能とNext.js App Routerでの実装方法を徹底解説。OAuth、JWT、セッション管理、エッジランタイム対応まで、実践的なコード例付きで学べる完全ガイドです。"
 pubDate: "2025-02-05"
-tags: ["Next.js", "Auth.js", "認証", "セキュリティ", "OAuth"]
+tags: ["Next.js", "Auth.js", "認証", "セキュリティ", "OAuth", "プログラミング"]
 ---
 
 ## はじめに

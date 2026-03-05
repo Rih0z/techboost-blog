@@ -2,7 +2,7 @@
 title: 'Grafana監視ダッシュボード構築ガイド - Prometheus連携とアラート設定'
 description: 'Grafanaで本格的な監視ダッシュボードを構築。Prometheus連携、メトリクス可視化、アラート設定、ログ分析、ダッシュボード設計のベストプラクティスを実例付きで解説します。'
 pubDate: '2025-02-06'
-tags: ['Grafana', 'Prometheus', 'Monitoring', 'DevOps', 'Observability']
+tags: ['Grafana', 'Prometheus', 'Monitoring', 'DevOps', 'Observability', 'インフラ']
 ---
 
 Grafanaは、メトリクスやログを可視化するオープンソースの監視プラットフォームです。Prometheusと組み合わせることで、システムの状態をリアルタイムで監視し、問題を早期発見できます。本記事では、Grafanaの導入から実践的なダッシュボード構築まで解説します。

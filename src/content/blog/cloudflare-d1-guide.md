@@ -2,7 +2,7 @@
 title: 'Cloudflare D1完全ガイド：エッジで動くSQLiteデータベース'
 description: 'Cloudflare D1の使い方を徹底解説。Workers連携、Drizzle ORM統合、実践的な開発パターンまで完全網羅'
 pubDate: 'Feb 05 2026'
-tags: ['Cloudflare', 'D1', 'SQLite', 'Workers', 'Drizzle ORM', 'エッジコンピューティング']
+tags: ['Cloudflare', 'D1', 'SQLite', 'Workers', 'Drizzle ORM', 'エッジコンピューティング', 'インフラ']
 ---
 
 # Cloudflare D1完全ガイド：エッジで動くSQLiteデータベース

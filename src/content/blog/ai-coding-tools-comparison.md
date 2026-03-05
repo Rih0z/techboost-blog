@@ -2,7 +2,7 @@
 title: "AIコーディングツール徹底比較2026 — Copilot/Cursor/Claude Code"
 description: "GitHub Copilot、Cursor、Claude Code、Cody等の主要AIコーディングツールを徹底比較。コード補完、チャット、エージェント機能、価格から最適な選び方まで解説します。"
 pubDate: "2026-02-05"
-tags: ["AI", "GitHub Copilot", "Cursor", "Claude", "コーディングツール"]
+tags: ["AI", "GitHub Copilot", "Cursor", "Claude", "コーディングツール", "プログラミング"]
 ---
 
 AIコーディングツールは、2026年には開発者の必須ツールとなりました。この記事では、主要なツールを徹底比較し、最適な選択をサポートします。

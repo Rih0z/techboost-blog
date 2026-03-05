@@ -2,7 +2,7 @@
 title: 'macOS 開発環境構築 2026 完全ガイド — M4 Mac対応・最新ツール全収録'
 description: 'M4 Mac対応のmacOS開発環境構築ガイド2026年版。Homebrew・Oh My Zsh・Git・Node.js・Python・Docker・VS Code・Cursor・Claude Codeまで、最速セットアップ手順を完全解説。'
 pubDate: 'Feb 21 2026'
-tags: ['macOS', 'DevTool', '開発環境', 'セットアップ']
+tags: ['macOS', 'DevTool', '開発環境', 'セットアップ', 'プログラミング']
 ---
 
 # macOS 開発環境構築 2026 完全ガイド — M4 Mac対応・最新ツール全収録

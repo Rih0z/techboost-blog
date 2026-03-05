@@ -2,7 +2,7 @@
 title: 'CSS Anchor Positioning完全ガイド: position-anchor、anchor()、inset-areaの使い方'
 description: 'CSS Anchor Positioning APIの完全ガイド。position-anchor、anchor()関数、inset-area、ポップオーバー、ツールチップ配置の実装方法を基礎から徹底解説'
 pubDate: 2025-02-05
-tags: ['CSS', 'Anchor Positioning', 'UI', 'Web標準', 'レイアウト']
+tags: ['CSS', 'Anchor Positioning', 'UI', 'Web標準', 'レイアウト', 'プログラミング']
 ---
 
 # CSS Anchor Positioning完全ガイド: position-anchor、anchor()、inset-areaの使い方

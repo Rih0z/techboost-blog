@@ -2,7 +2,7 @@
 title: "Signals リアクティビティパターン完全ガイド - モダンな状態管理の新潮流"
 description: "Solidjs、Preact、Angular、Vue.jsなど主要フレームワークで採用されるSignalsパターンの概念、実装、パフォーマンス最適化手法を徹底解説します。"
 pubDate: "2025-02-05"
-tags: ["signals", "reactivity", "state-management", "solidjs", "preact"]
+tags: ["signals", "reactivity", "state-management", "solidjs", "preact", "プログラミング"]
 ---
 
 ## Signalsとは何か

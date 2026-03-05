@@ -2,6 +2,7 @@
 title: "Docker Compose Secrets管理ガイド - 安全な機密情報の取り扱い"
 description: "Docker Secretsの基本からdocker-compose.ymlでのシークレット定義、環境変数との使い分け、本番環境でのベストプラクティスまで詳しく解説します。"
 pubDate: "2025-02-05"
+tags: ['インフラ']
 ---
 
 Docker Secretsは、パスワード、APIキー、証明書などの機密情報を安全に管理するための仕組みです。Docker Composeでの実装方法とベストプラクティスを解説します。

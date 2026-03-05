@@ -2,7 +2,7 @@
 title: "CSS :has() セレクター活用ガイド - 親要素セレクションの革命"
 description: "CSS :has() 疑似クラスを使った親要素の選択方法と実践的な活用例を紹介。JavaScriptなしで実現できる高度なスタイリングテクニックを解説します。"
 pubDate: "2025-02-05"
-tags: ["css", "frontend", "web-development"]
+tags: ["css", "frontend", "web-development", "プログラミング"]
 ---
 
 CSS の `:has()` 疑似クラスは、長年待ち望まれていた「親要素セレクター」を実現する画期的な機能です。これまでJavaScriptでしか実現できなかった複雑なスタイリングが、純粋なCSSだけで可能になりました。

@@ -2,6 +2,7 @@
 title: 'Core Web Vitals最適化完全ガイド - LCP/FID/CLS/INP改善の実践テクニック'
 description: 'Googleのコアウェブバイタル（LCP、FID、CLS、INP）を徹底的に改善する方法を解説。具体的な最適化テクニック、計測ツール、継続的モニタリングの実装まで網羅します。'
 pubDate: 'Feb 05 2026'
+tags: ['プログラミング']
 ---
 
 # Core Web Vitals最適化完全ガイド - LCP/FID/CLS/INP改善の実践テクニック
