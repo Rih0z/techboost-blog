@@ -10,22 +10,46 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 const allPosts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
-const latestPosts = allPosts.slice(0, 12);
+const featured = allPosts[0];
+const latestPosts = allPosts.slice(1, 9);
 
-// カテゴリ定義（タグをカテゴリにグルーピング）
+// カテゴリ定義
 const categories = [
-	{ name: 'フロントエンド', icon: '🎨', tags: ['React', 'react', 'Next.js', 'nextjs', 'Vue', 'vue', 'TypeScript', 'typescript', 'CSS', 'css', 'フロントエンド', 'Frontend', 'Svelte', 'svelte', 'Angular', 'angular', 'Astro', 'astro', 'HTML', 'html'] },
-	{ name: 'バックエンド', icon: '⚙️', tags: ['Node.js', 'nodejs', 'Python', 'python', 'Rust', 'rust', 'Go', 'go', 'Java', 'java', 'Ruby', 'ruby', 'PHP', 'php', 'GraphQL', 'graphql', 'API', 'api', 'Backend'] },
-	{ name: 'AI・機械学習', icon: '🤖', tags: ['AI', 'ai', 'LLM', 'llm', 'ChatGPT', 'Claude', 'Gemini', 'OpenAI', '機械学習', 'プロンプト'] },
-	{ name: 'インフラ・DevOps', icon: '🏗️', tags: ['Docker', 'docker', 'Kubernetes', 'kubernetes', 'AWS', 'aws', 'Linux', 'linux', 'DevOps', 'devops', 'CICD', 'インフラ', 'server', 'Terraform'] },
-	{ name: 'データベース', icon: '🗄️', tags: ['Database', 'database', 'データベース', 'PostgreSQL', 'MySQL', 'Redis', 'SQL', 'sql', 'Prisma'] },
-	{ name: 'セキュリティ', icon: '🔒', tags: ['Security', 'security', 'セキュリティ', 'JWT', 'jwt', 'OAuth', 'auth'] },
-	{ name: 'テスト・品質', icon: '✅', tags: ['Testing', 'testing', 'Jest', 'Vitest', 'vitest', 'テスト', 'TDD', 'Playwright'] },
-	{ name: 'パフォーマンス', icon: '⚡', tags: ['Performance', 'パフォーマンス', 'Core Web Vitals', 'Lighthouse'] },
+	{ name: 'React', slug: 'React', tags: ['React', 'react'] },
+	{ name: 'TypeScript', slug: 'TypeScript', tags: ['TypeScript', 'typescript'] },
+	{ name: 'Next.js', slug: 'Next.js', tags: ['Next.js', 'nextjs'] },
+	{ name: 'AI', slug: 'AI', tags: ['AI', 'ai', 'LLM', 'llm', 'ChatGPT', 'Claude'] },
+	{ name: 'Docker', slug: 'Docker', tags: ['Docker', 'docker'] },
+	{ name: 'CSS', slug: 'CSS', tags: ['CSS', 'css'] },
+	{ name: 'Python', slug: 'Python', tags: ['Python', 'python'] },
+	{ name: 'Node.js', slug: 'Node.js', tags: ['Node.js', 'nodejs'] },
+	{ name: 'AWS', slug: 'AWS', tags: ['AWS', 'aws'] },
+	{ name: 'Linux', slug: 'Linux', tags: ['Linux', 'linux'] },
+	{ name: 'Rust', slug: 'Rust', tags: ['Rust', 'rust'] },
+	{ name: 'Go', slug: 'Go', tags: ['Go', 'go'] },
+	{ name: 'Vue', slug: 'Vue', tags: ['Vue', 'vue'] },
+	{ name: 'GraphQL', slug: 'GraphQL', tags: ['GraphQL', 'graphql'] },
 ];
 
-// カテゴリごとの記事数を計算
-const categoryWithCounts = categories.map(cat => {
+// カテゴリごとの記事数
+const catWithCounts = categories.map(cat => {
+	const tagSet = new Set(cat.tags.map(t => t.toLowerCase()));
+	const count = allPosts.filter(p =>
+		(p.data.tags ?? []).some((t: string) => tagSet.has(t.toLowerCase()))
+	).length;
+	return { ...cat, count };
+}).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
+
+// グループカテゴリ（サイドバー用）
+const groupCategories = [
+	{ name: 'フロントエンド', icon: '/', tags: ['React', 'react', 'Next.js', 'nextjs', 'Vue', 'vue', 'TypeScript', 'typescript', 'CSS', 'css', 'フロントエンド', 'Svelte', 'Angular', 'Astro', 'HTML'] },
+	{ name: 'バックエンド', icon: '/', tags: ['Node.js', 'nodejs', 'Python', 'python', 'Rust', 'rust', 'Go', 'go', 'Java', 'Ruby', 'PHP', 'GraphQL', 'API', 'Hono'] },
+	{ name: 'AI', icon: '/', tags: ['AI', 'ai', 'LLM', 'llm', 'ChatGPT', 'Claude', 'Gemini', 'OpenAI'] },
+	{ name: 'インフラ', icon: '/', tags: ['Docker', 'docker', 'Kubernetes', 'AWS', 'aws', 'Linux', 'linux', 'DevOps', 'CICD', 'インフラ', 'Terraform', 'Cloudflare'] },
+	{ name: 'DB', icon: '/', tags: ['Database', 'PostgreSQL', 'MySQL', 'Redis', 'SQL', 'Prisma', 'Supabase'] },
+	{ name: 'セキュリティ', icon: '/', tags: ['Security', 'セキュリティ', 'JWT', 'OAuth'] },
+	{ name: 'テスト', icon: '/', tags: ['Testing', 'Jest', 'Vitest', 'テスト', 'TDD', 'Playwright'] },
+].map(cat => {
 	const tagSet = new Set(cat.tags.map(t => t.toLowerCase()));
 	const count = allPosts.filter(p =>
 		(p.data.tags ?? []).some((t: string) => tagSet.has(t.toLowerCase()))
@@ -39,221 +63,387 @@ const categoryWithCounts = categories.map(cat => {
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
-			main {
+			/* Layout */
+			.page-layout {
 				width: 960px;
 				max-width: calc(100% - 2rem);
 				margin: auto;
 			}
-			/* Hero */
-			.hero {
-				text-align: center;
-				padding: 2rem 0 1.5rem;
+			/* Category Nav Bar (Smashing Magazine style) */
+			.cat-nav {
+				border-bottom: 1px solid rgb(var(--gray-light));
+				padding: 0.5rem 0;
+				margin-bottom: 2rem;
+				overflow-x: auto;
+				-webkit-overflow-scrolling: touch;
+				scrollbar-width: none;
 			}
-			.hero h1 {
-				font-size: 2rem;
-				margin: 0 0 0.5rem;
-			}
-			.hero p {
-				color: rgb(var(--gray));
-				font-size: 1rem;
-				margin: 0 0 1.5rem;
-			}
-			.hero-stats {
+			.cat-nav::-webkit-scrollbar { display: none; }
+			.cat-nav-inner {
 				display: flex;
-				justify-content: center;
-				gap: 2rem;
-				font-size: 0.85rem;
+				gap: 0.25rem;
+				width: 960px;
+				max-width: calc(100% - 2rem);
+				margin: auto;
+			}
+			.cat-chip {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.25rem;
+				padding: 0.35rem 0.75rem;
+				border-radius: 999px;
+				background: transparent;
+				color: rgb(var(--gray-dark));
+				text-decoration: none;
+				font-size: 0.8rem;
+				font-weight: 500;
+				white-space: nowrap;
+				transition: background 0.15s, color 0.15s;
+				border: 1px solid transparent;
+			}
+			.cat-chip:hover {
+				background: rgb(var(--accent));
+				color: white;
+			}
+			.cat-chip-count {
+				font-size: 0.65rem;
+				opacity: 0.5;
+			}
+			.cat-chip-all {
+				color: rgb(var(--accent));
+				font-weight: 600;
+			}
+			/* Featured Article */
+			.featured {
+				margin-bottom: 2.5rem;
+				margin-top: 1rem;
+			}
+			.featured a {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 1.5rem;
+				text-decoration: none;
+				color: inherit;
+				align-items: center;
+			}
+			.featured img {
+				width: 100%;
+				aspect-ratio: 16/9;
+				object-fit: cover;
+				border-radius: 10px;
+			}
+			.featured-meta {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+				margin-bottom: 0.5rem;
+			}
+			.featured-tag {
+				display: inline-block;
+				padding: 0.15rem 0.5rem;
+				border-radius: 999px;
+				background: rgb(var(--accent) / 0.1);
+				color: rgb(var(--accent));
+				font-size: 0.7rem;
+				font-weight: 600;
+			}
+			.featured-date {
+				font-size: 0.8rem;
 				color: rgb(var(--gray));
 			}
-			.hero-stats strong {
-				color: rgb(var(--accent));
-				font-size: 1.25rem;
-			}
-			/* Categories */
-			.section-title {
-				font-size: 1.25rem;
+			.featured h2 {
+				font-size: 1.5rem;
+				line-height: 1.35;
+				margin: 0 0 0.75rem;
 				font-weight: 700;
-				margin: 2rem 0 1rem;
+			}
+			.featured a:hover h2 {
+				color: rgb(var(--accent));
+			}
+			.featured-desc {
+				font-size: 0.9rem;
+				color: rgb(var(--gray-dark));
+				line-height: 1.6;
+				margin: 0;
+				display: -webkit-box;
+				-webkit-line-clamp: 3;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
+			/* Section Headers */
+			.section-header {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				margin-bottom: 1rem;
 				padding-bottom: 0.5rem;
 				border-bottom: 2px solid rgb(var(--gray-light));
 			}
-			.categories {
-				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-				gap: 0.75rem;
-				margin-bottom: 2rem;
+			.section-header h2 {
+				font-size: 1.1rem;
+				font-weight: 700;
+				margin: 0;
 			}
-			.category-card {
+			.section-header a {
+				font-size: 0.8rem;
+				color: rgb(var(--accent));
+				text-decoration: none;
+				font-weight: 500;
+			}
+			.section-header a:hover { text-decoration: underline; }
+			/* Article List */
+			.articles {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 1.25rem;
+				margin-bottom: 2.5rem;
+			}
+			.article-card {
+				display: flex;
+				gap: 0.75rem;
+				text-decoration: none;
+				color: inherit;
+				padding: 0.75rem;
+				border-radius: 8px;
+				transition: background 0.15s;
+			}
+			.article-card:hover {
+				background: rgb(var(--gray-light) / 0.5);
+			}
+			.article-card:hover .article-title {
+				color: rgb(var(--accent));
+			}
+			.article-thumb {
+				width: 100px;
+				min-width: 100px;
+				aspect-ratio: 16/10;
+				object-fit: cover;
+				border-radius: 6px;
+			}
+			.article-body {
+				display: flex;
+				flex-direction: column;
+				gap: 0.25rem;
+				min-width: 0;
+			}
+			.article-title {
+				font-size: 0.85rem;
+				font-weight: 600;
+				line-height: 1.4;
+				margin: 0;
+				transition: color 0.15s;
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
+			.article-info {
 				display: flex;
 				align-items: center;
-				gap: 0.75rem;
-				padding: 0.75rem 1rem;
-				background: rgb(var(--gray-light));
-				border-radius: 8px;
-				text-decoration: none;
-				color: rgb(var(--black));
-				transition: background 0.15s, transform 0.1s;
+				gap: 0.5rem;
+				font-size: 0.7rem;
+				color: rgb(var(--gray));
 			}
-			.category-card:hover {
+			.article-tag {
+				padding: 0.1rem 0.4rem;
+				border-radius: 999px;
+				background: rgb(var(--gray-light));
+				color: rgb(var(--gray-dark));
+				font-size: 0.65rem;
+				font-weight: 500;
+				text-decoration: none;
+			}
+			/* Group Categories (Sidebar-like) */
+			.group-cats {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				margin-bottom: 2.5rem;
+			}
+			.group-cat {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.4rem;
+				padding: 0.5rem 1rem;
+				border-radius: 8px;
+				background: rgb(var(--gray-light));
+				color: rgb(var(--black));
+				text-decoration: none;
+				font-size: 0.85rem;
+				font-weight: 600;
+				transition: background 0.15s, color 0.15s, transform 0.1s;
+			}
+			.group-cat:hover {
 				background: rgb(var(--accent));
 				color: white;
 				transform: translateY(-1px);
 			}
-			.category-icon {
-				font-size: 1.25rem;
-				flex-shrink: 0;
+			.group-cat-count {
+				font-size: 0.7rem;
+				font-weight: 400;
+				opacity: 0.6;
 			}
-			.category-info {
-				display: flex;
-				flex-direction: column;
-				gap: 0.1rem;
-			}
-			.category-name {
-				font-size: 0.9rem;
-				font-weight: 600;
-			}
-			.category-count {
-				font-size: 0.75rem;
-				opacity: 0.7;
-			}
-			/* Latest posts */
-			.posts-grid {
+			/* Promo Section */
+			.promo-grid {
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-				gap: 1.5rem;
-				list-style: none;
-				margin: 0;
-				padding: 0;
+				grid-template-columns: 1fr 1fr;
+				gap: 1rem;
+				margin-bottom: 2rem;
 			}
-			.post-card {
-				display: flex;
-				flex-direction: column;
-				gap: 0.5rem;
-			}
-			.post-card a {
+			.promo-card {
+				padding: 1.25rem;
+				border-radius: 10px;
+				border: 1px solid rgb(var(--gray-light));
 				text-decoration: none;
 				color: inherit;
+				transition: border-color 0.15s, box-shadow 0.15s;
 			}
-			.post-card img {
-				width: 100%;
-				aspect-ratio: 16/9;
-				object-fit: cover;
-				border-radius: 8px;
+			.promo-card:hover {
+				border-color: rgb(var(--accent));
+				box-shadow: 0 2px 12px rgb(var(--accent) / 0.08);
 			}
-			.post-title {
-				font-size: 0.95rem;
+			.promo-label {
+				font-size: 0.7rem;
 				font-weight: 600;
-				line-height: 1.4;
-				margin: 0;
-				color: rgb(var(--black));
-			}
-			.post-card a:hover .post-title {
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
 				color: rgb(var(--accent));
+				margin-bottom: 0.5rem;
 			}
-			.post-date {
+			.promo-card h3 {
+				font-size: 1rem;
+				margin: 0 0 0.4rem;
+				font-weight: 700;
+			}
+			.promo-card p {
 				font-size: 0.8rem;
 				color: rgb(var(--gray));
 				margin: 0;
-			}
-			.post-tags {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 0.25rem;
-			}
-			.post-tag {
-				display: inline-block;
-				padding: 0.1rem 0.5rem;
-				border-radius: 999px;
-				background: rgb(var(--gray-light));
-				color: rgb(var(--gray));
-				font-size: 0.7rem;
-				font-weight: 500;
-				text-decoration: none;
-			}
-			.post-tag:hover {
-				background: rgb(var(--accent));
-				color: white;
+				line-height: 1.5;
 			}
 			/* View all */
 			.view-all {
 				display: block;
 				text-align: center;
-				margin: 2rem 0;
+				margin: 0 0 2.5rem;
 				padding: 0.75rem 2rem;
-				background: rgb(var(--accent));
+				background: rgb(var(--black));
 				color: white;
 				text-decoration: none;
 				border-radius: 8px;
 				font-weight: 600;
-				font-size: 1rem;
+				font-size: 0.9rem;
 				transition: opacity 0.15s;
 			}
-			.view-all:hover {
-				opacity: 0.85;
-			}
+			.view-all:hover { opacity: 0.85; }
+			/* Responsive */
 			@media (max-width: 720px) {
-				.hero h1 { font-size: 1.5rem; }
-				.hero-stats { gap: 1rem; }
-				.categories { grid-template-columns: repeat(2, 1fr); }
-				.posts-grid { grid-template-columns: 1fr; }
+				.featured a {
+					grid-template-columns: 1fr;
+				}
+				.featured h2 { font-size: 1.2rem; }
+				.articles {
+					grid-template-columns: 1fr;
+				}
+				.article-thumb {
+					width: 80px;
+					min-width: 80px;
+				}
+				.promo-grid {
+					grid-template-columns: 1fr;
+				}
 			}
 		</style>
 	</head>
 	<body>
 		<Header />
-		<main>
-			<section class="hero">
-				<h1>{SITE_TITLE}</h1>
-				<p>{SITE_DESCRIPTION}</p>
-				<div class="hero-stats">
-					<span><strong>{allPosts.length}</strong> 記事</span>
-					<span><strong>{categoryWithCounts.length}</strong> カテゴリ</span>
-				</div>
-			</section>
+		<nav class="cat-nav" aria-label="カテゴリナビ">
+			<div class="cat-nav-inner">
+				{catWithCounts.map(cat => (
+					<a href={`/blog/tag/${encodeURIComponent(cat.slug)}`} class="cat-chip">
+						{cat.name}
+						<span class="cat-chip-count">{cat.count}</span>
+					</a>
+				))}
+				<a href="/blog/tags" class="cat-chip cat-chip-all">All Tags</a>
+			</div>
+		</nav>
+		<main class="page-layout">
+			{/* Featured Article */}
+			<article class="featured">
+				<a href={`/blog/${featured.id}/`}>
+					{featured.data.heroImage && (
+						<Image width={560} height={315} src={featured.data.heroImage} alt={featured.data.title} />
+					)}
+					<div>
+						<div class="featured-meta">
+							{featured.data.tags && featured.data.tags[0] && (
+								<span class="featured-tag">#{(featured.data.tags as string[])[0]}</span>
+							)}
+							<span class="featured-date"><FormattedDate date={featured.data.pubDate} /></span>
+						</div>
+						<h2>{featured.data.title}</h2>
+						<p class="featured-desc">{featured.data.description}</p>
+					</div>
+				</a>
+			</article>
 
-			<h2 class="section-title">カテゴリから探す</h2>
-			<div class="categories">
-				{categoryWithCounts.map(cat => (
-					<a href={`/blog/tag/${encodeURIComponent(cat.tags[0])}`} class="category-card">
-						<span class="category-icon">{cat.icon}</span>
-						<div class="category-info">
-							<span class="category-name">{cat.name}</span>
-							<span class="category-count">{cat.count}件</span>
+			{/* Latest Articles */}
+			<div class="section-header">
+				<h2>Latest Articles</h2>
+				<a href="/blog">View all {allPosts.length} articles</a>
+			</div>
+			<div class="articles">
+				{latestPosts.map(post => (
+					<a href={`/blog/${post.id}/`} class="article-card">
+						{post.data.heroImage && (
+							<Image width={200} height={125} src={post.data.heroImage} alt="" class="article-thumb" />
+						)}
+						<div class="article-body">
+							<h3 class="article-title">{post.data.title}</h3>
+							<div class="article-info">
+								<FormattedDate date={post.data.pubDate} />
+								{post.data.tags && (post.data.tags as string[]).slice(0, 2).map(tag => (
+									<span class="article-tag">#{tag}</span>
+								))}
+							</div>
 						</div>
 					</a>
 				))}
-				<a href="/blog/tags" class="category-card">
-					<span class="category-icon">🏷️</span>
-					<div class="category-info">
-						<span class="category-name">全タグ一覧</span>
-						<span class="category-count">全て見る</span>
-					</div>
-				</a>
 			</div>
 
-			<h2 class="section-title">最新記事</h2>
-			<ul class="posts-grid">
-				{latestPosts.map(post => (
-					<li class="post-card">
-						<a href={`/blog/${post.id}/`}>
-							{post.data.heroImage && (
-								<Image width={560} height={315} src={post.data.heroImage} alt={post.data.title} />
-							)}
-							<h3 class="post-title">{post.data.title}</h3>
-							<p class="post-date"><FormattedDate date={post.data.pubDate} /></p>
-						</a>
-						{post.data.tags && post.data.tags.length > 0 && (
-							<div class="post-tags">
-								{(post.data.tags as string[]).slice(0, 3).map(tag => (
-									<a href={`/blog/tag/${encodeURIComponent(tag)}`} class="post-tag">#{tag}</a>
-								))}
-							</div>
-						)}
-					</li>
+			{/* Browse by Category */}
+			<div class="section-header">
+				<h2>Browse by Category</h2>
+				<a href="/blog/tags">All tags</a>
+			</div>
+			<div class="group-cats">
+				{groupCategories.map(cat => (
+					<a href={`/blog/tag/${encodeURIComponent(cat.tags[0])}`} class="group-cat">
+						{cat.name}
+						<span class="group-cat-count">{cat.count}</span>
+					</a>
 				))}
-			</ul>
+			</div>
 
-			<a href="/blog" class="view-all">全 {allPosts.length} 記事を見る &rarr;</a>
+			<a href="/blog" class="view-all">Browse All {allPosts.length} Articles</a>
+
+			{/* Tools & Resources */}
+			<div class="section-header">
+				<h2>Tools & Resources</h2>
+			</div>
+			<div class="promo-grid">
+				<a href="https://usedevtools.com/" target="_blank" rel="noopener" class="promo-card">
+					<div class="promo-label">Free Tools</div>
+					<h3>DevToolBox</h3>
+					<p>JSON, Base64, RegExp, Color — 46+ developer tools. All free, all in-browser.</p>
+				</a>
+				<a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="promo-card">
+					<div class="promo-label">Cheatsheets</div>
+					<h3>BOOTH Shop</h3>
+					<p>React, TypeScript, Docker, Git — printable cheatsheets for real-world development.</p>
+				</a>
+			</div>
 		</main>
 		<Footer />
 	</body>
