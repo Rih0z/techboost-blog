@@ -179,7 +179,8 @@ iDeCoでは投資信託を選んで運用します。エンジニアにおすす
 
 ## 関連記事
 
+- [エンジニアの老後資金計画2026](/blog/engineer-retirement-planning-guide-2026/) — 3000万円を作る具体的シミュレーション
+- [フリーランスエンジニアの社会保険・年金ガイド2026](/blog/freelance-engineer-insurance-pension-guide-2026/) — 国保・年金の選び方
 - [フリーランスエンジニアの確定申告完全ガイド2026](/blog/freelance-engineer-tax-guide-2026/) — 確定申告の全体像
 - [エンジニアの経費完全リスト2026](/blog/engineer-freelance-tax-expenses-2026/) — 経費計上で節税
 - [freee vs マネーフォワード徹底比較2026](/blog/freee-vs-moneyforward-comparison-2026/) — 会計ソフト選び
-- [エンジニアの年収アップ戦略](/blog/engineer-salary-up-strategy-2026/) — 収入を増やして投資原資を確保

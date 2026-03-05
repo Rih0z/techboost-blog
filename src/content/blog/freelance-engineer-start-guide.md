@@ -275,5 +275,6 @@ tags: ['フリーランス', 'キャリア', '副業', 'プログラミング']
 
 - [フリーランスエンジニアの開業届ガイド2026](/blog/freelance-kaigyo-guide-2026/) — 開業届・青色申告申請の詳細な書き方
 - [フリーランスエンジニアの確定申告完全ガイド2026](/blog/freelance-engineer-tax-guide-2026/) — 独立後の確定申告を完全網羅
+- [フリーランスエンジニアの契約書ガイド2026](/blog/freelance-engineer-contract-guide-2026/) — 業務委託契約の注意点
+- [フリーランスエンジニアの社会保険・年金ガイド2026](/blog/freelance-engineer-insurance-pension-guide-2026/) — 国保・年金の選び方
 - [freee vs マネーフォワード徹底比較2026](/blog/freee-vs-moneyforward-comparison-2026/) — 会計ソフト選びの決定版
-- [フリーランスエンジニアの必須ツール2026](/blog/freelance-engineer-tools-2026/) — 独立後に揃えるべきツール一覧

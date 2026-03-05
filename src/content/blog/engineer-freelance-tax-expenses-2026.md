@@ -222,7 +222,7 @@ freee会計では、按分を**自動計算**できます。
 ## 関連記事
 
 - [フリーランスエンジニアの確定申告完全ガイド2026](/blog/freelance-engineer-tax-guide-2026/) — 確定申告の全体像
+- [エンジニアのiDeCo・新NISA活用ガイド2026](/blog/engineer-ideco-nisa-guide-2026/) — iDeCo掛金も所得控除
+- [フリーランスエンジニアの社会保険・年金ガイド2026](/blog/freelance-engineer-insurance-pension-guide-2026/) — 社会保険料控除の詳細
 - [freee vs マネーフォワード徹底比較2026](/blog/freee-vs-moneyforward-comparison-2026/) — 会計ソフト選びの決定版
-- [エンジニアの副業と確定申告2026](/blog/engineer-side-job-tax-2026/) — 副業収入の申告方法
 - [フリーランスエンジニアの開業届ガイド2026](/blog/freelance-kaigyo-guide-2026/) — 開業届・青色申告申請
-- [リモートワークエンジニアガイド2026](/blog/remote-work-engineer-guide-2026/) — 自宅環境の経費計上にも

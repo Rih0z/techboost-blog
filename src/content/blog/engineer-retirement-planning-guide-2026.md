@@ -191,7 +191,7 @@ tags: ['フリーランス', '副業', 'キャリア', '税金']
 ## 関連記事
 
 - [エンジニアのiDeCo・新NISA活用ガイド2026](/blog/engineer-ideco-nisa-guide-2026/) — iDeCo・NISAの詳細
+- [フリーランスエンジニアの社会保険・年金ガイド2026](/blog/freelance-engineer-insurance-pension-guide-2026/) — 年金制度の詳細
 - [フリーランスエンジニアの確定申告完全ガイド2026](/blog/freelance-engineer-tax-guide-2026/) — 確定申告の全体像
 - [エンジニアの法人化ガイド2026](/blog/engineer-incorporation-guide-2026/) — 法人成りで節税
-- [エンジニアの年収アップ戦略](/blog/engineer-salary-up-strategy-2026/) — 投資原資を増やす
 - [freee vs マネーフォワード徹底比較2026](/blog/freee-vs-moneyforward-comparison-2026/) — 会計ソフト選び
