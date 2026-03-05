@@ -1,5 +1,5 @@
 ---
-title: 'Claude API完全ガイド2026 - Messages API、ストリーミング、ツール使用、コンテキストウィンドウ、ベストプラクティス'
+title: 'Claude API完全ガイド2026'
 description: 'Anthropic Claude APIを徹底解説。Messages API、ストリーミング、ツール使用、200Kコンテキストウィンドウ活用、プロンプトキャッシング、コスト最適化を実例付きで紹介'
 pubDate: 'Feb 05 2026'
 tags: ['AI', 'API', 'Claude', 'TypeScript']

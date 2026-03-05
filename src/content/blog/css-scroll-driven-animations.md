@@ -1,5 +1,5 @@
 ---
-title: 'CSS Scroll-driven Animations完全ガイド: JavaScriptなしでスクロール連動アニメーションを実装'
+title: 'CSS Scroll-driven Animations完全ガイド: JavaScriptなしでスクロール連動アニ...'
 description: 'CSS Scroll-driven Animations APIを使って、JavaScriptなしでスクロールに連動したアニメーションを実装する方法を徹底解説。animation-timeline、view-timeline、scroll()、view()の使い方'
 pubDate: 2025-05-20
 updatedDate: 2025-05-20

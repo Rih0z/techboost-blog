@@ -1,5 +1,5 @@
 ---
-title: 'Next.js App Routerの使い方 — Server ComponentsとClient Componentsの違い'
+title: 'Next.js App Routerの使い方'
 description: 'Next.js 13以降のApp Routerを徹底解説。Server ComponentsとClient Componentsの使い分け、データフェッチ、Server Actionsまで。'
 pubDate: 'Feb 12 2026'
 heroImage: '../../assets/thumbnails/third-post.jpg'

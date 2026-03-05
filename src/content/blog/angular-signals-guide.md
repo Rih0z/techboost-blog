@@ -1,5 +1,5 @@
 ---
-title: 'Angular Signals完全ガイド：signal(), computed(), effect()で始めるリアクティブプログラミング'
+title: 'Angular Signals完全ガイド：signal(), computed(), effect()で始めるリア...'
 description: 'Angular 16で導入されたSignalsの完全ガイド。signal(), computed(), effect()の使い方、RxJSとの共存、状態管理のベストプラクティスを実践的なコード例とともに解説します。'
 pubDate: 'Feb 06 2026'
 tags: ['Angular', 'Signals', 'TypeScript', 'リアクティブプログラミング', 'フロントエンド']

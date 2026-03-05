@@ -1,5 +1,5 @@
 ---
-title: 'TanStack Startフルスタックフレームワーク入門 - ファイルベースルーティング、サーバー関数、SSR完全ガイド'
+title: 'TanStack Startフルスタックフレームワーク入門'
 description: 'TanStack Startの完全ガイド。ファイルベースルーティング、サーバー関数、SSR、TanStack Query統合、Vinxiバンドラーなど、モダンなフルスタック開発手法を解説します。'
 pubDate: 2025-02-05
 tags: ['TanStack', 'TanStack Start', 'React', 'フルスタック', 'TypeScript']

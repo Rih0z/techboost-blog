@@ -1,5 +1,5 @@
 ---
-title: 'Web Components完全ガイド — Custom Elements・Shadow DOM・HTML Templates・Lit'
+title: 'Web Components完全ガイド'
 description: 'Web Componentsでフレームワーク非依存の再利用可能コンポーネントを構築する完全ガイド。Custom Elements・Shadow DOM・HTML Templates・Slots・Lit・TypeScript統合・React/Vue連携まで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/web-components-guide.jpg'

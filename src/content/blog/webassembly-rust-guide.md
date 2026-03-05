@@ -1,5 +1,5 @@
 ---
-title: 'Rust + WebAssembly実践ガイド: wasm-bindgenとwasm-packで高速Webアプリを構築する'
+title: 'Rust + WebAssembly実践ガイド: wasm-bindgenとwasm-packで高速Webアプリを...'
 description: 'Rustとwasm-bindgen、wasm-packを使って実践的なWebAssemblyアプリケーションを開発する方法を解説。JavaScriptとの相互運用、DOM操作、パフォーマンス最適化まで完全ガイド'
 pubDate: 2025-06-15
 updatedDate: 2025-06-15

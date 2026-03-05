@@ -1,5 +1,5 @@
 ---
-title: 'TypeScript 高度な型パターン実践ガイド：Conditional Types・Mapped Types・infer の使い方'
+title: 'TypeScript 高度な型パターン実践ガイド：Conditional Types・Mapped Types・i...'
 description: 'TypeScriptの上級者向け型パターン。Conditional Types、Mapped Types、Template Literal Types、inferを実践的なコード例で解説。型レベルプログラミングでコードの安全性を高める。'
 pubDate: 'Feb 26 2026'
 heroImage: '../../assets/thumbnails/typescript-advanced-types-guide.jpg'

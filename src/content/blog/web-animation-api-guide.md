@@ -1,5 +1,5 @@
 ---
-title: 'Web Animations API完全ガイド2026 - CSSアニメーション代替、タイムライン制御、スクロール連動、パフォーマンス最適化'
+title: 'Web Animations API完全ガイド2026'
 description: 'Web Animations APIを徹底解説。CSSアニメーションの代替、JavaScriptによるタイムライン制御、スクロール連動アニメーション、パフォーマンス最適化を実例付きで紹介'
 pubDate: 'Feb 05 2026'
 tags: ['JavaScript', 'CSS', 'アニメーション', 'Web API']

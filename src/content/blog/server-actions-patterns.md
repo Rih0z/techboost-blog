@@ -1,5 +1,5 @@
 ---
-title: "Server Actions設計パターン完全ガイド - Next.js/React 19での実践的なサーバーサイドロジック"
+title: "Server Actions設計パターン完全ガイド"
 description: "Next.js App RouterとReact 19のServer Actionsを使った実践的な設計パターン集。フォーム処理、データミューテーション、楽観的更新、エラーハンドリング、セキュリティまで徹底解説。"
 pubDate: "2025-07-28"
 updatedDate: "2025-07-28"

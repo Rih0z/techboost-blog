@@ -1,5 +1,5 @@
 ---
-title: 'Rust + WebAssembly実践ガイド - wasm-bindgen、wasm-pack、Webアプリ統合、パフォーマンス最適化'
+title: 'Rust + WebAssembly実践ガイド'
 description: 'RustでWebAssemblyを作成し、JavaScriptと統合する実践ガイド。wasm-bindgen、wasm-pack、パフォーマンス最適化、実用例まで徹底解説します。'
 pubDate: 2025-02-05
 tags: ['Rust', 'WebAssembly', 'WASM', 'JavaScript', 'パフォーマンス']

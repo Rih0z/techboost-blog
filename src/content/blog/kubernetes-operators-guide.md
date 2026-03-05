@@ -1,5 +1,5 @@
 ---
-title: "Kubernetesオペレーター開発完全ガイド - Controller RuntimeとKubebuilderで始めるカスタムコントローラー"
+title: "Kubernetesオペレーター開発完全ガイド"
 description: "Kubernetes Operatorパターンの基礎から、Kubebuilderを使った実装、本番運用まで、実践的なカスタムコントローラーの開発方法を解説します。"
 pubDate: "2025-02-05"
 tags: ['インフラ']

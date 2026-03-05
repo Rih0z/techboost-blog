@@ -1,5 +1,5 @@
 ---
-title: 'Webパフォーマンス最適化完全ガイド2026 - Core Web Vitals、INP、Speculation Rules APIまで徹底解説'
+title: 'Webパフォーマンス最適化完全ガイド2026'
 description: 'Core Web Vitals、INP対策、画像最適化、レンダリング戦略、Speculation Rules APIまで。2026年版Webパフォーマンス最適化の決定版ガイド'
 pubDate: 'Feb 05 2026'
 tags: ['パフォーマンス', 'Web Vitals', '最適化', 'フロントエンド', 'プログラミング']

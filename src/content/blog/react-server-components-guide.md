@@ -1,5 +1,5 @@
 ---
-title: 'React Server Components完全ガイド — Next.js App Routerで理解するRSC・Suspense・Streaming'
+title: 'React Server Components完全ガイド'
 description: 'React Server Componentsを完全解説。RSCとClient Componentsの違い・データフェッチング・Suspenseストリーミング・Server Actions・キャッシュ戦略をNext.js実装例付きで網羅。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/react-server-components-guide.jpg'

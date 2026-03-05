@@ -1,5 +1,5 @@
 ---
-title: "CSS transition-behavior完全ガイド - discrete transitionsで全プロパティをアニメーション化"
+title: "CSS transition-behavior完全ガイド"
 description: "CSS transition-behaviorプロパティを徹底解説。display、content-visibilityなどdiscreteプロパティのアニメーション化、allow-discreteの使い方、実践的なテクニックを網羅。"
 pubDate: "2025-02-06"
 tags: ["css", "animation", "transitions", "web-animations", "discrete-properties", "プログラミング"]

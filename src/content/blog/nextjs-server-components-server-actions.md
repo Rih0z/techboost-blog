@@ -1,5 +1,5 @@
 ---
-title: 'Next.js Server ComponentsとServer Actions完全ガイド -- React開発の新パラダイムを実装で理解する'
+title: 'Next.js Server ComponentsとServer Actions完全ガイド'
 description: 'Next.js App RouterにおけるServer ComponentsとServer Actionsの仕組みを体系的に解説。Client Componentsとの使い分け、データ取得パターン、フォーム処理、キャッシュ戦略まで、実装コード付きで実践的に学べる。'
 pubDate: '2026-02-21'
 tags: ['プログラミング']

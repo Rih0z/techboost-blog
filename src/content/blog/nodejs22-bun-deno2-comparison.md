@@ -1,5 +1,5 @@
 ---
-title: 'Node.js 22 vs Bun vs Deno 2 徹底比較 2026 — JavaScript ランタイム選択ガイド'
+title: 'Node.js 22 vs Bun vs Deno 2 徹底比較 2026'
 description: 'Node.js 22 LTS・Bun 1.x・Deno 2の性能・互換性・エコシステムを2026年最新版で徹底比較。ベンチマーク・ユースケース別おすすめ・移行コストまで網羅。'
 pubDate: 'Feb 21 2026'
 tags: ['Node.js', 'Bun', 'Deno', 'JavaScript', 'Runtime', 'Backend']

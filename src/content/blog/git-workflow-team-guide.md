@@ -1,5 +1,5 @@
 ---
-title: 'チーム開発のGitワークフロー完全ガイド — Git Flow vs GitHub Flow vs Trunk-Based'
+title: 'チーム開発のGitワークフロー完全ガイド'
 description: 'チーム開発で使われる3大Gitワークフロー（Git Flow, GitHub Flow, Trunk-Based Development）を徹底比較。それぞれのメリット・デメリット、使い分け、実践例、よくある問題と解決策まで完全解説。'
 pubDate: 'Feb 05 2026'
 tags: ['プログラミング']

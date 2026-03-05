@@ -1,5 +1,5 @@
 ---
-title: "ベクトルデータベース比較ガイド2026 — Pinecone, Weaviate, Qdrant, Chroma, pgvector"
+title: "ベクトルデータベース比較ガイド2026"
 description: "主要ベクトルデータベースの徹底比較。Pinecone、Weaviate、Qdrant、Chroma、pgvectorの機能、パフォーマンス、料金、ユースケース別の選び方を実例コード付きで解説。"
 pubDate: "2026-02-06"
 tags: ["ベクトルDB", "AI", "RAG", "埋め込み", "検索", "データベース", "LLM", "プログラミング"]

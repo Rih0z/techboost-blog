@@ -1,5 +1,5 @@
 ---
-title: 'React 19実践パターン集2026 - use()フック、Server Actions、フォームアクション、Suspense活用、最新ベストプラクティス'
+title: 'React 19実践パターン集2026'
 description: 'React 19の最新機能を実践的に解説。use()フック、Server Actions、フォームアクション、Suspenseの活用方法とベストプラクティスを徹底解説'
 pubDate: 'Feb 05 2026'
 tags: ['React', 'JavaScript', 'Web開発', 'フロントエンド']

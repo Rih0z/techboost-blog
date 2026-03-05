@@ -1,5 +1,5 @@
 ---
-title: 'ストリーミングSSR完全ガイド2026 - React Suspense、Next.js、Remix対応、パフォーマンス改善、実装パターン'
+title: 'ストリーミングSSR完全ガイド2026'
 description: 'ストリーミングSSRの仕組みから実装まで徹底解説。React Suspense SSR、Next.js/Remix対応、TTFBとFCP改善、プログレッシブレンダリング、実践パターンを紹介'
 pubDate: 'Feb 05 2026'
 tags: ['React', 'Next.js', 'Remix', 'SSR', 'パフォーマンス']

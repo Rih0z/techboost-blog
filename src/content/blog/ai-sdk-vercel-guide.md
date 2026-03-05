@@ -1,5 +1,5 @@
 ---
-title: 'Vercel AI SDK実践ガイド2026 - useChat、useCompletion、ストリーミングUI、マルチモーダル、エージェント構築'
+title: 'Vercel AI SDK実践ガイド2026'
 description: 'Vercel AI SDKを徹底解説。useChat/useCompletion、ストリーミングUI、マルチモーダル対応、ツール使用、エージェント構築、Next.js統合、OpenAI/Claude/Gemini連携を実例付きで紹介'
 pubDate: 'Feb 05 2026'
 tags: ['AI', 'Vercel', 'Next.js', 'TypeScript']

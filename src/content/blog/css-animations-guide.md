@@ -1,5 +1,5 @@
 ---
-title: 'CSS アニメーション完全ガイド — transition・keyframes・scroll-driven・パフォーマンス最適化'
+title: 'CSS アニメーション完全ガイド'
 description: 'CSSアニメーションを完全マスターする実践ガイド。transition・animation・@keyframes・CSS Custom Properties・Scroll-Driven Animations・View Transitions API・パフォーマンス最適化まで実装例付きで解説。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/css-animations-guide.jpg'

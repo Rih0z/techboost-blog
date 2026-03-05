@@ -1,5 +1,5 @@
 ---
-title: 'View Transitions API完全ガイド2026 - ページ遷移アニメーション、SPA/MPA対応、クロスドキュメント、Next.js統合'
+title: 'View Transitions API完全ガイド2026'
 description: 'View Transitions APIを徹底解説。ページ遷移アニメーション、SPA/MPA対応、クロスドキュメントトランジション、Next.js統合、パフォーマンス最適化を実例付きで紹介'
 pubDate: 'Feb 05 2026'
 tags: ['JavaScript', 'CSS', 'Web API', 'アニメーション']
