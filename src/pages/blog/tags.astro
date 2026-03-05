@@ -14,8 +14,37 @@ posts.forEach((post) => {
 	});
 });
 
-// Sort tags by count desc
-const sortedTags = Array.from(tagCount.entries()).sort((a, b) => b[1] - a[1]);
+// カテゴリ定義
+const categoryDefs = [
+	{ name: 'フロントエンド', tags: ['React', 'react', 'Next.js', 'nextjs', 'Vue', 'vue', 'TypeScript', 'typescript', 'JavaScript', 'javascript', 'CSS', 'css', 'フロントエンド', 'Frontend', 'Svelte', 'svelte', 'Angular', 'angular', 'Astro', 'astro', 'HTML', 'html', 'Tailwind', 'tailwind', 'Vite', 'vite'] },
+	{ name: 'バックエンド', tags: ['Node.js', 'nodejs', 'Python', 'python', 'Rust', 'rust', 'Go', 'go', 'Java', 'java', 'Ruby', 'ruby', 'PHP', 'php', 'GraphQL', 'graphql', 'API', 'api', 'Backend', 'Hono', 'hono', 'Express', 'Deno', 'deno', 'Bun', 'bun'] },
+	{ name: 'AI・機械学習', tags: ['AI', 'ai', 'LLM', 'llm', 'ChatGPT', 'Claude', 'Gemini', 'OpenAI', '機械学習', 'プロンプト', 'RAG', 'エージェント', 'MCP'] },
+	{ name: 'インフラ・DevOps', tags: ['Docker', 'docker', 'Kubernetes', 'kubernetes', 'AWS', 'aws', 'Linux', 'linux', 'DevOps', 'devops', 'CICD', 'インフラ', 'server', 'Terraform', 'terraform', 'Cloudflare', 'Vercel', 'deploy', 'nginx', 'Nginx'] },
+	{ name: 'データベース', tags: ['Database', 'database', 'データベース', 'PostgreSQL', 'MySQL', 'Redis', 'SQL', 'sql', 'Prisma', 'Drizzle', 'Supabase', 'MongoDB'] },
+	{ name: 'セキュリティ', tags: ['Security', 'security', 'セキュリティ', 'JWT', 'jwt', 'OAuth', 'auth', 'CSP', 'OWASP'] },
+	{ name: 'テスト・品質', tags: ['Testing', 'testing', 'Jest', 'Vitest', 'vitest', 'テスト', 'TDD', 'Playwright', 'Storybook'] },
+	{ name: 'パフォーマンス', tags: ['Performance', 'パフォーマンス', 'Core Web Vitals', 'Lighthouse', 'WebAssembly', 'WASM'] },
+	{ name: 'キャリア', tags: ['career', 'キャリア', '転職', '副業', 'フリーランス', 'freelance'] },
+];
+
+// カテゴリに属するタグとカウント
+const categorizedTags = new Set<string>();
+const categoryData = categoryDefs.map(cat => {
+	const matchedTags = cat.tags
+		.filter(t => tagCount.has(t))
+		.map(t => {
+			categorizedTags.add(t);
+			return { name: t, count: tagCount.get(t)! };
+		})
+		.sort((a, b) => b.count - a.count);
+	return { name: cat.name, tags: matchedTags };
+}).filter(c => c.tags.length > 0);
+
+// カテゴリに属さないタグ
+const uncategorized = Array.from(tagCount.entries())
+	.filter(([tag]) => !categorizedTags.has(tag))
+	.sort((a, b) => b[1] - a[1])
+	.map(([name, count]) => ({ name, count }));
 
 const title = 'タグ一覧 — TechBoost Blog';
 const description = 'TechBoost Blogの全タグ一覧。フロントエンド・バックエンド・DevOps・AI・セキュリティなど技術カテゴリで記事を探せます。';
@@ -28,40 +57,13 @@ const description = 'TechBoost Blogの全タグ一覧。フロントエンド・
 		<style>
 			main {
 				width: 960px;
+				max-width: calc(100% - 2rem);
+				margin: auto;
 			}
-			h1 {
-				margin-bottom: 0.5rem;
-			}
+			h1 { margin-bottom: 0.5rem; }
 			.subtitle {
 				color: rgb(var(--gray));
 				margin-bottom: 2rem;
-			}
-			.tags-grid {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 0.75rem;
-			}
-			.tag-chip {
-				display: inline-flex;
-				align-items: center;
-				gap: 0.375rem;
-				padding: 0.375rem 0.875rem;
-				border-radius: 999px;
-				background: rgb(var(--gray-light));
-				color: rgb(var(--black));
-				text-decoration: none;
-				font-size: 0.9rem;
-				font-weight: 500;
-				transition: background 0.15s, color 0.15s;
-			}
-			.tag-chip:hover {
-				background: rgb(var(--accent));
-				color: white;
-			}
-			.tag-count {
-				font-size: 0.75rem;
-				font-weight: 400;
-				opacity: 0.7;
 			}
 			.back-link {
 				display: inline-block;
@@ -70,8 +72,60 @@ const description = 'TechBoost Blogの全タグ一覧。フロントエンド・
 				text-decoration: none;
 				font-size: 0.9rem;
 			}
-			.back-link:hover {
-				text-decoration: underline;
+			.back-link:hover { text-decoration: underline; }
+			/* Category sections */
+			.category-section {
+				margin-bottom: 2rem;
+			}
+			.category-title {
+				font-size: 1.1rem;
+				font-weight: 700;
+				margin: 0 0 0.75rem;
+				padding-bottom: 0.5rem;
+				border-bottom: 2px solid rgb(var(--gray-light));
+			}
+			.tags-grid {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+			}
+			.tag-chip {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.3rem;
+				padding: 0.3rem 0.75rem;
+				border-radius: 999px;
+				background: rgb(var(--gray-light));
+				color: rgb(var(--black));
+				text-decoration: none;
+				font-size: 0.85rem;
+				font-weight: 500;
+				transition: background 0.15s, color 0.15s;
+			}
+			.tag-chip:hover {
+				background: rgb(var(--accent));
+				color: white;
+			}
+			.tag-count {
+				font-size: 0.7rem;
+				font-weight: 400;
+				opacity: 0.6;
+			}
+			/* Collapsible other tags */
+			.other-tags-toggle {
+				display: inline-block;
+				margin-top: 1rem;
+				padding: 0.4rem 1rem;
+				background: none;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 6px;
+				color: rgb(var(--gray));
+				font-size: 0.85rem;
+				cursor: pointer;
+			}
+			.other-tags-toggle:hover {
+				border-color: rgb(var(--accent));
+				color: rgb(var(--accent));
 			}
 		</style>
 	</head>
@@ -80,15 +134,35 @@ const description = 'TechBoost Blogの全タグ一覧。フロントエンド・
 		<main>
 			<a href="/blog" class="back-link">&larr; 記事一覧へ戻る</a>
 			<h1>タグ一覧</h1>
-			<p class="subtitle">全 {sortedTags.length} タグ</p>
-			<div class="tags-grid">
-				{sortedTags.map(([tag, count]) => (
-					<a href={`/blog/tag/${encodeURIComponent(tag)}`} class="tag-chip">
-						#{tag}
-						<span class="tag-count">({count})</span>
-					</a>
-				))}
-			</div>
+			<p class="subtitle">全 {tagCount.size} タグ / {posts.length} 記事</p>
+
+			{categoryData.map(cat => (
+				<section class="category-section">
+					<h2 class="category-title">{cat.name}</h2>
+					<div class="tags-grid">
+						{cat.tags.map(tag => (
+							<a href={`/blog/tag/${encodeURIComponent(tag.name)}`} class="tag-chip">
+								#{tag.name}
+								<span class="tag-count">({tag.count})</span>
+							</a>
+						))}
+					</div>
+				</section>
+			))}
+
+			{uncategorized.length > 0 && (
+				<section class="category-section">
+					<h2 class="category-title">その他のタグ</h2>
+					<div class="tags-grid">
+						{uncategorized.map(tag => (
+							<a href={`/blog/tag/${encodeURIComponent(tag.name)}`} class="tag-chip">
+								#{tag.name}
+								<span class="tag-count">({tag.count})</span>
+							</a>
+						))}
+					</div>
+				</section>
+			)}
 		</main>
 		<Footer />
 	</body>

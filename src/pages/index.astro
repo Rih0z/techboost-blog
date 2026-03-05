@@ -1,27 +1,259 @@
 ---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const allPosts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const latestPosts = allPosts.slice(0, 12);
+
+// カテゴリ定義（タグをカテゴリにグルーピング）
+const categories = [
+	{ name: 'フロントエンド', icon: '🎨', tags: ['React', 'react', 'Next.js', 'nextjs', 'Vue', 'vue', 'TypeScript', 'typescript', 'CSS', 'css', 'フロントエンド', 'Frontend', 'Svelte', 'svelte', 'Angular', 'angular', 'Astro', 'astro', 'HTML', 'html'] },
+	{ name: 'バックエンド', icon: '⚙️', tags: ['Node.js', 'nodejs', 'Python', 'python', 'Rust', 'rust', 'Go', 'go', 'Java', 'java', 'Ruby', 'ruby', 'PHP', 'php', 'GraphQL', 'graphql', 'API', 'api', 'Backend'] },
+	{ name: 'AI・機械学習', icon: '🤖', tags: ['AI', 'ai', 'LLM', 'llm', 'ChatGPT', 'Claude', 'Gemini', 'OpenAI', '機械学習', 'プロンプト'] },
+	{ name: 'インフラ・DevOps', icon: '🏗️', tags: ['Docker', 'docker', 'Kubernetes', 'kubernetes', 'AWS', 'aws', 'Linux', 'linux', 'DevOps', 'devops', 'CICD', 'インフラ', 'server', 'Terraform'] },
+	{ name: 'データベース', icon: '🗄️', tags: ['Database', 'database', 'データベース', 'PostgreSQL', 'MySQL', 'Redis', 'SQL', 'sql', 'Prisma'] },
+	{ name: 'セキュリティ', icon: '🔒', tags: ['Security', 'security', 'セキュリティ', 'JWT', 'jwt', 'OAuth', 'auth'] },
+	{ name: 'テスト・品質', icon: '✅', tags: ['Testing', 'testing', 'Jest', 'Vitest', 'vitest', 'テスト', 'TDD', 'Playwright'] },
+	{ name: 'パフォーマンス', icon: '⚡', tags: ['Performance', 'パフォーマンス', 'Core Web Vitals', 'Lighthouse'] },
+];
+
+// カテゴリごとの記事数を計算
+const categoryWithCounts = categories.map(cat => {
+	const tagSet = new Set(cat.tags.map(t => t.toLowerCase()));
+	const count = allPosts.filter(p =>
+		(p.data.tags ?? []).some((t: string) => tagSet.has(t.toLowerCase()))
+	).length;
+	return { ...cat, count };
+}).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
 ---
 
 <!doctype html>
 <html lang="ja">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			main {
+				width: 960px;
+				max-width: calc(100% - 2rem);
+				margin: auto;
+			}
+			/* Hero */
+			.hero {
+				text-align: center;
+				padding: 2rem 0 1.5rem;
+			}
+			.hero h1 {
+				font-size: 2rem;
+				margin: 0 0 0.5rem;
+			}
+			.hero p {
+				color: rgb(var(--gray));
+				font-size: 1rem;
+				margin: 0 0 1.5rem;
+			}
+			.hero-stats {
+				display: flex;
+				justify-content: center;
+				gap: 2rem;
+				font-size: 0.85rem;
+				color: rgb(var(--gray));
+			}
+			.hero-stats strong {
+				color: rgb(var(--accent));
+				font-size: 1.25rem;
+			}
+			/* Categories */
+			.section-title {
+				font-size: 1.25rem;
+				font-weight: 700;
+				margin: 2rem 0 1rem;
+				padding-bottom: 0.5rem;
+				border-bottom: 2px solid rgb(var(--gray-light));
+			}
+			.categories {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+				gap: 0.75rem;
+				margin-bottom: 2rem;
+			}
+			.category-card {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				padding: 0.75rem 1rem;
+				background: rgb(var(--gray-light));
+				border-radius: 8px;
+				text-decoration: none;
+				color: rgb(var(--black));
+				transition: background 0.15s, transform 0.1s;
+			}
+			.category-card:hover {
+				background: rgb(var(--accent));
+				color: white;
+				transform: translateY(-1px);
+			}
+			.category-icon {
+				font-size: 1.25rem;
+				flex-shrink: 0;
+			}
+			.category-info {
+				display: flex;
+				flex-direction: column;
+				gap: 0.1rem;
+			}
+			.category-name {
+				font-size: 0.9rem;
+				font-weight: 600;
+			}
+			.category-count {
+				font-size: 0.75rem;
+				opacity: 0.7;
+			}
+			/* Latest posts */
+			.posts-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+				gap: 1.5rem;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.post-card {
+				display: flex;
+				flex-direction: column;
+				gap: 0.5rem;
+			}
+			.post-card a {
+				text-decoration: none;
+				color: inherit;
+			}
+			.post-card img {
+				width: 100%;
+				aspect-ratio: 16/9;
+				object-fit: cover;
+				border-radius: 8px;
+			}
+			.post-title {
+				font-size: 0.95rem;
+				font-weight: 600;
+				line-height: 1.4;
+				margin: 0;
+				color: rgb(var(--black));
+			}
+			.post-card a:hover .post-title {
+				color: rgb(var(--accent));
+			}
+			.post-date {
+				font-size: 0.8rem;
+				color: rgb(var(--gray));
+				margin: 0;
+			}
+			.post-tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.25rem;
+			}
+			.post-tag {
+				display: inline-block;
+				padding: 0.1rem 0.5rem;
+				border-radius: 999px;
+				background: rgb(var(--gray-light));
+				color: rgb(var(--gray));
+				font-size: 0.7rem;
+				font-weight: 500;
+				text-decoration: none;
+			}
+			.post-tag:hover {
+				background: rgb(var(--accent));
+				color: white;
+			}
+			/* View all */
+			.view-all {
+				display: block;
+				text-align: center;
+				margin: 2rem 0;
+				padding: 0.75rem 2rem;
+				background: rgb(var(--accent));
+				color: white;
+				text-decoration: none;
+				border-radius: 8px;
+				font-weight: 600;
+				font-size: 1rem;
+				transition: opacity 0.15s;
+			}
+			.view-all:hover {
+				opacity: 0.85;
+			}
+			@media (max-width: 720px) {
+				.hero h1 { font-size: 1.5rem; }
+				.hero-stats { gap: 1rem; }
+				.categories { grid-template-columns: repeat(2, 1fr); }
+				.posts-grid { grid-template-columns: 1fr; }
+			}
+		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<h1>TechBoost Blog</h1>
-			<p>
-				Web制作・AI開発の最新技術情報を発信する技術ブログです。<br />
-				イザークコンサルティング株式会社が運営しています。
-			</p>
-			<p>
-				フロントエンド開発、AIツール活用、Web パフォーマンス最適化など、現場で役立つ技術情報をお届けします。
-			</p>
-			<p><a href="/blog">記事一覧を見る &rarr;</a></p>
+			<section class="hero">
+				<h1>{SITE_TITLE}</h1>
+				<p>{SITE_DESCRIPTION}</p>
+				<div class="hero-stats">
+					<span><strong>{allPosts.length}</strong> 記事</span>
+					<span><strong>{categoryWithCounts.length}</strong> カテゴリ</span>
+				</div>
+			</section>
+
+			<h2 class="section-title">カテゴリから探す</h2>
+			<div class="categories">
+				{categoryWithCounts.map(cat => (
+					<a href={`/blog/tag/${encodeURIComponent(cat.tags[0])}`} class="category-card">
+						<span class="category-icon">{cat.icon}</span>
+						<div class="category-info">
+							<span class="category-name">{cat.name}</span>
+							<span class="category-count">{cat.count}件</span>
+						</div>
+					</a>
+				))}
+				<a href="/blog/tags" class="category-card">
+					<span class="category-icon">🏷️</span>
+					<div class="category-info">
+						<span class="category-name">全タグ一覧</span>
+						<span class="category-count">全て見る</span>
+					</div>
+				</a>
+			</div>
+
+			<h2 class="section-title">最新記事</h2>
+			<ul class="posts-grid">
+				{latestPosts.map(post => (
+					<li class="post-card">
+						<a href={`/blog/${post.id}/`}>
+							{post.data.heroImage && (
+								<Image width={560} height={315} src={post.data.heroImage} alt={post.data.title} />
+							)}
+							<h3 class="post-title">{post.data.title}</h3>
+							<p class="post-date"><FormattedDate date={post.data.pubDate} /></p>
+						</a>
+						{post.data.tags && post.data.tags.length > 0 && (
+							<div class="post-tags">
+								{(post.data.tags as string[]).slice(0, 3).map(tag => (
+									<a href={`/blog/tag/${encodeURIComponent(tag)}`} class="post-tag">#{tag}</a>
+								))}
+							</div>
+						)}
+					</li>
+				))}
+			</ul>
+
+			<a href="/blog" class="view-all">全 {allPosts.length} 記事を見る &rarr;</a>
 		</main>
 		<Footer />
 	</body>

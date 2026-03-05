@@ -2,7 +2,6 @@
 title: 'クラウド会計ソフト比較2026：freee・マネーフォワード・弥生の特徴と選び方'
 description: 'freee会計・マネーフォワードクラウド・弥生オンラインの3大クラウド会計ソフトを料金・操作性・確定申告・API・モバイル対応など多角的に比較。2026年最新の選び方ガイドです。'
 pubDate: 'Mar 05 2026'
-heroImage: '../../assets/blog-placeholder-4.jpg'
 tags: ['確定申告', '会計', 'freee', 'フリーランス', 'SaaS']
 ---
 
