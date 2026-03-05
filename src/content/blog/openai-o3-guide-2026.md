@@ -2,6 +2,7 @@
 title: "OpenAI o3完全解説2026：思考するAIのアーキテクチャと実用的な使い方"
 description: "OpenAI o3/o3-miniの仕組みと活用法を解説。Chain of Thoughtによる推論強化がなぜ数学・コーディング・科学問題で威力を発揮するか、GPT-4oとの使い分けも解説。"
 pubDate: "2026-03-07"
+heroImage: '../../assets/thumbnails/openai-o3-guide-2026.jpg'
 tags:
   - "OpenAI"
   - "o3"

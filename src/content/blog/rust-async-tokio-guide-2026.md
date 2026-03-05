@@ -2,6 +2,7 @@
 title: "Rust非同期プログラミング完全ガイド2026：Tokioで高性能APIサーバーを作る"
 description: "RustのTokioランタイムを使った非同期プログラミングをゼロから解説。async/await・Axumフレームワーク・SQLxでのDB接続・エラーハンドリングまで実践的に学ぶ。"
 pubDate: "2026-03-12"
+heroImage: '../../assets/thumbnails/rust-async-tokio-guide-2026.jpg'
 tags:
   - "Rust"
   - "Tokio"

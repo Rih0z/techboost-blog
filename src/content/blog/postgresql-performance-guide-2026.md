@@ -2,6 +2,7 @@
 title: "PostgreSQLパフォーマンス最適化完全ガイド2026：インデックス設計からクエリ分析まで"
 description: "PostgreSQLのパフォーマンスチューニングを実践的に解説。EXPLAIN ANALYZE・インデックス戦略・パーティショニング・コネクションプール・PgBouncer設定まで網羅。"
 pubDate: "2026-03-15"
+heroImage: '../../assets/thumbnails/postgresql-performance-guide-2026.jpg'
 tags:
   - "PostgreSQL"
   - "データベース"

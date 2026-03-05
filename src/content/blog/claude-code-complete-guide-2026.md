@@ -2,6 +2,7 @@
 title: "Claude Code完全ガイド2026：ターミナルAIでコーディング生産性を10倍にする方法"
 description: "AnthropicのClaude Codeの全機能を解説。インストールから高度な自動化まで、CLAUDE.mdの書き方・MCP連携・並列エージェント実行など実践的な活用法を網羅。"
 pubDate: "2026-03-08"
+heroImage: '../../assets/thumbnails/claude-code-complete-guide-2026.jpg'
 tags:
   - "Claude Code"
   - "Anthropic"

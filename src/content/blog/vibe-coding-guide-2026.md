@@ -2,6 +2,7 @@
 title: "Vibe Coding完全ガイド2026：AIと対話しながら開発するエンジニアの新常識"
 description: "Vibe Codingとは何か、Cursor・Claude Code・GitHub Copilot Workspaceを使った実践的なAI協調開発の手法を解説。コード品質を落とさずに10倍速で開発する方法。"
 pubDate: "2026-03-05"
+heroImage: '../../assets/thumbnails/vibe-coding-guide-2026.jpg'
 tags:
   - "Vibe Coding"
   - "AI開発"

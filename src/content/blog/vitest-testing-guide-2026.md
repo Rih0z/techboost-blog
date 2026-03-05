@@ -2,6 +2,7 @@
 title: "Vitest完全ガイド2026：Next.js・React・Node.jsの高速テスト環境を構築する"
 description: "Vitestを使った現代的なJavaScript/TypeScriptテストを徹底解説。ユニットテスト・統合テスト・Snapshot・モック・カバレッジ計測まで実践的に学ぶ。"
 pubDate: "2026-03-14"
+heroImage: '../../assets/thumbnails/vitest-testing-guide-2026.jpg'
 tags:
   - "Vitest"
   - "テスト"

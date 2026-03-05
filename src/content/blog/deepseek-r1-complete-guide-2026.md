@@ -2,6 +2,7 @@
 title: "DeepSeek R1完全ガイド2026：中国発AI革命の実力をエンジニア視点で徹底解説"
 description: "DeepSeek R1の仕組み・性能・API活用法・GPT-4o/Claude 3.5 Sonnetとの比較を解説。コスト1/17の衝撃と、実務での使い方をエンジニア向けに徹底解説。"
 pubDate: "2026-03-04"
+heroImage: '../../assets/thumbnails/deepseek-r1-complete-guide-2026.jpg'
 tags:
   - "DeepSeek"
   - "AI"

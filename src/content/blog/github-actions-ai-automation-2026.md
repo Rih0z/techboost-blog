@@ -2,6 +2,7 @@
 title: "GitHub Actions×AI自動化2026：Claude/GPT-4oをCIパイプラインに組み込む実践ガイド"
 description: "GitHub ActionsでAIを活用したCI/CD自動化の実践ガイド。自動コードレビュー・PR要約・テスト失敗の自動解析・セキュリティスキャンをAIで自動化する方法を解説。"
 pubDate: "2026-03-09"
+heroImage: '../../assets/thumbnails/github-actions-ai-automation-2026.jpg'
 tags:
   - "GitHub Actions"
   - "CICD"

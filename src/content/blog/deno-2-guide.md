@@ -1,334 +1,286 @@
 ---
-title: "Deno 2完全ガイド — Node.js互換性とパフォーマンスの両立"
-description: "Deno 2の新機能を徹底解説。Node.js完全互換、npm直接サポート、deno.json設定、Freshフレームワーク、Deno Deployの使い方とパフォーマンス比較まで。"
-pubDate: "2026-02-05"
-tags: ["Deno", "TypeScript", "JavaScript", "Node.js", "Backend"]
+title: "Deno 2.0 完全ガイド — Node.js互換・npm対応・JSR・本番利用"
+description: "Deno 2.0の全機能を完全解説。Node.js完全互換、npmパッケージ対応、JSRレジストリ、Freshフレームワーク、本番環境での利用方法まで実践的に紹介します。"
+pubDate: "2026-03-04"
+tags: ["Deno", "JavaScript", "TypeScript", "バックエンド", "Node.js"]
 ---
 
-## Deno 2 とは
+## はじめに
 
-**Deno 2** は、Node.js の作者である Ryan Dahl が開発した、次世代の JavaScript/TypeScript ランタイムです。2024年にリリースされたバージョン2では、Node.js との完全互換性を実現し、既存のnpmエコシステムをそのまま利用できるようになりました。
+**Deno 2.0** は2024年10月にリリースされ、Node.js/npmとの完全互換を実現しました。「Node.jsを置き換える」という当初の目標から、「Node.jsの世界と共存しながら、より良い開発体験を提供する」という実用的な方向に進化しています。
 
-### Deno 2 の主な特徴
+## Deno の特徴
 
-- **Node.js完全互換**: `node:` プレフィックスでNode.js標準ライブラリを直接利用
-- **npm直接サポート**: `npm:` プレフィックスでnpmパッケージをインポート
-- **TypeScript標準対応**: トランスパイラ不要、そのまま実行可能
-- **セキュリティファースト**: デフォルトでサンドボックス化
-- **Web標準API**: fetch、WebSocket、Crypto APIなど標準搭載
-- **高速なパフォーマンス**: V8とRustで最適化
+- **TypeScriptネイティブ**: 設定不要でTypeScriptを直接実行
+- **セキュリティ**: ファイル・ネットワーク・環境変数へのアクセスを明示的に許可
+- **Node.js互換**: Node.js APIとnpmパッケージをそのまま使用可能
+- **組み込みツール**: フォーマッター・リンター・テストランナーが標準搭載
 
-## インストールとセットアップ
+## インストールと基本設定
 
 ```bash
-# macOS / Linux
+# macOS/Linux
 curl -fsSL https://deno.land/install.sh | sh
 
-# Windows (PowerShell)
+# Windows
 irm https://deno.land/install.ps1 | iex
-
-# Homebrew
-brew install deno
 
 # バージョン確認
 deno --version
+# deno 2.x.x (release, x86_64-apple-darwin)
 ```
 
-### VSCode設定
-
-```json
-// .vscode/settings.json
-{
-  "deno.enable": true,
-  "deno.lint": true,
-  "deno.unstable": false,
-  "[typescript]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  }
-}
-```
-
-## Node.js互換性の実践
-
-### npmパッケージの利用
+## TypeScript ネイティブ実行
 
 ```typescript
-// main.ts - npmパッケージを直接インポート
-import express from "npm:express@4";
-import { z } from "npm:zod@3";
-
-const app = express();
-app.use(express.json());
-
-const UserSchema = z.object({
-  name: z.string(),
-  email: z.string().email(),
-});
-
-app.post("/users", (req, res) => {
-  const result = UserSchema.safeParse(req.body);
-
-  if (!result.success) {
-    return res.status(400).json({ error: result.error });
-  }
-
-  res.json({ success: true, user: result.data });
-});
-
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
-});
-```
-
-```bash
-# そのまま実行（トランスパイル不要）
-deno run --allow-net --allow-read main.ts
-```
-
-### Node.js標準ライブラリの利用
-
-```typescript
-// file-server.ts
-import { createServer } from "node:http";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
-
-const server = createServer(async (req, res) => {
-  try {
-    const filePath = join(Deno.cwd(), "public", req.url || "index.html");
-    const content = await readFile(filePath);
-
-    res.writeHead(200);
-    res.end(content);
-  } catch (error) {
-    res.writeHead(404);
-    res.end("Not Found");
-  }
-});
-
-server.listen(8000, () => {
-  console.log("Server running on http://localhost:8000");
-});
-```
-
-## deno.json 設定の完全ガイド
-
-```json
-{
-  "compilerOptions": {
-    "lib": ["deno.window", "dom"],
-    "strict": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "react"
-  },
-  "imports": {
-    "@/": "./src/",
-    "@std/": "https://deno.land/std@0.218.0/",
-    "react": "npm:react@18",
-    "react-dom": "npm:react-dom@18"
-  },
-  "tasks": {
-    "dev": "deno run --watch --allow-net --allow-read main.ts",
-    "start": "deno run --allow-net --allow-read main.ts",
-    "test": "deno test --allow-read --allow-net",
-    "lint": "deno lint",
-    "fmt": "deno fmt"
-  },
-  "lint": {
-    "rules": {
-      "tags": ["recommended"],
-      "include": ["ban-untagged-todo"]
-    },
-    "exclude": ["dist/", "node_modules/"]
-  },
-  "fmt": {
-    "useTabs": false,
-    "lineWidth": 100,
-    "indentWidth": 2,
-    "semiColons": true,
-    "singleQuote": false,
-    "exclude": ["dist/", "coverage/"]
-  },
-  "test": {
-    "include": ["src/**/*_test.ts"]
-  },
-  "exclude": ["dist/", "node_modules/"]
-}
-```
-
-## Freshフレームワーク実践
-
-**Fresh** は Denoネイティブの Web フレームワークで、Islands Architecture を採用しています。
-
-```bash
-# プロジェクト作成
-deno run -A -r https://fresh.deno.dev my-fresh-app
-cd my-fresh-app
-deno task dev
-```
-
-### Freshのディレクトリ構造
-
-```
-my-fresh-app/
-├── routes/
-│   ├── index.tsx        # トップページ
-│   ├── api/users.ts     # APIルート
-│   └── _app.tsx         # ルートレイアウト
-├── islands/
-│   └── Counter.tsx      # クライアント側インタラクティブコンポーネント
-├── components/
-│   └── Button.tsx       # サーバーサイドコンポーネント
-├── static/
-│   └── logo.svg
-├── deno.json
-└── main.ts
-```
-
-### Fresh APIルート
-
-```typescript
-// routes/api/users.ts
-import { Handlers } from "$fresh/server.ts";
-
+// app.ts - 設定不要でTypeScriptを直接実行
 interface User {
   id: number;
   name: string;
   email: string;
 }
 
-const users: User[] = [];
+async function fetchUser(id: number): Promise<User> {
+  const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json() as Promise<User>;
+}
 
-export const handler: Handlers = {
-  async GET(_req) {
-    return new Response(JSON.stringify(users), {
-      headers: { "Content-Type": "application/json" },
-    });
-  },
-
-  async POST(req) {
-    const body = await req.json();
-    const newUser: User = {
-      id: users.length + 1,
-      ...body,
-    };
-    users.push(newUser);
-
-    return new Response(JSON.stringify(newUser), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
-  },
-};
+const user = await fetchUser(1);
+console.log(`ユーザー名: ${user.name}`);
+console.log(`メール: ${user.email}`);
 ```
 
-### Fresh Island（クライアントサイドコンポーネント）
+```bash
+# 実行（--allow-net でネットワーク許可）
+deno run --allow-net app.ts
+```
+
+## npm パッケージの利用
+
+Deno 2.0では `npm:` プレフィックスでnpmパッケージを直接使用できます。
 
 ```typescript
-// islands/Counter.tsx
-import { signal } from "@preact/signals";
+// npm: プレフィックスでnpmパッケージをインポート
+import express from "npm:express@5";
+import { z } from "npm:zod@3";
+import cors from "npm:cors";
 
-const count = signal(0);
+const userSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  age: z.number().min(0).max(150),
+});
 
-export default function Counter() {
-  return (
-    <div class="counter">
-      <p>Count: {count.value}</p>
-      <button onClick={() => count.value++}>Increment</button>
-      <button onClick={() => count.value--}>Decrement</button>
-    </div>
-  );
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.post("/users", (req, res) => {
+  const result = userSchema.safeParse(req.body);
+
+  if (!result.success) {
+    return res.status(400).json({
+      error: "バリデーションエラー",
+      details: result.error.issues,
+    });
+  }
+
+  res.json({ message: "ユーザーを作成しました", user: result.data });
+});
+
+app.listen(3000, () => {
+  console.log("サーバー起動: http://localhost:3000");
+});
+```
+
+```bash
+# npm パッケージを使うスクリプトの実行
+deno run --allow-net --allow-read server.ts
+```
+
+## Node.js 互換モード
+
+既存のNode.jsプロジェクトをDeno上で実行できます。
+
+```typescript
+// Node.js APIを直接使用
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { createServer } from "node:http";
+import { EventEmitter } from "node:events";
+
+// Node.jsのcreateServerがそのまま動く
+const server = createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ message: "Hello from Deno with Node.js API" }));
+});
+
+server.listen(8080, () => {
+  console.log("http://localhost:8080");
+});
+```
+
+## JSR（JavaScript Registry）
+
+**JSR** はDenoが開発した新しいJavaScriptパッケージレジストリです。npmの課題を解決した次世代レジストリとして注目されています。
+
+```typescript
+// JSRパッケージのインポート（@スコープ形式）
+import { encodeBase64 } from "jsr:@std/encoding/base64";
+import { parse } from "jsr:@std/csv";
+import { assertEquals } from "jsr:@std/assert";
+
+// Base64 エンコード
+const encoded = encodeBase64("Hello, Deno!");
+console.log(encoded); // "SGVsbG8sIERlbm8h"
+
+// CSV パース
+const csv = `name,age,city
+田中太郎,25,東京
+佐藤花子,30,大阪`;
+
+const records = parse(csv, { skipFirstRow: true });
+console.log(records);
+// [{ name: "田中太郎", age: "25", city: "東京" }, ...]
+```
+
+### deno.json 設定ファイル
+
+```json
+{
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.0",
+    "@std/encoding": "jsr:@std/encoding@^1.0.0",
+    "hono": "npm:hono@^4.0.0",
+    "zod": "npm:zod@^3.0.0"
+  },
+  "tasks": {
+    "dev": "deno run --watch --allow-all src/main.ts",
+    "test": "deno test --allow-all",
+    "lint": "deno lint",
+    "fmt": "deno fmt",
+    "build": "deno compile --allow-all src/main.ts"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true
+  }
 }
 ```
 
-## Deno Deploy へのデプロイ
-
-Deno Deploy は、エッジロケーションで動作するサーバーレスプラットフォームです。
-
-```bash
-# Deno Deploy CLI インストール
-deno install -A --no-check -r -f https://deno.land/x/deploy/deployctl.ts
-
-# デプロイ
-deployctl deploy --project=my-project main.ts
-```
-
-### GitHub Actionsでの自動デプロイ
-
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy to Deno Deploy
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v2.x
-
-      - name: Deploy to Deno Deploy
-        run: |
-          deno run -A https://deno.land/x/deploy/deployctl.ts deploy \
-            --project=my-project \
-            --token=${{ secrets.DENO_DEPLOY_TOKEN }} \
-            main.ts
-```
-
-## パフォーマンス比較
-
-### ベンチマーク: Hello World サーバー
+## Hono × Deno で API サーバー構築
 
 ```typescript
-// deno-server.ts
-Deno.serve(() => new Response("Hello, World!"));
+// src/main.ts
+import { Hono } from "npm:hono";
+import { cors } from "npm:hono/cors";
+import { logger } from "npm:hono/logger";
+import { zValidator } from "npm:@hono/zod-validator";
+import { z } from "npm:zod";
 
-// node-server.js
-import http from "node:http";
-http.createServer((req, res) => {
-  res.end("Hello, World!");
-}).listen(8000);
+const app = new Hono();
+
+app.use("*", cors());
+app.use("*", logger());
+
+// 型安全なバリデーション
+const createPostSchema = z.object({
+  title: z.string().min(1).max(100),
+  content: z.string().min(1),
+  tags: z.array(z.string()).optional(),
+});
+
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  tags: string[];
+  createdAt: Date;
+}
+
+const posts: Post[] = [];
+
+app.get("/posts", (c) => {
+  return c.json(posts);
+});
+
+app.post(
+  "/posts",
+  zValidator("json", createPostSchema),
+  async (c) => {
+    const body = c.req.valid("json");
+    const post: Post = {
+      id: crypto.randomUUID(),
+      title: body.title,
+      content: body.content,
+      tags: body.tags ?? [],
+      createdAt: new Date(),
+    };
+    posts.push(post);
+    return c.json(post, 201);
+  }
+);
+
+Deno.serve({ port: 3000 }, app.fetch);
 ```
 
-**結果（wrk -t12 -c400 -d30s）:**
+```bash
+# 起動
+deno run --allow-net src/main.ts
 
-| ランタイム | Req/sec | Latency (avg) | Transfer/sec |
-|-----------|---------|---------------|--------------|
-| Deno 2    | 68,340  | 5.85ms        | 9.12 MB      |
-| Node.js 20| 42,120  | 9.49ms        | 7.51 MB      |
-| Bun 1.1   | 71,580  | 5.58ms        | 9.56 MB      |
+# または deno task で
+deno task dev
+```
 
-Deno 2は、Node.jsより約62%高速です。
+## Deno のテストランナー
 
-## Denoが適しているケース
+```typescript
+// src/utils_test.ts
+import { assertEquals, assertRejects } from "jsr:@std/assert";
 
-**Denoを選ぶべき場面:**
-- 新規プロジェクトでモダンな技術スタックを使いたい
-- TypeScript中心の開発
-- エッジコンピューティング（Deno Deploy）
-- セキュリティが重要な用途
-- 依存関係管理をシンプルにしたい
+function add(a: number, b: number): number {
+  return a + b;
+}
 
-**Node.jsを選ぶべき場面:**
-- 既存の大規模Node.jsプロジェクト
-- ネイティブアドオン（N-API）に依存
-- エンタープライズの既存インフラ
-- チームがNode.jsに精通している
+async function divide(a: number, b: number): Promise<number> {
+  if (b === 0) throw new Error("ゼロ除算はできません");
+  return a / b;
+}
+
+Deno.test("足し算のテスト", () => {
+  assertEquals(add(1, 2), 3);
+  assertEquals(add(-1, 1), 0);
+  assertEquals(add(0, 0), 0);
+});
+
+Deno.test("割り算のテスト", async () => {
+  assertEquals(await divide(10, 2), 5);
+});
+
+Deno.test("ゼロ除算でエラーになる", async () => {
+  await assertRejects(
+    () => divide(10, 0),
+    Error,
+    "ゼロ除算はできません"
+  );
+});
+```
+
+```bash
+deno test
+```
 
 ## まとめ
 
-Deno 2は、Node.js互換性を獲得したことで、実用性と先進性を両立したランタイムとなりました。特に新規プロジェクトでは、TypeScriptのネイティブサポート、標準ライブラリの充実、セキュリティモデルの恩恵を受けられます。
+Deno 2.0は「Node.jsの代替」から「Node.jsと共存するより良い選択肢」へと進化しました。
 
-2026年現在、Deno 2は本番環境でも十分に使える成熟度に達しており、Deno Deployと組み合わせることで、エッジでの高速なアプリケーション配信が可能です。次のプロジェクトでは、Denoを検討する価値があるでしょう。
+- **TypeScript**: 設定不要でネイティブ実行
+- **Node.js互換**: 既存コードやnpmパッケージをそのまま使用
+- **セキュリティ**: 明示的な権限管理でより安全なランタイム
+- **JSR**: npmより優れた型安全なパッケージレジストリ
+- **組み込みツール**: lint・fmt・testが標準搭載
+
+新規プロジェクト、特にAPIサーバー・CLIツール・スクリプトの用途でDeno 2.0は有力な選択肢です。
