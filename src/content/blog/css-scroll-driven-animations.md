@@ -4,10 +4,7 @@ description: 'CSS Scroll-driven Animations APIを使って、JavaScriptなしで
 pubDate: 2025-05-20
 updatedDate: 2025-05-20
 tags: ['CSS', 'Scroll-driven Animations', 'Web Animation', 'フロントエンド', 'パフォーマンス', 'プログラミング']
-category: 'フロントエンド'
 ---
-
-# CSS Scroll-driven Animations完全ガイド: JavaScriptなしでスクロール連動アニメーションを実装
 
 CSS Scroll-driven Animations APIは、スクロール位置に連動したアニメーションをJavaScriptなしで実装できる革新的な機能です。
 

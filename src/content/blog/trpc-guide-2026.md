@@ -1,10 +1,9 @@
 ---
 title: 'tRPC完全ガイド - 型安全なAPI開発の決定版'
-description: 'tRPCの基本からNext.js統合、認証、エラーハンドリング、パフォーマンス最適化まで徹底解説。GraphQLやREST APIとの比較も紹介。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
-pubDate: 'Feb 05 2026'
+description: 'tRPCの基本からNext.js統合、認証、エラーハンドリング、パフォーマンス最適化まで徹底解説。GraphQLやREST APIとの比較も紹介。'
+pubDate: '2026-02-05'
 tags: ['tRPC', 'TypeScript', 'Next.js']
 ---
-# tRPC完全ガイド - 型安全なAPI開発の決定版
 
 tRPCは、TypeScriptでエンドツーエンドの型安全性を実現するRPCフレームワークです。REST APIやGraphQLのような複雑な設定なしに、フロントエンドとバックエンド間で完全な型共有が可能です。
 

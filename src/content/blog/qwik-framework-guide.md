@@ -1,8 +1,7 @@
 ---
 title: 'Qwik完全ガイド：即時読み込みを実現する次世代Webフレームワーク'
 description: 'Qwikの革新的なResumeabilityと遅延実行を徹底解説。コンポーネント・QwikCity・ローダー・アクション・サーバーサイドレンダリング・パフォーマンス最適化まで実践的に学ぶ。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/qwik-framework-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['プログラミング', '開発ツール']
 ---
 ## Qwikとは何か：Webパフォーマンスの再定義

@@ -4,9 +4,7 @@ description: 'Rustとwasm-bindgen、wasm-packを使って実践的なWebAssembly
 pubDate: 2025-06-15
 updatedDate: 2025-06-15
 tags: ['Rust', 'WebAssembly', 'wasm-bindgen', 'wasm-pack', 'パフォーマンス', 'プログラミング']
-category: 'フロントエンド'
 ---
-# Rust + WebAssembly実践ガイド: wasm-bindgenとwasm-packで高速Webアプリを構築する
 
 WebAssembly（WASM）は、ブラウザ上でネイティブに近い速度で動作するバイナリフォーマットです。Rustは最もWebAssemblyと相性の良い言語の一つとして注目されています。
 

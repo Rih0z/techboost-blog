@@ -2,7 +2,6 @@
 title: "Dockerコンテナパターン集: マルチステージビルドからヘルスチェックまで"
 description: "本番環境で使えるDockerfileのベストプラクティスとデザインパターンを徹底解説。マルチステージビルド、ヘルスチェック、セキュリティ対策など実践的なテクニックを紹介します。Docker・Container・DevOpsに関する実践情報。"
 pubDate: "2025-02-05"
-category: "DevOps"
 tags: ["Docker", "Container", "DevOps", "Best Practices", "Security"]
 ---
 Dockerコンテナは現代のアプリケーション開発に欠かせません。しかし、シンプルなDockerfileを書くのと、本番環境で運用できる最適化されたコンテナを作るのは別物です。本記事では、2026年の最新ベストプラクティスに基づいた実践的なDockerパターンを解説します。

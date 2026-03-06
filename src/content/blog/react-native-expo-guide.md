@@ -1,12 +1,9 @@
 ---
 title: 'React Native + Expo完全ガイド'
 description: 'React Native + ExpoでiOS/Androidアプリを開発する完全ガイド。Expo Router・TypeScript・React Navigation・Zustand・Expo SDK（Camera/Location/Notifications）・OTA更新・App Store公開まで...'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/react-native-expo-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['React Native', 'Expo', 'TypeScript', 'モバイル', 'iOS Android']
 ---
-
-# React Native + Expo完全ガイド — TypeScript・Navigation・状態管理・ネイティブAPI
 
 React NativeとExpoの組み合わせは、JavaScriptエンジニアがiOS/Androidアプリを開発するための最強の選択肢のひとつだ。Web開発の知識をそのまま活かしながら、真のネイティブパフォーマンスと豊富なプラットフォームAPIにアクセスできる。本記事では、プロジェクト作成から本番公開まで、実務で通用するレベルの実装を一気通貫で解説する。
 

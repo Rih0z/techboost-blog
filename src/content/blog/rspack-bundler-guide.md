@@ -2,7 +2,7 @@
 title: "Rspack完全ガイド — Rust製の超高速バンドラーでWebpack互換の次世代ビルド体験"
 description: "Webpack互換でRust製の超高速バンドラーRspackの完全ガイド。Webpackからの移行方法、パフォーマンス最適化、プラグインエコシステム、実践的な設定例まで徹底解説します。Rspack・Rust・Bundlerに関する実践情報。"
 pubDate: "2025-02-06"
-tags: ["Rspack", "Rust", "Bundler", "Webpack", "Build Tools", "Performance", "プログラミング"]
+tags: ["Rspack", "Rust", "Bundler", "Webpack", "Build Tools"]
 ---
 Rspackは、Rust言語で実装されたWebpack互換の次世代JavaScriptバンドラーです。Webpackのエコシステムと互換性を保ちながら、Rustによる10倍以上の高速化を実現し、大規模プロジェクトのビルド時間を劇的に短縮します。この記事では、Rspackの基本から実践的な使い方まで徹底的に解説します。
 

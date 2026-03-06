@@ -2,7 +2,6 @@
 title: "Server-Sent Events (SSE) 実践ガイド - リアルタイム通信の最適解"
 description: "Server-Sent Events（SSE）の基礎から実践まで徹底解説。WebSocketとの比較、Node.js/Next.js実装、エラーハンドリング、実運用のベストプラクティスを網羅。SSE・Server-Sent Events・Real-timeに関する実践情報。"
 pubDate: "2025-02-05"
-category: "Web Development"
 tags: ['SSE', 'Server-Sent Events', 'Realtime', 'Node.js', 'Next.js', 'プログラミング']
 ---
 ## はじめに

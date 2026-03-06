@@ -4,7 +4,6 @@ description: '@container style()を使ったスタイルベースのコンテナ
 pubDate: '2025-02-06'
 tags: ['CSS', 'Container Queries', 'Style Queries', 'Design System', 'プログラミング']
 ---
-# CSS Container Style Queries実践ガイド
 
 CSS Container Style Queries（スタイルクエリ）は、親要素の**サイズ**ではなく**スタイルプロパティ**に基づいて子要素のスタイルを変更できる革新的な機能です。
 

@@ -1,10 +1,9 @@
 ---
 title: 'Astro DB完全ガイド - エッジ対応の組み込みSQLデータベース'
 description: 'Astro DBの基礎から実践まで徹底解説。libSQLベースの型安全データベース、エッジランタイム対応、スキーマ定義、クエリAPI、Astroプロジェクトとの統合方法を完全網羅。Astro・Database・libSQLに関する実践情報。'
-pubDate: 'Feb 05 2026'
+pubDate: '2026-02-05'
 tags: ['Astro', 'Database', 'libSQL', 'TypeScript', 'Edge Computing']
 ---
-# Astro DB完全ガイド
 
 ## はじめに
 

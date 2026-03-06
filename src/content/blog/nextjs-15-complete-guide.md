@@ -1,7 +1,7 @@
 ---
 title: 'Next.js 15 完全ガイド — App Router・Server Actions・最新機能まとめ'
 description: 'Next.js 15の新機能を完全網羅。App Router、Server Actions、Partial Prerendering、Turbopackなど、2026年の最新機能を実践的なコード例とともに解説します。React Server Componentsの活用法も詳しく紹介。'
-pubDate: 'Feb 05 2026'
+pubDate: '2026-02-05'
 tags: ['JavaScript', 'Next.js', 'React', 'インフラ', 'フロントエンド']
 ---
 Next.js 15へのアップグレードを3つのプロダクションプロジェクトで経験しましたが、正直に言うと最初は地獄でした。`cookies()`が突然非同期になり、fetch cacheのデフォルトが変わり、既存コードが予想外の場所で壊れます。

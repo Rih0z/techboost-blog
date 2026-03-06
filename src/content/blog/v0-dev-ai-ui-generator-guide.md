@@ -2,7 +2,7 @@
 title: 'v0.dev完全ガイド｜AIでUI生成・React/Next.jsコンポーネントを自動作成'
 description: 'Vercelが提供するv0.devの使い方を徹底解説。プロンプト入力からReact/Next.jsコンポーネントを自動生成する方法、shadcn/ui・Tailwind CSS対応の生成コードの特徴、Bolt.newとの比較、料金プランまで網羅。'
 pubDate: '2026-03-05'
-tags: ['v0', 'Vercel', 'AI', 'UI生成', 'React', 'Next.js', 'shadcn-ui']
+tags: ['v0', 'Vercel', 'AI', 'UI生成', 'React']
 ---
 
 ランディングページのモック作成に丸1日かかっていたのが、v0.devを使い始めてから30分で終わるようになりました。デザイナーに依頼する前のプロトタイプ、社内ツールのUI、クライアントへの提案用モックアップ。これらの作業でv0.devは圧倒的な時間短縮をもたらします。

@@ -1,8 +1,7 @@
 ---
 title: 'Hono完全ガイド — 超軽量WebフレームワークでEdge/Cloudflare Workers開発'
 description: 'Honoフレームワークを完全解説。Cloudflare Workers・Node.js・Bun・Deno対応の超軽量WebフレームワークによるAPI開発。ルーティング・ミドルウェア・バリデーション・RPC・hono/jsx・デプロイまで実装例付きで解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/hono-web-framework-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Hono', 'Cloudflare Workers', 'TypeScript', 'Edge', 'API']
 ---
 

@@ -2,7 +2,7 @@
 title: 'Turso + LibSQL：エッジデータベース実践ガイド'
 description: 'Turso + LibSQLによるエッジデータベースの完全ガイド。セットアップ、レプリケーション、Drizzle ORM連携の実践的な使い方。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
 pubDate: 2025-02-05
-tags: ['Turso', 'libSQL', 'Edge Database', 'SQLite', 'Drizzle ORM', 'Database', 'インフラ']
+tags: ['Turso', 'libSQL', 'Edge Database', 'SQLite', 'Drizzle ORM']
 ---
 TursoはLibSQLを基盤とするエッジデータベースサービスで、グローバルに分散されたSQLiteデータベースを提供します。本記事では、Tursoの実践的な使い方について詳しく解説します。
 

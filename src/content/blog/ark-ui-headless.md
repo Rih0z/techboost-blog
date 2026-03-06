@@ -2,7 +2,7 @@
 title: "Ark UI完全ガイド — ヘッドレスUIコンポーネントで自由なデザインと型安全を両立"
 description: "スタイルを持たないヘッドレスUIコンポーネントライブラリArk UIの完全ガイド。React、Vue、Solidで使える高品質なアクセシブルコンポーネント、Panda CSSとの統合、実践例まで徹底解説します。実務で役立つポイントを厳選して解説。"
 pubDate: "2025-02-06"
-tags: ["Ark UI", "Headless UI", "React", "Vue", "Solid", "Accessibility", "Component Library"]
+tags: ["Ark UI", "Headless UI", "React", "Vue", "Solid"]
 ---
 Ark UIは、Chakra UIチームが開発した、スタイルを持たないヘッドレスUIコンポーネントライブラリです。React、Vue、Solidで同じAPIが使え、完全なアクセシビリティとキーボード操作をサポートし、Panda CSSやTailwindと組み合わせて自由にスタイリングできます。この記事では、Ark UIの基本から実践的な使い方まで徹底的に解説します。
 

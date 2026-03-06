@@ -1,10 +1,9 @@
 ---
 title: 'React Hooks完全ガイド — useState/useEffect/カスタムフック徹底解説'
 description: 'React Hooksの全種類を実例付きで解説。useState、useEffect、useContext、useMemo、useCallbackからカスタムフック設計パターンまで完全網羅。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
-pubDate: 'Feb 05 2026'
+pubDate: '2026-02-05'
 tags: ['React', 'フロントエンド', '開発ツール']
 ---
-# React Hooks完全ガイド — useState/useEffect/カスタムフック徹底解説
 
 **React Hooks**は2019年のReact 16.8で導入され、2026年現在もReact開発の標準です。クラスコンポーネントを使わず、関数コンポーネントだけで状態管理やライフサイクル処理が可能になりました。
 

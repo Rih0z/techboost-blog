@@ -2,7 +2,7 @@
 title: "Windsurf IDE完全ガイド2026｜AI搭載エディタの機能・使い方・Cursor比較"
 description: "Windsurf IDEの全機能と使い方を徹底解説。Codeium開発・Cognition買収のAIエディタでCascade・Flows・マルチファイル編集・ターミナル統合まで実践的に紹介。Cursor・GitHub Copilotとの料金・機能比較も。"
 pubDate: "2026-03-05"
-tags: ["AI", "開発ツール", "エディタ", "開発効率化"]
+tags: ["AI", "開発ツール", "career", "エディタ"]
 ---
 
 「Cursor は試してみたけど、月額 $20 はちょっと高い」「GitHub Copilot のインライン補完は便利だけど、複数ファイルをまたいだリファクタリングは手作業のまま」――こんな悩みを抱えている開発者は少なくないはずだ。

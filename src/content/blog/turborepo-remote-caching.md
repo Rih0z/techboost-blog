@@ -4,7 +4,6 @@ description: "Turborepoのリモートキャッシュ機能を使ったビルド
 pubDate: "2025-11-05"
 updatedDate: "2025-11-05"
 tags: ['Turborepo', 'Monorepo', 'ビルド最適化', 'CICD', 'キャッシュ', 'インフラ']
-category: "DevOps"
 ---
 Turborepoのリモートキャッシュは、チーム全体でビルド成果物を共有し、ビルド時間を劇的に短縮できる強力な機能です。本記事では、リモートキャッシュの実装から運用まで、実践的なノウハウを解説します。
 

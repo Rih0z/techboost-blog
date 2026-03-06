@@ -2,7 +2,6 @@
 title: '正規表現（Regex）完全ガイド — JavaScriptで使えるパターン50選と実践例'
 description: '正規表現の基礎から応用まで徹底解説。JavaScript/TypeScriptでよく使うパターン50選、メールバリデーション・URL解析・ログ解析など実務で使える実践例を豊富なコード付きで紹介。正規表現・Regex・JavaScriptに関する実践情報。'
 pubDate: '2026-02-20'
-heroImage: '../../assets/thumbnails/regex-complete-guide.jpg'
 tags: ['正規表現', 'Regex', 'JavaScript', 'TypeScript', 'バリデーション']
 ---
 正規表現（Regular Expression、略してRegex）は、テキストパターンを記述するための強力なミニ言語だ。一見すると暗号のような記号の羅列に見えるが、一度マスターすれば文字列処理の生産性が飛躍的に向上する。この記事では基礎概念から実践的なパターン集まで、JavaScriptを中心に体系的に解説する。

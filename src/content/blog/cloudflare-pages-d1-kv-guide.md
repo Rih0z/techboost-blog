@@ -2,7 +2,6 @@
 title: 'Cloudflare Pages + D1 + KV 完全ガイド — 無料枠でフルスタックアプリを構築'
 description: 'Cloudflare Pages, D1 (SQLite), KV Storageを組み合わせたフルスタックアプリの構築方法。Hono.js + TypeScript で本番運用まで。無料枠で月間100万リクエスト対応。初心者から実務レベルまで対応。'
 pubDate: '2026-02-21'
-heroImage: '../../assets/thumbnails/cloudflare-pages-d1-kv-guide.jpg'
 tags: ['Cloudflare', 'Edge', 'Serverless', 'TypeScript', 'Database']
 ---
 Cloudflare Pagesは静的サイトホスティングにとどまらず、D1（SQLiteデータベース）・KV Storage・Durable Objectsを組み合わせることで本格的なフルスタックアプリケーションを構築できるプラットフォームだ。しかも無料枠だけで月間100万リクエスト以上に対応できる。本記事ではHono.js + TypeScriptを用いて、実際にAPIサーバー・キャッシュ層・認証まで実装する方法を徹底的に解説する。

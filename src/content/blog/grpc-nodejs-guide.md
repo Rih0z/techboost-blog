@@ -1,8 +1,7 @@
 ---
 title: 'gRPC完全ガイド — Protocol Buffers・Node.js・型安全・双方向ストリーミング'
 description: 'gRPCとProtocol BuffersでマイクロサービスAPIを構築する完全ガイド。.protoファイル定義・Node.js実装・型コード生成・Unary/Server Streaming/Client Streaming/双方向・gRPC-Web・認証まで解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/grpc-nodejs-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['gRPC', 'Protocol Buffers', 'Node.js', 'マイクロサービス', 'TypeScript']
 ---
 

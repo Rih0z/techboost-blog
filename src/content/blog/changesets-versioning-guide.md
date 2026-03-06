@@ -1,8 +1,7 @@
 ---
 title: 'Changesetsでパッケージバージョン管理完全ガイド — モノレポ・自動化・GitHub Actionsリリース'
 description: 'Changesetsでモノレポのバージョン管理とnpmリリースを完全自動化する実践ガイド。changeset追加・バージョンバンプ・CHANGELOG生成・GitHub Actions自動リリース・npmパブリッシュ・プレリリースまで解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/changesets-versioning-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Changesets', 'バージョン管理', 'モノレポ', 'npm', 'GitHub Actions', 'プログラミング']
 ---
 

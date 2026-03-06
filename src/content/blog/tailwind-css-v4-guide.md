@@ -1,8 +1,7 @@
 ---
 title: 'Tailwind CSS v4完全ガイド — 新機能・CSS-first設定・パフォーマンス向上'
 description: 'Tailwind CSS v4の新機能を完全解説。CSS-first設定（@theme・@variant・@utility）・新デザイントークン・コンテナクエリ・3Dトランスフォーム・v3からの移行手順まで実装例付きで網羅。初心者から実務レベルまで対応。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/tailwind-css-v4-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Tailwind CSS', 'CSS', 'フロントエンド', 'v4', 'デザイン', 'プログラミング']
 ---
 Tailwind CSS v4は、2025年初頭にリリースされたメジャーバージョンアップで、フレームワークの根本的なアーキテクチャを再設計した大型リリースです。単なる機能追加にとどまらず、設定方法・ビルドエンジン・CSS出力の仕組みまでが刷新されており、v3からの移行には一定の理解が必要です。

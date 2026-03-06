@@ -1,10 +1,9 @@
 ---
 title: 'Claude API完全ガイド2026'
 description: 'Anthropic Claude APIを徹底解説。Messages API、ストリーミング、ツール使用、200Kコンテキストウィンドウ活用、プロンプトキャッシング、コスト最適化を実例付きで紹介。AI・API・Claudeに関する実践情報。'
-pubDate: 'Feb 05 2026'
+pubDate: '2026-02-05'
 tags: ['AI', 'API', 'Claude', 'TypeScript']
 ---
-# Claude API完全ガイド2026
 
 Anthropic Claude APIは、高度な推論能力を持つAI APIです。本記事では、Messages APIの基本からツール使用、最適化まで網羅的に解説します。
 

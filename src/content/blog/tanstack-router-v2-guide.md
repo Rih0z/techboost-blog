@@ -4,7 +4,6 @@ description: "TanStack Router v2の型安全なルーティング、ファイル
 pubDate: "2025-11-18"
 updatedDate: "2025-11-18"
 tags: ["TanStack Router", "React", "TypeScript", "ルーティング", "型安全"]
-category: "Frontend"
 ---
 TanStack Router v2は、React向けの完全型安全なルーティングライブラリです。React RouterやNext.jsのApp Routerとは異なり、エンドツーエンドの型安全性を重視した設計が特徴です。本記事では、v2の新機能と実践的な活用方法を解説します。
 

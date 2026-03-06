@@ -1,8 +1,7 @@
 ---
 title: 'WebAssembly WASI完全ガイド：サーバーサイドWasmの実践【2026年版】'
 description: 'WASI（WebAssembly System Interface）の基本からサーバーサイド実践まで完全解説。wasmtime・wasmer環境構築、RustでのWASIアプリ開発、ファイルシステム・ソケットアクセス、Cloudflare Workers・WasmEdge・Fastlyクラウド実行まで、'
-pubDate: 'Feb 21 2026'
-heroImage: '../../assets/thumbnails/webassembly-wasi-server-side-guide.jpg'
+pubDate: '2026-02-21'
 tags: ['WebAssembly', 'WASI', 'Rust', 'サーバーサイド', 'Cloudflare Workers', 'プログラミング']
 ---
 

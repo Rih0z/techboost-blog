@@ -1,8 +1,7 @@
 ---
 title: 'マイクロサービスアーキテクチャ完全ガイド — 設計原則・API Gateway・サービスメッシュ・観測性'
 description: 'マイクロサービスアーキテクチャの設計から運用まで完全解説。ドメイン境界設計・API Gateway・サービスディスカバリ・サーキットブレーカー・Istio・分散トレーシング・Event Sourcing/CQRSまで実装例付きで解説。サンプルコード付きで実践的に解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/microservices-architecture-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['マイクロサービス', 'アーキテクチャ', 'Kubernetes', 'API Gateway', 'DevOps', 'インフラ']
 ---
 マイクロサービスアーキテクチャは、現代のクラウドネイティブ開発における中心的な設計思想となっている。NetflixやAmazon、Uberといったハイパースケール企業がモノリスからの移行で得た知見は、今や中規模のスタートアップにも適用されつつある。本記事では、マイクロサービスの基本概念から、本番環境での運用に必要な全技術スタックを体系的に解説する。

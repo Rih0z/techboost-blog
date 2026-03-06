@@ -2,9 +2,8 @@
 title: "WebAssembly入門2026 — Webの限界を超える技術"
 description: "Rust・C++からWasmへのビルド、JavaScriptとの連携、画像処理・ゲーム・暗号化などの実用例、WASI（サーバーサイドWasm）まで完全解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2026-02-05"
-tags: ["WebAssembly", "Wasm", "Rust", "C++", "JavaScript", "WASI", "Performance"]
+tags: ["WebAssembly", "Wasm", "Rust", "C++", "JavaScript"]
 ---
-# WebAssembly入門2026 — Webの限界を超える技術
 
 WebAssembly（Wasm）は、Webブラウザ上でネイティブに近い速度でコードを実行できる革新的な技術です。JavaScriptでは実現困難だった高速な画像処理、ゲーム、暗号化処理などを可能にし、Webアプリケーションの可能性を大きく広げています。この記事では、WebAssemblyの基礎から実践的な活用方法まで、2026年の最新情報とともに徹底解説します。
 

@@ -1,8 +1,7 @@
 ---
 title: 'Cloudflare Workers完全ガイド'
 description: 'Cloudflare WorkersでEdge Computingアプリを構築する完全ガイド。Workers基礎・KV Storage・D1 Database・R2 Storage・Durable Objects・Queue・Cron Triggers・Wrangler CLIまで実装例付きで解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/cloudflare-workers-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Cloudflare Workers', 'Edge', 'TypeScript', 'KV', 'D1']
 ---
 

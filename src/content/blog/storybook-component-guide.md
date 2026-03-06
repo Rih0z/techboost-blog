@@ -1,8 +1,7 @@
 ---
 title: 'Storybook完全ガイド — コンポーネント駆動開発・Visual Testing・Chromatic'
 description: 'StorybookでReact/TypeScriptコンポーネントを体系的に管理する完全ガイド。Story記述・Args・Controls・Decorators・Interaction Testing・Chromatic Visual Testing・CI/CD統合まで実装例付きで解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/storybook-component-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Storybook', 'React', 'TypeScript', 'コンポーネント', 'テスト']
 ---
 

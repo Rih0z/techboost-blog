@@ -1,12 +1,10 @@
 ---
 title: 'tRPC v11実践: Server Functionsとの統合による型安全なフルスタック開発'
 description: 'tRPC v11の新機能Server Functionsを活用し、Next.js App RouterやReact Server Componentsと完全統合する実践ガイド。従来のRPC方式との違いや移行戦略も解説。開発効率を上げるヒントが満載です。'
-pubDate: 'Nov 18 2025'
+pubDate: '2025-11-18'
 updatedDate: 'Nov 18 2025'
 tags: ['tRPC', 'TypeScript', 'Next.js', 'React Server Components']
-category: 'Backend'
 ---
-# tRPC v11実践: Server Functionsとの統合による型安全なフルスタック開発
 
 tRPC v11では、React Server Components（RSC）やNext.js App Routerとのシームレスな統合を実現する「Server Functions」が導入されました。この記事では、従来のRPC方式とServer Functionsの違い、実装パターン、パフォーマンス最適化まで徹底解説します。
 

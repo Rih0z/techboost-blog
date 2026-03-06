@@ -1,7 +1,7 @@
 ---
 title: 'HTMX + Alpine.js: モダンなハイパーメディア駆動開発の実践ガイド'
 description: 'HTMXとAlpine.jsを組み合わせて、サーバーサイドレンダリングとインタラクティブUIを両立。SPAに頼らないモダンなフルスタック開発を実例で解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
-pubDate: 'Feb 05 2025'
+pubDate: '2025-02-05'
 tags: ['htmx', 'Alpine.js', 'Hypermedia', 'SSR', 'Full Stack', 'JavaScript']
 ---
 HTMXとAlpine.jsは、React/Vueなどの重量級フレームワークに頼らず、サーバーサイドレンダリングとインタラクティブUIを両立できる軽量な組み合わせです。

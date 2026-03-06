@@ -3,7 +3,6 @@ title: "コンテナセキュリティベストプラクティス: DockerとKube
 description: "Dockerコンテナのセキュリティ強化から、Kubernetesクラスタの本番運用まで。イメージスキャン、脆弱性管理、ランタイムセキュリティ、ネットワークポリシー、シークレット管理の実践的なガイド。Docker・Kubernetes・セキュリティに関する実践情報。"
 pubDate: "2025-07-28"
 updatedDate: "2025-07-28"
-category: "infrastructure"
 tags: ["Docker", "Kubernetes", "セキュリティ", "DevSecOps", "インフラ"]
 ---
 コンテナ技術の普及により、セキュリティ対策も進化しています。この記事では、**Dockerイメージのセキュア化**から**Kubernetes本番環境での防御戦略**まで、実践的なセキュリティ対策を解説します。

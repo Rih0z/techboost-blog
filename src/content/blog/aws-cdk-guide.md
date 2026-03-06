@@ -1,8 +1,7 @@
 ---
 title: 'AWS CDK完全ガイド — TypeScriptでAWSインフラをコード化・Lambda・ECS・RDS'
 description: 'AWS CDKでインフラをTypeScriptでコード化する完全ガイド。Stack設計・Lambda・API Gateway・ECS Fargate・RDS・SQS/SNS・CloudFront・CI/CDパイプラインまで実装例付きで解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/aws-cdk-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['AWS CDK', 'AWS', 'TypeScript', 'IaC', 'クラウド']
 ---
 

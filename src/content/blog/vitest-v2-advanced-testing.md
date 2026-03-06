@@ -3,9 +3,7 @@ title: 'Vitest v2高度なテスト技法ガイド'
 description: 'Vitest v2の高度な機能を徹底解説。Browser Mode、型テスト、スナップショットテスト、カスタムマッチャー、ベンチマーク、カバレッジ設定など実践的なテスト技法を網羅します。Vitest・Testing・TypeScriptに関する実践情報。'
 pubDate: 2025-02-05
 tags: ['Vitest', 'Testing', 'TypeScript', 'JavaScript', 'フロントエンド']
-category: 'Testing'
 ---
-# Vitest v2高度なテスト技法ガイド
 
 Vitest v2は、Viteベースの超高速テストフレームワークです。本記事では、基本的な使い方から一歩進んだ高度なテスト技法を解説します。
 

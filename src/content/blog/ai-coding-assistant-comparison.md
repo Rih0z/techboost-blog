@@ -1,10 +1,9 @@
 ---
 title: 'Cline/Aider：AIコーディングアシスタント徹底比較2026'
 description: 'Cline、Aider、Cursor、GitHub Copilotなど主要AIコーディングツールの比較。CLIベースのAIコーディングツールの使い方と実際の開発ワークフローへの統合方法を解説します。AI・Cline・Aiderに関する実践情報。'
-pubDate: 'Feb 05 2026'
-tags: ['AI', 'Cline', 'Aider', 'Cursor', 'GitHub Copilot', 'コーディング', 'プログラミング']
+pubDate: '2026-02-05'
+tags: ['AI', 'Cline', 'Aider', 'Cursor', 'GitHub Copilot']
 ---
-# Cline/Aider：AIコーディングアシスタント徹底比較2026
 
 AIコーディングアシスタントの登場により、ソフトウェア開発の生産性は劇的に向上しました。しかし、多くのツールが存在する中で、どれを選ぶべきか迷う開発者も多いでしょう。
 

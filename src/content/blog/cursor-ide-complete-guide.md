@@ -1,10 +1,9 @@
 ---
 title: 'Cursor IDE完全ガイド 2026 — AIコードエディタの使い方・設定・活用術'
 description: 'AIコードエディタ「Cursor」の使い方・設定・活用テクニックを完全解説。VS Codeとの違い、Chat/Composer/Tab機能、プロジェクト固有ルール設定、GitHub Copilotとの比較まで。サンプルコード付きで実践的に解説。'
-pubDate: 'Feb 21 2026'
+pubDate: '2026-02-21'
 tags: ['Cursor', 'AI', 'DevTool', '開発効率化', 'VS Code', 'プログラミング']
 ---
-# Cursor IDE完全ガイド 2026 — AIコードエディタの使い方・設定・活用術
 
 「コード補完ツールを入れたけど、思ったより使えない」「GitHub Copilot は使っているが、もっと AI にコードを書かせたい」
 

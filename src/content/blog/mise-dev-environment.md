@@ -2,8 +2,7 @@
 title: "mise（旧rtx）開発環境管理ガイド: asdfを超える次世代ツール"
 description: "mise（旧rtx）による統合開発環境管理。ランタイムバージョン管理、タスクランナー、環境変数管理を1つのツールで。Node.js、Python、Go、Rustなど複数言語対応。asdfからの移行も解説。mise・rtx・asdfに関する実践情報。"
 pubDate: "2025-02-05"
-category: "devtools"
-tags: ["mise", "rtx", "asdf", "開発環境", "バージョン管理", "タスクランナー", "CLI", "プログラミング"]
+tags: ["mise", "rtx", "asdf", "開発環境", "バージョン管理"]
 ---
 **mise**（旧rtx）は、複数のプログラミング言語のバージョン管理、タスクランナー、環境変数管理を1つのツールで実現する次世代の開発環境管理ツールです。
 

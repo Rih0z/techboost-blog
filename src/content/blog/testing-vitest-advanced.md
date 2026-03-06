@@ -4,9 +4,7 @@ description: 'Vitestの高度な機能を活用したテスト実装の完全ガ
 pubDate: 2025-05-25
 updatedDate: 2025-05-25
 tags: ['Vitest', 'Testing', 'TypeScript', 'Unit Testing', 'モック']
-category: 'testing'
 ---
-# Vitest高度テスティング: モック・スナップショット・並列実行の完全ガイド
 
 Vitestは、Viteベースの高速なテストフレームワークです。この記事では、モッキング、スナップショットテスト、並列実行など、Vitestの高度な機能を活用した実践的なテスティング手法を解説します。
 

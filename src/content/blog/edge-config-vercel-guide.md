@@ -4,7 +4,6 @@ description: 'Vercel Edge Configを使ったグローバル設定のリアルタ
 pubDate: 2025-09-15
 updatedDate: 2025-09-15
 tags: ['vercel', 'edge-config', 'Edge Computing', 'Performance', 'feature-flag', 'インフラ']
-category: 'infrastructure'
 ---
 ## Edge Configとは
 

@@ -2,10 +2,8 @@
 title: "MCP（Model Context Protocol）完全ガイド — AIエージェントとツール連携の新標準"
 description: "Anthropic発のMCP（Model Context Protocol）を徹底解説。アーキテクチャ、MCPサーバーの構築方法、Claude・VSCode・Cursorとの連携、TypeScript/Pythonでの実装例まで実践的に紹介します。"
 pubDate: "2026-02-24"
-tags: ["AI", "MCP", "Claude", "LLM", "TypeScript", "Python", "AIエージェント"]
+tags: ["AI", "MCP", "Claude", "LLM", "TypeScript"]
 ---
-
-# MCP（Model Context Protocol）完全ガイド — AIエージェントとツール連携の新標準
 
 AIアシスタントがファイルを読み書きし、データベースを検索し、外部APIを呼び出す。2026年、こうした「AIとツールの連携」はもはや当たり前になりました。しかし、各ツールごとにバラバラなインテグレーションを書くのは非効率です。
 

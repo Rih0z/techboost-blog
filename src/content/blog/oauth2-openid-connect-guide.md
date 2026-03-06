@@ -1,7 +1,7 @@
 ---
 title: 'OAuth 2.0 / OpenID Connect 完全解説 — 認証・認可の仕組みとNext.js実装'
 description: 'OAuth 2.0とOpenID Connectの仕組みを図解・コード例で完全解説。認証コードフロー・PKCE・JWTトークン・NextAuth.js実装・セキュリティベストプラクティスまで網羅。OAuth・Authentication・Securityに関する実践情報。'
-pubDate: 'Feb 21 2026'
+pubDate: '2026-02-21'
 tags: ['OAuth', 'Authentication', 'Security', 'Next.js', 'プログラミング']
 ---
 現代のWebアプリケーションで「Googleでログイン」「GitHubでログイン」を実装するとき、その裏側で動いているのが **OAuth 2.0** と **OpenID Connect（OIDC）** です。本記事では、これらのプロトコルの仕組みを概念レベルから丁寧に解説し、Next.js + NextAuth.js を使った実践的な実装まで一気に学びます。

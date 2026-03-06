@@ -1,8 +1,8 @@
 ---
 title: "Nitro完全ガイド — Nuxt/H3ベースのユニバーサルサーバーエンジンでどこでも動くAPI構築"
-description: "あらゆるプラットフォームで動作するユニバーサルサーバーエンジンNitroの完全ガイド。API Routes、Server Middleware、キャッシング、デプロイ戦略まで実践的に解説します。Nitroの基礎から実践的な活用法までカバー。"
+description: "あらゆるプラットフォームで動作するユニバーサルサーバーエンジンNitroの完全ガイド。"
 pubDate: "2025-02-06"
-tags: ["Nitro", "Nuxt", "H3", "Server", "API", "Universal", "Edge Computing"]
+tags: ["Nitro", "Nuxt", "H3", "Server", "API"]
 ---
 Nitroは、Nuxt 3のサーバーエンジンとして開発された、ユニバーサルなJavaScriptサーバーフレームワークです。Node.js、Cloudflare Workers、Deno、Vercel、AWS Lambdaなど、あらゆるプラットフォームで同じコードが動作し、高速なAPIとサーバーサイドロジックを構築できます。この記事では、Nitroの基本から実践的な使い方まで徹底的に解説します。
 

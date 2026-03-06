@@ -1,7 +1,7 @@
 ---
 title: 'TypeScriptで学ぶデザインパターン完全ガイド — GoF・関数型・Reactパターン実装'
 description: 'TypeScriptでGoFデザインパターンを実装する実践ガイド。Singleton・Factory・Observer・Strategy・Decoratorから、React Hooks・カスタムHooks・Compound Componentパターンまで網羅。'
-pubDate: 'Feb 21 2026'
+pubDate: '2026-02-21'
 tags: ['TypeScript', 'デザインパターン', 'Architecture', 'React']
 ---
 

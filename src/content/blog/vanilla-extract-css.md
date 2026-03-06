@@ -4,7 +4,6 @@ description: "vanilla-extractはビルド時にCSSを生成するゼロランタ
 pubDate: "2025-02-06"
 tags: ["vanilla-extract", "CSS-in-JS", "TypeScript", "Zero Runtime", "Styling", "Frontend"]
 ---
-# vanilla-extract完全ガイド - TypeScriptでゼロランタイムCSS-in-JSを実現する最新手法
 
 ## vanilla-extractとは
 

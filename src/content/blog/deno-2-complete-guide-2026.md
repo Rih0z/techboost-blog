@@ -2,7 +2,6 @@
 title: "Deno 2完全ガイド2026: Node.js互換・npm対応・TypeScript最適化の最新ランタイム"
 description: "Deno 2の全機能を徹底解説。Node.js完全互換、npm/package.json対応、TypeScript最適化、セキュアランタイムまで、モダンなJavaScript/TypeScript開発のための最新ランタイムを実践的に紹介します。"
 pubDate: "2026-02-06"
-category: "Backend"
 tags: ["Deno", "TypeScript", "JavaScript", "Runtime", "Node.js"]
 ---
 

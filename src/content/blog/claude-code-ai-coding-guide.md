@@ -1,10 +1,9 @@
 ---
 title: 'Claude Code完全ガイド — AIコーディングアシスタントで開発効率を10倍にする'
 description: 'Anthropic製AIコーディングアシスタント「Claude Code」の使い方・設定・活用テクニックを完全解説。CursorやGitHub Copilotとの違い、プロジェクト管理・コードレビュー・デバッグへの活用まで。現場で使える知識を体系的にまとめました。'
-pubDate: 'Feb 21 2026'
+pubDate: '2026-02-21'
 tags: ['Claude Code', 'AI', 'DevTool', '開発効率化', 'プログラミング']
 ---
-# Claude Code完全ガイド — AIコーディングアシスタントで開発効率を10倍にする
 
 「AIに頼んだのに、思った通りのコードが出てこない」「大規模なリファクタリングをお願いしたら途中で止まった」
 

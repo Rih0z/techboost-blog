@@ -1,10 +1,9 @@
 ---
 title: 'Testing Library上級テクニック2026'
 description: 'Testing Libraryの上級テクニックを徹底解説。ユーザーイベントシミュレーション、非同期処理のテスト、カスタムレンダー関数、アクセシビリティテスト、MSW連携を紹介。Testing・React・TypeScriptに関する実践情報。'
-pubDate: 'Feb 05 2026'
+pubDate: '2026-02-05'
 tags: ['Testing', 'React', 'TypeScript', 'アクセシビリティ']
 ---
-# Testing Library上級テクニック2026
 
 Testing Libraryは、ユーザー視点でのテストを可能にするライブラリです。本記事では、実践的な上級テクニックを徹底解説します。
 

@@ -2,7 +2,6 @@
 title: 'GitHub Actions完全ガイド — CI/CDパイプラインをゼロから構築する'
 description: 'GitHub Actionsを使ったCI/CDパイプラインの構築方法を徹底解説。Node.js/Next.jsのテスト自動化・Vercelデプロイ・Docker Build・マトリックスビルド・シークレット管理・セルフホストランナーまで実践コード付きで解説。'
 pubDate: '2026-02-20'
-heroImage: '../../assets/thumbnails/github-actions-cicd-guide.jpg'
 tags: ['GitHub Actions', 'CICD', 'DevOps', 'Docker', 'Vercel']
 ---
 

@@ -1,10 +1,9 @@
 ---
 title: 'LangChain.js RAG実装ガイド'
 description: 'LangChain.jsを使ったRAG（Retrieval-Augmented Generation）の実践的な実装方法。ベクトルストア、テキスト分割、リトリーバル、チェーン構成、パフォーマンス最適化を詳しく解説します。初心者から実務レベルまで対応。'
-pubDate: 'Feb 06 2026'
+pubDate: '2026-02-06'
 tags: ['LangChain', 'RAG', 'AI', 'TypeScript', 'ベクトル検索']
 ---
-# LangChain.js RAG実装ガイド
 
 RAG（Retrieval-Augmented Generation）は、大規模言語モデル（LLM）に外部知識を組み合わせることで、より正確で最新の情報を提供できる手法です。LangChain.jsを使えば、TypeScriptでRAGシステムを簡単に構築できます。
 

@@ -1,8 +1,7 @@
 ---
 title: 'Git上級テクニック完全ガイド：プロが使う高度な操作と効率化'
 description: 'Gitの高度なテクニックを徹底解説。rebase・cherry-pick・bisect・worktree・sparse-checkout・reflog・フック・サブモジュール・大規模リポジトリ最適化・GitLens活用まで実践的に学ぶ。初心者から実務レベルまで対応。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/git-advanced-techniques-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Git', 'DevOps', 'DevTool', 'インフラ']
 ---
 Gitは現代のソフトウェア開発において不可欠なバージョン管理システムだが、多くの開発者は基本的な `add`・`commit`・`push` の繰り返しで終わってしまっている。本記事では、プロフェッショナルな開発現場で実際に使われる高度なGitテクニックを体系的に解説する。これらのテクニックをマスターすることで、コードの品質管理・チームコラボレーション・障害対応のスピードが劇的に向上する。

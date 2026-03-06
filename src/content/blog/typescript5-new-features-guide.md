@@ -1,8 +1,7 @@
 ---
 title: 'TypeScript 5.x完全ガイド：最新機能と実践テクニック'
 description: 'TypeScript 5.0〜5.xの全新機能を徹底解説。Decorators・const型パラメータ・satisfies演算子・using宣言・Infer Extends・Variadic Tuple Types・Template Literal Types実践まで解説'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/typescript5-new-features-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['TypeScript', 'JavaScript', 'Frontend']
 ---
 

@@ -1,8 +1,7 @@
 ---
 title: 'HTMX完全ガイド：JavaScriptを最小化したモダンWeb開発'
 description: 'HTMXの基本から応用まで徹底解説。hx-get/post/put/delete・hx-trigger・hx-target・hx-swap・WebSocket・Server-Sent Events・Alpine.js連携・FastAPI/Express統合まで実践的に学ぶ'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/htmx-hypermedia-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['htmx', 'Frontend', 'Hypermedia', 'プログラミング']
 ---
 ## HTMXとは何か、なぜ今注目されているのか

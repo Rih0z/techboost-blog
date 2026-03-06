@@ -1,7 +1,7 @@
 ---
 title: 'Meilisearch全文検索エンジン入門：高速・タイポ耐性・簡単セットアップ'
 description: 'オープンソース全文検索エンジンMeilisearchの完全ガイド。インデックス作成、ファセット検索、タイポ耐性、JavaScript SDKの使い方を実践的なコード例とともに詳しく解説します。Meilisearch・全文検索・Searchに関する実践情報。'
-pubDate: 'Feb 06 2026'
+pubDate: '2026-02-06'
 tags: ['Meilisearch', '全文検索', 'Search', 'JavaScript', 'TypeScript']
 ---
 Meilisearchは、ElasticsearchやAlgoliaのようなパワフルな検索機能を、驚くほど簡単にセットアップできるオープンソース全文検索エンジンです。この記事では、Meilisearchの基本から実践的な活用法まで詳しく解説します。

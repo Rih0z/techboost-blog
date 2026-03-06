@@ -1,8 +1,7 @@
 ---
 title: 'NestJS完全ガイド：TypeScript対応エンタープライズNode.jsフレームワーク'
 description: 'NestJSの基本から応用まで完全解説。モジュール・コントローラー・サービス・依存性注入・Guard・Interceptor・WebSocket・マイクロサービス対応まで実践的に学ぶ。NestJS・TypeScript・Backendに関する実践情報。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/nestjs-complete-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['NestJS', 'TypeScript', 'Backend']
 ---
 NestJSは、TypeScriptをファーストクラスでサポートするNode.jsフレームワークであり、エンタープライズグレードのサーバーサイドアプリケーション構築に特化した設計思想を持つ。Angularのアーキテクチャパターンに強く影響を受けており、モジュール・コントローラー・サービスという3層構造でアプリケーションを整理する。本ガイドでは、NestJSの基礎から実践的な応用まで、豊富なコード例とともに体系的に解説する。

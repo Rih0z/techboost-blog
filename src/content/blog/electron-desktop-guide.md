@@ -1,8 +1,7 @@
 ---
 title: 'Electron完全ガイド — デスクトップアプリ開発・IPC通信・セキュリティ・配布'
 description: 'Electronでクロスプラットフォームデスクトップアプリを構築する完全ガイド。Main/Rendererプロセス・IPC通信・contextBridge・自動更新・electron-builder・コード署名・Mac/Windows配布まで実装例付きで解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/electron-desktop-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Electron', 'デスクトップアプリ', 'TypeScript', 'Node.js', 'React']
 ---
 

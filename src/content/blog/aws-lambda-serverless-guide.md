@@ -1,8 +1,7 @@
 ---
 title: 'AWS Lambda・サーバーレス完全ガイド2026：クラウドネイティブアーキテクチャ'
 description: 'AWS Lambdaとサーバーレスアーキテクチャを徹底解説。API Gateway・DynamoDB・SQS・EventBridge・SAM・Serverless Framework・CDK・コールドスタート対策・コスト最適化まで実践的に学ぶ'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/aws-lambda-serverless-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['AWS Lambda', 'Serverless', 'AWS']
 ---
 

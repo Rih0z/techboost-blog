@@ -1,8 +1,7 @@
 ---
 title: 'Rust + eBPF + Aya フレームワーク完全入門ガイド【2026年版】'
 description: 'RustでeBPFプログラムを書くためのAyaフレームワーク完全入門。環境構築からXDPパケットカウンター、eBPF Maps、ネットワーク監視ツールの実装まで実践的に解説。Rust中級エンジニア向け。具体的なコード例とともに詳しく紹介します。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/rust-ebpf-aya-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Rust', 'eBPF', 'Aya', 'Linux', 'ネットワーク', 'システムプログラミング']
 ---
 ## はじめに

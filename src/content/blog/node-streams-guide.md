@@ -4,7 +4,6 @@ description: 'Node.js Streamsを使った大量データの効率的な処理方
 pubDate: '2025-09-03'
 updatedDate: '2025-09-03'
 tags: ['Node.js', 'Streams', 'Performance', 'Data Processing', 'Backend', 'プログラミング']
-category: 'backend'
 ---
 ## はじめに
 

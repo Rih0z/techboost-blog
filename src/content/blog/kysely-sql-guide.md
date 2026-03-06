@@ -1,10 +1,9 @@
 ---
 title: 'Kysely完全ガイド - TypeScript型安全SQLクエリビルダー'
 description: 'Kyselyの基本からスキーマ定義、CRUD操作、マイグレーション、PostgreSQL/MySQL/SQLite対応まで。型安全なSQLクエリビルダーを徹底解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
-pubDate: 'Feb 05 2026'
+pubDate: '2026-02-05'
 tags: ['Kysely', 'TypeScript', 'SQL', 'データベース', 'ORM']
 ---
-# Kysely完全ガイド - TypeScript型安全SQLクエリビルダー
 
 Kyselyは、TypeScript向けの型安全なSQLクエリビルダーです。ORMではなくクエリビルダーとして設計されており、SQLの知識をそのまま活かしながら完全な型安全性を提供します。
 

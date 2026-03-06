@@ -1,8 +1,8 @@
 ---
 title: "ベクトルデータベース比較ガイド2026"
-description: "主要ベクトルデータベースの徹底比較。Pinecone、Weaviate、Qdrant、Chroma、pgvectorの機能、パフォーマンス、料金、ユースケース別の選び方を実例コード付きで解説。ベクトルデータベース比較ガイドの基礎から実践的な活用法までカバー。"
+description: "主要ベクトルデータベースの徹底比較。"
 pubDate: "2026-02-06"
-tags: ["ベクトルDB", "AI", "RAG", "埋め込み", "検索", "データベース", "LLM", "プログラミング"]
+tags: ["ベクトルDB", "AI", "RAG", "埋め込み", "検索"]
 ---
 ベクトルデータベースは、RAG（Retrieval-Augmented Generation）やセマンティック検索に不可欠なインフラです。
 

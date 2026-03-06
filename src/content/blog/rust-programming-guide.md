@@ -1,8 +1,7 @@
 ---
 title: 'Rust完全ガイド2026：安全で高速なシステムプログラミング言語'
 description: 'Rustの基本から応用まで完全解説。所有権・借用・ライフタイム・非同期処理・Axum Webフレームワーク・WebAssembly・エラーハンドリング・テストまで実践的に学ぶ。Rust・Systems Programming・Backendに関する実践情報。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/rust-programming-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Rust', 'Systems Programming', 'Backend', 'プログラミング']
 ---
 ## はじめに

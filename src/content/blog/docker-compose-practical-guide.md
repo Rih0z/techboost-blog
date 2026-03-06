@@ -1,7 +1,7 @@
 ---
 title: 'Docker Compose 実践ガイド — 開発環境を5分で構築する方法'
-description: 'Docker Composeで開発環境を爆速構築。docker-compose.yml書き方の基本から、Node.js+PostgreSQL、Python+Redisなど実用的な組み合わせまで実例付きで解説。Dockerの基礎から実践的な活用法までカバー。'
-pubDate: 'Feb 05 2026'
+description: 'Docker Composeで開発環境を爆速構築。'
+pubDate: '2026-02-05'
 tags: ['Docker', 'インフラ', '開発ツール']
 ---
 ## Docker Composeとは？複数コンテナを一括管理

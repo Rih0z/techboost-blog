@@ -1,8 +1,7 @@
 ---
 title: 'Go言語Webアプリケーション開発完全ガイド2026'
 description: 'Go言語によるWeb開発を徹底解説。net/http・Gin・Echo・Fiber・GORM・JWT認証・WebSocket・マイクロサービス・Docker・デプロイまで実践的に学ぶ。Go・Backend・Performanceに関する実践情報。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/golang-web-development-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Go', 'Backend', 'Performance', 'プログラミング']
 ---
 Go言語（Golang）はGoogleが2009年に公開したシステムプログラミング言語だ。静的型付け・コンパイル型・ガベージコレクション付きという特性を持ちながら、C言語に匹敵する実行速度とPythonに近い開発生産性を両立させている。特にWebサーバーやマイクロサービスの領域では、その真価が際立つ。

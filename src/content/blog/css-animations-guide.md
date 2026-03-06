@@ -1,8 +1,7 @@
 ---
 title: 'CSS アニメーション完全ガイド'
 description: 'CSSアニメーションを完全マスターする実践ガイド。transition・animation・@keyframes・CSS Custom Properties・Scroll-Driven Animations・View Transitions API・パフォーマンス最適化まで実装例付きで解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/css-animations-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['CSS', 'アニメーション', 'フロントエンド', 'パフォーマンス', 'Web API', 'プログラミング']
 ---
 

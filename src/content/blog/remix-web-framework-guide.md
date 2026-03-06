@@ -1,8 +1,7 @@
 ---
 title: 'Remix完全ガイド — Web標準準拠・Loader/Action・Nested Routes・フルスタック開発'
 description: 'RemixでWeb標準に忠実なフルスタックアプリを構築する完全ガイド。Loader/Action・Nested Routes・Error Boundary・Optimistic UI・Vite移行・Cloudflare Workers/Vercelデプロイまで実装例付きで解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/remix-web-framework-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Remix', 'React', 'TypeScript', 'フルスタック', 'Web標準']
 ---
 

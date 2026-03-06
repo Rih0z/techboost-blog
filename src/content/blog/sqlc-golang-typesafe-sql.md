@@ -4,7 +4,6 @@ description: "sqlcを使ってGoアプリケーションで型安全なSQL操作
 pubDate: "2025-02-06"
 tags: ["Go", "SQL", "sqlc", "Database", "Type Safety", "プログラミング"]
 ---
-# sqlc入門：GoでType-SafeなSQLクエリを実現する方法
 
 Goのデータベース操作では、ORMを使うかdatabase/sqlで生SQLを書くかの選択を迫られます。**sqlc**はその中間解として、SQLから型安全なGoコードを自動生成するツールです。本記事では、sqlcの基礎から実践的な活用法まで、包括的に解説します。
 

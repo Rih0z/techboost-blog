@@ -1,8 +1,7 @@
 ---
 title: 'WebAssembly（WASM）完全ガイド — ブラウザで高速実行・Rust/C++・WASI・コンポーネントモデル'
 description: 'WebAssemblyをブラウザと Node.jsで活用する完全ガイド。WASM基礎・Rust/wasm-pack・wasm-bindgen・JavaScript連携・WASI・Wasmtime・コンポーネントモデル・パフォーマンスまで実装例付きで解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/webassembly-wasm-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['WebAssembly', 'WASM', 'Rust', 'パフォーマンス', 'ブラウザ', 'プログラミング']
 ---
 

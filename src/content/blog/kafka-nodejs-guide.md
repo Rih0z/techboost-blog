@@ -1,8 +1,7 @@
 ---
 title: 'Apache Kafka完全ガイド — Node.js・イベント駆動アーキテクチャ・マイクロサービス連携'
 description: 'Apache KafkaをNode.jsで活用するイベント駆動アーキテクチャの完全ガイド。Topic・Producer・Consumer・Consumer Group・Partition・kafkajs実装・スキーマレジストリ・Kafka Connect・モニタリングまで解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/kafka-nodejs-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Kafka', 'Node.js', 'イベント駆動', 'メッセージキュー', 'マイクロサービス', 'プログラミング']
 ---
 

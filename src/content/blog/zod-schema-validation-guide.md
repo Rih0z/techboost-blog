@@ -1,8 +1,7 @@
 ---
 title: 'Zod完全ガイド — TypeScript型安全バリデーション・フォーム・API・環境変数管理'
 description: 'ZodでTypeScript型安全なバリデーションを完全実装する実践ガイド。スキーマ定義・変換・リファイン・react-hook-form統合・tRPC・環境変数バリデーション・カスタムエラーメッセージまで解説。実務で役立つポイントを厳選して解説。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/zod-schema-validation-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Zod', 'TypeScript', 'バリデーション', 'React', 'API']
 ---
 TypeScriptプロジェクトで「実行時に型が保証されない」問題を抱えたことはないだろうか。コンパイル時にエラーが出なくても、APIレスポンスや環境変数、フォーム入力が想定外の値を持っていれば、アプリケーションは予期せぬ挙動を示す。**Zod**はその問題を根本から解決するTypeScriptファーストのスキーマバリデーションライブラリだ。

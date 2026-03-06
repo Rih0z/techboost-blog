@@ -2,7 +2,6 @@
 title: "Turbopack完全ガイド - Next.jsで実現する超高速ビルド環境"
 description: "Next.js 15のTurbopack（安定版）を徹底解説。セットアップ、Webpack比較、パフォーマンス最適化、トラブルシューティングまで実践的に網羅。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2025-02-05"
-category: "Build Tools"
 tags: ["Turbopack", "Next.js", "Build Tools", "Performance", "Rust", "プログラミング"]
 ---
 ## はじめに

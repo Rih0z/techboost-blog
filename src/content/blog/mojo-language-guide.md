@@ -4,7 +4,6 @@ description: "Mojoは高速性と使いやすさを両立した新言語。Pytho
 pubDate: "2025-02-05"
 tags: ['Python', 'バックエンド', '開発ツール']
 ---
-# Mojo言語入門 - Pythonの100倍速い次世代プログラミング言語
 
 ## Mojoとは
 

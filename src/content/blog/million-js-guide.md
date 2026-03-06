@@ -1,10 +1,9 @@
 ---
 title: 'Million.js完全ガイド - React仮想DOMを最適化する次世代コンパイラ'
 description: 'Million.jsの基礎から実践まで徹底解説。React仮想DOM最適化、自動コンパイラ、70%高速化の仕組み、導入方法、パフォーマンスベンチマーク、実践的な活用事例を完全網羅。React・Performance・Million.jsに関する実践情報。'
-pubDate: 'Feb 05 2026'
+pubDate: '2026-02-05'
 tags: ['React', 'Performance', 'Million.js', 'Optimization', 'Compiler']
 ---
-# Million.js完全ガイド
 
 ## はじめに
 

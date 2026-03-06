@@ -1,7 +1,7 @@
 ---
 title: 'エンジニア向けレンタルサーバー・VPS比較2026：Xserver・ConoHa・さくら徹底比較'
 description: 'エンジニア向けにXserver・ConoHa WING・さくらのレンタルサーバーとVPSを料金・性能・WordPress相性で徹底比較。個人開発・ブログ・ポートフォリオに最適なサーバー選びを解説。インフラ・サーバー・WordPressに関する実践情報。'
-pubDate: 'Mar 05 2026'
+pubDate: '2026-03-05'
 tags: ['インフラ', 'サーバー', 'WordPress', 'ホスティング']
 ---
 ## はじめに

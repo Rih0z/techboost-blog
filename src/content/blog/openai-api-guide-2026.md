@@ -1,7 +1,7 @@
 ---
 title: 'OpenAI API実践ガイド2026 - GPT-4o・o3から音声・画像生成まで'
 description: '2026年最新版OpenAI API完全ガイド。GPT-4o、o3モデル、Function Calling、Assistants API、DALL-E 3、Whisper、TTSの実践的な使い方を徹底解説します。具体的なコード例とともに詳しく紹介します。'
-pubDate: 'Feb 05 2026'
+pubDate: '2026-02-05'
 tags: ['OpenAI', 'GPT-4', 'AI', 'API', 'LLM', 'プログラミング']
 ---
 OpenAI APIは2026年現在、GPT-4o、o3シリーズなど最先端のAIモデルを提供し、開発者にとって必須のツールとなっています。本記事では、最新APIの実践的な使い方を網羅的に解説します。

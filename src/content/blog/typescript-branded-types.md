@@ -4,7 +4,6 @@ description: 'TypeScriptのブランド型(Branded Types)を使った型安全�
 pubDate: 2025-09-22
 updatedDate: 2025-09-22
 tags: ['typescript', 'type-safety', 'domain-modeling', 'advanced-types', 'Design Patterns']
-category: 'programming'
 ---
 ## ブランド型(Branded Types)とは
 

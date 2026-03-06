@@ -4,7 +4,6 @@ description: "CSS interpolate-sizeプロパティを使って、height: autoやw
 pubDate: "2025-02-05"
 tags: ['CSS', 'フロントエンド']
 ---
-# CSS interpolate-sizeでアニメーション可能な高さ
 
 Web開発において、`height: auto`や`width: auto`をアニメーションさせることは長年の課題でした。CSSの新しいプロパティ`interpolate-size`は、この問題を解決し、コンテンツサイズに応じた自動調整とスムーズなアニメーションを両立させます。
 

@@ -1,8 +1,7 @@
 ---
 title: 'FastAPI完全ガイド — 高速Python APIフレームワーク・型安全・非同期・本番運用'
 description: 'FastAPIで高速なPython APIを構築する完全ガイド。Pydantic v2・依存性注入・認証（JWT/OAuth2）・非同期処理・SQLAlchemy統合・テスト・Dockerデプロイまで実装例付きで解説。具体的なコード例とともに詳しく紹介します。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/fastapi-python-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['FastAPI', 'Python', 'API', '非同期', 'バックエンド']
 ---
 FastAPIはPythonのWebフレームワークの中で最も急成長しているプロジェクトの一つだ。GitHub上のスター数は急速に増加し、Netflix・Uber・Microsoftといった大企業が本番環境で採用している。なぜこれほどまでに支持されるのか。その答えは「速度」「型安全性」「開発体験」の三位一体にある。

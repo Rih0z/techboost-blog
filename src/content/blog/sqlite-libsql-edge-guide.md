@@ -3,7 +3,6 @@ title: "libSQL + Edge Runtime完全ガイド - SQLiteをエッジで活用する
 description: "TursoのlibSQLとCloudflare Workers、Vercel Edge、Deno Deployなど各種Edge Runtimeで分散SQLiteを実現する完全ガイド。レプリケーション、マルチリージョン配置、パフォーマンス最適化まで徹底解説。"
 pubDate: "2025-07-15"
 updatedDate: "2025-07-15"
-category: "Database"
 tags: ["libSQL", "Edge Runtime", "SQLite", "Turso", "Cloudflare", "プログラミング"]
 ---
 

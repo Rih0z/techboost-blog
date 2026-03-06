@@ -1,10 +1,9 @@
 ---
 title: 'Next.js Middleware活用ガイド - 認証・リダイレクト・A/Bテストの実践パターン'
 description: 'Next.js Middlewareを使った認証、リダイレクト、A/Bテスト、地域別ルーティング、レートリミットの実装方法を実例で解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
-pubDate: 'Feb 05 2026'
+pubDate: '2026-02-05'
 tags: ['Next.js', 'Middleware', 'React', 'TypeScript']
 ---
-# Next.js Middleware活用ガイド
 
 Next.js Middlewareは、リクエストが完了する前にコードを実行できる強力な機能です。認証、リダイレクト、A/Bテスト、地域別ルーティングなど、さまざまなユースケースで活用できます。
 

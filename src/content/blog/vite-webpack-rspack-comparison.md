@@ -1,8 +1,8 @@
 ---
 title: 'Vite vs webpack 5 vs Rspack 徹底比較 2026 — フロントエンドビルドツール選択ガイド'
 description: 'Vite 5・webpack 5・Rspack（Rustベース高速バンドラ）の速度・設定・プラグインエコシステムを2026年版で徹底比較。プロジェクト規模別おすすめ・移行方法も解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
-pubDate: 'Feb 21 2026'
-tags: ['Vite', 'webpack', 'Rspack', 'Frontend', 'Build Tool', 'Performance', 'プログラミング']
+pubDate: '2026-02-21'
+tags: ['Vite', 'webpack', 'Rspack', 'Frontend', 'Build Tool']
 ---
 フロントエンド開発の生産性を大きく左右するのが、ビルドツールの選択だ。2026年現在、主力の座をめぐって **Vite**・**webpack 5**・**Rspack** の三者が鼎立している。それぞれに強固な支持基盤があり、「どれを選べばいいか」という問いに対して一律の答えは存在しない。
 

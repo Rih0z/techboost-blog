@@ -2,7 +2,6 @@
 title: 'Vitest + Testing Library 実践ガイド — React/Next.jsアプリのテスト戦略を完全解説'
 description: 'VitestとReact Testing Libraryを使ったモダンなフロントエンドテスト手法を解説。ユニットテスト・統合テスト・E2Eテストの使い分け、非同期処理・APIモック・カスタムフックのテスト、CI/CD連携まで実践コード付き。'
 pubDate: '2026-02-20'
-heroImage: '../../assets/thumbnails/vitest-testing-guide.jpg'
 tags: ['Vitest', 'Testing Library', 'テスト', 'React', 'Next.js']
 ---
 

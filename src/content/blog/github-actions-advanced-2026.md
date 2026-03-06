@@ -1,9 +1,11 @@
 ---
-title: "GitHub Actions上級ガイド2026：マトリックスビルド・キャッシュ・セルフホストランナー"
+title: "GitHub Actions上級ガイド2026"
 description: "GitHub Actionsの上級テクニックを徹底解説。マトリックスビルド、依存関係キャッシュ、セルフホストランナー、Reusable Workflows、セキュリティ強化の実践手法を紹介します。"
 pubDate: '2026-03-05'
 tags: ['GitHub Actions', 'CICD', 'DevOps', '自動化', 'インフラ']
 ---
+
+**関連記事**: [GitHub Actions上級テクニック完全ガイド2026](/blog/github-actions-advanced-guide)では基本的な上級テクニックを解説しています。本記事ではセルフホストランナー、Composite Actions、高度なキャッシュ戦略など、さらに踏み込んだ内容を扱います。
 
 GitHub Actionsは、CI/CDパイプラインの構築に最も広く使われているプラットフォームの一つです。基本的なテスト・ビルド・デプロイのワークフローから一歩進み、マトリックスビルド、高度なキャッシュ戦略、セルフホストランナー、Reusable Workflowsなどの上級テクニックを活用することで、パイプラインの実行速度とメンテナンス性を大幅に改善できます。
 

@@ -1,8 +1,7 @@
 ---
 title: 'React Server Components完全ガイド'
 description: 'React Server Componentsを完全解説。RSCとClient Componentsの違い・データフェッチング・Suspenseストリーミング・Server Actions・キャッシュ戦略をNext.js実装例付きで網羅。ベストプラクティスと注意点も紹介します。'
-pubDate: 'Feb 20 2026'
-heroImage: '../../assets/thumbnails/react-server-components-guide.jpg'
+pubDate: '2026-02-20'
 tags: ['Next.js', 'React', 'インフラ', 'フロントエンド', '開発ツール']
 ---
 React 18とNext.js App Routerの登場により、Webフロントエンド開発のパラダイムは大きく転換した。**React Server Components（RSC）**はその中核をなす技術であり、従来のSSR・CSRの概念を根本から刷新する。本記事では、RSCの基礎から実践的なパターンまでを、TypeScriptのコード例とともに網羅的に解説する。

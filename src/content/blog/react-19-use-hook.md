@@ -2,7 +2,6 @@
 title: "React 19の`use`フック完全ガイド: Promiseとコンテキストの新しい扱い方"
 description: "React 19で導入された革新的な`use`フックを徹底解説。Promiseの直接読み取り、条件付きコンテキスト使用など、従来のHooksルールを覆す新機能を実例とともに紹介します。React・React19・Hooksに関する実践情報。"
 pubDate: "2025-02-05"
-category: "Frontend"
 tags: ["React", "React19", "Hooks", "TypeScript", "Frontend"]
 ---
 React 19で導入された`use`フックは、従来のHooksの制約を覆す革新的な機能です。条件分岐やループの中で呼べる、Promiseを直接読み取れるなど、これまでのReactの常識を変える機能を持っています。本記事では、`use`フックの仕組みと実践的な使い方を詳しく解説します。

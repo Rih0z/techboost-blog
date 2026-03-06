@@ -1,7 +1,7 @@
 ---
 title: 'Docker × AI開発環境 構築完全ガイド2026'
 description: 'DockerとChatGPT・Claude Codeを組み合わせた開発環境の最速構築術を解説。Dockerfile自動生成・Docker Compose最適化・セキュリティスキャン・GitHub Actions CI/CD連携まで、AI活用で開発速度を3倍にする実践ガイド。'
-pubDate: 'Mar 05 2026'
+pubDate: '2026-03-05'
 tags: ['docker', 'AI', '開発環境', 'エンジニア', 'DevOps']
 ---
 
