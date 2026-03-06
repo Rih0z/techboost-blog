@@ -1,10 +1,9 @@
 ---
 title: "Render.comでアプリをデプロイする完全ガイド - 無料枠から本番運用まで"
-description: "Render.comでWebアプリ、API、静的サイト、データベースをデプロイ。GitHub連携、環境変数、カスタムドメイン、自動デプロイ、料金プラン、Vercel/Herokuとの比較まで完全解説"
+description: "Render.comでWebアプリ、API、静的サイト、データベースをデプロイ。GitHub連携、環境変数、カスタムドメイン、自動デプロイ、料金プラン、Vercel/Herokuとの比較まで完全解説。Renderの基礎から実践的な活用法までカバー。"
 pubDate: "2025-02-05"
-tags: ['インフラ']
+tags: ['インフラ', '開発ツール']
 ---
-
 # Render.comでアプリをデプロイする完全ガイド
 
 ## Render.comとは
@@ -32,7 +31,7 @@ git push origin main
 **3. 無料枠あり**
 - 静的サイト: 完全無料
 - Web Service: 750時間/月（1インスタンス）
-- PostgreSQL: 90日間無料（その後$7/月）
+- PostgreSQL: 30日間無料（その後$7/月）
 
 ### Heroku/Vercelとの比較
 
@@ -707,7 +706,7 @@ Web Service:
 - 512MB RAM
 
 PostgreSQL:
-- 90日間無料
+- 30日間無料
 - その後$7/月
 - 1GB ストレージ
 ```
