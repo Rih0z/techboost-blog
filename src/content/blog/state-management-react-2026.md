@@ -1,6 +1,6 @@
 ---
 title: "React状態管理2026 - Zustand, Jotai, Redux徹底比較"
-description: "2026年のReact状態管理を完全網羅。useState/Context、Zustand、Jotai、Redux Toolkit、TanStack Queryの特徴・使い分け・選定フローチャートを徹底解説。導入から応用まで段階的に学べます。"
+description: "2026年のReact状態管理を完全網羅。useState/Context、Zustand、Jotai、Redux Toolkit、TanStack Queryの特徴・使い分け・選定フローチャートを徹底解説。"
 pubDate: "2026-02-05"
 tags: ["React", "状態管理", "Zustand", "Jotai", "Redux"]
 ---
