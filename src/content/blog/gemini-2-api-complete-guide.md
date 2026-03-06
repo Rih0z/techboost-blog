@@ -5,8 +5,6 @@ pubDate: '2026-03-05'
 tags: ['Gemini', 'Google AI', 'API', 'マルチモーダル', 'LLM', 'TypeScript']
 ---
 
-# Gemini 2.0 API完全ガイド｜マルチモーダルAI・Function Calling・Context Caching実践解説
-
 GPT-4oを使っていたプロジェクトをGemini 2.0に移行したところ、Context CachingだけでAPI費用が60%削減できました。200ページ超のPDFマニュアルを毎回プロンプトに含めていた社内Q&Aボットで、キャッシュヒット率が90%を超えた結果です。
 
 Gemini 2.0は「安いGPT-4o代替」ではありません。100万トークンのコンテキストウィンドウ、ネイティブのマルチモーダル理解、Google Search連携によるGrounding、そしてContext Cachingによるコスト最適化など、Gemini固有のアーキテクチャ優位性があります。
