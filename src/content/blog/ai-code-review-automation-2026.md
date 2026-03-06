@@ -11,9 +11,9 @@ tags: ['AI', 'DevOps', '開発ツール', 'TypeScript', 'career']
 
 ---
 
-## 1. AIコードレビューの全体像
+### 1. AIコードレビューの全体像
 
-### 1-1. 何を自動化するのか
+#### 1-1. 何を自動化するのか
 
 AIコードレビューで自動化できる領域と、人間が担当すべき領域を明確に分ける。
 
@@ -33,7 +33,7 @@ AIが担当する領域:
 - コードの意図・目的の確認
 ```
 
-### 1-2. アーキテクチャ
+#### 1-2. アーキテクチャ
 
 ```
 Pull Request作成
@@ -65,9 +65,9 @@ GitHub Actions トリガー
 
 ---
 
-## 2. プロジェクトのセットアップ
+### 2. プロジェクトのセットアップ
 
-### 2-1. ディレクトリ構造
+#### 2-1. ディレクトリ構造
 
 ```
 .github/
@@ -87,7 +87,7 @@ GitHub Actions トリガー
         types.ts           # 型定義
 ```
 
-### 2-2. 依存関係
+#### 2-2. 依存関係
 
 ```json
 {
@@ -118,7 +118,7 @@ GitHub Actions トリガー
 
 ---
 
-## 3. 型定義
+### 3. 型定義
 
 ```typescript
 // src/types.ts
@@ -199,7 +199,7 @@ export interface PRInfo {
 
 ---
 
-## 4. Git Diff解析モジュール
+### 4. Git Diff解析モジュール
 
 ```typescript
 // src/diff-parser.ts
@@ -302,9 +302,9 @@ export function chunkDiffs(
 
 ---
 
-## 5. AIレビューモジュール
+### 5. AIレビューモジュール
 
-### 5-1. Claude API連携
+#### 5-1. Claude API連携
 
 ```typescript
 // src/ai-reviewer.ts
@@ -395,7 +395,7 @@ export async function reviewWithClaude(
 // 出典: Anthropic API Reference https://docs.anthropic.com/en/api/messages
 ```
 
-### 5-2. OpenAI API連携（代替）
+#### 5-2. OpenAI API連携（代替）
 
 ```typescript
 export async function reviewWithOpenAI(
@@ -441,7 +441,7 @@ export async function reviewWithOpenAI(
 // 出典: OpenAI API Reference https://platform.openai.com/docs/api-reference
 ```
 
-### 5-3. プロバイダー切り替え
+#### 5-3. プロバイダー切り替え
 
 ```typescript
 export async function runAIReview(
@@ -462,7 +462,7 @@ export async function runAIReview(
 
 ---
 
-## 6. ESLint統合モジュール
+### 6. ESLint統合モジュール
 
 ```typescript
 // src/eslint-runner.ts
@@ -526,7 +526,7 @@ export function eslintToReviewComments(
 
 ---
 
-## 7. セキュリティスキャンモジュール
+### 7. セキュリティスキャンモジュール
 
 ```typescript
 // src/security-scan.ts
@@ -683,7 +683,7 @@ export function scanForSecurityIssues(
 
 ---
 
-## 8. GitHub APIクライアント
+### 8. GitHub APIクライアント
 
 ```typescript
 // src/github-client.ts
@@ -767,10 +767,10 @@ function buildSummaryComment(result: ReviewResult): string {
 
 **Score**: ${result.overallScore}/100 (${scoreEmoji})
 
-### Summary
+#### Summary
 ${result.summary}
 
-### Metrics
+#### Metrics
 | Metric | Value |
 |--------|-------|
 | Files reviewed | ${metrics.totalFiles} |
@@ -779,7 +779,7 @@ ${result.summary}
 | Issues found | ${metrics.issuesFound} |
 | Critical issues | ${metrics.criticalIssues} |
 
-### Issue Breakdown
+#### Issue Breakdown
 ${result.comments.length === 0
     ? 'No issues found.'
     : result.comments
@@ -812,7 +812,7 @@ function formatCommentBody(comment: ReviewComment): string {
 
 ---
 
-## 9. エントリポイント
+### 9. エントリポイント
 
 ```typescript
 // src/index.ts
@@ -957,10 +957,10 @@ main().catch((error) => {
 
 ---
 
-## 10. GitHub Actions ワークフロー
+### 10. GitHub Actions ワークフロー
 
 ```yaml
-# .github/workflows/ai-review.yml
+## .github/workflows/ai-review.yml
 name: AI Code Review
 
 on:
@@ -1028,7 +1028,7 @@ jobs:
 
 ---
 
-## 11. ESLint設定例
+### 11. ESLint設定例
 
 ```javascript
 // eslint.config.mjs
@@ -1068,7 +1068,7 @@ export default tseslint.config(
 
 ---
 
-## 12. コスト管理
+### 12. コスト管理
 
 AIコードレビューのAPI利用にはコストがかかる。以下のテーブルを参考にコストを見積もる。
 
@@ -1096,7 +1096,7 @@ OpenAI API (gpt-4o):
 
 出典: Anthropic Pricing https://www.anthropic.com/pricing / OpenAI Pricing https://openai.com/pricing
 
-### コスト削減のヒント
+#### コスト削減のヒント
 
 ```typescript
 // 大きな差分はAIレビューをスキップ
@@ -1116,9 +1116,9 @@ const codeFiles = files.filter(
 
 ---
 
-## 13. 本番導入のベストプラクティス
+### 13. 本番導入のベストプラクティス
 
-### 13-1. 段階的な導入
+#### 13-1. 段階的な導入
 
 ```
 Phase 1: 情報提供のみ（1-2週間）
@@ -1135,7 +1135,7 @@ Phase 3: 本番モード
   - レビュー必須のブランチ保護ルールと組み合わせ
 ```
 
-### 13-2. AIの限界と注意点
+#### 13-2. AIの限界と注意点
 
 ```
 AIコードレビューの限界:
@@ -1154,7 +1154,7 @@ AIコードレビューの限界:
 
 ---
 
-## まとめ
+### まとめ
 
 本記事では、GitHub ActionsとAI API（Claude / GPT）を統合したコードレビュー自動化システムの構築方法を解説した。
 

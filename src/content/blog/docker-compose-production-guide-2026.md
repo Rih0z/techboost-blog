@@ -11,25 +11,25 @@ Docker Composeは開発環境の構築に使うもの、という認識は過去
 
 ---
 
-## 1. 前提知識と環境構成
+### 1. 前提知識と環境構成
 
-### 1-1. Docker Compose V2の確認
+#### 1-1. Docker Compose V2の確認
 
 Docker Compose V2はDocker CLIにプラグインとして統合されている。従来の`docker-compose`（ハイフン付き）ではなく、`docker compose`（スペース区切り）で実行する。
 
 ```bash
-# バージョン確認
+## バージョン確認
 docker compose version
-# Docker Compose version v2.29.0 以上を推奨
+## Docker Compose version v2.29.0 以上を推奨
 
-# Docker Engine バージョン確認
+## Docker Engine バージョン確認
 docker --version
-# Docker version 27.x 以上を推奨
+## Docker version 27.x 以上を推奨
 ```
 
 出典: Docker公式ドキュメント「Docker Compose V2」 https://docs.docker.com/compose/
 
-### 1-2. 3環境の全体構成
+#### 1-2. 3環境の全体構成
 
 本記事で構築する3つの環境の違いは以下の通りだ。
 
@@ -39,7 +39,7 @@ docker --version
 | staging | 検証・QA | staging.example.com | 80/443 | あり | あり |
 | production | 本番サービス | app.example.com | 80/443 | あり | あり（厳格） |
 
-### 1-3. サービス構成
+#### 1-3. サービス構成
 
 構築するサービスは以下の4つだ。
 
@@ -62,7 +62,7 @@ docker --version
 
 ---
 
-## 2. ディレクトリ構造
+### 2. ディレクトリ構造
 
 ```
 project/
@@ -90,12 +90,12 @@ project/
 
 ---
 
-## 3. ベースのdocker-compose.yml
+### 3. ベースのdocker-compose.yml
 
 全環境で共通する定義をベースファイルに記述する。環境固有の設定はオーバーライドファイルで上書きする。
 
 ```yaml
-# docker-compose.yml -- ベース定義（全環境共通）
+## docker-compose.yml -- ベース定義（全環境共通）
 name: myapp
 
 services:
@@ -191,12 +191,12 @@ networks:
 
 ---
 
-## 4. 開発環境 (docker-compose.dev.yml)
+### 4. 開発環境 (docker-compose.dev.yml)
 
 開発環境ではホットリロード、デバッグ用ポートの公開、ボリュームマウントによるコード同期を行う。
 
 ```yaml
-# docker-compose.dev.yml -- 開発環境オーバーライド
+## docker-compose.dev.yml -- 開発環境オーバーライド
 services:
   web:
     ports:
@@ -231,12 +231,12 @@ services:
 
 ---
 
-## 5. ステージング環境 (docker-compose.staging.yml)
+### 5. ステージング環境 (docker-compose.staging.yml)
 
 ステージング環境は本番に近い構成だが、リソース制限を緩めに設定する。
 
 ```yaml
-# docker-compose.staging.yml -- ステージング環境オーバーライド
+## docker-compose.staging.yml -- ステージング環境オーバーライド
 services:
   web:
     ports:
@@ -282,12 +282,12 @@ services:
 
 ---
 
-## 6. 本番環境 (docker-compose.prod.yml)
+### 6. 本番環境 (docker-compose.prod.yml)
 
 本番環境では、セキュリティ強化、リソース制限の厳格化、ログ集約の設定を行う。
 
 ```yaml
-# docker-compose.prod.yml -- 本番環境オーバーライド
+## docker-compose.prod.yml -- 本番環境オーバーライド
 services:
   web:
     ports:
@@ -388,37 +388,37 @@ services:
 
 ---
 
-## 7. Dockerfile（マルチステージビルド）
+### 7. Dockerfile（マルチステージビルド）
 
-### 7-1. 開発用Dockerfile
+#### 7-1. 開発用Dockerfile
 
 ```dockerfile
-# docker/api/Dockerfile
-# マルチステージビルド
+## docker/api/Dockerfile
+## マルチステージビルド
 
-# ---- ベースステージ ----
+## ---- ベースステージ ----
 FROM node:22-alpine AS base
 WORKDIR /app
 RUN apk add --no-cache tini
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# ---- 開発ステージ ----
+## ---- 開発ステージ ----
 FROM base AS development
 RUN npm install -g tsx
 COPY tsconfig.json ./
-# ソースコードはボリュームマウントで提供
+## ソースコードはボリュームマウントで提供
 EXPOSE 8080 9229
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["npx", "tsx", "watch", "src/server.ts"]
 
-# ---- ビルドステージ ----
+## ---- ビルドステージ ----
 FROM base AS build
 COPY tsconfig.json ./
 COPY src/ ./src/
 RUN npm run build
 
-# ---- 本番ステージ ----
+## ---- 本番ステージ ----
 FROM node:22-alpine AS production
 WORKDIR /app
 RUN apk add --no-cache tini curl
@@ -433,11 +433,11 @@ ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["node", "dist/server.js"]
 ```
 
-### 7-2. 本番用Dockerfile
+#### 7-2. 本番用Dockerfile
 
 ```dockerfile
-# docker/api/Dockerfile.production
-# 本番環境に最適化されたビルド
+## docker/api/Dockerfile.production
+## 本番環境に最適化されたビルド
 
 FROM node:22-alpine AS deps
 WORKDIR /app
@@ -479,12 +479,12 @@ CMD ["node", "dist/server.js"]
 
 ---
 
-## 8. Nginx設定
+### 8. Nginx設定
 
-### 8-1. 開発用
+#### 8-1. 開発用
 
 ```nginx
-# docker/nginx/nginx.conf -- 開発環境
+## docker/nginx/nginx.conf -- 開発環境
 upstream api {
     server api:8080;
 }
@@ -517,16 +517,16 @@ server {
 }
 ```
 
-### 8-2. 本番用
+#### 8-2. 本番用
 
 ```nginx
-# docker/nginx/nginx.production.conf -- 本番環境
+## docker/nginx/nginx.production.conf -- 本番環境
 upstream api {
     server api:8080;
     keepalive 32;
 }
 
-# HTTPをHTTPSにリダイレクト
+## HTTPをHTTPSにリダイレクト
 server {
     listen 80;
     server_name app.example.com;
@@ -607,22 +607,22 @@ server {
 
 ---
 
-## 9. 環境変数ファイル
+### 9. 環境変数ファイル
 
 環境ごとの変数を`.env`ファイルで管理する。
 
-### 9-1. 共通 (.env)
+#### 9-1. 共通 (.env)
 
 ```bash
-# .env -- 全環境共通の変数
+## .env -- 全環境共通の変数
 COMPOSE_PROJECT_NAME=myapp
 DB_NAME=myapp
 ```
 
-### 9-2. 開発用 (.env.development)
+#### 9-2. 開発用 (.env.development)
 
 ```bash
-# .env.development
+## .env.development
 NODE_ENV=development
 DB_USER=devuser
 DB_PASSWORD=devpassword123
@@ -630,11 +630,11 @@ REDIS_PASSWORD=devredis123
 LOG_LEVEL=debug
 ```
 
-### 9-3. 本番用 (.env.production)
+#### 9-3. 本番用 (.env.production)
 
 ```bash
-# .env.production
-# 注意: 本番の機密情報はDocker Secretsを使うことを推奨
+## .env.production
+## 注意: 本番の機密情報はDocker Secretsを使うことを推奨
 NODE_ENV=production
 DB_USER=produser
 DB_PASSWORD=${PROD_DB_PASSWORD}  # CI/CDパイプラインから注入
@@ -646,21 +646,21 @@ LOG_LEVEL=warn
 
 ---
 
-## 10. Makefile（操作コマンド集）
+### 10. Makefile（操作コマンド集）
 
 各環境の操作を簡潔に実行するためのMakefileを用意する。
 
 ```makefile
-# Makefile -- Docker Compose操作コマンド集
+## Makefile -- Docker Compose操作コマンド集
 .PHONY: help dev staging prod down logs clean build test
 
-# デフォルトターゲット
+## デフォルトターゲット
 help: ## ヘルプを表示
 	@echo "利用可能なコマンド:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-# ===== 開発環境 =====
+## ===== 開発環境 =====
 dev: ## 開発環境を起動
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml \
 		--env-file .env --env-file .env.development up -d
@@ -674,7 +674,7 @@ dev-logs: ## 開発環境のログを表示
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml \
 		--env-file .env --env-file .env.development logs -f
 
-# ===== ステージング環境 =====
+## ===== ステージング環境 =====
 staging: ## ステージング環境を起動
 	docker compose -f docker-compose.yml -f docker-compose.staging.yml \
 		--env-file .env --env-file .env.staging up -d
@@ -684,7 +684,7 @@ staging-build: ## ステージング環境をビルドして起動
 	docker compose -f docker-compose.yml -f docker-compose.staging.yml \
 		--env-file .env --env-file .env.staging up -d --build
 
-# ===== 本番環境 =====
+## ===== 本番環境 =====
 prod: ## 本番環境を起動
 	docker compose -f docker-compose.yml -f docker-compose.prod.yml \
 		--env-file .env --env-file .env.production up -d
@@ -708,7 +708,7 @@ prod-rollback: ## 本番環境を前のバージョンにロールバック
 		--env-file .env --env-file .env.production up -d api
 	@echo "ロールバックが完了しました"
 
-# ===== 共通操作 =====
+## ===== 共通操作 =====
 down: ## 全サービスを停止
 	docker compose down
 
@@ -731,7 +731,7 @@ health: ## ヘルスチェック結果を表示
 	@echo "=== サービスヘルスチェック ==="
 	@docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
 
-# ===== メンテナンス =====
+## ===== メンテナンス =====
 clean: ## 未使用のイメージ・コンテナ・ボリュームを削除
 	docker system prune -f
 	docker volume prune -f
@@ -740,7 +740,7 @@ clean: ## 未使用のイメージ・コンテナ・ボリュームを削除
 build: ## 全サービスのイメージをビルド
 	docker compose build --no-cache
 
-# ===== データベース =====
+## ===== データベース =====
 db-shell: ## PostgreSQLのシェルに接続
 	docker compose exec db psql -U $${DB_USER:-devuser} -d $${DB_NAME:-myapp}
 
@@ -755,7 +755,7 @@ db-restore: ## データベースをバックアップから復元（BACKUP_FILE
 	gunzip -c $(BACKUP_FILE) | docker compose exec -T db psql -U $${DB_USER:-devuser} -d $${DB_NAME:-myapp}
 	@echo "リストアが完了しました"
 
-# ===== Redis =====
+## ===== Redis =====
 redis-shell: ## Redis CLIに接続
 	docker compose exec redis redis-cli -a $${REDIS_PASSWORD:-devredis123}
 
@@ -763,7 +763,7 @@ redis-flush: ## Redisのキャッシュをクリア
 	docker compose exec redis redis-cli -a $${REDIS_PASSWORD:-devredis123} FLUSHALL
 	@echo "Redisキャッシュをクリアしました"
 
-# ===== テスト =====
+## ===== テスト =====
 test: ## テストを実行
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml \
 		--env-file .env --env-file .env.development \
@@ -777,11 +777,11 @@ test-integration: ## 統合テストを実行
 
 ---
 
-## 11. ヘルスチェックの設計
+### 11. ヘルスチェックの設計
 
 ヘルスチェックはコンテナの健全性を監視するための仕組みだ。Docker Composeの`healthcheck`ディレクティブと、アプリケーション側のヘルスチェックエンドポイントの両方を実装する。
 
-### 11-1. APIサーバーのヘルスチェックエンドポイント
+#### 11-1. APIサーバーのヘルスチェックエンドポイント
 
 ```typescript
 // src/health.ts
@@ -897,7 +897,7 @@ export function createHealthHandler(pool: Pool, redisClient: ReturnType<typeof c
 }
 ```
 
-### 11-2. ヘルスチェックのレスポンス例
+#### 11-2. ヘルスチェックのレスポンス例
 
 ```json
 {
@@ -930,9 +930,9 @@ export function createHealthHandler(pool: Pool, redisClient: ReturnType<typeof c
 
 ---
 
-## 12. ログ集約
+### 12. ログ集約
 
-### 12-1. 構造化ログの実装
+#### 12-1. 構造化ログの実装
 
 本番環境ではJSON形式の構造化ログを出力し、ログ集約ツールで分析できるようにする。
 
@@ -1011,36 +1011,36 @@ export const logger = new Logger(
 );
 ```
 
-### 12-2. ログの収集と閲覧
+#### 12-2. ログの収集と閲覧
 
 Docker Composeでは`json-file`ログドライバーがデフォルトだ。ログの確認は以下のコマンドで行う。
 
 ```bash
-# 全サービスのログ（最新100行）
+## 全サービスのログ（最新100行）
 docker compose logs --tail 100
 
-# 特定サービスのログ（リアルタイム）
+## 特定サービスのログ（リアルタイム）
 docker compose logs -f api
 
-# 特定時間帯のログ
+## 特定時間帯のログ
 docker compose logs --since 2026-03-06T10:00:00 api
 
-# ログをファイルに出力
+## ログをファイルに出力
 docker compose logs api > /tmp/api-logs.txt
 
-# ログのサイズ確認
+## ログのサイズ確認
 docker compose ps -q | xargs docker inspect --format='{{.Name}} {{.LogPath}}' | \
   while read name path; do echo "$name: $(du -sh $path 2>/dev/null)"; done
 ```
 
 ---
 
-## 13. セキュリティ対策
+### 13. セキュリティ対策
 
-### 13-1. Docker Secrets（機密情報管理）
+#### 13-1. Docker Secrets（機密情報管理）
 
 ```yaml
-# docker-compose.prod.yml に追加
+## docker-compose.prod.yml に追加
 services:
   api:
     secrets:
@@ -1094,10 +1094,10 @@ export const config = {
 };
 ```
 
-### 13-2. コンテナセキュリティのベストプラクティス
+#### 13-2. コンテナセキュリティのベストプラクティス
 
 ```yaml
-# セキュリティ強化の設定例
+## セキュリティ強化の設定例
 services:
   api:
     # rootユーザーでの実行を禁止
@@ -1123,13 +1123,13 @@ services:
 
 ---
 
-## 14. バックアップ戦略
+### 14. バックアップ戦略
 
-### 14-1. PostgreSQLの自動バックアップ
+#### 14-1. PostgreSQLの自動バックアップ
 
 ```bash
 #!/bin/bash
-# scripts/backup-db.sh -- データベース自動バックアップスクリプト
+## scripts/backup-db.sh -- データベース自動バックアップスクリプト
 
 set -euo pipefail
 
@@ -1138,10 +1138,10 @@ RETENTION_DAYS=30
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 BACKUP_FILE="${BACKUP_DIR}/myapp_${TIMESTAMP}.sql.gz"
 
-# バックアップディレクトリの作成
+## バックアップディレクトリの作成
 mkdir -p "${BACKUP_DIR}"
 
-# Docker Compose経由でダンプを取得
+## Docker Compose経由でダンプを取得
 docker compose exec -T db pg_dump \
   -U "${DB_USER}" \
   -d "${DB_NAME}" \
@@ -1149,32 +1149,32 @@ docker compose exec -T db pg_dump \
   --compress=9 \
   > "${BACKUP_FILE}"
 
-# バックアップサイズの確認
+## バックアップサイズの確認
 BACKUP_SIZE=$(du -sh "${BACKUP_FILE}" | cut -f1)
 echo "[$(date)] バックアップ完了: ${BACKUP_FILE} (${BACKUP_SIZE})"
 
-# 古いバックアップの削除
+## 古いバックアップの削除
 find "${BACKUP_DIR}" -name "*.sql.gz" -mtime +${RETENTION_DAYS} -delete
 echo "[$(date)] ${RETENTION_DAYS}日以上前のバックアップを削除しました"
 ```
 
-### 14-2. バックアップのcron設定
+#### 14-2. バックアップのcron設定
 
 ```bash
-# crontab -e で追加
-# 毎日AM3:00にバックアップを実行
+## crontab -e で追加
+## 毎日AM3:00にバックアップを実行
 0 3 * * * cd /path/to/project && bash scripts/backup-db.sh >> /var/log/db-backup.log 2>&1
 ```
 
 ---
 
-## 15. 監視とアラート
+### 15. 監視とアラート
 
-### 15-1. コンテナ監視スクリプト
+#### 15-1. コンテナ監視スクリプト
 
 ```bash
 #!/bin/bash
-# scripts/monitor.sh -- Docker Composeサービスの監視スクリプト
+## scripts/monitor.sh -- Docker Composeサービスの監視スクリプト
 
 set -euo pipefail
 
@@ -1216,12 +1216,12 @@ echo "[SUMMARY] 全サービス正常"
 
 ---
 
-## 16. CI/CDパイプラインとの統合
+### 16. CI/CDパイプラインとの統合
 
-### 16-1. GitHub Actionsでの自動デプロイ
+#### 16-1. GitHub Actionsでの自動デプロイ
 
 ```yaml
-# .github/workflows/deploy.yml
+## .github/workflows/deploy.yml
 name: Deploy to Production
 
 on:
@@ -1279,7 +1279,7 @@ jobs:
 
 ---
 
-## まとめ
+### まとめ
 
 本記事では、Docker Composeを使って開発・ステージング・本番の3環境を一貫した構成で構築する方法を解説した。主要なポイントを振り返る。
 
