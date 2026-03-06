@@ -1,11 +1,14 @@
 ---
 title: "Docker Compose Secrets管理ガイド - 安全な機密情報の取り扱い"
-description: "Docker Secretsの基本からdocker-compose.ymlでのシークレット定義、環境変数との使い分け、本番環境でのベストプラクティスまで詳しく解説します。"
+description: "Docker Secretsの基本からdocker-compose.ymlでのシークレット定義、環境変数との使い分け、本番環境でのベストプラクティスまで詳しく解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2025-02-05"
-tags: ['インフラ']
+tags: ['Docker', 'インフラ', '開発ツール']
 ---
+環境変数にDBパスワードを書いて`docker-compose.yml`をGitにpushしてしまった経験、ありませんか？ 私たちはあります。開発用のパスワードだったので実害はありませんでしたが、チーム全員にSlackで謝罪しました。
 
-Docker Secretsは、パスワード、APIキー、証明書などの機密情報を安全に管理するための仕組みです。Docker Composeでの実装方法とベストプラクティスを解説します。
+Docker Secretsは、まさにこの問題を根本的に解決する仕組みです。環境変数と違ってコンテナのメモリ内にだけ存在し、`docker inspect`でも見えません。一度使い始めると「なぜ最初からこうしなかったのか」と後悔するレベルの改善です。
+
+この記事では、Docker Composeでの実装方法を**実際にやりがちなミスとその回避策**も含めて解説します。
 
 ## Docker Secretsとは
 
@@ -479,16 +482,55 @@ services:
       - API_KEY=dev_key
 ```
 
+## よくある失敗パターンと対策
+
+### 1. Secretsファイルをgitignoreする前にコミット
+
+最も多い失敗。`secrets/`ディレクトリを作ってからgitignoreを追加するまでの間にコミットしてしまうケース。
+
+```bash
+# ❌ 先にファイルを作ってしまう
+echo "my-password" > secrets/db_password.txt
+git add .
+git commit -m "add docker config"  # secretsもコミットされる
+
+# ✅ 先に.gitignoreを設定
+echo "secrets/" >> .gitignore
+git add .gitignore && git commit -m "ignore secrets dir"
+mkdir secrets && echo "my-password" > secrets/db_password.txt
+```
+
+もし既にコミットしてしまった場合は、即座にパスワードを変更した上で`git filter-branch`で履歴から削除してください。
+
+### 2. docker inspectでSecretの値が見える？
+
+`docker inspect`では**Secretの値は表示されません**が、マウントパスは見えます。コンテナ内で`/run/secrets/`を直接catすれば値は読めるので、コンテナへのexec権限の管理も重要です。
+
+### 3. Docker ComposeでSecretsが使えない？
+
+Docker Compose v2（`docker compose`コマンド）では、Swarm Modeなしでも`secrets`が使えます。ただし暗号化はされず、バインドマウントとして扱われます。本番環境ではSwarm ModeまたはKubernetes Secretsを使いましょう。
+
+### いつSecretsを使い、いつ環境変数でいいのか
+
+| 情報の種類 | 推奨 | 理由 |
+|-----------|------|------|
+| DBパスワード | **Secrets** | 漏洩すると致命的 |
+| APIキー | **Secrets** | 第三者に悪用される |
+| `NODE_ENV` | 環境変数 | 機密情報ではない |
+| `PORT` | 環境変数 | 設定値で秘密ではない |
+| `DATABASE_URL` | **Secrets** | ホスト・パスワードを含む |
+| `LOG_LEVEL` | 環境変数 | 運用設定で秘密ではない |
+
+**判断基準**: その値がGitHubのpublicリポジトリに載ったら困るか？ 困るならSecrets、困らないなら環境変数。
+
 ## まとめ
 
-Docker Secretsは機密情報を安全に管理する強力な機能です。
+Docker Secretsは「面倒だから後で」と先延ばしにしがちですが、一度セットアップすれば環境変数より安全で管理しやすくなります。
 
-### 重要ポイント
+- **まず`.gitignore`を設定**してからSecretファイルを作る
+- **機密情報は全てSecrets**に、設定値は環境変数に
+- **ローカル開発では`docker-compose.override.yml`**で環境変数にフォールバック
+- **本番ではSwarm Secret**または外部シークレットマネージャーを使う
+- **コンテナへのexec権限**も合わせて管理する
 
-1. **機密情報はSecretsで**: パスワード、APIキーは必ずSecretsに
-2. **環境変数と使い分け**: 非機密な設定は環境変数でOK
-3. **Gitから除外**: `.gitignore`で確実に除外
-4. **権限設定**: ファイルパーミッションを適切に設定
-5. **本番ではSwarm Secret**: 外部管理でさらに安全に
-
-適切なSecret管理により、セキュアなコンテナアプリケーションを構築できます。
+「環境変数で十分」と思っている方は、一度`docker inspect`で自分のコンテナを見てみてください。全ての環境変数が平文で表示されます。それが本番環境でも起きています。

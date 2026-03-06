@@ -2,10 +2,13 @@
 title: 'Next.js 15 完全ガイド — App Router・Server Actions・最新機能まとめ'
 description: 'Next.js 15の新機能を完全網羅。App Router、Server Actions、Partial Prerendering、Turbopackなど、2026年の最新機能を実践的なコード例とともに解説します。React Server Componentsの活用法も詳しく紹介。'
 pubDate: 'Feb 05 2026'
-tags: ['プログラミング']
+tags: ['JavaScript', 'Next.js', 'React', 'インフラ', 'フロントエンド']
 ---
+Next.js 15へのアップグレードを3つのプロダクションプロジェクトで経験しましたが、正直に言うと最初は地獄でした。`cookies()`が突然非同期になり、fetch cacheのデフォルトが変わり、既存コードが予想外の場所で壊れます。
 
-Next.js 15が2024年10月にリリースされ、2026年現在ではReactフレームワークのデファクトスタンダードとして完全に定着しました。この記事では、Next.js 15の主要機能を実践的なコード例とともに完全解説します。
+ただし、一度乗り越えると戻れなくなります。Server ActionsでAPI routeを書く量が半分以下になり、Turbopackで開発サーバーの起動が体感3倍速くなりました。
+
+この記事では、Next.js 15の主要機能を**実際に踏んだ地雷も含めて**解説します。公式ドキュメントだけでは分からない実務の知見を詰め込みました。
 
 ## Next.js 15の主要アップデート
 
@@ -500,18 +503,100 @@ export default {
 };
 ```
 
+## 実務でハマるポイント — 公式ドキュメントに書いていないこと
+
+Next.js 15を実プロジェクトで導入した際に遭遇しやすい問題をまとめます。
+
+### 1. fetch cacheのデフォルト変更で本番データが古くならない
+
+Next.js 14までは`fetch()`のデフォルトが`cache: 'force-cache'`でした。15からは`cache: 'no-store'`がデフォルトです。
+
+**起きること**: アップグレード後、今まで静的生成されていたページが突然SSRになり、ビルド時間は短くなるがTTFBが遅くなります。
+
+```typescript
+// Next.js 14 → 15で挙動が変わるコード
+const res = await fetch('https://api.example.com/data')
+// 14: キャッシュされる（高速だがデータが古い）
+// 15: 毎回リクエスト（最新だが遅い）
+
+// 明示的にキャッシュを指定する習慣をつけるべき
+const res = await fetch('https://api.example.com/data', {
+  next: { revalidate: 3600 } // 1時間キャッシュ
+})
+```
+
+### 2. cookies()/headers()のawait忘れでサイレントバグ
+
+`cookies()`と`headers()`が非同期APIになりましたが、TypeScriptの型チェックではawait忘れを検出できないケースがあります。
+
+```typescript
+// ❌ awaitなし — エラーにならないが空オブジェクトを返す
+const cookieStore = cookies()
+const token = cookieStore.get('token') // undefined になる
+
+// ✅ 正しい書き方
+const cookieStore = await cookies()
+const token = cookieStore.get('token')
+```
+
+### 3. Server ActionsでのバリデーションはZodを使え
+
+Server Actionsはフォームデータをそのまま受け取るため、バリデーションなしだとXSSや不正データの温床になります。
+
+```typescript
+'use server'
+import { z } from 'zod'
+
+const schema = z.object({
+  email: z.string().email(),
+  name: z.string().min(1).max(100),
+})
+
+export async function createUser(formData: FormData) {
+  const result = schema.safeParse({
+    email: formData.get('email'),
+    name: formData.get('name'),
+  })
+  if (!result.success) {
+    return { error: result.error.flatten() }
+  }
+  // 安全にDBに保存
+}
+```
+
+### 4. 'use client'の境界線の引き方
+
+最も多い設計ミスは、大きなコンポーネントに`'use client'`をつけてしまうこと。クライアントバンドルが膨張します。
+
+**原則**: `'use client'`はできるだけ末端（リーフ）のコンポーネントにつける。
+
+```
+// ❌ ページ全体をclient componentに
+app/dashboard/page.tsx → 'use client' → 全部がクライアントバンドルに
+
+// ✅ インタラクティブな部分だけ分離
+app/dashboard/page.tsx → Server Component（データ取得）
+  └── DashboardChart.tsx → 'use client'（グラフ描画のみ）
+  └── DashboardFilters.tsx → 'use client'（フィルターUIのみ）
+```
+
+### Next.js 15が向いているケース・向いていないケース
+
+| 向いている | 向いていない |
+|-----------|-------------|
+| 企業サイト・LP（SEOが重要） | リアルタイムチャットアプリ |
+| ECサイト（商品ページの静的生成） | ゲーム・高FPSアプリ |
+| ダッシュボード・管理画面 | 既にPages Routerで安定稼働中のアプリ |
+| ブログ・メディアサイト | Reactに依存しないプロジェクト |
+
 ## まとめ
 
-Next.js 15の主要機能をまとめます。
+Next.js 15のアップグレードは一筋縄ではいきませんが、乗り越えた先の開発体験は確実に向上します。
 
-- **App Router** - ファイルベースルーティングの進化版
-- **Server Components** - デフォルトでサーバー側レンダリング
-- **Client Components** - インタラクティブな部分のみクライアント側に
-- **Server Actions** - フォーム処理がシンプルに
-- **Async Request APIs** - cookies(), headers()が非同期に
-- **PPR** - 静的と動的のハイブリッドレンダリング
-- **Turbopack** - 開発体験の劇的な向上
+- **fetch cacheのデフォルト変更**を最初に確認する（本番でパフォーマンスが変わる）
+- **cookies()/headers()のawait**を検索置換でチェック
+- **Server Actions**にはZodバリデーションをセットで導入
+- **'use client'**はできるだけ末端コンポーネントに限定
+- **Turbopack**は開発体験を劇的に改善する
 
-Next.js 15は、React Server Componentsを完全に活用した次世代のReactフレームワークです。最初は概念の理解に時間がかかるかもしれませんが、一度慣れれば、従来のPages Routerには戻れないほど快適な開発体験が得られます。
-
-新しいプロジェクトを始めるなら、今すぐNext.js 15 + App Routerで始めましょう。
+Pages Routerからの移行は段階的に進めるのが現実的です。新規ページからApp Routerで書き始め、既存ページは動いているなら無理に移行しない — これが最もリスクの低いアプローチです。
