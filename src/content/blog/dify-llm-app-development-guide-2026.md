@@ -1,6 +1,6 @@
 ---
 title: "Dify入門 — LLMアプリをノーコードで開発する方法"
-description: "DifyでLLMアプリを構築する方法を解説。RAG・エージェント・ワークフロー・API公開の実践例とDocker構築手順を紹介。"
+description: "DifyでLLMアプリケーションを構築する方法を徹底解説。RAGパイプライン・AIエージェント・ワークフロー自動化・API公開の実践例をDocker環境構築手順とともにコード付きで紹介。LangChainとの違いやセルフホスト運用のコツも。"
 pubDate: "2026-03-05"
 tags: ["AI", "開発ツール", "LLM", "Python", "開発効率化"]
 ---

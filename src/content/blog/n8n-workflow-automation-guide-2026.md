@@ -1,6 +1,6 @@
 ---
 title: 'n8n自動化ガイド｜Docker構築からAI連携まで'
-description: 'n8nでワークフロー自動化を構築する方法を解説。Docker・API連携・Webhook・AI統合・Zapier比較を実践コード付きで紹介'
+description: 'n8nでワークフロー自動化を構築する方法を徹底解説。Docker環境構築からAPI連携・Webhook受信・AIノード統合・カスタムノード開発まで実践コード付きで紹介。Zapier/Makeとの料金・機能比較やセルフホスト運用のベストプラクティスも網羅。'
 pubDate: '2026-03-05'
 tags: ['DevOps', '開発ツール', '自動化', 'Docker', '開発効率化']
 ---

@@ -2,7 +2,7 @@
 title: "GitHub Actions セルフホストランナー構築ガイド2026"
 description: "GitHub Actionsセルフホストランナーの構築・運用方法を徹底解説。Linux・macOSでのセットアップからDocker・Kubernetes対応、KEDA自動スケーリング、セキュリティベストプラクティス、VPSコスト比較まで実践コード付きで紹介。"
 pubDate: "2026-03-05"
-tags: ["GitHub", "GitHub Actions", "DevOps", "Docker", "インフラ"]
+tags: ["GitHub", "GitHub Actions", "DevOps", "Docker", "サーバー"]
 ---
 
 GitHub Actionsのセルフホストランナーは、自前のマシン上でCI/CDジョブを実行する仕組みです。GitHub提供のランナーでは対応しきれないGPU処理、大容量ビルド、プライベートネットワーク内のデプロイなど、多くの本番ユースケースで不可欠な選択肢となっています。本記事では、セルフホストランナーの導入理由から構築手順、Docker・Kubernetes対応、セキュリティ、コスト最適化まで、2026年時点の最新プラクティスを網羅的に解説します。

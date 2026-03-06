@@ -2,7 +2,7 @@
 title: "Astro 5完全ガイド2026｜Content Layer APIと新機能"
 description: "Astro 5の新機能を徹底解説。Content Layer API・Server Islands・astro:envによる型安全な環境変数管理・Vite 6統合など主要アップデートをコード付きで紹介。Astro 4からの移行方法と実践的なプロジェクト構築例も詳しく解説します。"
 pubDate: "2026-03-05"
-tags: ["Astro", "フレームワーク", "Web開発", "TypeScript", "プログラミング学習"]
+tags: ["Astro", "フレームワーク", "開発ツール", "TypeScript", "プログラミング学習"]
 ---
 
 Astro 5は、コンテンツ駆動型Webサイト構築のための静的サイトジェネレーターとして大幅に進化しました。Content Layer API、Server Islands、型安全な環境変数管理（astro:env）、Vite 6統合など、開発体験とパフォーマンスの両面で注目すべきアップデートが含まれています。本記事では、Astro 5の全新機能を実践的なコード例とともに解説します。
