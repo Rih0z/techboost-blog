@@ -3,10 +3,9 @@ title: 'GitHub Copilotカスタム指示: チーム開発でのAI活用最適化
 description: 'GitHub Copilotのカスタム指示(Custom Instructions)機能を活用したチーム開発の効率化手法を解説。プロジェクト固有のコーディング規約、アーキテクチャパターン、ベストプラクティスをAIに学習させる実践テクニックを紹介します。'
 pubDate: 2025-10-05
 updatedDate: 2025-10-05
-tags: ['github-copilot', 'ai', 'productivity', 'team-development', 'best-practices', 'プログラミング']
+tags: ['GitHub Copilot', 'AI', 'productivity', 'team-development', 'Best Practices', 'プログラミング']
 category: 'tools'
 ---
-
 ## カスタム指示(Custom Instructions)とは
 
 GitHub Copilot Custom Instructionsは、プロジェクト固有のコーディング規約、アーキテクチャパターン、命名規則などをCopilotに学習させ、より的確なコード提案を受けられる機能です。2024年後半から利用可能になりました。

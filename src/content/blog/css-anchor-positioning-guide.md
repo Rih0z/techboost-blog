@@ -1,12 +1,11 @@
 ---
 title: 'CSS Anchor Positioning実践: JavaScriptなしのツールチップ・ポップオーバー'
-description: 'CSS Anchor Positioning APIの実践的な活用方法、複雑なUIパターン、アクセシビリティ対応、レスポンシブデザイン、アニメーション実装を詳しく解説します。'
+description: 'CSS Anchor Positioning APIの実践的な活用方法、複雑なUIパターン、アクセシビリティ対応、レスポンシブデザイン、アニメーション実装を詳しく解説します。CSS・Anchor Positioning・UIに関する実践情報。'
 pubDate: '2025-10-07'
 updatedDate: '2025-10-07'
 category: 'CSS'
 tags: ['CSS', 'Anchor Positioning', 'UI', 'アクセシビリティ', 'アニメーション', 'プログラミング']
 ---
-
 # CSS Anchor Positioning実践
 
 CSS Anchor Positioningは、JavaScriptライブラリなしでツールチップやポップオーバーを実装できる革新的なCSS機能です。

@@ -6,10 +6,11 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import ProductCTA from '../components/ProductCTA.astro';
+import RelatedArticles from '../components/RelatedArticles.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & { slug?: string };
 
-const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags, slug = '' } = Astro.props;
 
 // タグベースのアフィリエイトCTA種別を判定
 const tagList = (tags as string[] | undefined) ?? [];
@@ -25,37 +26,55 @@ const hasCareer = tLower.some(x => ['career', '転職', '副業', 'キャリア'
   || /転職|キャリア|副業|フリーランス|年収|独立/.test(tagStr);
 const hasServer = tLower.some(x => ['server', 'インフラ', 'docker', 'linux', 'vps', 'devops', 'aws', 'cloud', 'kubernetes', 'nginx', 'hosting'].includes(x))
   || /レンタルサーバー|vps|サーバー|xserver|conoha|docker|kubernetes|aws|インフラ|デプロイ/.test(tagStr);
-const hasSchool = tLower.some(x => ['school', 'プログラミング', 'エンジニア', 'python', 'javascript', 'typescript', 'react', 'nextjs'].includes(x))
-  || /プログラミングスクール|プログラミング学習|スクール|オンライン学習|udemy|入門|初心者/.test(tagStr);
+const hasSchool = tLower.some(x => ['school', 'プログラミングスクール', 'プログラミング学習', 'オンライン学習'].includes(x))
+  || /プログラミングスクール|スクール比較|スクールおすすめ|オンライン学習|udemy/.test(tagStr);
 
+// 優先順位: 承認済みA8.netリンクを優先（school は未承認のため最後）
 if (hasAccounting) affiliateCTAType = 'accounting';
-else if (hasCareer) affiliateCTAType = 'career';
 else if (hasServer) affiliateCTAType = 'server';
+else if (hasCareer) affiliateCTAType = 'career';
 else if (hasSchool) affiliateCTAType = 'school';
 ---
 
 <html lang="ja">
 	<head>
-		<BaseHead title={title} description={description} />
-		<script type="application/ld+json" set:html={JSON.stringify({
-			'@context': 'https://schema.org',
-			'@type': 'BlogPosting',
-			headline: title,
-			description: description,
-			datePublished: pubDate.toISOString(),
-			dateModified: (updatedDate ?? pubDate).toISOString(),
-			author: {
-				'@type': 'Organization',
-				name: 'TechBoost',
-				url: 'https://techboostblog.com',
+		<BaseHead title={title} description={description} image={heroImage} ogType="article" />
+		<script type="application/ld+json" set:html={JSON.stringify([
+			{
+				'@context': 'https://schema.org',
+				'@type': 'BlogPosting',
+				mainEntityOfPage: {
+					'@type': 'WebPage',
+					'@id': `https://techboostblog.com/blog/${slug}/`,
+				},
+				headline: title,
+				description: description,
+				...(heroImage ? { image: new URL(heroImage.src, 'https://techboostblog.com').href } : {}),
+				datePublished: pubDate.toISOString(),
+				dateModified: (updatedDate ?? pubDate).toISOString(),
+				author: {
+					'@type': 'Organization',
+					name: 'TechBoost',
+					url: 'https://techboostblog.com',
+				},
+				publisher: {
+					'@type': 'Organization',
+					name: 'TechBoost',
+					url: 'https://techboostblog.com',
+				},
+				inLanguage: 'ja',
+				keywords: tagList.join(', '),
 			},
-			publisher: {
-				'@type': 'Organization',
-				name: 'TechBoost',
-				url: 'https://techboostblog.com',
+			{
+				'@context': 'https://schema.org',
+				'@type': 'BreadcrumbList',
+				itemListElement: [
+					{ '@type': 'ListItem', position: 1, name: 'ホーム', item: 'https://techboostblog.com/' },
+					{ '@type': 'ListItem', position: 2, name: '記事一覧', item: 'https://techboostblog.com/blog/' },
+					{ '@type': 'ListItem', position: 3, name: title },
+				],
 			},
-			inLanguage: 'ja',
-		})} />
+		])} />
 		<style>
 			main {
 				width: calc(100% - 2em);
@@ -199,6 +218,9 @@ else if (hasSchool) affiliateCTAType = 'school';
 					</div>
 					<slot />
 
+					<!-- Related Articles (内部リンクSEO) -->
+					<RelatedArticles currentSlug={slug} tags={tagList} title={title} />
+
 					<!-- BOOTH Product CTA -->
 					<ProductCTA title={title} description={description} />
 
@@ -208,13 +230,17 @@ else if (hasSchool) affiliateCTAType = 'school';
 							<p class="affiliate-cta-title">未経験からエンジニアへ — 転職成功率の高いスクールを比較しよう</p>
 							<p class="affiliate-cta-desc">DMM WEBCAMP・RUNTEQ・侍エンジニアなど、転職保証付きのプログラミングスクールを徹底比較。給付金対象コースで実質負担を大幅削減できます。</p>
 							<div class="affiliate-cta-links">
-								<a href="https://tech-camp.in/?utm_source=techboost&utm_medium=blog&utm_campaign=school-cta" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">
+								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+ENI2R6+4RIG+HWAG1" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">
+									ITシュガー 無料カウンセリング
+								</a>
+								<a href="https://tech-camp.in/?utm_source=techboost&utm_medium=blog&utm_campaign=school-cta" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">
 									テックキャンプ 無料相談
 								</a>
 								<a href="https://web-camp.io/?utm_source=techboost&utm_medium=blog&utm_campaign=school-cta" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">
 									DMM WEBCAMP 詳細を見る
 								</a>
 							</div>
+							<p style="font-size:0.8em;color:#888;margin-top:8px">※本リンクにはアフィリエイトリンクが含まれます</p>
 						</aside>
 					)}
 					{affiliateCTAType === 'server' && (
@@ -263,15 +289,18 @@ else if (hasSchool) affiliateCTAType = 'school';
 						</aside>
 					)}
 					{affiliateCTAType === 'default' && (
-						<aside class="affiliate-cta" aria-label="開発効率化ツール">
-							<p class="affiliate-cta-title">開発効率を上げるチートシート・プロンプト集</p>
-							<p class="affiliate-cta-desc">Git・Docker・React・TypeScript・Claude Code活用など、エンジニアが現場で使えるチートシートをまとめて公開中。</p>
+						<aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境">
+							<p class="affiliate-cta-title">エンジニアのスキルアップと環境構築を支援</p>
+							<p class="affiliate-cta-desc">キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p>
 							<div class="affiliate-cta-links">
-								<a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn">
-									BOOTHショップを見る
+								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">
+									PR: エンジニア転職相談
 								</a>
-								<a href="https://usedevtools.com/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary">
-									DevToolBox（無料）
+								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">
+									PR: XServer 詳細を見る
+								</a>
+								<a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary">
+									BOOTHショップ
 								</a>
 							</div>
 						</aside>

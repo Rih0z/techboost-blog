@@ -1,11 +1,10 @@
 ---
 title: 'Biome完全ガイド — ESLint + Prettierを置き換える超高速Rustベースツール'
-description: 'BiomeでESLint + Prettierを置き換える完全ガイド。biome.json設定・リント規則・フォーマット・インポート整理・VSCode統合・CI/CD・既存プロジェクト移行・パフォーマンス比較まで解説。'
+description: 'BiomeでESLint + Prettierを置き換える完全ガイド。biome.json設定・リント規則・フォーマット・インポート整理・VSCode統合・CI/CD・既存プロジェクト移行・パフォーマンス比較まで解説。ベストプラクティスと注意点も紹介します。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/biome-linter-formatter-guide.jpg'
 tags: ['Biome', 'ESLint', 'Prettier', 'TypeScript', '開発ツール']
 ---
-
 JavaScriptおよびTypeScriptのプロジェクトにおいて、コードの品質担保には長らく「ESLint（リント）+ Prettier（フォーマット）」という2ツール構成が事実上の標準となっていた。しかし、この構成には複雑な設定・プラグイン競合・実行速度の問題が常に付きまとっていた。
 
 2023年に登場した **Biome**（旧Rome）は、Rustで書かれた単一バイナリツールとして、リント・フォーマット・インポート整理を一括で高速処理する。Prettierのベンチマークと比べて **25倍以上高速** であり、設定も大幅にシンプルになる。

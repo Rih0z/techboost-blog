@@ -1,10 +1,9 @@
 ---
 title: 'Kubernetes入門ガイド2026 — コンテナオーケストレーションを基礎から解説'
-description: 'Kubernetes（k8s）の基礎から実践まで。Pod、Service、Deployment、Ingressなどの基本概念、実際のアプリデプロイ方法、運用のベストプラクティスを2026年の最新技術で解説します。'
+description: 'Kubernetes（k8s）の基礎から実践まで。Pod、Service、Deployment、Ingressなどの基本概念、実際のアプリデプロイ方法、運用のベストプラクティスを2026年の最新技術で解説します。サンプルコード付きで実践的に解説。'
 pubDate: 'Feb 05 2026'
-tags: ['インフラ']
+tags: ['Docker', 'Kubernetes', 'インフラ', '開発ツール']
 ---
-
 「Kubernetesって難しそう」と感じていませんか？確かに学習曲線は急ですが、基本概念を理解すれば、アプリケーションのデプロイ・スケーリング・運用が劇的に楽になります。この記事では、Kubernetesの基礎から実践的な使い方まで、2026年の最新情報とともに解説します。
 
 ## Kubernetesとは何か？

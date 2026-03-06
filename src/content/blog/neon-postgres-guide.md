@@ -1,10 +1,9 @@
 ---
 title: 'Neon PostgreSQL完全ガイド - サーバーレスDBで次世代開発'
-description: 'Neon PostgreSQLの基本からブランチング、自動スケーリング、Drizzle ORM連携、Next.jsアプリ構築まで。サーバーレスPostgreSQLを徹底解説。'
+description: 'Neon PostgreSQLの基本からブランチング、自動スケーリング、Drizzle ORM連携、Next.jsアプリ構築まで。サーバーレスPostgreSQLを徹底解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: 'Feb 05 2026'
 tags: ['Neon', 'PostgreSQL', 'サーバーレス', 'データベース', 'インフラ']
 ---
-
 # Neon PostgreSQL完全ガイド - サーバーレスDBで次世代開発
 
 Neonは、サーバーレスアーキテクチャを採用したPostgreSQLサービスです。コンピュートとストレージの分離により、自動スケーリング、ブランチング、ゼロから起動する機能を提供します。

@@ -1,6 +1,6 @@
 ---
 title: "Stripe決済実装完全ガイド2026 — Next.js App Router + Stripeで定期課金・ワンタイム決済"
-description: "Next.js App RouterとStripe SDKを使った決済実装を徹底解説。ワンタイム決済・サブスクリプション・Webhook処理・テスト・本番デプロイまで、実践的なコードで学べる2026年最新ガイドです。"
+description: "Next.js App RouterとStripe SDKを使った決済実装を徹底解説。ワンタイム決済・サブスクリプション・Webhook処理・テスト・本番デプロイまで、実践的なコードで学べる2026年最新ガイドです。初心者から実務レベルまで段階的に学べる内容です。"
 pubDate: "2026-03-05"
 tags: ["Stripe", "決済", "Next.js", "SaaS", "TypeScript"]
 ---

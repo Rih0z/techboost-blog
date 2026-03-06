@@ -1,12 +1,11 @@
 ---
 title: 'Node.js Streams完全ガイド: 大量データの効率的な処理パターン'
-description: 'Node.js Streamsを使った大量データの効率的な処理方法を解説。Readable、Writable、Transform、Duplexストリームの実装から、エラーハンドリング、バックプレッシャー、パイプラインまで網羅します。'
+description: 'Node.js Streamsを使った大量データの効率的な処理方法を解説。Readable、Writable、Transform、Duplexストリームの実装から、エラーハンドリング、バックプレッシャー、パイプラインまで網羅します。実務で役立つポイントを厳選して解説。'
 pubDate: '2025-09-03'
 updatedDate: '2025-09-03'
 tags: ['Node.js', 'Streams', 'Performance', 'Data Processing', 'Backend', 'プログラミング']
 category: 'backend'
 ---
-
 ## はじめに
 
 Node.js Streamsは、大量のデータを効率的に処理するための強力な抽象化です。ファイル全体をメモリに読み込むのではなく、小さなチャンクに分けて処理することで、メモリ効率を大幅に向上させます。

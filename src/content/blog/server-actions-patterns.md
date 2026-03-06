@@ -1,12 +1,11 @@
 ---
 title: "Server Actions設計パターン完全ガイド"
-description: "Next.js App RouterとReact 19のServer Actionsを使った実践的な設計パターン集。フォーム処理、データミューテーション、楽観的更新、エラーハンドリング、セキュリティまで徹底解説。"
+description: "Next.js App RouterとReact 19のServer Actionsを使った実践的な設計パターン集。フォーム処理、データミューテーション、楽観的更新、エラーハンドリング、セキュリティまで徹底解説。基礎から応用まで幅広くカバーしています。"
 pubDate: "2025-07-28"
 updatedDate: "2025-07-28"
 category: "React"
 tags: ["Server Actions", "Next.js", "React", "TypeScript", "Web Development"]
 ---
-
 ## はじめに
 
 Server Actionsは、React 19とNext.js 14以降で導入された、サーバーサイドロジックをクライアントから直接呼び出せる革新的な機能です。2026年現在、フォーム処理やデータミューテーションのデファクトスタンダードとなり、API Routesの多くのユースケースを置き換えています。

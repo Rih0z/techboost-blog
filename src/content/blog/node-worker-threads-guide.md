@@ -1,12 +1,11 @@
 ---
 title: 'Node.js Worker Threads実践: CPU集約タスクの並列処理'
-description: 'Node.js Worker Threadsを使ったCPU集約タスクの並列処理を実践的に解説。マルチスレッドプログラミングの基礎、ワーカープール実装、パフォーマンス最適化テクニックを紹介します。'
+description: 'Node.js Worker Threadsを使ったCPU集約タスクの並列処理を実践的に解説。マルチスレッドプログラミングの基礎、ワーカープール実装、パフォーマンス最適化テクニックを紹介します。nodejs・worker-threads・performanceに関する実践情報。'
 pubDate: 2025-10-12
 updatedDate: 2025-10-12
-tags: ['nodejs', 'worker-threads', 'performance', 'concurrency', 'backend', 'プログラミング']
+tags: ['nodejs', 'worker-threads', 'Performance', 'concurrency', 'Backend', 'プログラミング']
 category: 'backend'
 ---
-
 ## Worker Threadsとは
 
 Node.js Worker Threadsは、JavaScriptコードを別スレッドで実行するための機能です。CPU集約的な処理を並列化し、メインスレッド(イベントループ)をブロックせずにパフォーマンスを向上させます。

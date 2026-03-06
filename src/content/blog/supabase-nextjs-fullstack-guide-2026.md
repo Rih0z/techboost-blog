@@ -1,6 +1,6 @@
 ---
 title: 'Supabase × Next.js フルスタック開発ガイド2026｜認証・DB・リアルタイム・Storage'
-description: 'SupabaseとNext.js App Routerでフルスタックアプリを構築する方法を解説。認証、PostgreSQLデータベース、Row Level Security、リアルタイム、ファイルストレージまで。'
+description: 'SupabaseとNext.js App Routerでフルスタックアプリを構築する方法を解説。認証、PostgreSQLデータベース、Row Level Security、リアルタイム、ファイルストレージまで。実践的なコード例とともに解説しています。導入から応用まで段階的に学べます。'
 pubDate: '2026-03-05'
 tags: ['Supabase', 'Next.js', 'PostgreSQL', 'フルスタック', 'TypeScript']
 ---

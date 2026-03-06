@@ -1,10 +1,9 @@
 ---
 title: "OXC: Rust製JavaScript/TypeScriptツールチェーンの全貌【2026年最新】"
-description: "Rust製の超高速JavaScript/TypeScriptツールチェーンOXCの完全ガイド。ESLintの100倍高速なlinterとparser、既存プロジェクトへの導入方法、Biomeとの比較まで徹底解説。"
+description: "Rust製の超高速JavaScript/TypeScriptツールチェーンOXCの完全ガイド。ESLintの100倍高速なlinterとparser、既存プロジェクトへの導入方法、Biomeとの比較まで徹底解説。開発効率を上げるヒントが満載です。"
 pubDate: "2026-02-05"
-tags: ["Rust", "JavaScript", "TypeScript", "OXC", "linter", "tooling"]
+tags: ['Rust', 'JavaScript', 'TypeScript', 'OXC', 'Linter', 'tooling']
 ---
-
 ## OXCとは
 
 OXC（The JavaScript Oxidation Compiler）は、Rust製の超高速JavaScript/TypeScriptツールチェインです。ESLintやBabelといった既存のJavaScriptツールをRustで再実装することで、圧倒的なパフォーマンスを実現しています。

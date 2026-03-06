@@ -1,12 +1,11 @@
 ---
 title: 'AI Function Calling実践ガイド: LLMとツール連携でインテリジェントなアプリ構築'
-description: 'OpenAI、Anthropic Claude、Geminiなど主要LLMのFunction Calling機能を活用したインテリジェントアプリケーション開発ガイド。実装パターン、エラーハンドリング、ベストプラクティスを詳しく解説します。'
+description: 'OpenAI、Anthropic Claude、Geminiなど主要LLMのFunction Calling機能を活用したインテリジェントアプリケーション開発ガイド。実装パターン、エラーハンドリング、ベストプラクティスを詳しく解説します。具体的なコード例とともに詳しく紹介します。'
 pubDate: 2025-05-28
 updatedDate: 2025-05-28
 tags: ['AI', 'Function Calling', 'OpenAI', 'Claude', 'LLM', 'プログラミング']
 category: 'ai'
 ---
-
 # AI Function Calling実践ガイド: LLMとツール連携でインテリジェントなアプリ構築
 
 Function Calling（関数呼び出し）は、LLMが外部ツールやAPIを呼び出せるようにする機能です。この記事では、OpenAI、Anthropic Claude、GeminiなどのFunction Calling実装を完全解説します。

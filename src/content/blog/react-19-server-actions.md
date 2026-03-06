@@ -1,10 +1,9 @@
 ---
 title: 'React 19 Server Actions完全ガイド - フォーム処理とデータミューテーション'
-description: 'React 19 Server Actionsの実践的な使い方を徹底解説。フォーム処理、データミューテーション、楽観的更新、エラーハンドリング、バリデーションを実例付きで紹介します。'
+description: 'React 19 Server Actionsの実践的な使い方を徹底解説。フォーム処理、データミューテーション、楽観的更新、エラーハンドリング、バリデーションを実例付きで紹介します。React・React19・Server Actionsに関する実践情報。'
 pubDate: '2025-02-06'
 tags: ['React', 'React19', 'Server Actions', 'Next.js', 'Full Stack']
 ---
-
 React 19で導入されたServer Actionsは、フォーム処理とデータミューテーションを革新的にシンプルにしました。Next.js 14以降で利用可能なこの機能により、API Routeを書かずにサーバーサイド処理を実行できます。
 
 ## Server Actionsとは

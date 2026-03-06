@@ -1,10 +1,9 @@
 ---
 title: "UnJSエコシステム完全ガイド - Nitro, H3, ofetch, etc."
-description: "UnJSが提供する高品質なJavaScript/TypeScriptライブラリ群を解説します。Nitro、H3、ofetch、unimportなど、フルスタック開発を効率化する強力なツールの使い方を学びます。"
+description: "UnJSが提供する高品質なJavaScript/TypeScriptライブラリ群を解説します。Nitro、H3、ofetch、unimportなど、フルスタック開発を効率化する強力なツールの使い方を学びます。サンプルコード付きで実践的に解説。"
 pubDate: "2025-02-05"
-tags: ['プログラミング']
+tags: ['プログラミング', '開発ツール']
 ---
-
 ## UnJSエコシステムとは
 
 UnJS（https://unjs.io）は、高品質で再利用可能なJavaScript/TypeScriptライブラリ群を提供するプロジェクトです。Nuxtチームが中心となって開発しており、フレームワークに依存しないユニバーサルなツールを目指しています。

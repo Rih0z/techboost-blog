@@ -1,10 +1,9 @@
 ---
 title: 'ElectricSQL: ローカルファーストアプリケーション同期フレームワーク入門'
-description: 'ElectricSQLでローカルファーストアプリを構築。PostgreSQL同期、オフライン対応、CRDT競合解決、リアクティブクエリの実装方法を実例とともに徹底解説'
+description: 'ElectricSQLでローカルファーストアプリを構築。PostgreSQL同期、オフライン対応、CRDT競合解決、リアクティブクエリの実装方法を実例とともに徹底解説。ElectricSQL・PostgreSQL・オフラインに関する実践情報。'
 pubDate: '2025-02-06'
 tags: ['ElectricSQL', 'PostgreSQL', 'オフライン', 'CRDT', 'ローカルファースト', 'プログラミング']
 ---
-
 # ElectricSQL: ローカルファーストアプリケーション同期フレームワーク入門
 
 ElectricSQLは、ローカルファーストアプリケーション開発のための同期フレームワークです。SQLiteをローカルデータベースとして使用し、PostgreSQLサーバーと双方向で自動同期します。

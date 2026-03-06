@@ -2,9 +2,8 @@
 title: 'Next.js Server ComponentsとServer Actions完全ガイド'
 description: 'Next.js App RouterにおけるServer ComponentsとServer Actionsの仕組みを体系的に解説。Client Componentsとの使い分け、データ取得パターン、フォーム処理、キャッシュ戦略まで、実装コード付きで実践的に学べる。'
 pubDate: '2026-02-21'
-tags: ['プログラミング']
+tags: ['JavaScript', 'Next.js', 'React', 'インフラ', 'フロントエンド']
 ---
-
 Next.jsのApp Routerが安定版となって以降、React Server Components（RSC）とServer Actionsは、フロントエンド開発における標準的なアーキテクチャとして定着した。しかし、従来のPages Routerとは根本的にメンタルモデルが異なるため、移行に苦戦する開発者は少なくない。
 
 本記事では、Server ComponentsとServer Actionsの仕組みを基礎から解説し、実装パターン、パフォーマンス最適化、本番運用における設計指針までを網羅する。

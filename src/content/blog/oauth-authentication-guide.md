@@ -1,11 +1,10 @@
 ---
 title: "OAuth 2.0 / OpenID Connect 実装ガイド — 安全な認証システムの作り方"
-description: "OAuth 2.0とOpenID Connectを使った安全な認証・認可システムの実装方法を完全解説。Next.js + NextAuthの実装例やセキュリティベストプラクティスも紹介します。"
+description: "OAuth 2.0とOpenID Connectを使った安全な認証・認可システムの実装方法を完全解説。Next.js + NextAuthの実装例やセキュリティベストプラクティスも紹介します。OAuth・認証・セキュリティに関する実践情報。"
 pubDate: "2026-02-06"
 category: "Security"
 tags: ["OAuth", "認証", "セキュリティ", "OpenID Connect", "JWT", "プログラミング"]
 ---
-
 現代のWebアプリケーションにおいて、安全な認証・認可システムの実装は必須要件です。本記事では、業界標準となったOAuth 2.0とOpenID Connectの仕組みから実装まで、セキュリティベストプラクティスを含めて徹底解説します。
 
 ## 目次

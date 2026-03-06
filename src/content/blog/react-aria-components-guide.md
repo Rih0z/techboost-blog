@@ -1,12 +1,11 @@
 ---
 title: 'React Aria Components実践: Adobe製アクセシブルUIライブラリ'
-description: 'React Aria Componentsを使ったアクセシブルなUI構築ガイド。基本コンポーネントからカスタムフック、スタイリング戦略、実践的なパターンまで徹底解説します。'
+description: 'React Aria Componentsを使ったアクセシブルなUI構築ガイド。基本コンポーネントからカスタムフック、スタイリング戦略、実践的なパターンまで徹底解説します。React・Accessibility・UI Componentsに関する実践情報。'
 pubDate: '2025-11-18'
 updatedDate: '2025-11-18'
 tags: ['React', 'Accessibility', 'UI Components', 'TypeScript', 'Adobe']
 category: 'frontend'
 ---
-
 React Aria Componentsは、Adobeが開発するアクセシビリティファーストのReact UIライブラリです。WCAG準拠、キーボードナビゲーション、スクリーンリーダー対応を標準実装し、完全にカスタマイズ可能なスタイルを提供します。
 
 ## React Aria Componentsとは

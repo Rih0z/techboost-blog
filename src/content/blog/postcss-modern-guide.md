@@ -1,12 +1,11 @@
 ---
 title: 'PostCSS完全ガイド2026: プラグインシステムと実践活用法'
-description: 'PostCSSのプラグインアーキテクチャから実践的な活用法まで。Autoprefixer、postcss-preset-env、カスタムプラグイン開発、パフォーマンス最適化、Tailwind CSS連携まで網羅的に解説します。'
+description: 'PostCSSのプラグインアーキテクチャから実践的な活用法まで。Autoprefixer、postcss-preset-env、カスタムプラグイン開発、パフォーマンス最適化、Tailwind CSS連携まで網羅的に解説します。現場で使える知識を体系的にまとめました。'
 pubDate: '2025-03-12'
 updatedDate: '2025-03-12'
 tags: ['PostCSS', 'CSS', 'ビルドツール', 'Webpack', 'Vite', 'プログラミング']
 category: 'frontend'
 ---
-
 ## PostCSSとは？モダンCSS開発の要
 
 PostCSSは、JavaScriptでCSSを変換するツールです。プラグインベースのアーキテクチャにより、CSS構文の拡張、自動プレフィックス付与、最適化、未来のCSS構文の利用など、あらゆるCSS変換処理を実現できます。

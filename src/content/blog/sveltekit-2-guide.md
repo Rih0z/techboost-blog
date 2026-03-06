@@ -1,12 +1,11 @@
 ---
 title: "SvelteKit 2完全ガイド - Svelte 5 Runesと新しいルーティングで構築する次世代Webアプリ"
-description: "SvelteKit 2とSvelte 5 Runesを使った最新Web開発の完全ガイド。新しいリアクティビティシステム、ファイルベースルーティング、フォームアクション、SEO最適化まで実践的に解説。"
+description: "SvelteKit 2とSvelte 5 Runesを使った最新Web開発の完全ガイド。新しいリアクティビティシステム、ファイルベースルーティング、フォームアクション、SEO最適化まで実践的に解説。SvelteKit・Svelte・Runesに関する実践情報。"
 pubDate: "2025-09-05"
 updatedDate: "2025-09-05"
 category: "Framework"
 tags: ["SvelteKit", "Svelte", "Runes", "Web Development", "SSR", "プログラミング"]
 ---
-
 ## はじめに
 
 SvelteKit 2は、Svelte 5 Runesの導入により、よりシンプルで型安全なリアクティビティを実現したフルスタックフレームワークです。2026年現在、Next.js、Remix、Nuxtと並ぶモダンWebフレームワークの選択肢として、特にパフォーマンスとDXの高さで注目されています。

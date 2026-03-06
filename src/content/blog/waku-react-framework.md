@@ -1,10 +1,9 @@
 ---
 title: "Waku：React Server Components対応の軽量フレームワーク"
-description: "Wakuは最小限の構成でReact Server Componentsをサポートする新世代のReactフレームワーク。その特徴、使い方、Next.jsとの違いを詳しく解説します。"
+description: "Wakuは最小限の構成でReact Server Componentsをサポートする新世代のReactフレームワーク。その特徴、使い方、Next.jsとの違いを詳しく解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2025-02-05"
-tags: ['プログラミング']
+tags: ['Next.js', 'React', 'インフラ', 'フロントエンド']
 ---
-
 Reactエコシステムにおいて、Next.jsやRemixといった成熟したフレームワークが主流となっていますが、2024年から注目を集めている新しいフレームワークがあります。それが**Waku**です。Wakuは「最小限の構成でReact Server Components（RSC）を体験できる」というコンセプトで開発されており、軽量でシンプルな設計が特徴です。
 
 本記事では、Wakuの特徴、インストール方法、基本的な使い方、そしてNext.jsとの違いについて詳しく解説します。

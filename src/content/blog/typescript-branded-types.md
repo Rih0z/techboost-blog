@@ -1,12 +1,11 @@
 ---
 title: 'TypeScriptブランド型実践: 型安全なドメインモデリング'
-description: 'TypeScriptのブランド型(Branded Types)を使った型安全なドメインモデリング手法を解説。プリミティブ型の誤用を防ぎ、ドメインロジックを型レベルで表現するテクニックを実践的に紹介します。'
+description: 'TypeScriptのブランド型(Branded Types)を使った型安全なドメインモデリング手法を解説。プリミティブ型の誤用を防ぎ、ドメインロジックを型レベルで表現するテクニックを実践的に紹介します。具体的なコード例とともに詳しく紹介します。'
 pubDate: 2025-09-22
 updatedDate: 2025-09-22
-tags: ['typescript', 'type-safety', 'domain-modeling', 'advanced-types', 'design-patterns']
+tags: ['typescript', 'type-safety', 'domain-modeling', 'advanced-types', 'Design Patterns']
 category: 'programming'
 ---
-
 ## ブランド型(Branded Types)とは
 
 ブランド型は、プリミティブ型に「ブランド」という見えないマーカーを付けることで、同じ基底型でも異なる型として扱えるようにするTypeScriptのテクニックです。

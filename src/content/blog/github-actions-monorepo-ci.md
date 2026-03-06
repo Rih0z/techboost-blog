@@ -1,10 +1,9 @@
 ---
 title: "GitHub ActionsでモノレポのCI/CDを構築する実践テクニック"
-description: "モノレポ環境でのGitHub Actions活用法を徹底解説。パス指定トリガー、マトリックスビルド、キャッシュ戦略、Changesetsによる自動リリースまで網羅します。"
+description: "モノレポ環境でのGitHub Actions活用法を徹底解説。パス指定トリガー、マトリックスビルド、キャッシュ戦略、Changesetsによる自動リリースまで網羅します。GitHub Actions・CICD・Monorepoに関する実践情報。"
 pubDate: "2026-02-05"
 tags: ["GitHub Actions", "CICD", "Monorepo", "DevOps", "インフラ"]
 ---
-
 ## モノレポCI/CDの課題
 
 モノレポ（Turborepo、Nx、pnpm workspaces等）では、複数のパッケージやアプリが1つのリポジトリに共存します。効率的なCI/CDには以下の課題があります。

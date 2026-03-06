@@ -1,10 +1,9 @@
 ---
 title: "WebAssembly Component Model 入門 - 次世代のコンポーネント指向開発"
-description: "WebAssembly Component Modelの基本から実践まで。WASI、WIT、コンポーネント間通信、言語間の相互運用性を実現する新しいWebAssembly標準を徹底解説。"
+description: "WebAssembly Component Modelの基本から実践まで。WASI、WIT、コンポーネント間通信、言語間の相互運用性を実現する新しいWebAssembly標準を徹底解説。webassembly・wasm・component-modelに関する実践情報。"
 pubDate: "2025-02-05"
-tags: ["webassembly", "wasm", "component-model", "wasi", "wit", "rust", "プログラミング"]
+tags: ['webassembly', 'wasm', 'component-model', 'wasi', 'wit', 'Rust', 'プログラミング']
 ---
-
 WebAssembly Component Model（WASM Component Model）は、WebAssemblyモジュールを再利用可能なコンポーネントとして構成するための新しい標準です。異なる言語で書かれたコンポーネント同士が型安全に通信できる、次世代のソフトウェア開発パラダイムを実現します。
 
 本記事では、Component Modelの基本概念から実践的な使い方まで、コード例を交えて詳しく解説します。

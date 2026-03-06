@@ -1,11 +1,10 @@
 ---
 title: 'D3.js完全ガイド — データビジュアライゼーション・インタラクティブグラフ・React統合'
-description: 'D3.jsでインタラクティブなデータビジュアライゼーションを構築する完全ガイド。SVG・スケール・軸・棒グラフ・折れ線グラフ・散布図・地図・React統合・アニメーションまで実装例付きで解説。'
+description: 'D3.jsでインタラクティブなデータビジュアライゼーションを構築する完全ガイド。SVG・スケール・軸・棒グラフ・折れ線グラフ・散布図・地図・React統合・アニメーションまで実装例付きで解説。D3.js・データビジュアライゼーション・SVGに関する実践情報。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/d3js-data-visualization-guide.jpg'
 tags: ['D3.js', 'データビジュアライゼーション', 'SVG', 'TypeScript', 'React']
 ---
-
 D3.js（Data-Driven Documents）はMike Bostockが2011年に開発したJavaScriptライブラリで、「データに基づいてDOMを操作する」という哲学のもと設計されている。Chart.jsやRechartsのような「すぐ使えるチャートライブラリ」とは根本的に異なり、SVGやCanvas、HTMLを直接操作する低レベルのツールセットだ。その代わり、実現できるビジュアライゼーションの自由度は他の追随を許さない。
 
 本記事ではD3.jsの基礎からReact統合・アニメーション・レスポンシブ対応まで、実務で必要なすべての技術要素を実装例とともに徹底解説する。

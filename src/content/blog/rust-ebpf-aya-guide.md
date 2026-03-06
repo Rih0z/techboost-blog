@@ -1,11 +1,10 @@
 ---
 title: 'Rust + eBPF + Aya フレームワーク完全入門ガイド【2026年版】'
-description: 'RustでeBPFプログラムを書くためのAyaフレームワーク完全入門。環境構築からXDPパケットカウンター、eBPF Maps、ネットワーク監視ツールの実装まで実践的に解説。Rust中級エンジニア向け。'
+description: 'RustでeBPFプログラムを書くためのAyaフレームワーク完全入門。環境構築からXDPパケットカウンター、eBPF Maps、ネットワーク監視ツールの実装まで実践的に解説。Rust中級エンジニア向け。具体的なコード例とともに詳しく紹介します。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/rust-ebpf-aya-guide.jpg'
 tags: ['Rust', 'eBPF', 'Aya', 'Linux', 'ネットワーク', 'システムプログラミング']
 ---
-
 ## はじめに
 
 2026年現在、eBPF（extended Berkeley Packet Filter）はLinuxカーネルプログラミングの主役に躍り出た。Cloudflare、Facebook（Meta）、Google、Netflixといった大手が本番環境で大規模採用し、Kubernetes/クラウドネイティブスタックの根幹を支えている。そしてその世界に「Rust」という新しいプレイヤーが力強く登場した。

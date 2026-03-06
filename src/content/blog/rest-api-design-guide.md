@@ -1,11 +1,10 @@
 ---
 title: 'REST API設計ベストプラクティス — 保守性の高いAPIを設計・実装する完全ガイド'
-description: 'RESTful API設計の基本原則から実践的なベストプラクティスまで徹底解説。URLルーティング・HTTPメソッド・ステータスコード・認証・バージョニング・エラーレスポンス・ページネーション・OpenAPI仕様書まで実践コード付き。'
+description: 'RESTful API設計の基本原則から実践的なベストプラクティスまで徹底解説。URLルーティング・HTTPメソッド・ステータスコード・認証・バージョニング・エラーレスポンス・ページネーション・OpenAPI仕様書まで実践コード付き。具体的なコード例とともに詳しく紹介します。'
 pubDate: '2026-02-20'
 heroImage: '../../assets/thumbnails/rest-api-design-guide.jpg'
 tags: ['REST API', 'API設計', 'Node.js', 'Express', 'TypeScript']
 ---
-
 APIはソフトウェアの「インターフェース」だ。内部実装がどれだけ優れていても、APIが使いにくければ開発者体験は損なわれ、保守コストは増大し、バグを生む温床となる。REST APIの設計は、一度リリースしてしまうと後から変更しにくいため、**最初から正しく設計することが重要**だ。
 
 この記事では、REST APIの根本原則から、URLルーティング・HTTPメソッドの使い方・エラーハンドリング・ページネーション・認証・OpenAPI仕様書まで、実際のTypeScript/Expressコードを交えて徹底解説する。

@@ -1,11 +1,10 @@
 ---
 title: 'Vitest 完全ガイド — Jest移行から実践的テスト設計まで'
-description: 'VitestによるJavaScript/TypeScriptテストの完全解説。Jestからの移行ガイド、React Testing Library統合、カバレッジ、MSW、スナップショットテストを網羅。'
+description: 'VitestによるJavaScript/TypeScriptテストの完全解説。Jestからの移行ガイド、React Testing Library統合、カバレッジ、MSW、スナップショットテストを網羅。Testing・Vitest・TypeScriptに関する実践情報。'
 pubDate: '2026-02-21'
 heroImage: '../../assets/thumbnails/vitest-complete-guide.jpg'
 tags: ['Testing', 'Vitest', 'TypeScript', 'React', 'Jest']
 ---
-
 現代のJavaScript/TypeScript開発において、テストは品質保証の中核を担う。しかしJestの設定の複雑さやESMサポートの不完全さに悩まされてきた開発者は多い。そこに登場したVitestは、Viteエコシステムと深く統合された次世代テストランナーとして急速に普及している。本記事では、VitestのセットアップからJestからの移行、React Testing Library・MSW統合、カバレッジ設定、GitHub Actionsとの連携まで、実務で即活用できる知識を体系的に解説する。
 
 ## 目次

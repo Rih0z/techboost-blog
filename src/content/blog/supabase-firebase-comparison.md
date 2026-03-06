@@ -1,10 +1,9 @@
 ---
 title: "Supabase vs Firebase 徹底比較2026 - BaaS選定の決定版ガイド"
-description: "SupabaseとFirebaseを機能・料金・開発体験で徹底比較。認証、データベース、ストレージ、リアルタイム機能、Edge Functionsの違いと、プロジェクトに最適なBaaSの選び方を解説します。"
+description: "SupabaseとFirebaseを機能・料金・開発体験で徹底比較。認証、データベース、ストレージ、リアルタイム機能、Edge Functionsの違いと、プロジェクトに最適なBaaSの選び方を解説します。具体的なコード例とともに詳しく紹介します。"
 pubDate: "2026-02-05"
 tags: ["Supabase", "Firebase", "BaaS", "Backend", "データベース", "プログラミング"]
 ---
-
 ## はじめに
 
 バックエンド開発を劇的に効率化するBaaS（Backend as a Service）。その中でも、**Supabase**と**Firebase**は2026年現在、最も人気のある2大サービスです。

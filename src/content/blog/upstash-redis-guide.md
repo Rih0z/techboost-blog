@@ -1,10 +1,9 @@
 ---
 title: 'Upstash Redisでサーバーレスキャッシュ構築 - Next.js/Vercel完全対応'
-description: 'Upstash Redisを使ったサーバーレス環境でのキャッシュ実装ガイド。Next.js App Router、Vercel Edge Functions、Rate Limitingまで実践的に解説します。'
+description: 'Upstash Redisを使ったサーバーレス環境でのキャッシュ実装ガイド。Next.js App Router、Vercel Edge Functions、Rate Limitingまで実践的に解説します。現場で使える知識を体系的にまとめました。'
 pubDate: 'Feb 05 2026'
 tags: ['Upstash', 'Redis', 'Next.js', 'Vercel', 'サーバーレス', 'キャッシュ', 'インフラ']
 ---
-
 Upstash Redisは、サーバーレス環境に最適化されたRedisサービスです。従量課金制で、Vercel、Cloudflare Workers、AWS Lambdaなどと完璧に統合できます。この記事では、Next.jsアプリでUpstashを活用する方法を解説します。
 
 ## Upstash Redisとは？

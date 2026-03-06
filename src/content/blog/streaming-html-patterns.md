@@ -1,10 +1,9 @@
 ---
 title: "ストリーミングHTML完全ガイド — Suspenseとプログレッシブレンダリング"
-description: "React 19のストリーミングSSRとSuspense境界設計を徹底解説。Out-of-Order StreamingとProgressive Hydrationで最高のUXを実現する方法。"
+description: "React 19のストリーミングSSRとSuspense境界設計を徹底解説。Out-of-Order StreamingとProgressive Hydrationで最高のUXを実現する方法。React・Streaming・SSRに関する実践情報。"
 pubDate: "2026-02-05"
 tags: ["React", "Streaming", "SSR", "Suspense", "Performance"]
 ---
-
 ## ストリーミングHTMLとは
 
 従来のSSRでは、サーバーが全てのHTMLを生成してからクライアントに送信していました。ストリーミングSSRでは、準備ができた部分から順次送信することで、初期表示を大幅に高速化できます。

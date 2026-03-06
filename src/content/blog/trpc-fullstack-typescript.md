@@ -1,10 +1,9 @@
 ---
 title: "tRPCで型安全なフルスタックTypeScript開発 - エンドツーエンドの型安全性を実現"
-description: "tRPCを使ったフルスタックTypeScriptアプリケーション開発の実践ガイド。Next.js App Router、Prisma、Zodを組み合わせた完全な型安全開発を解説します。"
+description: "tRPCを使ったフルスタックTypeScriptアプリケーション開発の実践ガイド。Next.js App Router、Prisma、Zodを組み合わせた完全な型安全開発を解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2025-02-05"
-tags: ['プログラミング']
+tags: ['TypeScript', 'フロントエンド']
 ---
-
 # tRPCで型安全なフルスタックTypeScript開発
 
 tRPCは、TypeScriptのフルスタック開発において、フロントエンドとバックエンド間の完全な型安全性を実現するライブラリです。GraphQLやREST APIのような冗長なスキーマ定義なしに、TypeScriptの型システムをそのまま活用できます。

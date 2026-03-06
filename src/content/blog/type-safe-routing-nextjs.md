@@ -1,10 +1,9 @@
 ---
 title: "Next.jsで型安全なルーティングを実現する方法【2026年最新】"
-description: "Next.js App Routerで型安全なルーティングを実装する方法を徹底解説。next-safe-navigation、pathpida、独自型定義など複数のアプローチを比較します。"
+description: "Next.js App Routerで型安全なルーティングを実装する方法を徹底解説。next-safe-navigation、pathpida、独自型定義など複数のアプローチを比較します。Next.js・TypeScript・App Routerに関する実践情報。"
 pubDate: "2026-02-05"
 tags: ["Next.js", "TypeScript", "App Router", "Type Safety", "Routing"]
 ---
-
 Next.jsのApp Routerは強力ですが、標準では型安全性が保証されていません。URLの文字列を直接書くと、タイポやパラメータの渡し忘れに気づけません。この記事では、Next.jsで型安全なルーティングを実現する複数の方法を紹介し、プロジェクトに最適なアプローチを見つける手助けをします。
 
 ## 問題点: 型安全でないルーティング

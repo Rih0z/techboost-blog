@@ -1,10 +1,9 @@
 ---
 title: 'Dagger CI/CD完全ガイド - プログラマブルなCI/CDパイプライン'
-description: 'Daggerを使ったCI/CD構築を徹底解説。コンテナベースパイプライン、Go/TypeScript/Python SDK、ローカル実行、GitHub Actions統合、再現可能なビルドを習得しよう。'
+description: 'Daggerを使ったCI/CD構築を徹底解説。コンテナベースパイプライン、Go/TypeScript/Python SDK、ローカル実行、GitHub Actions統合、再現可能なビルドを習得しよう。Dagger・CICD・Dockerに関する実践情報。'
 pubDate: 'Feb 05 2026'
 tags: ['Dagger', 'CICD', 'Docker', 'DevOps']
 ---
-
 # Dagger CI/CD完全ガイド - プログラマブルなCI/CDパイプライン
 
 Daggerは、コンテナベースのプログラマブルCI/CDエンジンです。YAMLではなくコード（Go、TypeScript、Python）でパイプラインを記述し、ローカルでもCIでも同じように実行できます。

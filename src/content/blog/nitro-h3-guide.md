@@ -1,10 +1,9 @@
 ---
 title: 'Nitro/H3完全ガイド - UnJSのサーバーフレームワーク'
-description: 'Nitro/H3サーバーエンジンの基本からAPI Routes、ミドルウェア、ストレージ、エッジデプロイまで。UnJSエコシステムのサーバーフレームワークを徹底解説。'
+description: 'Nitro/H3サーバーエンジンの基本からAPI Routes、ミドルウェア、ストレージ、エッジデプロイまで。UnJSエコシステムのサーバーフレームワークを徹底解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: 'Feb 05 2026'
 tags: ['Nitro', 'H3', 'UnJS', 'サーバー', 'Edge', 'インフラ']
 ---
-
 # Nitro/H3完全ガイド - UnJSのサーバーフレームワーク
 
 NitroはNuxtの裏側で動くサーバーエンジンで、H3はその軽量HTTPフレームワークです。単体でも使え、あらゆるデプロイターゲット（Node.js、Cloudflare Workers、Deno Deployなど）に対応したユニバーサルなサーバーを構築できます。

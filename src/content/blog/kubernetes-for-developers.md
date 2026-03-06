@@ -1,10 +1,9 @@
 ---
 title: "開発者のためのKubernetes入門 — Pod/Service/Deploymentの基本"
-description: "Kubernetesの基本概念からkubectlコマンド、Pod/Service/Deploymentの定義、Helmチャート、ローカル開発環境(kind/minikube)まで実践的に解説します。"
+description: "Kubernetesの基本概念からkubectlコマンド、Pod/Service/Deploymentの定義、Helmチャート、ローカル開発環境(kind/minikube)まで実践的に解説します。Kubernetes・k8s・Dockerに関する実践情報。"
 pubDate: "2026-02-05"
 tags: ["Kubernetes", "k8s", "Docker", "DevOps", "インフラ"]
 ---
-
 Kubernetesは、コンテナオーケストレーションのデファクトスタンダードです。この記事では、開発者が知っておくべきKubernetesの基本を実践的に解説します。
 
 ## Kubernetesとは

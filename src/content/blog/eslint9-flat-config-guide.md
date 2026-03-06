@@ -1,11 +1,10 @@
 ---
 title: 'ESLint 9 Flat Config 完全ガイド — 新設定システムへの移行と実践設定'
-description: 'ESLint 9の新しいFlat Config（eslint.config.js）への移行ガイド。TypeScript、React、Next.js、Prettierとの統合設定を実例で解説。'
+description: 'ESLint 9の新しいFlat Config（eslint.config.js）への移行ガイド。TypeScript、React、Next.js、Prettierとの統合設定を実例で解説。ESLint・TypeScript・Lintingに関する実践情報。'
 pubDate: 'Feb 21 2026'
 heroImage: '../../assets/thumbnails/eslint9-flat-config-guide.jpg'
 tags: ['ESLint', 'TypeScript', 'Linting', 'JavaScript', 'DevTool']
 ---
-
 2024年4月、ESLint 9.0.0がリリースされ、設定システムが根本から刷新された。長年親しまれてきた `.eslintrc.js` ベースの「レガシーconfig」に代わり、**Flat Config（eslint.config.js）**が新たなデフォルトとなった。ESLint 10ではレガシーconfigのサポートが完全に廃止される予定であり、今こそ移行を検討する時期だ。
 
 Flat Configは単なる設定ファイル名の変更ではなく、プラグイン解決の仕組み・グローバル変数の扱い・無視パターンの指定方法など、あらゆる面で設計が見直された。最初は戸惑う部分もあるが、理解すればはるかにシンプルで予測可能な設定体系であることが分かる。

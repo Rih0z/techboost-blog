@@ -1,11 +1,10 @@
 ---
 title: 'Rust完全ガイド2026：安全で高速なシステムプログラミング言語'
-description: 'Rustの基本から応用まで完全解説。所有権・借用・ライフタイム・非同期処理・Axum Webフレームワーク・WebAssembly・エラーハンドリング・テストまで実践的に学ぶ'
+description: 'Rustの基本から応用まで完全解説。所有権・借用・ライフタイム・非同期処理・Axum Webフレームワーク・WebAssembly・エラーハンドリング・テストまで実践的に学ぶ。Rust・Systems Programming・Backendに関する実践情報。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/rust-programming-guide.jpg'
 tags: ['Rust', 'Systems Programming', 'Backend', 'プログラミング']
 ---
-
 ## はじめに
 
 Rustは2015年にバージョン1.0がリリースされて以来、システムプログラミングの世界に革命をもたらし続けている言語だ。Stack Overflowの開発者調査では、2016年から9年連続で「最も愛されているプログラミング言語」の首位を維持している。2026年現在、LinuxカーネルへのRustコード採用、AndroidのHALレイヤへの導入、Windowsカーネルコンポーネントのリライトなど、システムソフトウェアの主要領域でRustは着実に存在感を高めている。

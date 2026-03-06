@@ -1,12 +1,11 @@
 ---
 title: 'Lit + Web Components実践: フレームワーク非依存のコンポーネント開発'
-description: 'Litを使ったモダンなWeb Componentsの開発方法を実践的に解説。リアクティビティ、ライフサイクル、スタイリング、イベント処理から、実際のコンポーネントライブラリ構築まで網羅します。'
+description: 'Litを使ったモダンなWeb Componentsの開発方法を実践的に解説。リアクティビティ、ライフサイクル、スタイリング、イベント処理から、実際のコンポーネントライブラリ構築まで網羅します。Web Components・Lit・Custom Elementsに関する実践情報。'
 pubDate: '2025-08-28'
 updatedDate: '2025-08-28'
 tags: ['Web Components', 'Lit', 'Custom Elements', 'Shadow DOM', 'Frontend', 'プログラミング']
 category: 'frontend'
 ---
-
 ## はじめに
 
 Litは、GoogleによってメンテナンスされているWeb Componentsライブラリです。わずか5KBの軽量さでありながら、リアクティビティ、宣言的テンプレート、そしてモダンな開発体験を提供します。

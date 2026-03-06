@@ -1,10 +1,9 @@
 ---
 title: 'Payload CMS完全ガイド：Next.jsと統合するヘッドレスCMS'
-description: 'Payload CMSの基本からコレクション定義、カスタムフィールド、Next.jsとの統合、セルフホスティングまで徹底解説します。'
+description: 'Payload CMSの基本からコレクション定義、カスタムフィールド、Next.jsとの統合、セルフホスティングまで徹底解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
 pubDate: 'Feb 05 2026'
 tags: ['Payload CMS', 'Next.js', 'TypeScript', 'CMS', 'ヘッドレスCMS']
 ---
-
 # Payload CMS完全ガイド：Next.jsと統合するヘッドレスCMS
 
 ヘッドレスCMSは、コンテンツ管理とフロントエンドを分離し、柔軟なWebアプリケーション開発を可能にします。Payload CMSは、TypeScriptで構築された次世代のヘッドレスCMSで、開発者体験とカスタマイズ性に優れています。

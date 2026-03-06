@@ -1,10 +1,9 @@
 ---
 title: 'Remix v3からReact Router v7への移行ガイド'
-description: 'Remix v3からReact Router v7への移行における破壊的変更、ルーティング変更、データローディングの完全移行ガイド'
+description: 'Remix v3からReact Router v7への移行における破壊的変更、ルーティング変更、データローディングの完全移行ガイド。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
 pubDate: 2025-02-05
 tags: ['Remix', 'React Router', 'Migration', 'React', 'v7', 'Routing']
 ---
-
 Remix v3とReact Router v7の統合により、両プロジェクトは実質的に同じものになります。本記事では、Remix v3からReact Router v7への移行について詳しく解説します。
 
 ## Remix v3とReact Router v7の統合

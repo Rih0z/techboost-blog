@@ -1,10 +1,9 @@
 ---
 title: "CI/CDベストプラクティス2026 — GitHub Actions, GitLab CI, CircleCI"
-description: "CI/CDパイプライン設計の最新ベストプラクティス。GitHub Actions, GitLab CI, CircleCIの比較、キャッシュ戦略、セキュリティ、デプロイ戦略まで徹底解説。"
+description: "CI/CDパイプライン設計の最新ベストプラクティス。GitHub Actions, GitLab CI, CircleCIの比較、キャッシュ戦略、セキュリティ、デプロイ戦略まで徹底解説。CICD・GitHub Actions・GitLab CIに関する実践情報。"
 pubDate: "2026-02-05"
 tags: ["CICD", "GitHub Actions", "GitLab CI", "DevOps", "自動化", "インフラ"]
 ---
-
 ## CI/CDとは
 
 CI/CD（Continuous Integration / Continuous Delivery）は、コードの変更を自動的にテスト・ビルド・デプロイするための仕組みです。

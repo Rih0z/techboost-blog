@@ -1,12 +1,11 @@
 ---
 title: 'React Compiler実践ガイド: 自動メモ化で実現するパフォーマンス最適化の新時代'
-description: 'React Compilerを使った自動最適化の実践ガイド。手動のuseMemo/useCallbackが不要になる自動メモ化、最適化の仕組み、導入方法、ベンチマーク、トラブルシューティングを徹底解説'
+description: 'React Compilerを使った自動最適化の実践ガイド。手動のuseMemo/useCallbackが不要になる自動メモ化、最適化の仕組み、導入方法、ベンチマーク、トラブルシューティングを徹底解説。具体的なコード例とともに詳しく紹介します。'
 pubDate: 2025-08-05
 updatedDate: 2025-08-05
-tags: ['React', 'React Compiler', 'パフォーマンス', '最適化', 'メモ化']
+tags: ['React', 'React-Compiler', 'パフォーマンス', '最適化', 'メモ化']
 category: 'フロントエンド'
 ---
-
 # React Compiler実践ガイド: 自動メモ化で実現するパフォーマンス最適化の新時代
 
 React Compilerは、手動の`useMemo`や`useCallback`を不要にする革新的なコンパイラです。

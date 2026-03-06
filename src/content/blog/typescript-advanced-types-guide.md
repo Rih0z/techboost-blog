@@ -1,11 +1,10 @@
 ---
 title: 'TypeScript 高度な型パターン実践ガイド：Conditional Types・Mapped Types・i...'
-description: 'TypeScriptの上級者向け型パターン。Conditional Types、Mapped Types、Template Literal Types、inferを実践的なコード例で解説。型レベルプログラミングでコードの安全性を高める。'
+description: 'TypeScriptの上級者向け型パターン。Conditional Types、Mapped Types、Template Literal Types、inferを実践的なコード例で解説。型レベルプログラミングでコードの安全性を高める。サンプルコード付きで実践的に解説。'
 pubDate: 'Feb 26 2026'
 heroImage: '../../assets/thumbnails/typescript-advanced-types-guide.jpg'
-tags: ['プログラミング']
+tags: ['TypeScript', 'フロントエンド', '開発ツール']
 ---
-
 TypeScriptの型システムは、単なる「変数の型チェック」をはるかに超えた能力を持っています。Conditional Types、Mapped Types、Template Literal Types、そして `infer` キーワードを組み合わせることで、ランタイムエラーをコンパイル時に検出できる強力な型制約を設計できます。
 
 本記事では、実際のプロダクト開発で遭遇する課題を題材に、4つの高度な型パターンを体系的に解説します。「なぜこの型が必要なのか」という設計の動機から入り、段階的に複雑な応用例へと展開していきます。

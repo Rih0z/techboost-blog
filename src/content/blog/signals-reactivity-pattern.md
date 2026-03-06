@@ -1,10 +1,9 @@
 ---
 title: "Signals リアクティビティパターン完全ガイド - モダンな状態管理の新潮流"
-description: "Solidjs、Preact、Angular、Vue.jsなど主要フレームワークで採用されるSignalsパターンの概念、実装、パフォーマンス最適化手法を徹底解説します。"
+description: "Solidjs、Preact、Angular、Vue.jsなど主要フレームワークで採用されるSignalsパターンの概念、実装、パフォーマンス最適化手法を徹底解説します。signals・reactivity・state-managementに関する実践情報。"
 pubDate: "2025-02-05"
-tags: ["signals", "reactivity", "state-management", "solidjs", "preact", "プログラミング"]
+tags: ['Signals', 'Reactivity', 'state-management', 'SolidJS', 'Preact', 'プログラミング']
 ---
-
 ## Signalsとは何か
 
 Signalsは、リアクティブな状態管理を実現するための設計パターンです。従来の仮想DOM差分検出に代わり、細粒度（fine-grained）なリアクティビティを提供することで、パフォーマンスの大幅な向上とシンプルなコードを両立します。

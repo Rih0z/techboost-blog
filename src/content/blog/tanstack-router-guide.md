@@ -1,10 +1,9 @@
 ---
 title: "TanStack Router完全ガイド - 型安全ルーティングの次世代標準"
-description: "React向け次世代型安全ルーターTanStack Routerの完全ガイド。ファイルベースルーティング、検索パラメータの型安全性、レイアウトネスト、データローディング、コード分割まで実践的に解説します。"
+description: "React向け次世代型安全ルーターTanStack Routerの完全ガイド。ファイルベースルーティング、検索パラメータの型安全性、レイアウトネスト、データローディング、コード分割まで実践的に解説します。React・TanStack Router・TypeScriptに関する実践情報。"
 pubDate: "2025-02-06"
 tags: ["React", "TanStack Router", "TypeScript", "ルーティング", "型安全性", "パフォーマンス"]
 ---
-
 # TanStack Router完全ガイド - 型安全ルーティングの次世代標準
 
 Reactアプリケーション開発において、ルーティングは避けて通れない重要な要素です。従来のReact Routerは長年業界標準として利用されてきましたが、TypeScriptの型安全性やモダンな開発体験という点で課題を抱えていました。

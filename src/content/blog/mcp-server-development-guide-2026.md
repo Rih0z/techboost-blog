@@ -1,11 +1,10 @@
 ---
-title: "MCPサーバー開発完全ガイド2026：Model Context Protocolで自分専用AIツールを作る"
-description: "Anthropicが策定したModel Context Protocol（MCP）の仕組みを解説し、TypeScriptでカスタムMCPサーバーを実装する方法を実践的なコードとともに紹介。"
+title: "MCPサーバー開発入門ガイド2026：Model Context Protocolで自分専用AIツールを作る"
+description: "Anthropicが策定したModel Context Protocol（MCP）の仕組みを解説し、TypeScriptでカスタムMCPサーバーを実装する方法を実践的なコードとともに紹介。MCP・Model Context Protocol・Anthropicに関する実践情報。"
 pubDate: "2026-03-06"
 heroImage: '../../assets/thumbnails/mcp-server-development-guide-2026.jpg'
 tags: ["MCP", "Model Context Protocol", "Anthropic", "Claude", "AI開発", "プログラミング"]
 ---
-
 ## MCPとは：AIとツールを繋ぐ標準規格
 
 **Model Context Protocol（MCP）**は、Anthropicが2024年11月に発表したオープン規格です。AIアシスタント（Claude, GPT等）が外部ツール・データソースと安全に通信するための標準インターフェースを定義します。

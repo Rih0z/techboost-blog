@@ -1,10 +1,9 @@
 ---
 title: "tRPC + TanStack Query統合ガイド — 型安全なデータフェッチングの極意"
-description: "tRPCとTanStack Queryを組み合わせた高度なデータフェッチング戦略を解説。キャッシュ管理、楽観的更新、Suspense統合、無限スクロール、プリフェッチ、エラーハンドリングまで完全網羅。"
+description: "tRPCとTanStack Queryを組み合わせた高度なデータフェッチング戦略を解説。キャッシュ管理、楽観的更新、Suspense統合、無限スクロール、プリフェッチ、エラーハンドリングまで完全網羅。基礎から応用まで幅広くカバーしています。"
 pubDate: "2026-02-06"
 tags: ["tRPC", "TanStack Query", "React Query", "TypeScript", "キャッシュ", "データフェッチング"]
 ---
-
 tRPCとTanStack Query（旧React Query）を組み合わせることで、型安全かつ高性能なデータフェッチングを実現できます。
 
 この記事では、基本的な統合方法から高度なキャッシュ戦略、楽観的更新、無限スクロールまで、実践的なパターンを詳しく解説します。

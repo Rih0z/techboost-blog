@@ -1,11 +1,10 @@
 ---
 title: 'MongoDB完全ガイド — Node.js・Mongoose・集計パイプライン・インデックス・Atlas'
-description: 'MongoDBをNode.js/TypeScriptで使いこなす完全ガイド。ドキュメント設計・Mongoose・CRUD・集計パイプライン・インデックス最適化・トランザクション・MongoDB Atlas・時系列コレクションまで解説。'
+description: 'MongoDBをNode.js/TypeScriptで使いこなす完全ガイド。ドキュメント設計・Mongoose・CRUD・集計パイプライン・インデックス最適化・トランザクション・MongoDB Atlas・時系列コレクションまで解説。基礎から応用まで幅広くカバーしています。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/mongodb-nodejs-guide.jpg'
 tags: ['MongoDB', 'Node.js', 'Mongoose', 'TypeScript', 'データベース']
 ---
-
 MongoDBは、現代のWebアプリケーション開発で最も広く採用されているNoSQLデータベースの一つだ。JSONライクなドキュメント形式でデータを扱えるため、JavaScriptエコシステムとの親和性が高く、Node.jsアプリケーションのバックエンドとして非常に人気がある。
 
 本記事では、MongoDBの基礎概念からNode.js・TypeScriptでの実践的な使い方、集計パイプライン、インデックス戦略、トランザクション、MongoDB Atlas、時系列コレクションまで、プロダクションレベルの知識を体系的に解説する。

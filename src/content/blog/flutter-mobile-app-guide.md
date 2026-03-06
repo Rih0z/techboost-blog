@@ -1,11 +1,10 @@
 ---
 title: 'Flutter完全ガイド2026：クロスプラットフォームモバイルアプリ開発'
-description: 'Flutterの基本から応用まで完全解説。Widget・Riverpod・Bloc・Flutter Hooks・Firebase連携・REST API・アニメーション・テスト・App Store公開まで実践的に学ぶ'
+description: 'Flutterの基本から応用まで完全解説。Widget・Riverpod・Bloc・Flutter Hooks・Firebase連携・REST API・アニメーション・テスト・App Store公開まで実践的に学ぶ。実務で役立つポイントを厳選して解説。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/flutter-mobile-app-guide.jpg'
-tags: ['プログラミング']
+tags: ['プログラミング', '開発ツール']
 ---
-
 Flutterは2018年にGoogleが正式リリースしたクロスプラットフォームUIフレームワークだ。一つのコードベースからiOS・Android・Web・Desktop（Windows/macOS/Linux）向けのアプリを生成できる。2026年現在、モバイルアプリ開発の主流として広く採用されており、世界中の開発者が利用している。
 
 本記事では、Flutter入門から実際のApp Store/Play Store公開まで、実践的なコード例を交えながら体系的に解説する。

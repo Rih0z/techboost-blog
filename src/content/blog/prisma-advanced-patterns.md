@@ -1,10 +1,9 @@
 ---
 title: 'Prisma高度パターン集 — 最適化・マイグレーション・テスト戦略完全ガイド'
-description: 'Prisma ORMの高度な使い方を徹底解説。N+1問題対策、クエリ最適化、トランザクション、マイグレーション戦略、テスト手法、本番運用のベストプラクティスまで完全網羅します。'
+description: 'Prisma ORMの高度な使い方を徹底解説。N+1問題対策、クエリ最適化、トランザクション、マイグレーション戦略、テスト手法、本番運用のベストプラクティスまで完全網羅します。Prisma・Database・PostgreSQLに関する実践情報。'
 pubDate: '2025-02-06'
 tags: ['Prisma', 'Database', 'PostgreSQL', 'ORM', 'TypeScript']
 ---
-
 Prisma ORMは、TypeScriptでデータベース操作を型安全に行える最強のツールです。2026年現在、Next.js、Remix、NestJSなど主要フレームワークで標準的に使われています。
 
 この記事では、Prismaの基礎を超えた高度なパターン、最適化手法、マイグレーション戦略、テスト手法を実践的に解説します。

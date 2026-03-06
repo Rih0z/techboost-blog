@@ -1,10 +1,9 @@
 ---
 title: "CSS round()関数でピクセルパーフェクトなレイアウトを実現する"
-description: "CSS Values and Units Module Level 4で導入されたround()関数を使えば、計算結果を指定した間隔に丸めることができます。レスポンシブデザインやグリッドレイアウトで威力を発揮します。"
+description: "CSS Values and Units Module Level 4で導入されたround()関数を使えば、計算結果を指定した間隔に丸めることができます。レスポンシブデザインやグリッドレイアウトで威力を発揮します。サンプルコード付きで実践的に解説。"
 pubDate: "2025-02-05"
-tags: ['プログラミング']
+tags: ['CSS', 'フロントエンド']
 ---
-
 ## CSS round()関数とは
 
 `round()` は CSS の数学関数の一つで、計算結果を指定した間隔（倍数）に丸めることができます。2023年にブラウザサポートが進み、Chrome 107+、Firefox 108+、Safari 15.4+ で利用可能になりました。

@@ -1,10 +1,9 @@
 ---
 title: "Astro Content Collections 活用ガイド - 型安全なコンテンツ管理を実現"
-description: "Astro 2.0で導入されたContent Collectionsの使い方を徹底解説。Zodスキーマによる型安全性、コンテンツのクエリ・ソート・フィルタリング、MDXとの連携など実践的なテクニックを紹介。"
+description: "Astro 2.0で導入されたContent Collectionsの使い方を徹底解説。Zodスキーマによる型安全性、コンテンツのクエリ・ソート・フィルタリング、MDXとの連携など実践的なテクニックを紹介。Astro・TypeScript・コンテンツ管理に関する実践情報。"
 pubDate: "2025-02-05"
 tags: ["Astro", "TypeScript", "コンテンツ管理"]
 ---
-
 Astro Content Collectionsは、Markdown/MDXファイルを型安全に管理できる強力な機能です。本記事では、基本的な使い方から実践的なテクニックまで、包括的に解説します。
 
 ## Content Collectionsとは

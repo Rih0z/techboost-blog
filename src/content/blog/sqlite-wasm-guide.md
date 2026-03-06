@@ -1,10 +1,9 @@
 ---
 title: 'SQLite WASM完全ガイド - ブラウザでSQLデータベースを動かす'
-description: 'SQLite WASMでブラウザ内SQLデータベースを実現。OPFS永続化、sql.js、wa-sqlite比較、実践的な実装パターンを解説します。'
+description: 'SQLite WASMでブラウザ内SQLデータベースを実現。OPFS永続化、sql.js、wa-sqlite比較、実践的な実装パターンを解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
 pubDate: 'Feb 05 2026'
 tags: ['SQLite', 'WASM', 'JavaScript', 'WebAssembly']
 ---
-
 # SQLite WASM完全ガイド
 
 SQLite WASMを使えば、ブラウザ内で本格的なSQLデータベースを動かせます。本記事では、基本的な使い方からOPFSによる永続化、各ライブラリの比較まで徹底解説します。

@@ -1,10 +1,9 @@
 ---
 title: "htmx入門2026 — JavaScriptなしでインタラクティブなWebアプリを作る革命"
-description: "htmx完全ガイド。SPAフレームワーク不要でAJAX、WebSocket、SSEを実現。基本使い方、サーバーサイド連携、実践例を網羅。"
+description: "htmx完全ガイド。SPAフレームワーク不要でAJAX、WebSocket、SSEを実現。基本使い方、サーバーサイド連携、実践例を網羅。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2026-02-05"
 tags: ["htmx", "HTML", "JavaScript", "Web開発", "AJAX", "ハイパーメディア", "SSR"]
 ---
-
 # htmx入門2026 — JavaScriptなしでインタラクティブなWebアプリを作る
 
 JavaScriptフレームワークの複雑さに疲れていませんか？**htmx**は、HTMLの**属性（attributes）だけ**でAJAX、WebSocket、Server-Sent Eventsを実現する革命的なライブラリです。

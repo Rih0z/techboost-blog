@@ -1,10 +1,9 @@
 ---
 title: "Panda CSS完全ガイド — ビルド時CSS-in-JSでゼロランタイムの高速スタイリング"
-description: "ビルド時に静的CSSを生成するゼロランタイムCSS-in-JSライブラリPanda CSSの完全ガイド。型安全なスタイリング、レシピパターン、テーマカスタマイズ、実践的な使い方まで徹底解説します。"
+description: "ビルド時に静的CSSを生成するゼロランタイムCSS-in-JSライブラリPanda CSSの完全ガイド。型安全なスタイリング、レシピパターン、テーマカスタマイズ、実践的な使い方まで徹底解説します。Panda CSS・CSS-in-JS・Stylingに関する実践情報。"
 pubDate: "2025-02-06"
 tags: ["Panda CSS", "CSS-in-JS", "Styling", "TypeScript", "Zero Runtime", "Design System"]
 ---
-
 Panda CSSは、ビルド時に静的CSSを生成する次世代のCSS-in-JSライブラリです。ゼロランタイムでパフォーマンスに影響を与えず、完全な型安全性を提供し、直感的なAPIでスタイリングできます。この記事では、Panda CSSの基本から実践的な使い方まで徹底的に解説します。
 
 ## Panda CSSとは

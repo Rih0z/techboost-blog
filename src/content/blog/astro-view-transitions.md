@@ -1,12 +1,11 @@
 ---
 title: "Astro View Transitions完全ガイド: ページ遷移アニメーションの実装"
-description: "Astro View Transitions APIを使った滑らかなページ遷移の実装。カスタムアニメーション、遷移ライフサイクル、パーシャルハイドレーション、パフォーマンス最適化まで徹底解説。"
+description: "Astro View Transitions APIを使った滑らかなページ遷移の実装。カスタムアニメーション、遷移ライフサイクル、パーシャルハイドレーション、パフォーマンス最適化まで徹底解説。Astro・View Transitions・アニメーションに関する実践情報。"
 pubDate: "2025-10-05"
 updatedDate: "2025-10-05"
 category: "frontend"
 tags: ["Astro", "View Transitions", "アニメーション", "UX", "パフォーマンス", "プログラミング"]
 ---
-
 Astro 3.0で導入された**View Transitions API**により、MPAでもSPAのような滑らかなページ遷移が可能になりました。この記事では、基本から高度なカスタマイズまで、実践的な実装方法を解説します。
 
 ## View Transitions APIとは

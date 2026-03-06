@@ -1,10 +1,9 @@
 ---
 title: "Prisma vs Drizzle ORM徹底比較 — 2026年どちらを選ぶべきか"
-description: "Prisma と Drizzle ORM のスキーマ定義、クエリAPI、マイグレーション、パフォーマンス、DX、エッジ対応を徹底比較。プロジェクトに最適な選択基準を解説します。"
+description: "Prisma と Drizzle ORM のスキーマ定義、クエリAPI、マイグレーション、パフォーマンス、DX、エッジ対応を徹底比較。プロジェクトに最適な選択基準を解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2026-02-05"
 tags: ["Prisma", "Drizzle", "ORM", "TypeScript", "データベース"]
 ---
-
 TypeScriptエコシステムにおいて、Prisma と Drizzle ORM は最も人気のあるORMです。この記事では、両者の特徴を徹底比較し、プロジェクトに最適な選択をサポートします。
 
 ## 概要と哲学の違い

@@ -1,10 +1,9 @@
 ---
 title: "Vite 6の新機能完全解説 — Environment APIとパフォーマンス改善"
-description: "Vite 6の革新的な新機能を徹底解説。Environment API、CSS Lightning、ビルド最適化、Rolldown統合の進捗、v5からの移行ガイドまで網羅します。"
+description: "Vite 6の革新的な新機能を徹底解説。Environment API、CSS Lightning、ビルド最適化、Rolldown統合の進捗、v5からの移行ガイドまで網羅します。Vite・Frontend・Build Toolに関する実践情報。"
 pubDate: "2026-02-05"
 tags: ["Vite", "Frontend", "Build Tool", "Performance", "Web Development", "プログラミング"]
 ---
-
 ## Vite 6 概要
 
 **Vite 6** は、2025年末にリリースされた最新バージョンのフロントエンドビルドツールです。v5から大きく進化し、特に **Environment API** の導入によって、SSR/SSGの開発体験が劇的に向上しました。

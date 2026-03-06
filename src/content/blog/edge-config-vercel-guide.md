@@ -1,12 +1,11 @@
 ---
 title: 'Vercel Edge Config実践: グローバル設定のリアルタイム管理'
-description: 'Vercel Edge Configを使ったグローバル設定のリアルタイム管理手法を実践的に解説。Feature Flag、A/Bテスト、動的設定の実装パターンとパフォーマンス最適化テクニックを紹介します。'
+description: 'Vercel Edge Configを使ったグローバル設定のリアルタイム管理手法を実践的に解説。Feature Flag、A/Bテスト、動的設定の実装パターンとパフォーマンス最適化テクニックを紹介します。現場で使える知識を体系的にまとめました。'
 pubDate: 2025-09-15
 updatedDate: 2025-09-15
-tags: ['vercel', 'edge-config', 'edge-computing', 'performance', 'feature-flag', 'インフラ']
+tags: ['vercel', 'edge-config', 'Edge Computing', 'Performance', 'feature-flag', 'インフラ']
 category: 'infrastructure'
 ---
-
 ## Edge Configとは
 
 Vercel Edge Configは、エッジランタイムで高速にアクセスできるグローバルなKey-Valueストアです。従来のデータベースやAPIコールと異なり、超低レイテンシ(1ms以下)でデータを取得できるため、Feature Flag、A/Bテスト、動的設定に最適です。

@@ -1,12 +1,11 @@
 ---
 title: 'Cloudflare R2ストレージ実践ガイド: S3互換オブジェクトストレージの活用'
-description: 'Cloudflare R2を使ったオブジェクトストレージ実装の完全ガイド。S3互換APIでの操作、パブリックアクセス設定、Workers統合、コスト最適化まで実践的に解説します。'
+description: 'Cloudflare R2を使ったオブジェクトストレージ実装の完全ガイド。S3互換APIでの操作、パブリックアクセス設定、Workers統合、コスト最適化まで実践的に解説します。Cloudflare・R2・Object Storageに関する実践情報。'
 pubDate: 2025-05-18
 updatedDate: 2025-05-18
 tags: ['Cloudflare', 'R2', 'Object Storage', 'S3', 'Workers', 'インフラ']
 category: 'infrastructure'
 ---
-
 # Cloudflare R2ストレージ実践ガイド: S3互換オブジェクトストレージの活用
 
 Cloudflare R2は、S3互換のオブジェクトストレージサービスで、エグレス料金が無料という革新的な特徴を持っています。この記事では、R2の基本から実践的な活用方法まで完全解説します。

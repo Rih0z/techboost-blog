@@ -1,10 +1,9 @@
 ---
 title: "Lucia認証ライブラリ完全ガイド — セッションベース認証の新定番"
-description: "TypeScriptファーストのセッション認証ライブラリLuciaの完全ガイド。Next.js、SvelteKit、Astroでの実装から、OAuth統合、セキュリティベストプラクティスまで徹底解説します。"
+description: "TypeScriptファーストのセッション認証ライブラリLuciaの完全ガイド。Next.js、SvelteKit、Astroでの実装から、OAuth統合、セキュリティベストプラクティスまで徹底解説します。サンプルコード付きで実践的に解説。"
 pubDate: "2026-02-06"
 tags: ["Lucia", "Authentication", "TypeScript", "Next.js", "セキュリティ"]
 ---
-
 Luciaは、TypeScriptファーストのセッションベース認証ライブラリです。JWTやサードパーティ認証サービスに依存せず、シンプルで柔軟なセッション管理を実現します。Next.js、SvelteKit、Astroなど、あらゆるフレームワークで使用できます。この記事では、Luciaの基本から実践的な実装まで徹底的に解説します。
 
 ## Luciaとは

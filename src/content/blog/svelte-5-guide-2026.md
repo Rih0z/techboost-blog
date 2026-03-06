@@ -1,10 +1,9 @@
 ---
 title: "Svelte 5完全ガイド — Runesで変わるリアクティビティ"
-description: "Svelte 5の革新的な新機能Runes（$state、$derived、$effect）、SvelteKitとの統合、React/Vueとの比較、実践的なコンポーネント設計パターンを徹底解説"
+description: "Svelte 5の革新的な新機能Runes（$state、$derived、$effect）、SvelteKitとの統合、React/Vueとの比較、実践的なコンポーネント設計パターンを徹底解説。Svelte・Svelte 5・Runesに関する実践情報。"
 pubDate: "2026-02-05"
 tags: ["Svelte", "Svelte 5", "Runes", "SvelteKit", "JavaScript", "Frontend"]
 ---
-
 # Svelte 5完全ガイド — Runesで変わるリアクティビティ
 
 Svelte 5は、フロントエンド開発の常識を覆す革新的なアップデートです。新しいRunes（$state、$derived、$effect）により、リアクティビティの仕組みが根本的に変わり、より直感的で強力な開発体験を提供します。この記事では、Svelte 5の新機能から実践的な活用方法まで、2026年最新の情報とともに完全解説します。

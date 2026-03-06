@@ -1,11 +1,10 @@
 ---
 title: 'MySQL完全ガイド2026：データベース設計から最適化まで'
-description: 'MySQLの基本から応用まで完全解説。SQL基礎・テーブル設計・インデックス最適化・トランザクション・レプリケーション・パーティショニング・Node.js/Python連携・Docker設定まで実践的に学ぶ'
+description: 'MySQLの基本から応用まで完全解説。SQL基礎・テーブル設計・インデックス最適化・トランザクション・レプリケーション・パーティショニング・Node.js/Python連携・Docker設定まで実践的に学ぶ。導入から応用まで段階的に学べます。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/mysql-complete-guide.jpg'
 tags: ['MySQL', 'Database', 'Backend', 'インフラ']
 ---
-
 MySQLは世界で最も広く使われているオープンソースのリレーショナルデータベース管理システム（RDBMS）だ。WordPress・Laravel・Drupalなど主要なWebフレームワークのデフォルトデータベースとして採用されており、Facebook・Twitter・YouTube・Airbnbなど大規模サービスの根幹を支えてきた実績がある。
 
 2026年現在、MySQLはバージョン8.0系が主流となり、ウィンドウ関数・共通テーブル式（CTE）・JSON関数・不可視インデックス・ロールベースアクセス制御など、かつてはPostgreSQLの専売特許だった機能も次々と取り込んでいる。本ガイドでは、MySQLの基礎から本番運用レベルの最適化まで、実際に動くSQLコード例とともに体系的に解説する。

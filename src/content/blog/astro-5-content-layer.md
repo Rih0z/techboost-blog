@@ -1,10 +1,9 @@
 ---
 title: "Astro 5のContent Layer API完全解説 — 型安全なコンテンツ管理"
-description: "Astro 5で導入されたContent Layer APIの使い方を徹底解説。カスタムローダー、外部データソース統合、型推論の活用方法まで実践的に紹介します。"
+description: "Astro 5で導入されたContent Layer APIの使い方を徹底解説。カスタムローダー、外部データソース統合、型推論の活用方法まで実践的に紹介します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2026-02-05"
 tags: ["Astro", "TypeScript", "Content Layer", "CMS", "静的サイト"]
 ---
-
 Astro 5で導入されたContent Layer APIは、コンテンツ管理の方法を根本から変えました。従来のファイルベースのコンテンツコレクションに加え、外部API、データベース、HeadlessCMSなど、あらゆるデータソースを統一的に扱えるようになりました。この記事では、Content Layer APIの仕組みと実践的な使い方を解説します。
 
 ## Content Layer APIとは

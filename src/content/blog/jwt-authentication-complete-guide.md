@@ -1,11 +1,10 @@
 ---
 title: 'JWT認証の仕組みと実装ガイド — セキュアなWebアプリ認証を構築する'
-description: 'JWTの構造と仕組みを徹底解説。Node.js/Next.jsでのJWT認証実装、リフレッシュトークン戦略、セキュリティベストプラクティス、よくある脆弱性と対策まで網羅した完全ガイド。'
+description: 'JWTの構造と仕組みを徹底解説。Node.js/Next.jsでのJWT認証実装、リフレッシュトークン戦略、セキュリティベストプラクティス、よくある脆弱性と対策まで網羅した完全ガイド。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: '2026-02-20'
 heroImage: '../../assets/thumbnails/jwt-authentication-complete-guide.jpg'
 tags: ['JWT', '認証', 'セキュリティ', 'Node.js', 'Next.js', 'プログラミング']
 ---
-
 現代のWebアプリケーションにおいて、認証（Authentication）はセキュリティの根幹をなす仕組みだ。セッションベースの認証が長年使われてきたが、RESTful API・マイクロサービス・SPAが普及した現在、**JWT（JSON Web Token）**が事実上の標準として広く採用されている。
 
 この記事では、JWTの構造と署名アルゴリズムの原理から始まり、Node.js/TypeScriptでの実装、Next.js App Routerとの統合、リフレッシュトークン戦略、そして現場で実際に発生する脆弱性と対策まで、体系的に解説する。

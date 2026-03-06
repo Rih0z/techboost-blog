@@ -1,10 +1,9 @@
 ---
 title: 'Expo + React Native完全ガイド - モバイルアプリ開発を最速で始める'
-description: 'ExpoとReact Nativeを使ったモバイルアプリ開発の完全ガイド。セットアップからビルド、デプロイまで実践的に解説。iOS/Androidアプリを一つのコードベースで開発する方法を学びます。'
+description: 'ExpoとReact Nativeを使ったモバイルアプリ開発の完全ガイド。セットアップからビルド、デプロイまで実践的に解説。iOS/Androidアプリを一つのコードベースで開発する方法を学びます。React Native・Expo・モバイル開発に関する実践情報。'
 pubDate: 'Feb 05 2026'
 tags: ['React Native', 'Expo', 'モバイル開発', 'TypeScript', 'iOS', 'Android']
 ---
-
 ExpoとReact Nativeを使えば、JavaScriptとReactの知識だけで、iOS/Androidの両方に対応したネイティブアプリを開発できます。この記事では、Expoを使った最新のモバイルアプリ開発手法を解説します。
 
 ## ExpoとReact Nativeの違い

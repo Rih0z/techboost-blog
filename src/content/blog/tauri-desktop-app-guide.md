@@ -1,11 +1,10 @@
 ---
 title: 'Tauri完全ガイド — Rust + WebViewでElectronより軽量なデスクトップアプリ開発'
-description: 'TauriでクロスプラットフォームデスクトップアプリをReact + TypeScript + Rustで構築する完全ガイド。Tauri Commands・ファイルシステム・システムトレイ・自動更新・ビルド・配布まで実装例付きで解説。'
+description: 'TauriでクロスプラットフォームデスクトップアプリをReact + TypeScript + Rustで構築する完全ガイド。Tauri Commands・ファイルシステム・システムトレイ・自動更新・ビルド・配布まで実装例付きで解説。導入から応用まで段階的に学べます。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/tauri-desktop-app-guide.jpg'
 tags: ['Tauri', 'Rust', 'デスクトップアプリ', 'React', 'TypeScript']
 ---
-
 2021年、Electronに代わる本命として注目を集めた **Tauri** がv1.0をリリースし、デスクトップアプリ開発の常識を変えた。Electronが抱える「アプリサイズが大きい」「メモリ消費が激しい」「起動が遅い」という三大問題を、TauriはRust + OSネイティブWebViewという大胆なアーキテクチャで解決した。
 
 本記事では、Tauriの内部設計から実践的なアプリ構築まで、2000語を超える詳細解説でお届けする。セットアップ・Tauri Commands・ファイルシステム・システムトレイ・自動更新・クロスプラットフォームビルドまで、実際のRustとTypeScriptコード例とともに網羅する。

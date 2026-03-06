@@ -1,10 +1,9 @@
 ---
 title: "SST (Serverless Stack) 入門 — AWSサーバーレス開発の新定番【2026年版】"
-description: "SST v3（Ion）の概要から実践まで。Pulumi基盤のInfrastructure as Code、Live Lambda Development、Next.js/Astro統合、AWS CDKとの比較を徹底解説します。"
+description: "SST v3（Ion）の概要から実践まで。Pulumi基盤のInfrastructure as Code、Live Lambda Development、Next.js/Astro統合、AWS CDKとの比較を徹底解説します。現場で使える知識を体系的にまとめました。"
 pubDate: "2026-02-05"
 tags: ["SST", "AWS", "Serverless", "IaC", "TypeScript"]
 ---
-
 ## SST (Serverless Stack) とは
 
 **SST (Serverless Stack)** は、AWSサーバーレスアプリケーションを構築するためのフルスタックフレームワークです。2026年現在、v3（通称 **Ion**）が最新バージョンで、Pulumi基盤の強力なInfrastructure as Codeを提供します。

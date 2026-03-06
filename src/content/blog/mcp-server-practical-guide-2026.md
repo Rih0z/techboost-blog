@@ -1,6 +1,6 @@
 ---
 title: 'MCP（Model Context Protocol）サーバー開発実践ガイド2026｜Claude連携・ツール作成'
-description: 'AnthropicのModel Context Protocol（MCP）サーバーの開発方法を実践的に解説。TypeScript/PythonでのMCPサーバー構築、カスタムツール作成、Claude Desktopとの連携まで。'
+description: 'AnthropicのModel Context Protocol（MCP）サーバーの開発方法を実践的に解説。TypeScript/PythonでのMCPサーバー構築、カスタムツール作成、Claude Desktopとの連携まで。実践的なコード例とともに解説しています。導入から応用まで段階的に学べます。'
 pubDate: '2026-03-05'
 tags: ['MCP', 'AI', 'TypeScript', 'Python', 'Claude']
 ---

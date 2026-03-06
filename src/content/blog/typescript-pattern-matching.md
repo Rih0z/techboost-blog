@@ -1,12 +1,11 @@
 ---
 title: 'TypeScriptパターンマッチング実践: ts-patternで型安全な条件分岐'
-description: 'ts-patternを使ったTypeScriptの高度なパターンマッチング実装ガイド。型安全な条件分岐、データ抽出、エラーハンドリングの実践的な手法を詳しく解説します。'
+description: 'ts-patternを使ったTypeScriptの高度なパターンマッチング実装ガイド。型安全な条件分岐、データ抽出、エラーハンドリングの実践的な手法を詳しく解説します。TypeScript・ts-pattern・Pattern Matchingに関する実践情報。'
 pubDate: 2025-05-22
 updatedDate: 2025-05-22
 tags: ['TypeScript', 'ts-pattern', 'Pattern Matching', '型安全', '関数型プログラミング']
 category: 'typescript'
 ---
-
 # TypeScriptパターンマッチング実践: ts-patternで型安全な条件分岐
 
 関数型プログラミング言語では標準機能であるパターンマッチングを、TypeScriptでも`ts-pattern`ライブラリを使って実現できます。複雑な条件分岐を型安全に、かつ読みやすく記述する方法を完全解説します。

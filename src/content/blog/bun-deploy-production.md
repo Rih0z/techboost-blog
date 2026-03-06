@@ -1,10 +1,9 @@
 ---
 title: "Bunで本番環境にデプロイする方法 — Docker・Fly.io・Render対応"
-description: "Bun 1.2+を本番環境にデプロイする完全ガイド。Dockerマルチステージビルド、Fly.io・Render・Railwayへのデプロイ手順、パフォーマンスチューニングまで実践的に解説。"
+description: "Bun 1.2+を本番環境にデプロイする完全ガイド。Dockerマルチステージビルド、Fly.io・Render・Railwayへのデプロイ手順、パフォーマンスチューニングまで実践的に解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2026-02-05"
 tags: ["Bun", "デプロイ", "Docker", "Fly.io", "Render", "本番環境"]
 ---
-
 ## Bunとは
 
 Bunは、JavaScriptとTypeScriptのための超高速なオールインワンランタイムです。Node.js、npm、Webpack、Babelなどの役割を単一のツールで担い、圧倒的なパフォーマンスを実現しています。

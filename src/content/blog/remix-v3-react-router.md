@@ -1,12 +1,11 @@
 ---
 title: 'Remix v3 / React Router v7完全ガイド: フレームワーク統合の新時代'
-description: 'Remix v3とReact Router v7の統合により、フルスタックフレームワークとクライアントルーティングの境界が消失。新しいアーキテクチャと移行方法を実践的に解説します。'
+description: 'Remix v3とReact Router v7の統合により、フルスタックフレームワークとクライアントルーティングの境界が消失。新しいアーキテクチャと移行方法を実践的に解説します。Remix・React Router・Reactに関する実践情報。'
 pubDate: '2025-08-15'
 updatedDate: '2025-08-15'
 tags: ['Remix', 'React Router', 'React', 'Full Stack', 'Web Framework']
 category: 'framework'
 ---
-
 ## はじめに
 
 2024年、RemixとReact Routerの開発チームは、両プロジェクトを統合する大胆な決定を発表しました。Remix v3とReact Router v7は、実質的に同じコードベースを共有し、フルスタックフレームワークとクライアントルーティングライブラリの境界を曖昧にしました。

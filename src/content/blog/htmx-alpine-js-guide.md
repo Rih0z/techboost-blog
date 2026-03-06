@@ -1,12 +1,11 @@
 ---
 title: "htmx + Alpine.js実践ガイド: JavaScriptフレームワークなしのモダンWeb開発"
-description: "htmxとAlpine.jsを組み合わせて、React/Vueなしでモダンなインタラクティブウェブアプリを構築する方法を実例とともに解説。シンプルさと強力さを両立した開発手法を学びましょう。"
+description: "htmxとAlpine.jsを組み合わせて、React/Vueなしでモダンなインタラクティブウェブアプリを構築する方法を実例とともに解説。シンプルさと強力さを両立した開発手法を学びましょう。htmx・Alpine.js・Web開発に関する実践情報。"
 pubDate: "2025-06-18"
 updatedDate: "2025-06-18"
 tags: ["htmx", "Alpine.js", "Web開発", "JavaScript", "フロントエンド"]
 category: "Development"
 ---
-
 React、Vue、Angularといった大規模JavaScriptフレームワークが主流となっている現在ですが、htmxとAlpine.jsを組み合わせることで、はるかにシンプルかつ効率的にモダンなウェブアプリケーションを構築できます。本記事では、この強力な組み合わせを実践的に解説します。
 
 ## htmx + Alpine.jsの哲学

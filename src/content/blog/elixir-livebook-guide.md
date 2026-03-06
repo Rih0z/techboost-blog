@@ -1,10 +1,9 @@
 ---
 title: "Elixir Livebookでインタラクティブな開発環境を構築"
-description: "Elixir Livebook を使ったインタラクティブなデータ分析、機械学習、Web開発の実践ガイド。Jupyter風のノートブック環境をElixirで実現"
+description: "Elixir Livebook を使ったインタラクティブなデータ分析、機械学習、Web開発の実践ガイド。Jupyter風のノートブック環境をElixirで実現。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2025-02-05"
-tags: ['プログラミング']
+tags: ['プログラミング', '開発ツール']
 ---
-
 ## Elixir Livebookとは
 
 Elixir Livebook は、Elixir のためのインタラクティブなノートブック環境です。Jupyter Notebook に似た使い心地で、データ分析、機械学習、プロトタイピング、ドキュメント作成など、幅広い用途に活用できます。

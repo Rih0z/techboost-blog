@@ -131,7 +131,7 @@ GitHub Issue → [Copilot Workspace]
 | モデル | 特徴 |
 |---|---|
 | GPT-4o | 高速・バランス型。日常的な補完に適する |
-| Claude 3.7 Sonnet | 長いコンテキスト・複雑な推論に強い |
+| Claude Sonnet 4 | 長いコンテキスト・複雑な推論に強い |
 | Gemini 2.0 Flash | マルチモーダル・図解理解が得意 |
 | o3-mini | 数学的推論・アルゴリズム問題に特化 |
 
@@ -414,7 +414,7 @@ Continue.dev は VS Code と JetBrains IDE 向けのオープンソース AI コ
 {
   "models": [
     {
-      "title": "Claude 3.7 Sonnet",
+      "title": "Claude Sonnet 4",
       "provider": "anthropic",
       "model": "claude-sonnet-4-6",
       "apiKey": "${ANTHROPIC_API_KEY}"

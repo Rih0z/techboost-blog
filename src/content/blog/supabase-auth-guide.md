@@ -1,10 +1,9 @@
 ---
 title: "Supabase Authで実装するユーザー認証 完全ガイド【2026年版】"
-description: "Supabase Authを使った認証システムの構築を完全解説。メール/パスワード、OAuth（Google、GitHub）、Row Level Security、Next.js統合まで実践的なコード例で学べます。"
+description: "Supabase Authを使った認証システムの構築を完全解説。メール/パスワード、OAuth（Google、GitHub）、Row Level Security、Next.js統合まで実践的なコード例で学べます。初心者から実務レベルまで対応。"
 pubDate: "2026-02-05"
 tags: ["Supabase", "認証", "Auth", "Next.js", "OAuth", "セキュリティ", "プログラミング"]
 ---
-
 ## Supabase Authとは
 
 Supabase Authは、Supabaseが提供する認証サービスです。Firebase Authenticationの代替として設計されており、オープンソースで完全にセルフホスト可能です。

@@ -1,6 +1,6 @@
 ---
 title: 'GitHub Actions CI/CD完全ガイド2026｜テスト自動化・デプロイ・キャッシュ最適化'
-description: 'GitHub ActionsでCI/CDパイプラインを構築する方法を徹底解説。テスト自動化、Docker build、Vercel/AWS/GCPデプロイ、キャッシュ最適化、セキュリティまで。'
+description: 'GitHub ActionsでCI/CDパイプラインを構築する方法を徹底解説。テスト自動化、Docker build、Vercel/AWS/GCPデプロイ、キャッシュ最適化、セキュリティまで。初心者から実務レベルまで段階的に学べる内容です。'
 pubDate: '2026-03-05'
 tags: ['GitHub Actions', 'CICD', 'DevOps', 'テスト', '自動化']
 ---

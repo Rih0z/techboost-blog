@@ -1,10 +1,9 @@
 ---
 title: 'Biome完全ガイド - Rust製高速リンター＆フォーマッターの決定版'
-description: 'BiomeでESLint/Prettierから移行する方法を徹底解説。高速リント、フォーマット、設定方法、CI統合、VSCode統合、モノレポ対応まで網羅的に学ぼう。'
+description: 'BiomeでESLint/Prettierから移行する方法を徹底解説。高速リント、フォーマット、設定方法、CI統合、VSCode統合、モノレポ対応まで網羅的に学ぼう。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: 'Feb 05 2026'
 tags: ['Biome', 'Linter', 'Formatter', 'Rust', 'DevTools', 'プログラミング']
 ---
-
 # Biome完全ガイド - Rust製高速リンター＆フォーマッターの決定版
 
 Biome（旧Rome Tools）は、Rustで実装された高速リンター＆フォーマッターです。ESLintとPrettierを統合し、10倍以上の速度で動作します。

@@ -1,10 +1,9 @@
 ---
 title: "ReScript言語によるJavaScript開発ガイド"
-description: "型安全で高速なJavaScript開発を実現するReScript言語の基礎から実践まで、詳しく解説します"
+description: "型安全で高速なJavaScript開発を実現するReScript言語の基礎から実践まで、詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。"
 pubDate: "2025-02-05"
-tags: ["rescript", "javascript", "typescript", "functional-programming"]
+tags: ['rescript', 'JavaScript', 'typescript', 'Functional Programming']
 ---
-
 ReScriptは、JavaScriptにコンパイルされる型安全な関数型プログラミング言語です。OCamlをベースにしており、Reactとの親和性が高く、型安全性とパフォーマンスを両立させた開発が可能です。本記事では、ReScriptの基礎から実践的な使い方まで詳しく解説します。
 
 ## ReScriptとは

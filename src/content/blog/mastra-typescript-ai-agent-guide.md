@@ -1,10 +1,9 @@
 ---
 title: "Mastra: TypeScript製AIエージェントフレームワーク完全ガイド2026"
-description: "Gatsby.jsの作者が開発したTypeScript/Node.js向けAIフレームワーク「Mastra」を徹底解説。エージェント・ワークフロー・RAG・メモリ機能の実装から、Next.js/Vercelとの統合まで実践例付きで紹介。"
+description: "Gatsby.jsの作者が開発したTypeScript/Node.js向けAIフレームワーク「Mastra」を徹底解説。エージェント・ワークフロー・RAG・メモリ機能の実装から、Next.js/Vercelとの統合まで実践例付きで紹介。基礎から応用まで幅広くカバーしています。"
 pubDate: "2026-03-04"
 tags: ["AI", "Mastra", "TypeScript", "Node.js", "エージェント", "Next.js"]
 ---
-
 ## はじめに
 
 Mastraは、**TypeScript/Node.js向けのAIエージェントフレームワーク**です。Gatsby.jsの元開発者チームが2025年末にリリースし、瞬く間にJavaScriptコミュニティで人気を集めました。

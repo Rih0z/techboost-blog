@@ -1,10 +1,9 @@
 ---
 title: "OllamaでローカルにLLMを動かす完全ガイド2026 - インストールからAPI連携まで"
-description: "Ollamaを使ってLlama 3、Mistral、Gemmaなどのオープンソースモデルをローカル環境で動かす方法を解説。プライバシー重視のAI開発、REST API、Python/JS連携も網羅。"
+description: "Ollamaを使ってLlama 3、Mistral、Gemmaなどのオープンソースモデルをローカル環境で動かす方法を解説。プライバシー重視のAI開発、REST API、Python/JS連携も網羅。AI・LLM・Ollamaに関する実践情報。"
 pubDate: "2026-03-04"
 tags: ["AI", "LLM", "Ollama", "Python", "ローカルAI", "プライバシー"]
 ---
-
 ## はじめに
 
 Ollamaは、オープンソースのLLM（大規模言語モデル）をローカル環境で簡単に動かすためのツールです。クラウドAPIに依存せず、**データをローカルに保ちながらAIアプリを開発**できます。

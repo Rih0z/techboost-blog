@@ -1,12 +1,11 @@
 ---
 title: 'PocketBase実践ガイド: リアルタイムバックエンドの構築と運用'
-description: 'PocketBaseを使ったリアルタイムアプリケーションの構築方法を実践的に解説。認証、ファイルストレージ、リアルタイムサブスクリプション、カスタムエンドポイント、本番運用まで網羅。'
+description: 'PocketBaseを使ったリアルタイムアプリケーションの構築方法を実践的に解説。認証、ファイルストレージ、リアルタイムサブスクリプション、カスタムエンドポイント、本番運用まで網羅。PocketBase・Backend・SQLiteに関する実践情報。'
 pubDate: 'Oct 22 2025'
 updatedDate: 'Oct 22 2025'
 tags: ['PocketBase', 'Backend', 'SQLite', 'Realtime', 'Go', 'プログラミング']
 category: 'Backend'
 ---
-
 # PocketBase実践ガイド: リアルタイムバックエンドの構築と運用
 
 PocketBaseは、Go言語で書かれたオープンソースのバックエンドで、SQLiteをベースにした認証、リアルタイムデータベース、ファイルストレージを単一バイナリで提供します。この記事では、実際のアプリケーション開発から本番運用まで実践的に解説します。

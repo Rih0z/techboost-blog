@@ -1,10 +1,9 @@
 ---
 title: "Deno 2.0 完全ガイド — Node.js互換・npm対応・JSR・本番利用"
-description: "Deno 2.0の全機能を完全解説。Node.js完全互換、npmパッケージ対応、JSRレジストリ、Freshフレームワーク、本番環境での利用方法まで実践的に紹介します。"
+description: "Deno 2.0の全機能を完全解説。Node.js完全互換、npmパッケージ対応、JSRレジストリ、Freshフレームワーク、本番環境での利用方法まで実践的に紹介します。Deno・JavaScript・TypeScriptに関する実践情報。"
 pubDate: "2026-03-04"
 tags: ["Deno", "JavaScript", "TypeScript", "バックエンド", "Node.js"]
 ---
-
 ## はじめに
 
 **Deno 2.0** は2024年10月にリリースされ、Node.js/npmとの完全互換を実現しました。「Node.jsを置き換える」という当初の目標から、「Node.jsの世界と共存しながら、より良い開発体験を提供する」という実用的な方向に進化しています。

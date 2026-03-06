@@ -1,10 +1,9 @@
 ---
 title: "Next.js 15のServer Actions完全ガイド — フォーム処理からデータ更新まで"
-description: "Next.js 15のServer Actionsの仕組み、フォーム送信、楽観的UI更新、エラーハンドリング、セキュリティのベストプラクティスを実践的に解説します。"
+description: "Next.js 15のServer Actionsの仕組み、フォーム送信、楽観的UI更新、エラーハンドリング、セキュリティのベストプラクティスを実践的に解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2026-02-05"
 tags: ["Next.js", "Server Actions", "React", "TypeScript", "Forms"]
 ---
-
 ## Server Actionsとは
 
 Server Actionsは、Next.js 13.4で実験的に導入され、Next.js 15で正式リリースされた機能です。サーバーサイドのロジックをクライアントから直接呼び出せる、React Server Componentsの重要な機能の一つです。

@@ -1,10 +1,9 @@
 ---
 title: 'ClickHouse分析データベース入門ガイド - 高速集計とリアルタイム分析'
-description: 'ClickHouseでビッグデータを高速分析。カラムナストレージ、分散処理、リアルタイム集計の実装方法を実例付きで解説します。PostgreSQLの100倍高速な分析クエリを実現。'
+description: 'ClickHouseでビッグデータを高速分析。カラムナストレージ、分散処理、リアルタイム集計の実装方法を実例付きで解説します。PostgreSQLの100倍高速な分析クエリを実現。ClickHouse・Database・Analyticsに関する実践情報。'
 pubDate: '2025-02-06'
 tags: ['ClickHouse', 'Database', 'Analytics', 'BigData', 'OLAP', 'インフラ']
 ---
-
 ClickHouseは、Yandex社が開発したオープンソースのカラムナデータベースです。億単位のレコードでも秒単位で集計でき、リアルタイム分析に最適です。本記事では、ClickHouseの導入から実践的な使い方まで解説します。
 
 ## ClickHouseとは

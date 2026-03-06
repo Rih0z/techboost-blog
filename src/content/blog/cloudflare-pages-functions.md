@@ -1,12 +1,11 @@
 ---
 title: 'Cloudflare Pages Functions実践: フルスタックアプリのエッジデプロイ'
-description: 'Cloudflare Pages Functionsを使ったフルスタックアプリケーション開発ガイド。Next.js、Remix、Astroとの統合、D1データベース、R2ストレージの活用方法を実践的に解説します。'
+description: 'Cloudflare Pages Functionsを使ったフルスタックアプリケーション開発ガイド。Next.js、Remix、Astroとの統合、D1データベース、R2ストレージの活用方法を実践的に解説します。サンプルコード付きで実践的に解説。'
 pubDate: '2025-12-01'
 updatedDate: '2025-12-01'
 tags: ['Cloudflare', 'Pages Functions', 'Serverless', 'Edge Computing', 'フルスタック', 'インフラ']
 category: 'fullstack'
 ---
-
 Cloudflare Pages Functionsは、静的サイトホスティングとサーバーレス関数を統合したプラットフォームです。既存のCloudflare Workersガイドでは基本的なAPI構築を紹介しましたが、本記事ではフルスタックアプリケーションの構築に焦点を当てます。
 
 ## Cloudflare Pages Functionsとは

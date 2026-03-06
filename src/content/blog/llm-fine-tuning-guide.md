@@ -1,11 +1,10 @@
 ---
 title: 'LLMファインチューニング完全ガイド：カスタムAIモデルの作り方'
-description: 'LLMファインチューニングの理論から実践まで徹底解説。LoRA・QLoRA・Unsloth・Hugging Face・OpenAI Fine-tuning API・データセット準備・評価・デプロイまで実践的に学ぶ'
+description: 'LLMファインチューニングの理論から実践まで徹底解説。LoRA・QLoRA・Unsloth・Hugging Face・OpenAI Fine-tuning API・データセット準備・評価・デプロイまで実践的に学ぶ。ベストプラクティスと注意点も紹介します。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/llm-fine-tuning-guide.jpg'
-tags: ['プログラミング']
+tags: ['AI', '開発ツール', '開発効率化']
 ---
-
 大規模言語モデル（LLM）のファインチューニングは、汎用的なベースモデルを特定のドメインやタスクに特化させる最も効果的な手法の一つだ。GPT-4やClaude、Geminiのような強力なモデルが登場した今日でも、ファインチューニングは依然として重要な技術である。特定のトーン・スタイル・専門知識・フォーマットが求められる場面では、プロンプトエンジニアリングだけでは限界があり、ファインチューニングが真価を発揮する。
 
 本ガイドでは、ファインチューニングの基礎理論から実際のコード実装、評価、デプロイまでを体系的に解説する。LoRA、QLoRA、Unsloth、Hugging Face Transformers、OpenAI Fine-tuning APIをすべてカバーし、実務で即使えるレベルの知識を提供する。

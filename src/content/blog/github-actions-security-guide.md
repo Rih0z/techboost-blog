@@ -1,12 +1,11 @@
 ---
 title: 'GitHub Actionsセキュリティガイド: ワークフローの安全な運用'
-description: 'GitHub Actionsのセキュリティリスクと対策を徹底解説。シークレット管理、OIDC認証、サプライチェーン攻撃対策、権限最小化、セキュリティ監査、CIパイプラインの堅牢化まで実践的にカバー。'
+description: 'GitHub Actionsのセキュリティリスクと対策を徹底解説。シークレット管理、OIDC認証、サプライチェーン攻撃対策、権限最小化、セキュリティ監査、CIパイプラインの堅牢化まで実践的にカバー。GitHub Actions・セキュリティ・DevSecOpsに関する実践情報。'
 pubDate: '2025-04-05'
 updatedDate: '2025-04-05'
 tags: ['GitHub Actions', 'セキュリティ', 'DevSecOps', 'CICD', 'OIDC', 'インフラ']
 category: 'infrastructure'
 ---
-
 ## GitHub Actionsのセキュリティリスク
 
 GitHub Actionsは便利ですが、適切な対策を講じないと重大なセキュリティリスクを招きます。

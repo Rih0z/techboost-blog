@@ -1,11 +1,10 @@
 ---
 title: 'Kubernetes入門完全ガイド — Pod・Service・Deployment・Ingress・本番運用'
-description: 'Kubernetesの基礎から本番運用まで完全解説。Pod・ReplicaSet・Deployment・Service・Ingress・ConfigMap・Secret・HPA・Helm・GitOps実践をYAML例付きで網羅。'
+description: 'Kubernetesの基礎から本番運用まで完全解説。Pod・ReplicaSet・Deployment・Service・Ingress・ConfigMap・Secret・HPA・Helm・GitOps実践をYAML例付きで網羅。初心者から実務レベルまで対応。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/kubernetes-basics-guide.jpg'
 tags: ['Kubernetes', 'Docker', 'DevOps', 'インフラ', 'クラウド']
 ---
-
 現代のクラウドネイティブ開発において、**Kubernetes（K8s）** は事実上の標準コンテナオーケストレーションプラットフォームとなっています。AWS・GCP・Azureいずれのクラウドプロバイダーでも中核サービスとして提供されており、スタートアップから大企業まで幅広い組織が採用しています。
 
 しかし「Kubernetesは難しい」という評判があるのも事実です。Pod・ReplicaSet・Deployment・Service・Ingressといった概念が多く、初学者が全体像を把握するのに時間がかかりがちです。

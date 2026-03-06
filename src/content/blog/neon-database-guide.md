@@ -1,10 +1,9 @@
 ---
 title: "Neon サーバーレスPostgreSQL完全ガイド - 次世代のデータベースプラットフォーム"
-description: "Neonの基本から実践的な活用方法まで。サーバーレスPostgreSQLの利点、ブランチング機能、スケーリング、そして実際のアプリケーション開発での使い方を詳しく解説します。"
+description: "Neonの基本から実践的な活用方法まで。サーバーレスPostgreSQLの利点、ブランチング機能、スケーリング、そして実際のアプリケーション開発での使い方を詳しく解説します。Database・PostgreSQL・Serverlessに関する実践情報。"
 pubDate: "2025-02-05"
 tags: ["Database", "PostgreSQL", "Serverless", "インフラ"]
 ---
-
 Neon は、従来のデータベースの概念を覆すサーバーレスPostgreSQLプラットフォームです。自動スケーリング、ブランチング、そして完全なPostgreSQL互換性を提供し、現代のアプリケーション開発に最適化されています。
 
 この記事では、Neonの基本から実践的な活用方法まで詳しく解説します。

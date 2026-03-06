@@ -1,10 +1,9 @@
 ---
 title: "CSS @starting-style完全ガイド - display:noneからの滑らかなアニメーション"
-description: "@starting-styleルールを使ったCSS遷移の新手法。display:noneからのアニメーション、Popover API・dialog要素との組み合わせ、ブラウザサポート状況と代替策を詳しく解説します。"
+description: "@starting-styleルールを使ったCSS遷移の新手法。display:noneからのアニメーション、Popover API・dialog要素との組み合わせ、ブラウザサポート状況と代替策を詳しく解説します。2026年最新の情報を反映しています。"
 pubDate: "2025-02-05"
-tags: ['プログラミング']
+tags: ['CSS', 'フロントエンド', '開発ツール']
 ---
-
 CSS `@starting-style`は、要素が初めてレンダリングされる際の開始スタイルを定義する新しいat-ruleです。これにより、`display: none`からのアニメーションやダイアログの表示アニメーションが簡単に実装できます。
 
 ## @starting-styleとは

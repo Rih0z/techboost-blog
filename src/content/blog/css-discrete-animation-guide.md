@@ -1,10 +1,9 @@
 ---
 title: 'CSS離散アニメーション実践ガイド: display/visibilityをアニメーション化'
-description: 'CSS transition-behavior: allow-discreteで、これまでアニメーション不可だったdisplay、visibility、content-visibilityをスムーズに遷移させる方法を解説します。'
+description: 'CSS transition-behavior: allow-discreteで、これまでアニメーション不可だったdisplay、visibility、content-visibilityをスムーズに遷移させる方法を解説します。サンプルコード付きで実践的に解説。'
 pubDate: 'Feb 05 2025'
 tags: ['CSS', 'Animation', 'Transition', 'WebDev', 'Frontend', 'プログラミング']
 ---
-
 CSS離散プロパティ（discrete properties）のアニメーション化は、長年の課題でした。しかし`transition-behavior: allow-discrete`の登場により、`display`や`visibility`をスムーズに遷移できるようになりました。
 
 ## 離散アニメーションとは

@@ -1,10 +1,9 @@
 ---
 title: "Kubernetes Helmチャート実践ガイド — テンプレート、Values、依存関係管理"
-description: "Helm 3を使ったKubernetesパッケージ管理の完全ガイド。チャート作成、テンプレート構文、values.yaml設計、依存関係管理、リリース運用、ベストプラクティスまで実践的に解説。"
+description: "Helm 3を使ったKubernetesパッケージ管理の完全ガイド。チャート作成、テンプレート構文、values.yaml設計、依存関係管理、リリース運用、ベストプラクティスまで実践的に解説。Kubernetes・Helm・DevOpsに関する実践情報。"
 pubDate: "2026-02-06"
 tags: ["Kubernetes", "Helm", "DevOps", "インフラ", "コンテナ", "YAML"]
 ---
-
 Helmは、Kubernetesアプリケーションをパッケージ化・管理するための事実上の標準ツールです。
 
 この記事では、Helm 3の基礎から、チャート作成、テンプレート設計、本番運用まで、実践的な内容を詳しく解説します。

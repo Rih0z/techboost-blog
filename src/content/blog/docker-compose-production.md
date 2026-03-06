@@ -1,10 +1,9 @@
 ---
 title: "Docker Compose本番運用ガイド — マルチサービス構成のベストプラクティス"
-description: "Docker Composeを使った本番環境でのマルチサービス構成の完全ガイド。セキュリティ、パフォーマンス、監視、CI/CD統合まで実践的なベストプラクティスを徹底解説します。"
+description: "Docker Composeを使った本番環境でのマルチサービス構成の完全ガイド。セキュリティ、パフォーマンス、監視、CI/CD統合まで実践的なベストプラクティスを徹底解説します。Docker・Docker Compose・DevOpsに関する実践情報。"
 pubDate: "2026-02-06"
 tags: ["Docker", "Docker Compose", "DevOps", "インフラ", "本番運用"]
 ---
-
 Docker Composeは、開発環境だけでなく、本番環境でのマルチサービス構成にも活用できます。この記事では、Docker Composeを使った本番環境の構築から、セキュリティ、パフォーマンス最適化、監視、CI/CD統合まで、実践的なベストプラクティスを徹底的に解説します。
 
 ## Docker Compose本番運用の概要

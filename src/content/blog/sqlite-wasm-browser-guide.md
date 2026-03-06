@@ -1,11 +1,10 @@
 ---
 title: "SQLite WASM完全ガイド - ブラウザでSQLiteを使う実践的な方法"
-description: "ブラウザ上でSQLiteを動かすSQLite WASMの完全ガイド。セットアップ、クエリ実行、パフォーマンス最適化、実践的なユースケースまで徹底解説。"
+description: "ブラウザ上でSQLiteを動かすSQLite WASMの完全ガイド。セットアップ、クエリ実行、パフォーマンス最適化、実践的なユースケースまで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2025-02-05"
 category: "Database"
 tags: ["SQLite", "WASM", "WebAssembly", "Browser", "Database", "インフラ"]
 ---
-
 ## はじめに
 
 SQLite WASMは、WebAssembly技術を使ってブラウザ上でSQLiteを動かす公式実装です。2026年現在、オフラインファーストのアプリケーションやローカルストレージの高度な活用に欠かせない技術となっています。

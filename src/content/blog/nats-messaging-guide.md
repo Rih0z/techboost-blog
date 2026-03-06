@@ -1,10 +1,9 @@
 ---
 title: "NATS メッセージングシステム入門 - 軽量高速な分散通信基盤"
-description: "NATSは軽量高速なメッセージングシステム。Pub/Sub、Request/Reply、Queue Groups、JetStream永続化、Node.js/Go統合まで実践的に解説します。"
+description: "NATSは軽量高速なメッセージングシステム。Pub/Sub、Request/Reply、Queue Groups、JetStream永続化、Node.js/Go統合まで実践的に解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2025-02-06"
-tags: ['プログラミング']
+tags: ['TypeScript', 'フロントエンド', '開発ツール']
 ---
-
 **NATS**は、クラウドネイティブアプリケーション向けの**軽量・高速・シンプルなメッセージングシステム**です。マイクロサービス間の通信、イベント駆動アーキテクチャ、リアルタイムデータ配信に最適です。
 
 本記事では、NATSの基本概念からPub/Sub、Request/Reply、JetStreamによる永続化、実際のNode.js/Go実装まで詳しく解説します。

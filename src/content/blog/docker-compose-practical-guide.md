@@ -1,10 +1,9 @@
 ---
 title: 'Docker Compose 実践ガイド — 開発環境を5分で構築する方法'
-description: 'Docker Composeで開発環境を爆速構築。docker-compose.yml書き方の基本から、Node.js+PostgreSQL、Python+Redisなど実用的な組み合わせまで実例付きで解説。'
+description: 'Docker Composeで開発環境を爆速構築。docker-compose.yml書き方の基本から、Node.js+PostgreSQL、Python+Redisなど実用的な組み合わせまで実例付きで解説。Dockerの基礎から実践的な活用法までカバー。'
 pubDate: 'Feb 05 2026'
-tags: ['インフラ']
+tags: ['Docker', 'インフラ', '開発ツール']
 ---
-
 ## Docker Composeとは？複数コンテナを一括管理
 
 Docker Composeは、複数のDockerコンテナを定義・実行するためのツールです。YAML形式の設定ファイル（docker-compose.yml）に記述するだけで、Webアプリ + データベース + キャッシュサーバーなど複雑な環境を一発で構築できます。

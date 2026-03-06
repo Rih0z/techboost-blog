@@ -1,10 +1,9 @@
 ---
 title: "GitHub Copilot活用術2026 - 生産性を最大化する15のテクニック"
-description: "GitHub Copilotを使いこなすための実践的テクニックを徹底解説。効果的なプロンプト、コメント駆動開発、テスト自動生成、Copilot Chat/Workspaceの活用法まで完全網羅。"
+description: "GitHub Copilotを使いこなすための実践的テクニックを徹底解説。効果的なプロンプト、コメント駆動開発、テスト自動生成、Copilot Chat/Workspaceの活用法まで完全網羅。GitHub Copilot・AI・生産性に関する実践情報。"
 pubDate: "2026-02-05"
 tags: ["GitHub Copilot", "AI", "生産性", "開発ツール", "プログラミング"]
 ---
-
 ## はじめに
 
 GitHub Copilotは、2026年現在**最も普及しているAIコーディングアシスタント**です。

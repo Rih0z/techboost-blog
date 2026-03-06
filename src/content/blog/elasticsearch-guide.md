@@ -1,11 +1,10 @@
 ---
 title: 'Elasticsearch完全ガイド — 全文検索・Node.js統合・Kibana・パフォーマンスチューニング'
-description: 'Elasticsearchで高速全文検索を実装する完全ガイド。インデックス設計・マッピング・クエリDSL・Aggregation・Node.js統合・Kibana・オートコンプリート・ベクトル検索まで実装例付きで解説。'
+description: 'Elasticsearchで高速全文検索を実装する完全ガイド。インデックス設計・マッピング・クエリDSL・Aggregation・Node.js統合・Kibana・オートコンプリート・ベクトル検索まで実装例付きで解説。現場で使える知識を体系的にまとめました。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/elasticsearch-guide.jpg'
 tags: ['Elasticsearch', '全文検索', 'Node.js', 'TypeScript', 'Kibana']
 ---
-
 Elasticsearchは、Apache Luceneをベースに構築された分散型全文検索・分析エンジンです。ログ解析、ECサイトの商品検索、ドキュメント管理システムなど、あらゆるスケールの検索要件に対応できます。本記事では、ローカル環境の構築からプロダクション運用まで、実装例を交えながら体系的に解説します。
 
 ---

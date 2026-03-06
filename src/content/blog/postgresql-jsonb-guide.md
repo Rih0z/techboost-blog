@@ -1,11 +1,10 @@
 ---
 title: "PostgreSQL JSONB完全活用ガイド: リレーショナルとドキュメント指向の融合"
-description: "PostgreSQLのJSONB型を使った実践的なデータ管理。JSONB演算子、クエリパターン、インデックス戦略、パフォーマンス最適化、マイグレーション、実践的なスキーマ設計を徹底解説。"
+description: "PostgreSQLのJSONB型を使った実践的なデータ管理。JSONB演算子、クエリパターン、インデックス戦略、パフォーマンス最適化、マイグレーション、実践的なスキーマ設計を徹底解説。PostgreSQL・JSONB・SQLに関する実践情報。"
 pubDate: "2025-02-05"
 category: "database"
 tags: ["PostgreSQL", "JSONB", "SQL", "データベース", "NoSQL", "インデックス", "インフラ"]
 ---
-
 PostgreSQLの**JSONB型**は、リレーショナルデータベースでありながらドキュメント指向のデータを扱える強力な機能です。柔軟性とパフォーマンスを両立できます。
 
 この記事では、JSONBの基本から高度なクエリパターン、インデックス戦略、実践的な設計パターンまでを解説します。

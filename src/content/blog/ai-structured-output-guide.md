@@ -1,12 +1,11 @@
 ---
 title: 'AI構造化出力実践: LLMからJSON/TypeScriptの型安全なレスポンスを取得'
-description: 'OpenAI、Anthropic、GeminiなどのLLMから構造化出力を取得する実践ガイド。Zod、TypeBox、JSON Schemaを使った型安全な実装、エラーハンドリング、パフォーマンス最適化まで解説。'
+description: 'OpenAI、Anthropic、GeminiなどのLLMから構造化出力を取得する実践ガイド。Zod、TypeBox、JSON Schemaを使った型安全な実装、エラーハンドリング、パフォーマンス最適化まで解説。ベストプラクティスと注意点も紹介します。'
 pubDate: 'Dec 12 2025'
 updatedDate: 'Dec 12 2025'
 tags: ['AI', 'LLM', 'TypeScript', 'OpenAI', 'Claude']
 category: 'AI'
 ---
-
 # AI構造化出力実践: LLMからJSON/TypeScriptの型安全なレスポンスを取得
 
 LLM（Large Language Model）からの出力を構造化データとして扱うことで、アプリケーション統合が劇的に容易になります。この記事では、OpenAI、Anthropic Claude、Google Geminiから型安全な構造化出力を取得する実践的な方法を解説します。

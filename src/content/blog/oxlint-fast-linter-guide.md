@@ -1,10 +1,9 @@
 ---
 title: 'OXLint高速リンター入門: ESLintから100倍速への移行ガイド'
-description: 'Rust製の超高速JavaScriptリンターOXLintの導入方法を解説。ESLintからの移行手順、ルール設定、パフォーマンス比較、CI/CD統合まで実践的に説明します。'
+description: 'Rust製の超高速JavaScriptリンターOXLintの導入方法を解説。ESLintからの移行手順、ルール設定、パフォーマンス比較、CI/CD統合まで実践的に説明します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: 'Feb 05 2025'
 tags: ['OXLint', 'ESLint', 'Linter', 'JavaScript', 'TypeScript', 'DevTools']
 ---
-
 OXLintは、Rust製の超高速JavaScriptリンターです。ESLintの50〜100倍の速度で動作し、大規模プロジェクトでも数秒でlintが完了します。
 
 ## OXLintとは

@@ -1,10 +1,9 @@
 ---
 title: "Remix v3入門 — React Router v7ベースの次世代フレームワーク"
-description: "Remix v3とReact Router v7の統合で進化した新しいフルスタックフレームワーク。loader/action、ネストルーティング、Server Functions、ストリーミングの実装方法を解説。"
+description: "Remix v3とReact Router v7の統合で進化した新しいフルスタックフレームワーク。loader/action、ネストルーティング、Server Functions、ストリーミングの実装方法を解説。2026年最新の情報を反映しています。"
 pubDate: "2026-02-05"
 tags: ["Remix", "React Router", "React", "フルスタック"]
 ---
-
 Remix v3は、React Router v7との統合により、より強力で柔軟なフルスタックフレームワークへと進化しました。この記事では、Remix v3の基本から応用までを実践的に解説します。
 
 ## Remix v3とReact Router v7の統合

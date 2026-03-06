@@ -1,10 +1,9 @@
 ---
 title: "エッジファンクション徹底比較 - Vercel vs Cloudflare vs Deno Deploy"
-description: "Vercel Edge Functions、Cloudflare Workers、Deno Deployを詳細比較。パフォーマンス、価格、DX、制約を実測データと実装例で解説します。"
+description: "Vercel Edge Functions、Cloudflare Workers、Deno Deployを詳細比較。パフォーマンス、価格、DX、制約を実測データと実装例で解説します。エッジコンピューティング・Vercel・Cloudflareに関する実践情報。"
 pubDate: "2025-02-05"
 tags: ["エッジコンピューティング", "Vercel", "Cloudflare", "Deno", "サーバーレス", "インフラ"]
 ---
-
 ## はじめに
 
 エッジコンピューティングは、2025年のWeb開発における最重要トレンドの1つです。ユーザーに最も近い場所でコードを実行することで、**レイテンシを劇的に削減**できます。

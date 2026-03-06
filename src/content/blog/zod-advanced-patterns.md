@@ -1,10 +1,9 @@
 ---
 title: "Zodの高度なパターン集 — 型安全なバリデーションを極める"
-description: "Zodのカスタムスキーマ、transform、refine、discriminated union、フォームバリデーション、API連携など、実践的な高度パターンを網羅的に解説します。"
+description: "Zodのカスタムスキーマ、transform、refine、discriminated union、フォームバリデーション、API連携など、実践的な高度パターンを網羅的に解説します。Zod・TypeScript・Validationに関する実践情報。"
 pubDate: "2026-02-05"
 tags: ["Zod", "TypeScript", "Validation", "Type Safety", "Frontend"]
 ---
-
 ## Zodとは
 
 **Zod** は、TypeScriptファーストのスキーマバリデーションライブラリです。型推論とランタイムバリデーションを同時に提供し、フォーム入力、API レスポンス、環境変数の検証など、あらゆる場面で活用できます。

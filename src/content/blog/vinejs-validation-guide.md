@@ -1,10 +1,9 @@
 ---
 title: "VineJS入門 — Node.jsの高速バリデーションライブラリ"
-description: "Zodの14倍高速なバリデーションライブラリVineJSの特徴、スキーマ定義、カスタムルール、AdonisJS/Hono統合を実例とともに解説します。"
+description: "Zodの14倍高速なバリデーションライブラリVineJSの特徴、スキーマ定義、カスタムルール、AdonisJS/Hono統合を実例とともに解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2026-02-05"
 tags: ["VineJS", "Validation", "Node.js", "TypeScript", "AdonisJS"]
 ---
-
 ## VineJSとは
 
 VineJSは、AdonisJS開発チームが開発した高速バリデーションライブラリです。Zodなどの既存ライブラリと比較して**約14倍の処理速度**を誇り、TypeScriptの型安全性も完全にサポートしています。

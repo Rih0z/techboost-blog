@@ -1,10 +1,9 @@
 ---
 title: "LangFuseでLLMアプリの可観測性を実現する完全ガイド2026 - トレーシング・評価・監視"
-description: "LangFuseを使ってLLMアプリのトレーシング・コスト監視・品質評価を実装する方法を解説。OpenAI・LangChain・LlamaIndex・PydanticAI連携から、カスタム評価スコアの実装まで実践例付きで紹介。"
+description: "LangFuseを使ってLLMアプリのトレーシング・コスト監視・品質評価を実装する方法を解説。OpenAI・LangChain・LlamaIndex・PydanticAI連携から、カスタム評価スコアの実装まで実践例付きで紹介。サンプルコード付きで実践的に解説。"
 pubDate: "2026-03-04"
 tags: ["AI", "LangFuse", "LLMOps", "可観測性", "Python", "モニタリング"]
 ---
-
 ## はじめに
 
 LLMアプリを本番環境で運用するには、**何が起きているかを可視化する仕組み**が不可欠です。LangFuseは、LLMアプリの**トレーシング・コスト追跡・品質評価・デバッグ**を一元管理するオープンソースのLLMOpsプラットフォームです。

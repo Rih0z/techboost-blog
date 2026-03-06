@@ -1,10 +1,9 @@
 ---
 title: "htmx 入門ガイド - JavaScriptなしでモダンUI"
-description: "htmxを使ってJavaScriptフレームワークなしでインタラクティブなWebアプリケーションを構築する方法を解説。軽量でシンプルなアプローチを紹介します。"
+description: "htmxを使ってJavaScriptフレームワークなしでインタラクティブなWebアプリケーションを構築する方法を解説。軽量でシンプルなアプローチを紹介します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2025-02-05"
-tags: ["htmx", "web-development", "html", "javascript"]
+tags: ['htmx', 'web-development', 'HTML', 'JavaScript']
 ---
-
 htmx は、HTML属性だけでAJAX、WebSocket、Server-Sent Eventsなどのモダンなブラウザ機能を利用できるライブラリです。複雑なJavaScriptフレームワークを使わずに、インタラクティブなWebアプリケーションを構築できます。
 
 ## htmx とは

@@ -1,10 +1,9 @@
 ---
 title: "tRPC v11入門 — エンドツーエンド型安全APIの構築ガイド"
-description: "tRPC v11でフルスタックTypeScriptアプリを構築する方法を解説。ルーター/プロシージャ定義、Zod連携、React Query統合、Next.js App Router対応まで網羅した実践ガイド。"
+description: "tRPC v11でフルスタックTypeScriptアプリを構築する方法を解説。ルーター/プロシージャ定義、Zod連携、React Query統合、Next.js App Router対応まで網羅した実践ガイド。ベストプラクティスと注意点も紹介します。"
 pubDate: "2026-02-05"
 tags: ["tRPC", "TypeScript", "Next.js", "React Query", "API"]
 ---
-
 tRPCは、TypeScriptによるエンドツーエンド型安全なAPIを実現するフレームワークです。REST APIやGraphQLと異なり、スキーマ定義や型生成が不要で、TypeScriptの型システムを直接活用できます。
 
 この記事では、tRPC v11の基本から実践的な使い方まで、順を追って解説します。

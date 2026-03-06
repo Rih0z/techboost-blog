@@ -1,10 +1,9 @@
 ---
 title: 'Vercel Edge Functions完全ガイド - グローバル分散APIで超高速レスポンス'
-description: 'Vercel Edge Functionsを使った高速API構築ガイド。Edge Runtime、ミドルウェア、地理情報取得、A/Bテストまで実践的に解説。Next.js 15対応。'
+description: 'Vercel Edge Functionsを使った高速API構築ガイド。Edge Runtime、ミドルウェア、地理情報取得、A/Bテストまで実践的に解説。Next.js 15対応。Vercel・Edge Functions・Next.jsに関する実践情報。'
 pubDate: 'Feb 05 2026'
 tags: ['Vercel', 'Edge Functions', 'Next.js', 'サーバーレス', 'パフォーマンス', 'プログラミング']
 ---
-
 Vercel Edge Functionsは、世界中に分散されたエッジネットワークで実行されるサーバーレス関数です。従来のサーバーレス関数（AWS Lambda等）と比べて圧倒的に高速で、グローバルなユーザーに低レイテンシでコンテンツを配信できます。
 
 ## Edge Functionsとは？

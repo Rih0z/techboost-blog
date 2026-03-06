@@ -1,11 +1,10 @@
 ---
 title: "Bun完全ガイド2026: JavaScriptランタイム・パッケージマネージャー・ビルドツールの全て"
-description: "Bunの全機能を網羅した完全ガイド。高速ランタイム、内蔵パッケージマネージャー、ビルドツール、テストランナーまで、Node.jsとの互換性を保ちながら圧倒的な速度を実現するBunの全てを解説します。"
+description: "Bunの全機能を網羅した完全ガイド。高速ランタイム、内蔵パッケージマネージャー、ビルドツール、テストランナーまで、Node.jsとの互換性を保ちながら圧倒的な速度を実現するBunの全てを解説します。Bun・JavaScript・TypeScriptに関する実践情報。"
 pubDate: "2026-02-06"
 category: "Backend"
 tags: ["Bun", "JavaScript", "TypeScript", "Runtime", "Build Tool"]
 ---
-
 BunはJavaScript/TypeScriptランタイム、パッケージマネージャー、ビルドツール、テストランナーを統合した次世代のJavaScriptツールキットです。本記事では、Bunの全機能を実践的なコード例とともに徹底解説します。
 
 ## Bunとは

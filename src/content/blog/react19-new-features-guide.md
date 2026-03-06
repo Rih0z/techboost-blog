@@ -3,9 +3,8 @@ title: 'React 19完全ガイド：新機能と変更点を徹底解説'
 description: 'React 19の全新機能を徹底解説。Server Actions・use()フック・新しいフォームAPI・Document Metadata・Asset Loading・Improved Error Handling・Compiler（React Forget）まで実践的に学ぶ'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/react19-new-features-guide.jpg'
-tags: ['プログラミング']
+tags: ['React', 'フロントエンド', '開発ツール']
 ---
-
 React 19は、2024年12月にリリースされたReactの最新メジャーバージョンである。このバージョンは、Reactが長年積み重ねてきた設計哲学を再定義し、開発者体験（DX）とアプリケーションパフォーマンスの両面で大きな進化をもたらした。本記事では、React 19のすべての新機能を実践的なコード例とともに徹底解説する。
 
 ---

@@ -1,10 +1,9 @@
 ---
 title: "OxlintでJavaScript/TypeScriptを超高速Lint - ESLintの50〜100倍高速"
-description: "Oxlintは、Rustで書かれた超高速なJavaScript/TypeScript Linterです。ESLintの50〜100倍高速で、既存プロジェクトにも簡単に導入できます。"
+description: "Oxlintは、Rustで書かれた超高速なJavaScript/TypeScript Linterです。ESLintの50〜100倍高速で、既存プロジェクトにも簡単に導入できます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2025-02-05"
-tags: ['プログラミング']
+tags: ['JavaScript', 'TypeScript', 'フロントエンド']
 ---
-
 フロントエンド開発において、Lintツールは欠かせない存在です。しかし、プロジェクトが大きくなるにつれて、ESLintの実行時間が長くなり、開発体験が悪化することがあります。
 
 **Oxlint**は、Rustで書かれた超高速なLinterで、ESLintの**50〜100倍高速**です。この記事では、Oxlintの特徴から実践的な使い方まで、詳しく解説します。

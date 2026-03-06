@@ -1,10 +1,9 @@
 ---
 title: "モダンSQLite活用ガイド — サーバーレスからエッジまで"
-description: "SQLiteの進化、Litestream・LiteFS・Turso/libSQLによるレプリケーション、better-sqlite3・D1・WALモードの実践的な活用方法を解説します。"
+description: "SQLiteの進化、Litestream・LiteFS・Turso/libSQLによるレプリケーション、better-sqlite3・D1・WALモードの実践的な活用方法を解説します。SQLite・Database・Edge Computingに関する実践情報。"
 pubDate: "2026-02-05"
 tags: ["SQLite", "Database", "Edge Computing", "Serverless", "Turso", "インフラ"]
 ---
-
 ## SQLiteの再評価
 
 SQLiteは「おもちゃのデータベース」と思われがちですが、実は非常に強力です。

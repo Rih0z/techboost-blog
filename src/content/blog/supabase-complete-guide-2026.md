@@ -1,11 +1,10 @@
 ---
-title: "Supabase完全ガイド2026：Next.jsとの統合・認証・RLS設定の実践"
-description: "SupabaseでBaaS開発を始める実践ガイド。PostgreSQL・Row Level Security・Edge Functions・Realtime・Auth（Google OAuth）とNext.js 15の統合を徹底解説。"
+title: "Supabase入門ガイド2026：Next.jsとの統合・認証・RLS設定の実践"
+description: "SupabaseでBaaS開発を始める実践ガイド。PostgreSQL・Row Level Security・Edge Functions・Realtime・Auth（Google OAuth）とNext.js 15の統合を徹底解説。サンプルコード付きで実践的に解説。"
 pubDate: "2026-03-17"
 heroImage: '../../assets/thumbnails/supabase-complete-guide-2026.jpg'
 tags: ["Supabase", "PostgreSQL", "Next.js", "バックエンド", "認証", "プログラミング"]
 ---
-
 ## SupabaseとFirebaseの違い：なぜ2026年にSupabaseが選ばれるか
 
 ```

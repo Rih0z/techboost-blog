@@ -1,12 +1,11 @@
 ---
 title: "TypeScript Generics上級テクニック: 条件型・マッピング型・テンプレートリテラル型"
-description: "TypeScript Genericsの高度なパターンを実践的に解説。条件型による型の分岐、マッピング型によるユーティリティ型の作成、テンプレートリテラル型による文字列操作、infer活用など上級者向けテクニックを網羅。"
+description: "TypeScript Genericsの高度なパターンを実践的に解説。条件型による型の分岐、マッピング型によるユーティリティ型の作成、テンプレートリテラル型による文字列操作、infer活用など上級者向けテクニックを網羅。実務で役立つポイントを厳選して解説。"
 pubDate: "2025-11-12"
 updatedDate: "2025-11-12"
 category: "typescript"
 tags: ["TypeScript", "Generics", "型システム", "上級", "型安全"]
 ---
-
 TypeScriptのGenericsは、単なる型パラメータ以上の力を持っています。この記事では、**条件型**、**マッピング型**、**テンプレートリテラル型**を組み合わせた高度なパターンを解説します。
 
 ## 条件型（Conditional Types）の基礎

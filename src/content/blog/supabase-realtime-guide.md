@@ -1,12 +1,11 @@
 ---
 title: 'Supabase Realtime完全ガイド: WebSocketベースのリアルタイムデータ同期'
-description: 'Supabase Realtimeを使ったリアルタイムアプリケーション開発を完全解説。データベース変更の購読、Presence、Broadcastの実装パターンとパフォーマンス最適化テクニックを紹介します。'
+description: 'Supabase Realtimeを使ったリアルタイムアプリケーション開発を完全解説。データベース変更の購読、Presence、Broadcastの実装パターンとパフォーマンス最適化テクニックを紹介します。2026年最新の情報を反映しています。'
 pubDate: 2025-09-28
 updatedDate: 2025-09-28
-tags: ['supabase', 'realtime', 'websocket', 'react', 'database']
+tags: ['Supabase', 'Realtime', 'websocket', 'React', 'Database']
 category: 'backend'
 ---
-
 ## Supabase Realtimeとは
 
 Supabase Realtimeは、PostgreSQLデータベースの変更をWebSocket経由でリアルタイムに購読できる機能です。チャットアプリ、コラボレーションツール、ライブダッシュボードなど、リアルタイム性が求められるアプリケーション開発に最適です。

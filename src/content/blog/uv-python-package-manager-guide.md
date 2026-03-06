@@ -1,12 +1,11 @@
 ---
 title: "uv完全ガイド: Rustで作られた超高速Pythonパッケージマネージャー"
-description: "uvはpipの10〜100倍高速なPythonパッケージマネージャーです。インストール方法、仮想環境管理、pyproject.toml対応、Pythonバージョン管理まで実践的に解説します。"
+description: "uvはpipの10〜100倍高速なPythonパッケージマネージャーです。インストール方法、仮想環境管理、pyproject.toml対応、Pythonバージョン管理まで実践的に解説します。Python・uv・パッケージ管理に関する実践情報。"
 pubDate: "2026-02-24"
 updatedDate: "2026-02-24"
 tags: ["Python", "uv", "パッケージ管理", "Rust", "開発環境", "ツール"]
 category: "Development"
 ---
-
 Pythonのパッケージ管理はこれまで`pip`や`poetry`、`pipenv`など様々なツールが使われてきましたが、2024年から急速に普及している**uv**が開発者の間で大きな話題になっています。Rustで書かれたuvはpipの**10〜100倍**の速度を実現し、仮想環境管理、Pythonバージョン管理まで一つのツールで完結させることができます。本記事では、uvの基本から実践的な使い方まで徹底解説します。
 
 ## uvとは何か

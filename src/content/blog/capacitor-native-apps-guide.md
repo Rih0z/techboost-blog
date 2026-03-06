@@ -1,10 +1,9 @@
 ---
 title: 'Capacitor：WebアプリをiOS/Androidネイティブアプリに変換'
-description: 'Capacitorを使ってWebアプリケーションをiOS/Androidネイティブアプリに変換する方法。プラグイン活用、カメラ・通知機能、App Store/Play Store公開フローを解説します。'
+description: 'Capacitorを使ってWebアプリケーションをiOS/Androidネイティブアプリに変換する方法。プラグイン活用、カメラ・通知機能、App Store/Play Store公開フローを解説します。ベストプラクティスと注意点も紹介します。'
 pubDate: 'Feb 05 2026'
 tags: ['Capacitor', 'React', 'iOS', 'Android', 'モバイルアプリ', 'ハイブリッドアプリ']
 ---
-
 # Capacitor：WebアプリをiOS/Androidネイティブアプリに変換
 
 モバイルアプリを開発する際、Swift/Kotlin/React Nativeを学ぶのは時間がかかります。Capacitorを使えば、既存のWeb技術（React、Vue、Angularなど）で作ったアプリを、そのままiOSとAndroidのネイティブアプリに変換できます。

@@ -1,12 +1,11 @@
 ---
 title: "Kyselyマイグレーション実践: 型安全なデータベーススキーマ管理"
-description: "Kyselyを使った実践的なマイグレーション管理。スキーマバージョニング、ロールバック戦略、Zero-Downtime Deployment、本番環境での安全な運用手法を徹底解説。"
+description: "Kyselyを使った実践的なマイグレーション管理。スキーマバージョニング、ロールバック戦略、Zero-Downtime Deployment、本番環境での安全な運用手法を徹底解説。Kysely・PostgreSQL・マイグレーションに関する実践情報。"
 pubDate: "2025-09-22"
 updatedDate: "2025-09-22"
 category: "backend"
 tags: ["Kysely", "PostgreSQL", "マイグレーション", "データベース", "TypeScript"]
 ---
-
 Kyselyは型安全なSQLクエリビルダーとして知られていますが、**マイグレーション機能**も強力です。この記事では、実践的なマイグレーション戦略と本番環境での安全な運用方法を解説します。
 
 ## Kyselyマイグレーションの基礎

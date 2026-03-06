@@ -1,11 +1,10 @@
 ---
 title: 'TanStack Startフルスタックフレームワーク入門'
-description: 'TanStack Startの完全ガイド。ファイルベースルーティング、サーバー関数、SSR、TanStack Query統合、Vinxiバンドラーなど、モダンなフルスタック開発手法を解説します。'
+description: 'TanStack Startの完全ガイド。ファイルベースルーティング、サーバー関数、SSR、TanStack Query統合、Vinxiバンドラーなど、モダンなフルスタック開発手法を解説します。TanStack・TanStack Start・Reactに関する実践情報。'
 pubDate: 2025-02-05
 tags: ['TanStack', 'TanStack Start', 'React', 'フルスタック', 'TypeScript']
 category: 'フロントエンド'
 ---
-
 # TanStack Startフルスタックフレームワーク入門
 
 TanStack Startは、TanStack Queryの作者Tanner Linsleyが開発した、**型安全なフルスタックReactフレームワーク**です。

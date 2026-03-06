@@ -1,11 +1,10 @@
 ---
-title: "Vibe Coding完全ガイド2026：AIと対話しながら開発するエンジニアの新常識"
-description: "Vibe Codingとは何か、Cursor・Claude Code・GitHub Copilot Workspaceを使った実践的なAI協調開発の手法を解説。コード品質を落とさずに10倍速で開発する方法。"
+title: "Vibe Coding入門ガイド2026：AIと対話しながら開発するエンジニアの新常識"
+description: "Vibe Codingとは何か、Cursor・Claude Code・GitHub Copilot Workspaceを使った実践的なAI協調開発の手法を解説。コード品質を落とさずに10倍速で開発する方法。サンプルコード付きで実践的に解説。"
 pubDate: "2026-03-05"
 heroImage: '../../assets/thumbnails/vibe-coding-guide-2026.jpg'
 tags: ["Vibe Coding", "AI開発", "Cursor", "Claude Code", "GitHub Copilot", "プログラミング"]
 ---
-
 ## Vibe Codingとは：自然言語で「意図を伝えて」コードを生成する開発スタイル
 
 **Vibe Coding**は、2025年にAndrej Karpathy（元Tesla AI責任者）が提唱した概念で、「AIに完全に身を委ね、エラーメッセージをそのまま貼り付けて修正させる」開発スタイルです。

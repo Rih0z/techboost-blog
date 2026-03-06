@@ -1,10 +1,9 @@
 ---
 title: "React Native + Expo Router：ファイルベースルーティングでモバイルアプリ開発"
-description: "Expo Routerを使ったReact Nativeアプリの開発方法を解説。ファイルベースルーティング、ナビゲーション、ディープリンクまで実践的に学びます。"
+description: "Expo Routerを使ったReact Nativeアプリの開発方法を解説。ファイルベースルーティング、ナビゲーション、ディープリンクまで実践的に学びます。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2025-02-06"
 tags: ["React Native", "Expo", "Mobile", "Router", "TypeScript"]
 ---
-
 # React Native + Expo Router：ファイルベースルーティングでモバイルアプリ開発
 
 React Nativeのナビゲーション管理は、従来React Navigationを使った命令的なアプローチが主流でした。しかし、**Expo Router**の登場により、Next.jsのようなファイルベースルーティングがモバイルアプリ開発にもたらされました。本記事では、Expo Routerを使った現代的なReact Nativeアプリ開発を徹底解説します。

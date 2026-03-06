@@ -1,11 +1,10 @@
 ---
 title: 'Node.jsパフォーマンス最適化完全ガイド — プロファイリング・メモリ・クラスタリング・Worker Threads'
-description: 'Node.jsアプリのパフォーマンスを最大化する実践ガイド。V8プロファイリング・メモリリーク検出・イベントループ監視・クラスタリング・Worker Threads・ストリーム最適化・APM導入まで解説。'
+description: 'Node.jsアプリのパフォーマンスを最大化する実践ガイド。V8プロファイリング・メモリリーク検出・イベントループ監視・クラスタリング・Worker Threads・ストリーム最適化・APM導入まで解説。Node.js・パフォーマンス・TypeScriptに関する実践情報。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/nodejs-performance-guide.jpg'
 tags: ['Node.js', 'パフォーマンス', 'TypeScript', 'Worker Threads', '最適化']
 ---
-
 Node.jsは非同期I/Oとイベント駆動アーキテクチャにより、高いスループットを実現できるランタイムだ。しかし、適切な最適化を施さなければ、本番環境でメモリリークやイベントループブロッキング、CPUスパイクなどの問題が顕在化する。本記事では、Node.jsアプリケーションのパフォーマンスを根本から改善するための手法を、実際のコード例を交えながら体系的に解説する。
 
 ---

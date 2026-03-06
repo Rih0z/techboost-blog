@@ -1,10 +1,9 @@
 ---
 title: 'Web Worker実践ガイド - ブラウザで並列処理を実現する'
-description: 'Web Workerの基本から実践まで徹底解説。メッセージパッシング、SharedWorker、Service Workerとの違い、パフォーマンス改善の実例まで、フロントエンドの並列処理をマスター'
+description: 'Web Workerの基本から実践まで徹底解説。メッセージパッシング、SharedWorker、Service Workerとの違い、パフォーマンス改善の実例まで、フロントエンドの並列処理をマスター。Webの基礎から実践的な活用法までカバー。'
 pubDate: 'Feb 05 2026'
-tags: ['プログラミング']
+tags: ['プログラミング', '開発ツール']
 ---
-
 # Web Worker実践ガイド
 
 JavaScriptはシングルスレッドで動作しますが、Web Workerを使用することで別スレッドでコードを実行し、メインスレッドをブロックせずに重い処理を行えます。

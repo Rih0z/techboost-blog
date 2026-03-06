@@ -1,11 +1,10 @@
 ---
 title: 'Nx完全ガイド — モノレポ管理・コード生成・テスト最適化・CI/CD'
-description: 'NxでモダンなモノレポをTypeScriptで構築する完全ガイド。ワークスペース設定・コードジェネレーター・affected commands・分散キャッシュ・Nx Cloud・GitHub Actions統合まで実装例付きで解説。'
+description: 'NxでモダンなモノレポをTypeScriptで構築する完全ガイド。ワークスペース設定・コードジェネレーター・affected commands・分散キャッシュ・Nx Cloud・GitHub Actions統合まで実装例付きで解説。開発効率を上げるヒントが満載です。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/monorepo-nx-guide.jpg'
 tags: ['Nx', 'モノレポ', 'TypeScript', 'CICD', '開発環境']
 ---
-
 モノレポ（Monorepo）は、複数のプロジェクトやパッケージを単一のリポジトリで管理するアーキテクチャだ。Google、Meta、Microsoftといった大企業が長年採用してきたこの手法は、近年フロントエンド・バックエンド開発の世界でも急速に普及している。その中心にいるのが **Nx** — Narwhal Technologiesが開発した、TypeScript/JavaScript エコシステム向けの高機能ビルドシステムだ。
 
 本記事では、Nxの基礎から高度な設定まで、実際のコード例を交えながら徹底的に解説する。

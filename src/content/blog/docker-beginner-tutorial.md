@@ -1,10 +1,9 @@
 ---
 title: '【入門】Dockerを1から学ぶ完全ガイド - インストールから実践まで'
-description: 'Docker初心者向けの完全入門ガイド。Dockerとは何かの基礎知識から、インストール方法、基本コマンド、Dockerfileの書き方、docker-composeまで、実践例付きで丁寧に解説します。'
+description: 'Docker初心者向けの完全入門ガイド。Dockerとは何かの基礎知識から、インストール方法、基本コマンド、Dockerfileの書き方、docker-composeまで、実践例付きで丁寧に解説します。ベストプラクティスと注意点も紹介します。'
 pubDate: 'Feb 03 2026'
-tags: ['プログラミング']
+tags: ['Docker', 'インフラ']
 ---
-
 「Dockerって聞いたことあるけど、何がいいの？」「コンテナ？仮想マシンと何が違うの？」そんな疑問を持つ方に向けて、Dockerをゼロから実践レベルまで解説します。
 
 ## Dockerとは何か

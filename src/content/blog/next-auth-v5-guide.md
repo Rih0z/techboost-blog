@@ -1,10 +1,9 @@
 ---
 title: 'NextAuth.js v5 (Auth.js) 実践ガイド - Next.js 15対応の認証実装'
-description: 'NextAuth.js v5 (Auth.js)を使ったNext.js 15での認証実装完全ガイド。Google OAuth、GitHub、メール認証からセッション管理、ミドルウェアまで実践的に解説します。'
+description: 'NextAuth.js v5 (Auth.js)を使ったNext.js 15での認証実装完全ガイド。Google OAuth、GitHub、メール認証からセッション管理、ミドルウェアまで実践的に解説します。導入から応用まで段階的に学べます。'
 pubDate: 'Feb 05 2026'
 tags: ['Next.js', 'NextAuth', 'Auth.js', '認証', 'TypeScript']
 ---
-
 Next.js向けの認証ライブラリであるNextAuth.jsは、v5でAuth.jsとしてリブランディングされ、より強力で柔軟な認証システムに進化しました。この記事では、Next.js 15でのAuth.js実装を実践的に解説します。
 
 ## NextAuth.js v5 (Auth.js) とは？

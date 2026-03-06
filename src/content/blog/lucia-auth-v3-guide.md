@@ -1,10 +1,9 @@
 ---
 title: 'Lucia Auth v3完全ガイド: TypeScriptファーストな認証ライブラリ入門'
-description: 'Lucia Auth v3を使った認証システムの構築を解説。セッション管理、パスワード認証、OAuth連携、Next.js/SvelteKit統合、セキュリティベストプラクティスまで実践的に網羅'
+description: 'Lucia Auth v3を使った認証システムの構築を解説。セッション管理、パスワード認証、OAuth連携、Next.js/SvelteKit統合、セキュリティベストプラクティスまで実践的に網羅。Lucia Auth・認証・TypeScriptに関する実践情報。'
 pubDate: '2025-02-05'
 tags: ['Lucia Auth', '認証', 'TypeScript', 'セッション管理', 'OAuth', 'セキュリティ']
 ---
-
 # Lucia Auth v3完全ガイド: TypeScriptファーストな認証ライブラリ入門
 
 Lucia Auth v3は、TypeScriptで書かれた軽量でフレキシブルな認証ライブラリです。本記事では、ゼロから認証システムを構築する方法を実践的に解説します。

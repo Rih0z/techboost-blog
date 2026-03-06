@@ -1,12 +1,11 @@
 ---
 title: 'Lucia v3認証マイグレーション: セッションベース認証の次世代アプローチ'
-description: 'Lucia v2からv3への移行ガイド。破壊的変更への対応、新しいAPI設計、パフォーマンス改善、Better Authとの比較まで実践的に解説します。'
+description: 'Lucia v2からv3への移行ガイド。破壊的変更への対応、新しいAPI設計、パフォーマンス改善、Better Authとの比較まで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
 pubDate: '2025-11-05'
 updatedDate: '2025-11-05'
 tags: ['Lucia', 'Authentication', 'Migration', 'TypeScript', 'セキュリティ']
 category: 'backend'
 ---
-
 Lucia v3は2024年末にリリースされ、より洗練されたAPIと改善されたパフォーマンスを提供します。既存のLucia v2プロジェクトを持つ開発者にとって、v3への移行は避けて通れない道です。本記事では、実践的な移行戦略を解説します。
 
 ## Lucia v3の主な変更点

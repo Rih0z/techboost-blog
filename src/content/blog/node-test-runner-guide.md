@@ -1,11 +1,10 @@
 ---
 title: "Node.js組み込みテストランナー完全ガイド"
-description: "Node.js 20で正式リリースされた組み込みテストランナーを徹底解説。Jest/Vitestからの移行方法、モック、カバレッジ取得まで実践的な使い方を紹介します。"
+description: "Node.js 20で正式リリースされた組み込みテストランナーを徹底解説。Jest/Vitestからの移行方法、モック、カバレッジ取得まで実践的な使い方を紹介します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2025-02-05"
 category: "Backend"
 tags: ["Node.js", "Testing", "JavaScript", "TypeScript", "TDD"]
 ---
-
 Node.js 20で正式リリースされた組み込みテストランナーは、外部ライブラリなしでユニットテストを実行できる強力な機能です。2026年現在、多くのプロジェクトがJest/Vitestから移行しています。本記事では、Node.js Test Runnerの実践的な使い方を詳しく解説します。
 
 ## Node.js Test Runnerとは

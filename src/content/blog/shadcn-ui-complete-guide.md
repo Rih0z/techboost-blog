@@ -1,11 +1,10 @@
 ---
 title: 'shadcn/ui完全ガイド — Radix UI・Tailwind CSSで作るモダンUIコンポーネント'
-description: 'shadcn/uiを使ったReactコンポーネント開発の完全ガイド。インストール・コンポーネント追加・カスタマイズ・テーマ・フォーム（react-hook-form + zod）・データテーブル・アクセシビリティまで実装例付きで解説。'
+description: 'shadcn/uiを使ったReactコンポーネント開発の完全ガイド。インストール・コンポーネント追加・カスタマイズ・テーマ・フォーム（react-hook-form + zod）・データテーブル・アクセシビリティまで実装例付きで解説。現場で使える知識を体系的にまとめました。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/shadcn-ui-complete-guide.jpg'
 tags: ['shadcn-ui', 'React', 'Tailwind CSS', 'TypeScript', 'UIコンポーネント']
 ---
-
 ## はじめに
 
 フロントエンド開発においてUIコンポーネントライブラリの選択は、プロジェクトの生産性とメンテナンス性を大きく左右する。MUIやChakra UIといった従来型のライブラリとは一線を画す新世代のアプローチとして、**shadcn/ui**が急速に普及している。

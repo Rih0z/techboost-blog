@@ -1,10 +1,9 @@
 ---
 title: "Million.js完全ガイド - 仮想DOM最適化で70%高速化を実現するReactコンパイラー"
-description: "Million.jsはReactアプリを自動最適化し仮想DOMを70%高速化。ドロップイン対応、ブロック仮想DOM、自動メモ化で既存コードを変更せず圧倒的パフォーマンス向上"
+description: "Million.jsはReactアプリを自動最適化し仮想DOMを70%高速化。ドロップイン対応、ブロック仮想DOM、自動メモ化で既存コードを変更せず圧倒的パフォーマンス向上。Million.js・React・Performanceに関する実践情報。"
 pubDate: "2025-02-06"
 tags: ["Million.js", "React", "Performance", "Virtual DOM", "Compiler", "Optimization"]
 ---
-
 # Million.js完全ガイド - 仮想DOM最適化で70%高速化を実現するReactコンパイラー
 
 ## Million.jsとは

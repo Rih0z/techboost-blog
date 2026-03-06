@@ -1,10 +1,9 @@
 ---
 title: 'ElectricSQL完全ガイド - ローカルファーストアプリケーション開発の決定版'
-description: 'ElectricSQLの導入方法、SQLiteとPostgresの同期、リアルタイムデータ同期、オフライン対応、競合解決を徹底解説。ローカルファースト開発の最新技術を習得しよう。'
+description: 'ElectricSQLの導入方法、SQLiteとPostgresの同期、リアルタイムデータ同期、オフライン対応、競合解決を徹底解説。ローカルファースト開発の最新技術を習得しよう。ElectricSQL・SQLite・Postgresに関する実践情報。'
 pubDate: 'Feb 05 2026'
 tags: ['ElectricSQL', 'SQLite', 'Postgres', 'LocalFirst', 'プログラミング']
 ---
-
 # ElectricSQL完全ガイド - ローカルファーストアプリケーション開発の決定版
 
 ElectricSQLは、SQLiteとPostgreSQLを同期し、ローカルファーストなアプリケーションを実現するオープンソースフレームワークです。オフライン対応、リアルタイム同期、自動競合解決を提供します。

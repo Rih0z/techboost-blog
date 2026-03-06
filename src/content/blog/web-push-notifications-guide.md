@@ -1,12 +1,11 @@
 ---
 title: 'Web Push通知実装ガイド: Service WorkerとPush APIの活用'
-description: 'Web Push通知の実装方法を徹底解説。Service Workerの登録、Push API、Notification API、VAPID認証、プッシュ配信サーバー構築、通知戦略、パフォーマンス最適化まで実践的にカバー。'
+description: 'Web Push通知の実装方法を徹底解説。Service Workerの登録、Push API、Notification API、VAPID認証、プッシュ配信サーバー構築、通知戦略、パフォーマンス最適化まで実践的にカバー。基礎から応用まで幅広くカバーしています。'
 pubDate: '2025-03-30'
 updatedDate: '2025-03-30'
 tags: ['Web API', 'Service Worker', 'PWA', 'Push通知', 'TypeScript']
 category: 'frontend'
 ---
-
 ## Web Push通知とは？
 
 Web Push通知は、ブラウザを閉じていてもユーザーにメッセージを届けられる強力な機能です。PWA（Progressive Web Apps）の中核技術の一つで、ネイティブアプリのようなユーザー体験を実現します。

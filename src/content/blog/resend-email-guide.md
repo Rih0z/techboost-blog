@@ -1,10 +1,9 @@
 ---
 title: 'Resendで最新メール送信を実装する - Next.jsからのトランザクションメール配信'
-description: 'Resendを使ったモダンなメール送信実装ガイド。React EmailでHTMLメールをコンポーネントとして作成し、Next.js APIルートから送信する方法を実践的に解説します。'
+description: 'Resendを使ったモダンなメール送信実装ガイド。React EmailでHTMLメールをコンポーネントとして作成し、Next.js APIルートから送信する方法を実践的に解説します。Resend・Next.js・Emailに関する実践情報。'
 pubDate: 'Feb 05 2026'
 tags: ['Resend', 'Next.js', 'Email', 'React Email', 'TypeScript']
 ---
-
 Resendは、開発者体験を重視した最新のメール配信サービスです。React Emailと組み合わせることで、HTMLメールをReactコンポーネントとして作成できます。この記事では、Next.jsアプリにResendを統合する方法を解説します。
 
 ## Resendとは？

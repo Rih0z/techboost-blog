@@ -1,11 +1,10 @@
 ---
 title: "Terraform × AWS完全ガイド2026：Infrastructure as Codeで本番環境を自動化する"
-description: "TerraformでAWSインフラをコード化する実践ガイド。ECS/ALB/RDS構成・モジュール化・GitHub Actions CI/CD統合・コスト最適化まで網羅。"
+description: "TerraformでAWSインフラをコード化する実践ガイド。ECS/ALB/RDS構成・モジュール化・GitHub Actions CI/CD統合・コスト最適化まで網羅。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2026-03-13"
 heroImage: '../../assets/thumbnails/terraform-aws-guide-2026.jpg'
 tags: ["Terraform", "AWS", "IaC", "DevOps", "CICD", "インフラ"]
 ---
-
 ## TerraformでAWSを管理する理由
 
 ```

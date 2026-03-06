@@ -1,10 +1,9 @@
 ---
 title: "Turso + libSQLで始めるエッジデータベース【2026年完全ガイド】"
-description: "Tursoはエッジで動作するSQLiteベースのデータベース。libSQLの特徴、エッジレプリカ、Drizzle ORMとの統合、Next.js/Astroでの活用方法を解説します。"
+description: "Tursoはエッジで動作するSQLiteベースのデータベース。libSQLの特徴、エッジレプリカ、Drizzle ORMとの統合、Next.js/Astroでの活用方法を解説します。Turso・libSQL・Databaseに関する実践情報。"
 pubDate: "2026-02-05"
 tags: ["Turso", "libSQL", "Database", "Edge Computing", "インフラ"]
 ---
-
 ## Tursoとは
 
 Tursoは、SQLiteをベースにしたエッジデータベースサービスです。世界中の35箇所以上のロケーションにデータベースをレプリケートし、ユーザーに最も近い場所からデータを提供します。

@@ -1,12 +1,11 @@
 ---
 title: "GraphQL Federation v2実践ガイド - マイクロサービスの型安全なAPI統合"
-description: "Apollo Federation v2を使ったマイクロサービスアーキテクチャの構築完全ガイド。スキーマ共有、エンティティ連携、パフォーマンス最適化、実践的なデザインパターンまで徹底解説。"
+description: "Apollo Federation v2を使ったマイクロサービスアーキテクチャの構築完全ガイド。スキーマ共有、エンティティ連携、パフォーマンス最適化、実践的なデザインパターンまで徹底解説。GraphQL・Federation・Microservicesに関する実践情報。"
 pubDate: "2025-06-22"
 updatedDate: "2025-06-22"
 category: "API"
 tags: ["GraphQL", "Federation", "Microservices", "Apollo", "Architecture", "プログラミング"]
 ---
-
 ## はじめに
 
 GraphQL Federation v2は、複数のGraphQLサービスを単一の統合グラフとして公開するためのアーキテクチャパターンです。2026年現在、マイクロサービス間の型安全なAPI統合のデファクトスタンダードとなっており、Netflix、Shopify、GitHubなど大規模サービスで採用されています。

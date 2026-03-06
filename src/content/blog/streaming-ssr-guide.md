@@ -1,10 +1,9 @@
 ---
 title: 'ストリーミングSSR完全ガイド2026'
-description: 'ストリーミングSSRの仕組みから実装まで徹底解説。React Suspense SSR、Next.js/Remix対応、TTFBとFCP改善、プログレッシブレンダリング、実践パターンを紹介'
+description: 'ストリーミングSSRの仕組みから実装まで徹底解説。React Suspense SSR、Next.js/Remix対応、TTFBとFCP改善、プログレッシブレンダリング、実践パターンを紹介。React・Next.js・Remixに関する実践情報。'
 pubDate: 'Feb 05 2026'
 tags: ['React', 'Next.js', 'Remix', 'SSR', 'パフォーマンス']
 ---
-
 # ストリーミングSSR完全ガイド2026
 
 ストリーミングSSR（Server-Side Rendering）は、HTMLを段階的に送信することでページ表示を高速化する技術です。本記事では、React 19とNext.js 15での実装方法を徹底解説します。

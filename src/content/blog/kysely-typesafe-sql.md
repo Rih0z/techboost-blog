@@ -1,10 +1,9 @@
 ---
 title: "Kysely完全ガイド - TypeScript型安全SQLクエリビルダーでデータベース操作を革新する"
-description: "KyselyはTypeScript型安全なSQLクエリビルダー。生SQLの柔軟性と完全な型推論、マイグレーション、トランザクション、複数DB対応を実現。Prisma/Drizzleとの比較も解説"
+description: "KyselyはTypeScript型安全なSQLクエリビルダー。生SQLの柔軟性と完全な型推論、マイグレーション、トランザクション、複数DB対応を実現。Prisma/Drizzleとの比較も解説。Kysely・TypeScript・SQLに関する実践情報。"
 pubDate: "2025-02-06"
 tags: ["Kysely", "TypeScript", "SQL", "Database", "Type Safety", "Query Builder"]
 ---
-
 # Kysely完全ガイド - TypeScript型安全SQLクエリビルダーでデータベース操作を革新する
 
 ## Kyselyとは

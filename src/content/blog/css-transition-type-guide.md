@@ -1,10 +1,9 @@
 ---
 title: "CSS transition-behavior完全ガイド"
-description: "CSS transition-behaviorプロパティを徹底解説。display、content-visibilityなどdiscreteプロパティのアニメーション化、allow-discreteの使い方、実践的なテクニックを網羅。"
+description: "CSS transition-behaviorプロパティを徹底解説。display、content-visibilityなどdiscreteプロパティのアニメーション化、allow-discreteの使い方、実践的なテクニックを網羅。基礎から応用まで幅広くカバーしています。"
 pubDate: "2025-02-06"
-tags: ["css", "animation", "transitions", "web-animations", "discrete-properties", "プログラミング"]
+tags: ['CSS', 'Animation', 'transitions', 'web-animations', 'discrete-properties', 'プログラミング']
 ---
-
 CSS Transitions APIは長年、`opacity`や`transform`などの連続的なプロパティのみをアニメーション化できました。しかし、**CSS transition-behavior**プロパティの登場により、`display`や`content-visibility`などの離散的（discrete）なプロパティもアニメーション可能になりました。
 
 この記事では、transition-behaviorの基本から実践的な活用方法まで、最新のCSSアニメーション技術を徹底解説します。

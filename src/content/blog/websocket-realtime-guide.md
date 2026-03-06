@@ -1,11 +1,10 @@
 ---
 title: 'WebSocketリアルタイム通信完全ガイド — Socket.io・チャット・通知・スケール設計'
-description: 'WebSocketによるリアルタイムアプリ開発の完全ガイド。Socket.io・Room/Namespace・認証・再接続処理・チャット実装・リアルタイム通知・Redis Pub/Sub・水平スケールまで実装例付きで解説。'
+description: 'WebSocketによるリアルタイムアプリ開発の完全ガイド。Socket.io・Room/Namespace・認証・再接続処理・チャット実装・リアルタイム通知・Redis Pub/Sub・水平スケールまで実装例付きで解説。2026年最新の情報を反映しています。'
 pubDate: 'Feb 20 2026'
 heroImage: '../../assets/thumbnails/websocket-realtime-guide.jpg'
 tags: ['WebSocket', 'Socket.io', 'Node.js', 'リアルタイム', 'TypeScript']
 ---
-
 リアルタイム通信は現代のWebアプリケーションに不可欠な要素だ。チャット、通知、ライブダッシュボード、オンラインゲーム、コラボレーションツール — これらはすべて、サーバーとクライアントが双方向に即座にデータをやり取りする仕組みを必要とする。本記事では、WebSocketの基礎からSocket.ioを使った実装、本番環境での水平スケール設計まで、実務で通用する知識を体系的に解説する。
 
 ---
