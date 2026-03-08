@@ -206,6 +206,160 @@ npm test -- --coverage # カバレッジ計測
 
 ---
 
+## 高度なモックパターン
+
+テストの品質を高めるには、適切なモック戦略が不可欠です。ここでは実務で頻繁に使うパターンを紹介します。
+
+### モジュール全体のモック
+
+```typescript
+// src/services/userService.test.ts
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getUserProfile } from './userService';
+
+// モジュール全体をモック
+vi.mock('./api/client', () => ({
+  apiClient: {
+    get: vi.fn(),
+    post: vi.fn(),
+  },
+}));
+
+// モックされたモジュールをインポート
+import { apiClient } from './api/client';
+
+describe('getUserProfile', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('APIレスポンスを整形して返す', async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({
+      data: { id: 1, name: '田中太郎', role: 'admin' },
+    });
+
+    const profile = await getUserProfile(1);
+    expect(profile).toEqual({
+      id: 1,
+      displayName: '田中太郎',
+      isAdmin: true,
+    });
+  });
+
+  it('API失敗時にnullを返す', async () => {
+    vi.mocked(apiClient.get).mockRejectedValue(new Error('Network Error'));
+
+    const profile = await getUserProfile(1);
+    expect(profile).toBeNull();
+  });
+});
+```
+
+### 部分モック（spyOn）
+
+```typescript
+import { describe, it, expect, vi } from 'vitest';
+import * as dateUtils from './dateUtils';
+
+describe('部分モック', () => {
+  it('現在日時を固定してテストする', () => {
+    const fixedDate = new Date('2026-04-01T09:00:00Z');
+    vi.spyOn(dateUtils, 'getCurrentDate').mockReturnValue(fixedDate);
+
+    const result = dateUtils.isBusinessHour();
+    expect(result).toBe(true);
+
+    vi.restoreAllMocks();
+  });
+});
+```
+
+---
+
+## CI/CDへの統合
+
+Vitestをチームの開発フローに組み込むことで、コードの品質を継続的に保てます。
+
+### GitHub Actionsでの設定
+
+```yaml
+# .github/workflows/test.yml
+name: Test
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test -- --reporter=verbose
+      - run: npm test -- --coverage
+      - name: カバレッジレポートをアップロード
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+```
+
+### pre-commitフックでテストを実行
+
+```bash
+# .husky/pre-commit
+#!/bin/sh
+npx vitest run --changed HEAD~1
+```
+
+変更されたファイルに関連するテストだけを実行することで、コミット前の待ち時間を最小限に抑えられます。
+
+---
+
+## カバレッジ設定の最適化
+
+カバレッジを正しく設定することで、テストの品質指標を可視化できます。
+
+```typescript
+// vitest.config.ts（カバレッジ詳細設定）
+export default defineConfig({
+  test: {
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov', 'json-summary'],
+      reportsDirectory: './coverage',
+      // ファイル単位の閾値設定
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 70,
+        statements: 80,
+        // 個別ファイルにも閾値を適用
+        perFile: true,
+      },
+      // カバレッジ対象の制御
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/**/*.stories.{ts,tsx}',
+        'src/types/**',
+        'src/test/**',
+      ],
+    },
+  },
+});
+```
+
+カバレッジレポートはHTMLで出力すると、ファイルごとの未テスト行を視覚的に確認できます。`open coverage/index.html` でブラウザから確認しましょう。
+
+---
+
 ## まとめ
 
 ```

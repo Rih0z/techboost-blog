@@ -224,6 +224,158 @@ jobs:
 
 ---
 
+## Matrix戦略：複数環境での並列テスト
+
+AI自動化と組み合わせて、複数のNode.jsバージョンやOSで並列テストを実行する方法です。
+
+```yaml
+# .github/workflows/matrix-test.yml
+name: Matrix Test with AI Analysis
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        node-version: [20, 22]
+        os: [ubuntu-latest, macos-latest]
+      fail-fast: false  # 1つ失敗しても他のジョブを継続
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - run: npm test
+      - name: テスト失敗時にAIで環境差分を分析
+        if: failure()
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          echo "失敗環境: ${{ matrix.os }} / Node ${{ matrix.node-version }}"
+          # AI分析のcurlコマンドをここに記述
+```
+
+`fail-fast: false` を設定すると、1つの環境で失敗しても他の環境のテストは最後まで実行されます。環境固有のバグを見逃さないために重要な設定です。
+
+---
+
+## Secrets管理のベストプラクティス
+
+AI APIキーを安全にGitHub Actionsで使うための設定方法です。
+
+### Environment単位での管理
+
+```yaml
+jobs:
+  ai-review:
+    runs-on: ubuntu-latest
+    environment: production  # Environment単位でsecretsを管理
+    steps:
+      - name: AI Review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          # APIキーが空の場合はスキップ
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "APIキー未設定のためスキップ"
+            exit 0
+          fi
+```
+
+### Secretsの階層設計
+
+| レベル | 用途 | 設定場所 |
+|--------|------|---------|
+| Repository secrets | リポジトリ固有のAPIキー | Settings > Secrets |
+| Environment secrets | 本番/ステージング別のキー | Settings > Environments |
+| Organization secrets | 組織共通のキー | Org Settings > Secrets |
+
+### セキュリティ上の注意点
+
+- **Forkからのプルリクエスト**ではsecretsにアクセスできません（セキュリティ上の制限）
+- APIキーのローテーションを四半期ごとに実施する
+- `GITHUB_TOKEN`の権限は最小限に設定する（`permissions`で明示）
+
+---
+
+## Reusable Workflows：AI処理の再利用
+
+複数リポジトリで同じAIワークフローを使い回すための設計です。
+
+### 共通ワークフローの定義
+
+```yaml
+# .github/workflows/reusable-ai-review.yml
+name: Reusable AI Review
+on:
+  workflow_call:
+    inputs:
+      model:
+        description: '使用するAIモデル'
+        required: false
+        default: 'claude-sonnet-4-6'
+        type: string
+      max_tokens:
+        description: '最大トークン数'
+        required: false
+        default: 1024
+        type: number
+    secrets:
+      ANTHROPIC_API_KEY:
+        required: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get diff and review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          DIFF=$(git diff origin/${{ github.base_ref }}...HEAD -- '*.ts' '*.tsx' | head -300)
+          curl -s https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "content-type: application/json" \
+            -d '{
+              "model": "${{ inputs.model }}",
+              "max_tokens": ${{ inputs.max_tokens }},
+              "messages": [{"role": "user", "content": "コードレビュー:\n'"$DIFF"'"}]
+            }'
+```
+
+### 呼び出し側のワークフロー
+
+```yaml
+# 各リポジトリの .github/workflows/review.yml
+name: AI Review
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  ai-review:
+    uses: your-org/shared-workflows/.github/workflows/reusable-ai-review.yml@main
+    with:
+      model: 'claude-sonnet-4-6'
+      max_tokens: 2048
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+```
+
+この方式なら、AIレビューのプロンプト改善を1箇所で行うだけで、全リポジトリに反映されます。
+
+---
+
 ## まとめ
 
 「完璧なAIレビュー」を目指すより、「人間レビューの補完ツール」として使うことが成功の鍵です。AIで繰り返し作業を自動化し、人間はアーキテクチャ・ビジネスロジック・UXの判断に集中する体制を作りましょう。

@@ -252,6 +252,67 @@ export default defineConfig({
 });
 ```
 
+## Webpack から Vite への移行チェックリスト
+
+大規模プロジェクトでの移行を成功させるために、段階的なアプローチが重要です。
+
+### Step 1: 依存関係の互換性チェック
+
+移行前に、使用しているnpmパッケージがViteで動作するか確認します。
+
+```bash
+# package.jsonの依存関係を一覧化
+npm ls --depth=0
+
+# Webpack固有プラグインを洗い出す
+grep -r "webpack" package.json
+```
+
+特に注意が必要なパッケージ:
+
+| Webpack プラグイン | Vite での代替 |
+|---|---|
+| `html-webpack-plugin` | Vite標準機能（index.html） |
+| `mini-css-extract-plugin` | Vite標準機能（CSSコード分割） |
+| `copy-webpack-plugin` | `vite-plugin-static-copy` |
+| `webpack-bundle-analyzer` | `rollup-plugin-visualizer` |
+| `DefinePlugin` | `define` オプション |
+| `ProvidePlugin` | `vite-plugin-provide` |
+
+### Step 2: 段階的な移行戦略
+
+一度にすべてを移行するのではなく、以下の順序で進めます。
+
+1. **開発環境のみ先行移行** - `vite dev` で開発し、本番ビルドはWebpackのまま
+2. **テスト環境での検証** - 全ページの表示確認とE2Eテスト実行
+3. **本番ビルドの切り替え** - `vite build` に完全移行
+4. **Webpack設定の削除** - 不要になったパッケージと設定を削除
+
+## プラグインエコシステムの比較
+
+ViteとWebpackではプラグインの考え方が異なります。
+
+### Webpack のプラグインアーキテクチャ
+
+Webpackはローダー（ファイル変換）とプラグイン（ビルドプロセス拡張）の2層構造です。設定が複雑になりやすい反面、細かい制御が可能です。
+
+### Vite のプラグインアーキテクチャ
+
+ViteはRollupプラグインAPIを拡張した統一的なプラグインシステムを採用しています。多くのRollupプラグインがそのまま動作するため、エコシステムの恩恵を受けやすいのが特徴です。
+
+### 主要プラグイン対応表
+
+| 用途 | Webpack | Vite |
+|---|---|---|
+| React Fast Refresh | `@pmmmwh/react-refresh-webpack-plugin` | `@vitejs/plugin-react`（内蔵） |
+| Vue SFC | `vue-loader` | `@vitejs/plugin-vue`（内蔵） |
+| SVGコンポーネント化 | `@svgr/webpack` | `vite-plugin-svgr` |
+| 環境変数注入 | `dotenv-webpack` | Vite標準機能 |
+| PWA対応 | `workbox-webpack-plugin` | `vite-plugin-pwa` |
+| レガシーブラウザ対応 | `@babel/preset-env` | `@vitejs/plugin-legacy` |
+| SSR | `webpack-node-externals` | Vite標準SSR機能 |
+| 画像最適化 | `image-webpack-loader` | `vite-plugin-image-optimizer` |
+
 ## Webpack を使い続けるべきケース
 
 すべてのプロジェクトがViteに移行すべきとは限りません。以下のケースはWebpackが優位です。
