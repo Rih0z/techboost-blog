@@ -1,0 +1,468 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/golang-context-best-practices/"><!-- Primary Meta Tags --><title>Go言語Context完全ガイド: キャンセル・タイムアウト・値の伝播</title><meta name="title" content="Go言語Context完全ガイド: キャンセル・タイムアウト・値の伝播"><meta name="description" content="Go言語のcontextパッケージを徹底解説。WithCancel、WithTimeout、WithValueの使い方、伝播パターン、ベストプラクティスを実例コード付きで説明します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/golang-context-best-practices/"><meta property="og:title" content="Go言語Context完全ガイド: キャンセル・タイムアウト・値の伝播"><meta property="og:description" content="Go言語のcontextパッケージを徹底解説。WithCancel、WithTimeout、WithValueの使い方、伝播パターン、ベストプラクティスを実例コード付きで説明します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/golang-context-best-practices/"><meta name="twitter:title" content="Go言語Context完全ガイド: キャンセル・タイムアウト・値の伝播"><meta name="twitter:description" content="Go言語のcontextパッケージを徹底解説。WithCancel、WithTimeout、WithValueの使い方、伝播パターン、ベストプラクティスを実例コード付きで説明します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/golang-context-best-practices/"},"headline":"Go言語Context完全ガイド: キャンセル・タイムアウト・値の伝播","description":"Go言語のcontextパッケージを徹底解説。WithCancel、WithTimeout、WithValueの使い方、伝播パターン、ベストプラクティスを実例コード付きで説明します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。","datePublished":"2025-02-05T00:00:00.000Z","dateModified":"2025-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Go, Golang, Context, concurrency, Best Practices, プログラミング"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Go言語Context完全ガイド: キャンセル・タイムアウト・値の伝播"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-05T00:00:00.000Z"> Feb 4, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>Go言語Context完全ガイド: キャンセル・タイムアウト・値の伝播</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Go" class="article-tag" data-astro-cid-bvzihdzo>
+#Go </a><a href="/blog/tag/Golang" class="article-tag" data-astro-cid-bvzihdzo>
+#Golang </a><a href="/blog/tag/Context" class="article-tag" data-astro-cid-bvzihdzo>
+#Context </a><a href="/blog/tag/concurrency" class="article-tag" data-astro-cid-bvzihdzo>
+#concurrency </a><a href="/blog/tag/Best%20Practices" class="article-tag" data-astro-cid-bvzihdzo>
+#Best Practices </a><a href="/blog/tag/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="article-tag" data-astro-cid-bvzihdzo>
+#プログラミング </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Go言語の<code>context</code>パッケージは、ゴルーチン間でキャンセル信号、デッドライン、リクエストスコープの値を伝播するための標準的な仕組みです。Web APIやデータベースアクセスで必須の知識です。</p>
+<h2 id="contextとは">Contextとは</h2>
+<p>Contextは、並行処理において以下を管理します。</p>
+<p><strong>主な役割:</strong></p>
+<ul>
+<li><strong>キャンセル伝播</strong>: 上位の処理がキャンセルされたら、下位も中断</li>
+<li><strong>タイムアウト制御</strong>: 時間制限のある処理を実装</li>
+<li><strong>値の伝播</strong>: リクエストIDやユーザー情報などをゴルーチン間で共有</li>
+<li><strong>デッドライン管理</strong>: 絶対時刻での処理期限を設定</li>
+</ul>
+<h2 id="基本-contextbackground-と-contexttodo">基本: context.Background と context.TODO</h2>
+<p>すべてのContextの起点となる2つの関数があります。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> main</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">context</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">fmt</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">    // context.Background: メイン関数やトップレベルで使用</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // context.TODO: まだどのContextを使うか決まっていないときの一時的な代用</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctxTodo </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">TODO</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    processData</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> processData</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"処理開始"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D">    // ctx を下流の関数に渡していく</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>使い分けのルール:</strong></p>
+<ul>
+<li><code>context.Background()</code>: 本番コードのエントリーポイント</li>
+<li><code>context.TODO()</code>: リファクタリング中の一時的な代用</li>
+</ul>
+<h2 id="withcancel-キャンセル可能なcontext">WithCancel: キャンセル可能なContext</h2>
+<p>手動でキャンセル可能なContextを作成します。</p>
+<h3 id="基本例">基本例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> main</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">context</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">fmt</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">time</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx, cancel </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithCancel</span><span style="color:#E1E4E8">(context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ゴルーチンで長時間処理を開始</span></span>
+<span class="line"><span style="color:#F97583">    go</span><span style="color:#B392F0"> longRunningTask</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 2秒後にキャンセル</span></span>
+<span class="line"><span style="color:#E1E4E8">    time.</span><span style="color:#B392F0">Sleep</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">2</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Second)</span></span>
+<span class="line"><span style="color:#B392F0">    cancel</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // キャンセルが伝播するまで待機</span></span>
+<span class="line"><span style="color:#E1E4E8">    time.</span><span style="color:#B392F0">Sleep</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Second)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> longRunningTask</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        select</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        case</span><span style="color:#F97583"> &#x3C;-</span><span style="color:#E1E4E8">ctx.</span><span style="color:#B392F0">Done</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#E1E4E8">            fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"キャンセルされました:"</span><span style="color:#E1E4E8">, ctx.</span><span style="color:#B392F0">Err</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#F97583">            return</span></span>
+<span class="line"><span style="color:#F97583">        default</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"処理中..."</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            time.</span><span style="color:#B392F0">Sleep</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">500</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Millisecond)</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="複数ゴルーチンへの伝播">複数ゴルーチンへの伝播</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx, cancel </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithCancel</span><span style="color:#E1E4E8">(context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#F97583">    defer</span><span style="color:#B392F0"> cancel</span><span style="color:#E1E4E8">() </span><span style="color:#6A737D">// 必ずcancelを呼ぶ</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 複数のゴルーチンを起動</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">:=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&#x3C;=</span><span style="color:#79B8FF"> 3</span><span style="color:#E1E4E8">; i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        go</span><span style="color:#B392F0"> worker</span><span style="color:#E1E4E8">(ctx, i)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    time.</span><span style="color:#B392F0">Sleep</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">3</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Second)</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"全ワーカーをキャンセル"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#B392F0">    cancel</span><span style="color:#E1E4E8">() </span><span style="color:#6A737D">// すべてのworkerに伝播</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    time.</span><span style="color:#B392F0">Sleep</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Second)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> worker</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">id</span><span style="color:#F97583"> int</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        select</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        case</span><span style="color:#F97583"> &#x3C;-</span><span style="color:#E1E4E8">ctx.</span><span style="color:#B392F0">Done</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#E1E4E8">            fmt.</span><span style="color:#B392F0">Printf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Worker </span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF"> 停止</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">, id)</span></span>
+<span class="line"><span style="color:#F97583">            return</span></span>
+<span class="line"><span style="color:#F97583">        default</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            fmt.</span><span style="color:#B392F0">Printf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Worker </span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF"> 稼働中</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">, id)</span></span>
+<span class="line"><span style="color:#E1E4E8">            time.</span><span style="color:#B392F0">Sleep</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">500</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Millisecond)</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="withtimeout-タイムアウト制御">WithTimeout: タイムアウト制御</h2>
+<p>指定時間後に自動的にキャンセルされるContextです。</p>
+<h3 id="基本例-1">基本例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">    // 3秒のタイムアウト</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx, cancel </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithTimeout</span><span style="color:#E1E4E8">(context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">(), </span><span style="color:#79B8FF">3</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">time.Second)</span></span>
+<span class="line"><span style="color:#F97583">    defer</span><span style="color:#B392F0"> cancel</span><span style="color:#E1E4E8">() </span><span style="color:#6A737D">// タイムアウト前に終了した場合のリソース解放</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> make</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">chan</span><span style="color:#F97583"> string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    go</span><span style="color:#B392F0"> fetchData</span><span style="color:#E1E4E8">(ctx, result)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    select</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    case</span><span style="color:#E1E4E8"> res </span><span style="color:#F97583">:=</span><span style="color:#F97583"> &#x3C;-</span><span style="color:#E1E4E8">result:</span></span>
+<span class="line"><span style="color:#E1E4E8">        fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"取得成功:"</span><span style="color:#E1E4E8">, res)</span></span>
+<span class="line"><span style="color:#F97583">    case</span><span style="color:#F97583"> &#x3C;-</span><span style="color:#E1E4E8">ctx.</span><span style="color:#B392F0">Done</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#E1E4E8">        fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"タイムアウト:"</span><span style="color:#E1E4E8">, ctx.</span><span style="color:#B392F0">Err</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> fetchData</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">result</span><span style="color:#F97583"> chan&#x3C;-</span><span style="color:#F97583"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 5秒かかる処理（タイムアウトが先に発動する）</span></span>
+<span class="line"><span style="color:#E1E4E8">    time.</span><span style="color:#B392F0">Sleep</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">5</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Second)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    select</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    case</span><span style="color:#E1E4E8"> result </span><span style="color:#F97583">&#x3C;-</span><span style="color:#9ECBFF"> "データ"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    case</span><span style="color:#F97583"> &#x3C;-</span><span style="color:#E1E4E8">ctx.</span><span style="color:#B392F0">Done</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#E1E4E8">        fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"fetchData中断"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="httpリクエストへの適用">HTTPリクエストへの適用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> main</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">context</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">fmt</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">io</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">net/http</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">time</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> fetchURL</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">url</span><span style="color:#F97583"> string</span><span style="color:#E1E4E8">) (</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">error</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    req, err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> http.</span><span style="color:#B392F0">NewRequestWithContext</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#9ECBFF">"GET"</span><span style="color:#E1E4E8">, url, </span><span style="color:#79B8FF">nil</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#9ECBFF"> ""</span><span style="color:#E1E4E8">, err</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    resp, err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> http.DefaultClient.</span><span style="color:#B392F0">Do</span><span style="color:#E1E4E8">(req)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#9ECBFF"> ""</span><span style="color:#E1E4E8">, err</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    defer</span><span style="color:#E1E4E8"> resp.Body.</span><span style="color:#B392F0">Close</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    body, err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> io.</span><span style="color:#B392F0">ReadAll</span><span style="color:#E1E4E8">(resp.Body)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#9ECBFF"> ""</span><span style="color:#E1E4E8">, err</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> string</span><span style="color:#E1E4E8">(body), </span><span style="color:#79B8FF">nil</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx, cancel </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithTimeout</span><span style="color:#E1E4E8">(context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">(), </span><span style="color:#79B8FF">5</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">time.Second)</span></span>
+<span class="line"><span style="color:#F97583">    defer</span><span style="color:#B392F0"> cancel</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    data, err </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> fetchURL</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#9ECBFF">"https://api.example.com/data"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"エラー:"</span><span style="color:#E1E4E8">, err)</span></span>
+<span class="line"><span style="color:#F97583">        return</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"取得成功:"</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">len</span><span style="color:#E1E4E8">(data), </span><span style="color:#9ECBFF">"bytes"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="withdeadline-絶対時刻での期限設定">WithDeadline: 絶対時刻での期限設定</h2>
+<p>WithTimeoutは相対時間ですが、WithDeadlineは絶対時刻を指定します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">    // 現在時刻から10秒後を期限に設定</span></span>
+<span class="line"><span style="color:#E1E4E8">    deadline </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> time.</span><span style="color:#B392F0">Now</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">Add</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Second)</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx, cancel </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithDeadline</span><span style="color:#E1E4E8">(context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">(), deadline)</span></span>
+<span class="line"><span style="color:#F97583">    defer</span><span style="color:#B392F0"> cancel</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    go</span><span style="color:#B392F0"> processWithDeadline</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    time.</span><span style="color:#B392F0">Sleep</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">15</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Second)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> processWithDeadline</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    deadline, ok </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> ctx.</span><span style="color:#B392F0">Deadline</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> ok {</span></span>
+<span class="line"><span style="color:#E1E4E8">        fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"期限:"</span><span style="color:#E1E4E8">, deadline.</span><span style="color:#B392F0">Format</span><span style="color:#E1E4E8">(time.RFC3339))</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        select</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        case</span><span style="color:#F97583"> &#x3C;-</span><span style="color:#E1E4E8">ctx.</span><span style="color:#B392F0">Done</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#E1E4E8">            fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"期限到達:"</span><span style="color:#E1E4E8">, ctx.</span><span style="color:#B392F0">Err</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#F97583">            return</span></span>
+<span class="line"><span style="color:#F97583">        default</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"処理中..."</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            time.</span><span style="color:#B392F0">Sleep</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">2</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Second)</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="withvalue-値の伝播">WithValue: 値の伝播</h2>
+<p>リクエストスコープの値をゴルーチン間で共有します。</p>
+<h3 id="基本例-2">基本例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> contextKey</span><span style="color:#F97583"> string</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#79B8FF">    userIDKey</span><span style="color:#B392F0">     contextKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "userID"</span></span>
+<span class="line"><span style="color:#79B8FF">    requestIDKey</span><span style="color:#B392F0">  contextKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "requestID"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 値を追加</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithValue</span><span style="color:#E1E4E8">(ctx, userIDKey, </span><span style="color:#9ECBFF">"user123"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithValue</span><span style="color:#E1E4E8">(ctx, requestIDKey, </span><span style="color:#9ECBFF">"req-abc-456"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    handleRequest</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> handleRequest</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    userID </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> ctx.</span><span style="color:#B392F0">Value</span><span style="color:#E1E4E8">(userIDKey).(</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    requestID </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> ctx.</span><span style="color:#B392F0">Value</span><span style="color:#E1E4E8">(requestIDKey).(</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Printf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"User: </span><span style="color:#79B8FF">%s</span><span style="color:#9ECBFF">, Request: </span><span style="color:#79B8FF">%s\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">, userID, requestID)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 下流の関数にctxを渡す</span></span>
+<span class="line"><span style="color:#B392F0">    processData</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> processData</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 上流で設定された値にアクセス可能</span></span>
+<span class="line"><span style="color:#E1E4E8">    userID </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> ctx.</span><span style="color:#B392F0">Value</span><span style="color:#E1E4E8">(userIDKey).(</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"処理中のユーザー:"</span><span style="color:#E1E4E8">, userID)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="型安全なcontext値アクセス">型安全なContext値アクセス</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> contextKey</span><span style="color:#F97583"> string</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> userContextKey</span><span style="color:#B392F0"> contextKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "user"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> User</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ID   </span><span style="color:#F97583">string</span></span>
+<span class="line"><span style="color:#E1E4E8">    Name </span><span style="color:#F97583">string</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 型安全なセッター</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> WithUser</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">user</span><span style="color:#F97583"> *</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithValue</span><span style="color:#E1E4E8">(ctx, userContextKey, user)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 型安全なゲッター</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> GetUser</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">) (</span><span style="color:#F97583">*</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    user, ok </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> ctx.</span><span style="color:#B392F0">Value</span><span style="color:#E1E4E8">(userContextKey).(</span><span style="color:#F97583">*</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> user, ok</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    user </span><span style="color:#F97583">:=</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">{ID: </span><span style="color:#9ECBFF">"123"</span><span style="color:#E1E4E8">, Name: </span><span style="color:#9ECBFF">"山田太郎"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx </span><span style="color:#F97583">=</span><span style="color:#B392F0"> WithUser</span><span style="color:#E1E4E8">(ctx, user)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> u, ok </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> GetUser</span><span style="color:#E1E4E8">(ctx); ok {</span></span>
+<span class="line"><span style="color:#E1E4E8">        fmt.</span><span style="color:#B392F0">Printf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"ユーザー: </span><span style="color:#79B8FF">%s</span><span style="color:#9ECBFF"> (</span><span style="color:#79B8FF">%s</span><span style="color:#9ECBFF">)</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">, u.Name, u.ID)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="実践例-web-apiサーバー">実践例: Web APIサーバー</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> main</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">context</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">encoding/json</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">fmt</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">log</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">net/http</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">time</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> contextKey</span><span style="color:#F97583"> string</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> requestIDKey</span><span style="color:#B392F0"> contextKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "requestID"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ミドルウェア: リクエストIDを生成してContextに追加</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> requestIDMiddleware</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">next</span><span style="color:#B392F0"> http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Handler</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Handler</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> http.</span><span style="color:#B392F0">HandlerFunc</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">w</span><span style="color:#B392F0"> http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ResponseWriter</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">r</span><span style="color:#F97583"> *</span><span style="color:#B392F0">http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        requestID </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> fmt.</span><span style="color:#B392F0">Sprintf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">, time.</span><span style="color:#B392F0">Now</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">UnixNano</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">        ctx </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithValue</span><span style="color:#E1E4E8">(r.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">(), requestIDKey, requestID)</span></span>
+<span class="line"><span style="color:#E1E4E8">        next.</span><span style="color:#B392F0">ServeHTTP</span><span style="color:#E1E4E8">(w, r.</span><span style="color:#B392F0">WithContext</span><span style="color:#E1E4E8">(ctx))</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ミドルウェア: タイムアウト設定</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> timeoutMiddleware</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">timeout</span><span style="color:#B392F0"> time</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Duration</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Handler</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Handler</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">next</span><span style="color:#B392F0"> http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Handler</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Handler</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> http.</span><span style="color:#B392F0">HandlerFunc</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">w</span><span style="color:#B392F0"> http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ResponseWriter</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">r</span><span style="color:#F97583"> *</span><span style="color:#B392F0">http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">            ctx, cancel </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithTimeout</span><span style="color:#E1E4E8">(r.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">(), timeout)</span></span>
+<span class="line"><span style="color:#F97583">            defer</span><span style="color:#B392F0"> cancel</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">            next.</span><span style="color:#B392F0">ServeHTTP</span><span style="color:#E1E4E8">(w, r.</span><span style="color:#B392F0">WithContext</span><span style="color:#E1E4E8">(ctx))</span></span>
+<span class="line"><span style="color:#E1E4E8">        })</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> handler</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">w</span><span style="color:#B392F0"> http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ResponseWriter</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">r</span><span style="color:#F97583"> *</span><span style="color:#B392F0">http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    requestID </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> ctx.</span><span style="color:#B392F0">Value</span><span style="color:#E1E4E8">(requestIDKey).(</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    log.</span><span style="color:#B392F0">Printf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"[</span><span style="color:#79B8FF">%s</span><span style="color:#9ECBFF">] リクエスト受信"</span><span style="color:#E1E4E8">, requestID)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // データベースクエリのシミュレーション</span></span>
+<span class="line"><span style="color:#E1E4E8">    data, err </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> fetchFromDB</span><span style="color:#E1E4E8">(ctx, requestID)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> context.DeadlineExceeded {</span></span>
+<span class="line"><span style="color:#E1E4E8">            http.</span><span style="color:#B392F0">Error</span><span style="color:#E1E4E8">(w, </span><span style="color:#9ECBFF">"タイムアウト"</span><span style="color:#E1E4E8">, http.StatusRequestTimeout)</span></span>
+<span class="line"><span style="color:#F97583">            return</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">        http.</span><span style="color:#B392F0">Error</span><span style="color:#E1E4E8">(w, err.</span><span style="color:#B392F0">Error</span><span style="color:#E1E4E8">(), http.StatusInternalServerError)</span></span>
+<span class="line"><span style="color:#F97583">        return</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    json.</span><span style="color:#B392F0">NewEncoder</span><span style="color:#E1E4E8">(w).</span><span style="color:#B392F0">Encode</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">map</span><span style="color:#E1E4E8">[</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">]</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        "requestID"</span><span style="color:#E1E4E8">: requestID,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "data"</span><span style="color:#E1E4E8">:      data,</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> fetchFromDB</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">requestID</span><span style="color:#F97583"> string</span><span style="color:#E1E4E8">) (</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">error</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 長時間かかるクエリをシミュレート</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">:=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&#x3C;</span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8">; i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        select</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        case</span><span style="color:#F97583"> &#x3C;-</span><span style="color:#E1E4E8">ctx.</span><span style="color:#B392F0">Done</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#E1E4E8">            log.</span><span style="color:#B392F0">Printf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"[</span><span style="color:#79B8FF">%s</span><span style="color:#9ECBFF">] クエリ中断: </span><span style="color:#79B8FF">%v</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">, requestID, ctx.</span><span style="color:#B392F0">Err</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#9ECBFF"> ""</span><span style="color:#E1E4E8">, ctx.</span><span style="color:#B392F0">Err</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">        case</span><span style="color:#F97583"> &#x3C;-</span><span style="color:#E1E4E8">time.</span><span style="color:#B392F0">After</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">500</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Millisecond):</span></span>
+<span class="line"><span style="color:#E1E4E8">            log.</span><span style="color:#B392F0">Printf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"[</span><span style="color:#79B8FF">%s</span><span style="color:#9ECBFF">] クエリ中... </span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">/10"</span><span style="color:#E1E4E8">, requestID, i</span><span style="color:#F97583">+</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#9ECBFF"> "取得したデータ"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">nil</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    mux </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> http.</span><span style="color:#B392F0">NewServeMux</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    mux.</span><span style="color:#B392F0">HandleFunc</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"/api/data"</span><span style="color:#E1E4E8">, handler)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ミドルウェアを適用</span></span>
+<span class="line"><span style="color:#F97583">    var</span><span style="color:#E1E4E8"> h </span><span style="color:#B392F0">http</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Handler</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> mux</span></span>
+<span class="line"><span style="color:#E1E4E8">    h </span><span style="color:#F97583">=</span><span style="color:#B392F0"> timeoutMiddleware</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">3</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Second)(h)</span></span>
+<span class="line"><span style="color:#E1E4E8">    h </span><span style="color:#F97583">=</span><span style="color:#B392F0"> requestIDMiddleware</span><span style="color:#E1E4E8">(h)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    log.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"サーバー起動: http://localhost:8080"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    log.</span><span style="color:#B392F0">Fatal</span><span style="color:#E1E4E8">(http.</span><span style="color:#B392F0">ListenAndServe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">":8080"</span><span style="color:#E1E4E8">, h))</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="ベストプラクティス">ベストプラクティス</h2>
+<h3 id="1-contextは第一引数に">1. Contextは第一引数に</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// Good</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> ProcessData</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">data</span><span style="color:#F97583"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // ...</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Bad</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> ProcessData</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">data</span><span style="color:#F97583"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // ...</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-必ずcancelを呼ぶ">2. 必ずcancelを呼ぶ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#E1E4E8">ctx, cancel </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithCancel</span><span style="color:#E1E4E8">(context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#F97583">defer</span><span style="color:#B392F0"> cancel</span><span style="color:#E1E4E8">() </span><span style="color:#6A737D">// リソースリーク防止</span></span></code></pre>
+<h3 id="3-contextは構造体に埋め込まない">3. Contextは構造体に埋め込まない</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// Bad</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Request</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx  </span><span style="color:#B392F0">context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#6A737D"> // NG</span></span>
+<span class="line"><span style="color:#E1E4E8">    Data </span><span style="color:#F97583">string</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Good</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#F97583">*</span><span style="color:#B392F0">Request</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">Process</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // ...</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="4-withvalueは制限的に使う">4. WithValueは制限的に使う</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// Good: リクエストスコープの値</span></span>
+<span class="line"><span style="color:#E1E4E8">ctx </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithValue</span><span style="color:#E1E4E8">(ctx, requestIDKey, </span><span style="color:#9ECBFF">"req-123"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Bad: 関数の引数で渡すべき値</span></span>
+<span class="line"><span style="color:#E1E4E8">ctx </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">WithValue</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#9ECBFF">"config"</span><span style="color:#E1E4E8">, config) </span><span style="color:#6A737D">// NG</span></span></code></pre>
+<h3 id="5-エラーチェック">5. エラーチェック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">select</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">case</span><span style="color:#F97583"> &#x3C;-</span><span style="color:#E1E4E8">ctx.</span><span style="color:#B392F0">Done</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> ctx.</span><span style="color:#B392F0">Err</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> context.Canceled {</span></span>
+<span class="line"><span style="color:#E1E4E8">        log.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"キャンセルされました"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> ctx.</span><span style="color:#B392F0">Err</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> context.DeadlineExceeded {</span></span>
+<span class="line"><span style="color:#E1E4E8">        log.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"タイムアウトしました"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> ctx.</span><span style="color:#B392F0">Err</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="アンチパターン">アンチパターン</h2>
+<h3 id="1-nilcontextを渡す">1. nilContextを渡す</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// Bad</span></span>
+<span class="line"><span style="color:#B392F0">ProcessData</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">nil</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"data"</span><span style="color:#E1E4E8">) </span><span style="color:#6A737D">// パニックのリスク</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Good</span></span>
+<span class="line"><span style="color:#B392F0">ProcessData</span><span style="color:#E1E4E8">(context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">(), </span><span style="color:#9ECBFF">"data"</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<h3 id="2-contextを無視する">2. Contextを無視する</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// Bad: ctxを受け取っているのに使っていない</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> LongTask</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    time.</span><span style="color:#B392F0">Sleep</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Second)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Good: キャンセルに対応</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> LongTask</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    select</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    case</span><span style="color:#F97583"> &#x3C;-</span><span style="color:#E1E4E8">time.</span><span style="color:#B392F0">After</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> time.Second):</span></span>
+<span class="line"><span style="color:#6A737D">        // 処理完了</span></span>
+<span class="line"><span style="color:#F97583">    case</span><span style="color:#F97583"> &#x3C;-</span><span style="color:#E1E4E8">ctx.</span><span style="color:#B392F0">Done</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#6A737D"> // キャンセル検知</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="3-グローバルなcontextを保持">3. グローバルなContextを保持</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// Bad</span></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> globalCtx </span><span style="color:#B392F0">context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> init</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    globalCtx </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Good: 必要な場所で生成</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#B392F0">    Process</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Contextは、Go言語の並行処理における重要な設計パターンです。</p>
+<p><strong>主な使い方:</strong></p>
+<ul>
+<li><code>WithCancel</code>: 手動キャンセル</li>
+<li><code>WithTimeout</code>: 相対時間でのタイムアウト</li>
+<li><code>WithDeadline</code>: 絶対時刻での期限</li>
+<li><code>WithValue</code>: リクエストスコープの値伝播</li>
+</ul>
+<p><strong>ベストプラクティス:</strong></p>
+<ul>
+<li>第一引数にする</li>
+<li>必ずcancelを呼ぶ</li>
+<li>構造体に埋め込まない</li>
+<li>WithValueは控えめに</li>
+</ul>
+<p>Web APIやデータベースアクセス、マイクロサービス間通信など、あらゆる場面でContextを活用することで、堅牢で保守性の高いGoアプリケーションを構築できます。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

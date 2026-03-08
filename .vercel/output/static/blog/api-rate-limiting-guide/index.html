@@ -1,0 +1,1002 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/api-rate-limiting-guide/"><!-- Primary Meta Tags --><title>APIレートリミティング実装ガイド2026</title><meta name="title" content="APIレートリミティング実装ガイド2026"><meta name="description" content="APIレートリミティングの実装を完全解説。トークンバケット、スライディングウィンドウ、Redis実装、Express/Hono対応まで実践的に紹介。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/api-rate-limiting-guide/"><meta property="og:title" content="APIレートリミティング実装ガイド2026"><meta property="og:description" content="APIレートリミティングの実装を完全解説。トークンバケット、スライディングウィンドウ、Redis実装、Express/Hono対応まで実践的に紹介。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/api-rate-limiting-guide/"><meta name="twitter:title" content="APIレートリミティング実装ガイド2026"><meta name="twitter:description" content="APIレートリミティングの実装を完全解説。トークンバケット、スライディングウィンドウ、Redis実装、Express/Hono対応まで実践的に紹介。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/api-rate-limiting-guide/"},"headline":"APIレートリミティング実装ガイド2026","description":"APIレートリミティングの実装を完全解説。トークンバケット、スライディングウィンドウ、Redis実装、Express/Hono対応まで実践的に紹介。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。","datePublished":"2026-02-05T00:00:00.000Z","dateModified":"2026-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"API, セキュリティ, Redis, Node.js, インフラ"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"APIレートリミティング実装ガイド2026"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-05T00:00:00.000Z"> Feb 4, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>APIレートリミティング実装ガイド2026</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/API" class="article-tag" data-astro-cid-bvzihdzo>
+#API </a><a href="/blog/tag/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3" class="article-tag" data-astro-cid-bvzihdzo>
+#セキュリティ </a><a href="/blog/tag/Redis" class="article-tag" data-astro-cid-bvzihdzo>
+#Redis </a><a href="/blog/tag/Node.js" class="article-tag" data-astro-cid-bvzihdzo>
+#Node.js </a><a href="/blog/tag/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#インフラ </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>APIレートリミティングは、サービスの安定性とセキュリティに不可欠です。本記事では、主要なアルゴリズムと実装方法を徹底解説します。</p>
+<h2 id="目次">目次</h2>
+<ol>
+<li>レートリミティングの基本</li>
+<li>アルゴリズム比較</li>
+<li>トークンバケット実装</li>
+<li>スライディングウィンドウ実装</li>
+<li>Redis実装</li>
+<li>Express対応</li>
+<li>Hono対応</li>
+<li>分散環境での実装</li>
+<li>ベストプラクティス</li>
+</ol>
+<h2 id="レートリミティングの基本">レートリミティングの基本</h2>
+<h3 id="なぜ必要か">なぜ必要か</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// レートリミティングが必要な理由</span></span>
+<span class="line"><span style="color:#6A737D">// 1. DDoS攻撃の防止</span></span>
+<span class="line"><span style="color:#6A737D">// 2. APIの公平な利用</span></span>
+<span class="line"><span style="color:#6A737D">// 3. サーバーリソースの保護</span></span>
+<span class="line"><span style="color:#6A737D">// 4. コストの最適化</span></span>
+<span class="line"><span style="color:#6A737D">// 5. サービス品質の維持</span></span></code></pre>
+<h3 id="レート制限の種類">レート制限の種類</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ユーザーごと</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> USER_RATE_LIMIT</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  requests: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  window: </span><span style="color:#9ECBFF">'1m'</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 1分間に100リクエスト</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// IPアドレスごと</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> IP_RATE_LIMIT</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  requests: </span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  window: </span><span style="color:#9ECBFF">'1h'</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 1時間に1000リクエスト</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// APIキーごと</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> API_KEY_RATE_LIMIT</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  free: { requests: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">, window: </span><span style="color:#9ECBFF">'1d'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  pro: { requests: </span><span style="color:#79B8FF">10000</span><span style="color:#E1E4E8">, window: </span><span style="color:#9ECBFF">'1d'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  enterprise: { requests: </span><span style="color:#79B8FF">1000000</span><span style="color:#E1E4E8">, window: </span><span style="color:#9ECBFF">'1d'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="レスポンスヘッダー">レスポンスヘッダー</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 標準的なレートリミットヘッダー</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> headers</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">  'X-RateLimit-Limit'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'100'</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 制限値</span></span>
+<span class="line"><span style="color:#9ECBFF">  'X-RateLimit-Remaining'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'95'</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 残り回数</span></span>
+<span class="line"><span style="color:#9ECBFF">  'X-RateLimit-Reset'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'1640995200'</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// リセット時刻（UNIX timestamp）</span></span>
+<span class="line"><span style="color:#9ECBFF">  'Retry-After'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'60'</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 再試行までの秒数</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="アルゴリズム比較">アルゴリズム比較</h2>
+<h3 id="固定ウィンドウ">固定ウィンドウ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// シンプルだが境界問題がある</span></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> FixedWindowLimiter</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> counts</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, { </span><span style="color:#FFAB70">count</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">resetAt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> }>()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  isAllowed</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.counts.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">data </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">>=</span><span style="color:#E1E4E8"> data.resetAt) {</span></span>
+<span class="line"><span style="color:#6A737D">      // 新しいウィンドウ</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.counts.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        count: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        resetAt: now </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> windowMs,</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (data.count </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> limit) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      data.count</span><span style="color:#F97583">++</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  getInfo</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.counts.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">data) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        remaining: limit,</span></span>
+<span class="line"><span style="color:#E1E4E8">        resetAt: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 60000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      remaining: Math.</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, limit </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> data.count),</span></span>
+<span class="line"><span style="color:#E1E4E8">      resetAt: data.resetAt,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="スライディングウィンドウ">スライディングウィンドウ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// より正確だが計算コストが高い</span></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> SlidingWindowLimiter</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> requests</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">number</span><span style="color:#E1E4E8">[]>()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  isAllowed</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> timestamps</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.requests.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 古いタイムスタンプを削除</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> validTimestamps</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> timestamps.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ts</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> ts </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> windowMs)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (validTimestamps.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> &#x3C;</span><span style="color:#E1E4E8"> limit) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      validTimestamps.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(now)</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.requests.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, validTimestamps)</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.requests.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, validTimestamps)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  getInfo</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> timestamps</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.requests.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> validTimestamps</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> timestamps.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ts</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> ts </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> windowMs)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      remaining: Math.</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, limit </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> validTimestamps.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">      resetAt: validTimestamps[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> validTimestamps[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> windowMs </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> windowMs,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="トークンバケット">トークンバケット</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 柔軟でバースト対応可能</span></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> TokenBucketLimiter</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> buckets</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#E1E4E8"> Map</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">string, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    tokens: number</span></span>
+<span class="line"><span style="color:#E1E4E8">    lastRefill: number</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span><span style="color:#F97583">></span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  isAllowed</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    capacity</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    refillRate</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// tokens per second</span></span>
+<span class="line"><span style="color:#FFAB70">    cost</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> bucket</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.buckets.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      tokens: capacity,</span></span>
+<span class="line"><span style="color:#E1E4E8">      lastRefill: now,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // トークンを補充</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> timePassed</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> bucket.lastRefill) </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> tokensToAdd</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> timePassed </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> refillRate</span></span>
+<span class="line"><span style="color:#E1E4E8">    bucket.tokens </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(capacity, bucket.tokens </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> tokensToAdd)</span></span>
+<span class="line"><span style="color:#E1E4E8">    bucket.lastRefill </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> now</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (bucket.tokens </span><span style="color:#F97583">>=</span><span style="color:#E1E4E8"> cost) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      bucket.tokens </span><span style="color:#F97583">-=</span><span style="color:#E1E4E8"> cost</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.buckets.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, bucket)</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.buckets.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, bucket)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  getInfo</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">capacity</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">refillRate</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> bucket</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.buckets.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">bucket) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        remaining: capacity,</span></span>
+<span class="line"><span style="color:#E1E4E8">        resetAt: now,</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> timePassed</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> bucket.lastRefill) </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> tokensToAdd</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> timePassed </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> refillRate</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> currentTokens</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(capacity, bucket.tokens </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> tokensToAdd)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      remaining: Math.</span><span style="color:#B392F0">floor</span><span style="color:#E1E4E8">(currentTokens),</span></span>
+<span class="line"><span style="color:#E1E4E8">      resetAt: bucket.lastRefill </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> ((capacity </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> bucket.tokens) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> refillRate) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="リーキーバケット">リーキーバケット</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 一定のレートで処理</span></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> LeakyBucketLimiter</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> queues</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#E1E4E8"> Map</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">string, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    queue: number[]</span></span>
+<span class="line"><span style="color:#E1E4E8">    lastLeak: number</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span><span style="color:#F97583">></span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  isAllowed</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    capacity</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    leakRate</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#6A737D"> // requests per second</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.queues.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      queue: [],</span></span>
+<span class="line"><span style="color:#E1E4E8">      lastLeak: now,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // リークを処理</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> timePassed</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> data.lastLeak) </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> requestsToLeak</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">floor</span><span style="color:#E1E4E8">(timePassed </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> leakRate)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (requestsToLeak </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      data.queue </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> data.queue.</span><span style="color:#B392F0">slice</span><span style="color:#E1E4E8">(requestsToLeak)</span></span>
+<span class="line"><span style="color:#E1E4E8">      data.lastLeak </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> now</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // キューに追加</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (data.queue.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> &#x3C;</span><span style="color:#E1E4E8"> capacity) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      data.queue.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(now)</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.queues.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, data)</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.queues.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, data)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="トークンバケット実装">トークンバケット実装</h2>
+<h3 id="基本実装">基本実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// token-bucket.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> TokenBucket</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> tokens</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> lastRefill</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">    private</span><span style="color:#FFAB70"> capacity</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    private</span><span style="color:#FFAB70"> refillRate</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#6A737D"> // tokens per second</span></span>
+<span class="line"><span style="color:#E1E4E8">  ) {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.tokens </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> capacity</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.lastRefill </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  consume</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">tokens</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">refill</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.tokens </span><span style="color:#F97583">>=</span><span style="color:#E1E4E8"> tokens) {</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.tokens </span><span style="color:#F97583">-=</span><span style="color:#E1E4E8"> tokens</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#B392F0"> refill</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> timePassed</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (now </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.lastRefill) </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> tokensToAdd</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> timePassed </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.refillRate</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.tokens </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.capacity, </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.tokens </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> tokensToAdd)</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.lastRefill </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> now</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  getTokens</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">refill</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">floor</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.tokens)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  getWaitTime</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">tokens</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">refill</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.tokens </span><span style="color:#F97583">>=</span><span style="color:#E1E4E8"> tokens) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> deficit</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> tokens </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.tokens</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">ceil</span><span style="color:#E1E4E8">((deficit </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.refillRate) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="階層型レート制限">階層型レート制限</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// tiered-rate-limiter.ts</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Tier</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'free'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'pro'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'enterprise'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> TIER_LIMITS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  free: { capacity: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">, refillRate: </span><span style="color:#79B8FF">100</span><span style="color:#F97583"> /</span><span style="color:#79B8FF"> 3600</span><span style="color:#E1E4E8"> }, </span><span style="color:#6A737D">// 100 per hour</span></span>
+<span class="line"><span style="color:#E1E4E8">  pro: { capacity: </span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">, refillRate: </span><span style="color:#79B8FF">1000</span><span style="color:#F97583"> /</span><span style="color:#79B8FF"> 3600</span><span style="color:#E1E4E8"> }, </span><span style="color:#6A737D">// 1000 per hour</span></span>
+<span class="line"><span style="color:#E1E4E8">  enterprise: { capacity: </span><span style="color:#79B8FF">10000</span><span style="color:#E1E4E8">, refillRate: </span><span style="color:#79B8FF">10000</span><span style="color:#F97583"> /</span><span style="color:#79B8FF"> 3600</span><span style="color:#E1E4E8"> }, </span><span style="color:#6A737D">// 10000 per hour</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> TieredRateLimiter</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> buckets</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">TokenBucket</span><span style="color:#E1E4E8">>()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  isAllowed</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">tier</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Tier</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">cost</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `${</span><span style="color:#E1E4E8">userId</span><span style="color:#9ECBFF">}:${</span><span style="color:#E1E4E8">tier</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> bucket </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.buckets.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">bucket) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> TIER_LIMITS</span><span style="color:#E1E4E8">[tier]</span></span>
+<span class="line"><span style="color:#E1E4E8">      bucket </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> TokenBucket</span><span style="color:#E1E4E8">(config.capacity, config.refillRate)</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.buckets.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, bucket)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> bucket.</span><span style="color:#B392F0">consume</span><span style="color:#E1E4E8">(cost)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  getInfo</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">tier</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Tier</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `${</span><span style="color:#E1E4E8">userId</span><span style="color:#9ECBFF">}:${</span><span style="color:#E1E4E8">tier</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> bucket</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.buckets.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> TIER_LIMITS</span><span style="color:#E1E4E8">[tier]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">bucket) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        limit: config.capacity,</span></span>
+<span class="line"><span style="color:#E1E4E8">        remaining: config.capacity,</span></span>
+<span class="line"><span style="color:#E1E4E8">        resetAt: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 3600000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      limit: config.capacity,</span></span>
+<span class="line"><span style="color:#E1E4E8">      remaining: bucket.</span><span style="color:#B392F0">getTokens</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      resetAt: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> bucket.</span><span style="color:#B392F0">getWaitTime</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="スライディングウィンドウ実装">スライディングウィンドウ実装</h2>
+<h3 id="メモリベース">メモリベース</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// sliding-window.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> SlidingWindowLimiter</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> windows</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">number</span><span style="color:#E1E4E8">[]>()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  isAllowed</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> requests</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.windows.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ウィンドウ外のリクエストを削除</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> validRequests</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> requests.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">timestamp</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> timestamp </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> windowMs)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (validRequests.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> &#x3C;</span><span style="color:#E1E4E8"> limit) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      validRequests.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(now)</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.windows.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, validRequests)</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.windows.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, validRequests)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  getInfo</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> requests</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.windows.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> validRequests</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> requests.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">timestamp</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> timestamp </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> windowMs)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> oldestRequest</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> validRequests[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> now</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> resetAt</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> oldestRequest </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> windowMs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      limit,</span></span>
+<span class="line"><span style="color:#E1E4E8">      remaining: Math.</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, limit </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> validRequests.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">      resetAt,</span></span>
+<span class="line"><span style="color:#E1E4E8">      retryAfter: validRequests.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> >=</span><span style="color:#E1E4E8"> limit</span></span>
+<span class="line"><span style="color:#F97583">        ?</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">ceil</span><span style="color:#E1E4E8">((resetAt </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> now) </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        :</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 定期的にクリーンアップ</span></span>
+<span class="line"><span style="color:#B392F0">  cleanup</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">maxAge</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 3600000</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">key</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">requests</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">of</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.windows.</span><span style="color:#B392F0">entries</span><span style="color:#E1E4E8">()) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> validRequests</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> requests.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">timestamp</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> timestamp </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> maxAge)</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (validRequests.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ===</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">        this</span><span style="color:#E1E4E8">.windows.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"><span style="color:#E1E4E8">      } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">        this</span><span style="color:#E1E4E8">.windows.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, validRequests)</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="スライディングウィンドウログ">スライディングウィンドウログ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// sliding-window-log.ts</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> RequestLog</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  timestamp</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#FFAB70">  cost</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> SlidingWindowLog</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> logs</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">RequestLog</span><span style="color:#E1E4E8">[]>()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  isAllowed</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    cost</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> requests</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.logs.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ウィンドウ外のリクエストを削除</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> validRequests</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> requests.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">      req</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> req.timestamp </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> windowMs</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // コストの合計を計算</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> totalCost</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> validRequests.</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">sum</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> sum </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> req.cost, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (totalCost </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> cost </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> limit) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      validRequests.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">({ timestamp: now, cost })</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.logs.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, validRequests)</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.logs.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, validRequests)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  getInfo</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> requests</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.logs.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> validRequests</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> requests.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">      req</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> req.timestamp </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> windowMs</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> totalCost</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> validRequests.</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">sum</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> sum </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> req.cost, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> oldestRequest</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> validRequests[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]?.timestamp </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> now</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      limit,</span></span>
+<span class="line"><span style="color:#E1E4E8">      used: totalCost,</span></span>
+<span class="line"><span style="color:#E1E4E8">      remaining: Math.</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, limit </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> totalCost),</span></span>
+<span class="line"><span style="color:#E1E4E8">      resetAt: oldestRequest </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> windowMs,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="redis実装">Redis実装</h2>
+<h3 id="redisベーストークンバケット">Redisベーストークンバケット</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// redis-token-bucket.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'ioredis'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> RedisTokenBucket</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">private</span><span style="color:#FFAB70"> redis</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Redis</span><span style="color:#E1E4E8">) {}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> isAllowed</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    capacity</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    refillRate</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// tokens per second</span></span>
+<span class="line"><span style="color:#FFAB70">    cost</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">boolean</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> bucketKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `rate:${</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Luaスクリプトでアトミックに処理</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> script</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `</span></span>
+<span class="line"><span style="color:#9ECBFF">      local key = KEYS[1]</span></span>
+<span class="line"><span style="color:#9ECBFF">      local capacity = tonumber(ARGV[1])</span></span>
+<span class="line"><span style="color:#9ECBFF">      local refillRate = tonumber(ARGV[2])</span></span>
+<span class="line"><span style="color:#9ECBFF">      local cost = tonumber(ARGV[3])</span></span>
+<span class="line"><span style="color:#9ECBFF">      local now = tonumber(ARGV[4])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">      local bucket = redis.call('HMGET', key, 'tokens', 'lastRefill')</span></span>
+<span class="line"><span style="color:#9ECBFF">      local tokens = tonumber(bucket[1]) or capacity</span></span>
+<span class="line"><span style="color:#9ECBFF">      local lastRefill = tonumber(bucket[2]) or now</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">      -- トークンを補充</span></span>
+<span class="line"><span style="color:#9ECBFF">      local timePassed = (now - lastRefill) / 1000</span></span>
+<span class="line"><span style="color:#9ECBFF">      local tokensToAdd = timePassed * refillRate</span></span>
+<span class="line"><span style="color:#9ECBFF">      tokens = math.min(capacity, tokens + tokensToAdd)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">      -- トークンを消費</span></span>
+<span class="line"><span style="color:#9ECBFF">      if tokens >= cost then</span></span>
+<span class="line"><span style="color:#9ECBFF">        tokens = tokens - cost</span></span>
+<span class="line"><span style="color:#9ECBFF">        redis.call('HMSET', key, 'tokens', tokens, 'lastRefill', now)</span></span>
+<span class="line"><span style="color:#9ECBFF">        redis.call('EXPIRE', key, 3600)</span></span>
+<span class="line"><span style="color:#9ECBFF">        return {1, tokens}</span></span>
+<span class="line"><span style="color:#9ECBFF">      else</span></span>
+<span class="line"><span style="color:#9ECBFF">        redis.call('HMSET', key, 'tokens', tokens, 'lastRefill', now)</span></span>
+<span class="line"><span style="color:#9ECBFF">        redis.call('EXPIRE', key, 3600)</span></span>
+<span class="line"><span style="color:#9ECBFF">        return {0, tokens}</span></span>
+<span class="line"><span style="color:#9ECBFF">      end</span></span>
+<span class="line"><span style="color:#9ECBFF">    `</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.redis.</span><span style="color:#B392F0">eval</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      script,</span></span>
+<span class="line"><span style="color:#79B8FF">      1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      bucketKey,</span></span>
+<span class="line"><span style="color:#E1E4E8">      capacity,</span></span>
+<span class="line"><span style="color:#E1E4E8">      refillRate,</span></span>
+<span class="line"><span style="color:#E1E4E8">      cost,</span></span>
+<span class="line"><span style="color:#E1E4E8">      now</span></span>
+<span class="line"><span style="color:#E1E4E8">    ) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">number</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">number</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> getInfo</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">capacity</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">refillRate</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> bucketKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `rate:${</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> bucket</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.redis.</span><span style="color:#B392F0">hmget</span><span style="color:#E1E4E8">(bucketKey, </span><span style="color:#9ECBFF">'tokens'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'lastRefill'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> tokens</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> parseFloat</span><span style="color:#E1E4E8">(bucket[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> capacity.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> lastRefill</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> parseFloat</span><span style="color:#E1E4E8">(bucket[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> now.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // トークンを補充（読み取りのみ）</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> timePassed</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> lastRefill) </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> tokensToAdd</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> timePassed </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> refillRate</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> currentTokens</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(capacity, tokens </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> tokensToAdd)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      limit: capacity,</span></span>
+<span class="line"><span style="color:#E1E4E8">      remaining: Math.</span><span style="color:#B392F0">floor</span><span style="color:#E1E4E8">(currentTokens),</span></span>
+<span class="line"><span style="color:#E1E4E8">      resetAt: lastRefill </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> ((capacity </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> tokens) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> refillRate) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="redisスライディングウィンドウ">Redisスライディングウィンドウ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// redis-sliding-window.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'ioredis'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> RedisSlidingWindow</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">private</span><span style="color:#FFAB70"> redis</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Redis</span><span style="color:#E1E4E8">) {}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> isAllowed</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">boolean</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> windowKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `rate:${</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> windowStart</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> windowMs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Luaスクリプトでアトミックに処理</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> script</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `</span></span>
+<span class="line"><span style="color:#9ECBFF">      local key = KEYS[1]</span></span>
+<span class="line"><span style="color:#9ECBFF">      local limit = tonumber(ARGV[1])</span></span>
+<span class="line"><span style="color:#9ECBFF">      local windowStart = tonumber(ARGV[2])</span></span>
+<span class="line"><span style="color:#9ECBFF">      local now = tonumber(ARGV[3])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">      -- 古いエントリを削除</span></span>
+<span class="line"><span style="color:#9ECBFF">      redis.call('ZREMRANGEBYSCORE', key, 0, windowStart)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">      -- 現在のカウントを取得</span></span>
+<span class="line"><span style="color:#9ECBFF">      local count = redis.call('ZCARD', key)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">      if count &#x3C; limit then</span></span>
+<span class="line"><span style="color:#9ECBFF">        redis.call('ZADD', key, now, now)</span></span>
+<span class="line"><span style="color:#9ECBFF">        redis.call('EXPIRE', key, 3600)</span></span>
+<span class="line"><span style="color:#9ECBFF">        return 1</span></span>
+<span class="line"><span style="color:#9ECBFF">      else</span></span>
+<span class="line"><span style="color:#9ECBFF">        return 0</span></span>
+<span class="line"><span style="color:#9ECBFF">      end</span></span>
+<span class="line"><span style="color:#9ECBFF">    `</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.redis.</span><span style="color:#B392F0">eval</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      script,</span></span>
+<span class="line"><span style="color:#79B8FF">      1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      windowKey,</span></span>
+<span class="line"><span style="color:#E1E4E8">      limit,</span></span>
+<span class="line"><span style="color:#E1E4E8">      windowStart,</span></span>
+<span class="line"><span style="color:#E1E4E8">      now</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> getInfo</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> windowKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `rate:${</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> windowStart</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> windowMs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 古いエントリを削除</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.redis.</span><span style="color:#B392F0">zremrangebyscore</span><span style="color:#E1E4E8">(windowKey, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, windowStart)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 現在のカウントを取得</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> count</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.redis.</span><span style="color:#B392F0">zcard</span><span style="color:#E1E4E8">(windowKey)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 最も古いエントリのタイムスタンプを取得</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> oldest</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.redis.</span><span style="color:#B392F0">zrange</span><span style="color:#E1E4E8">(windowKey, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'WITHSCORES'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> oldestTimestamp</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> oldest[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">?</span><span style="color:#B392F0"> parseFloat</span><span style="color:#E1E4E8">(oldest[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]) </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> now</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      limit,</span></span>
+<span class="line"><span style="color:#E1E4E8">      remaining: Math.</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, limit </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> count),</span></span>
+<span class="line"><span style="color:#E1E4E8">      resetAt: oldestTimestamp </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> windowMs,</span></span>
+<span class="line"><span style="color:#E1E4E8">      retryAfter: count </span><span style="color:#F97583">>=</span><span style="color:#E1E4E8"> limit</span></span>
+<span class="line"><span style="color:#F97583">        ?</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">ceil</span><span style="color:#E1E4E8">((oldestTimestamp </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> windowMs </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> now) </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        :</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="express対応">Express対応</h2>
+<h3 id="ミドルウェア実装">ミドルウェア実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// express-rate-limit.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Request, Response, NextFunction } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'express'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'ioredis'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { RedisSlidingWindow } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './redis-sliding-window'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> RateLimitConfig</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#FFAB70">  max</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#FFAB70">  message</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  statusCode</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#B392F0">  keyGenerator</span><span style="color:#F97583">?:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">req</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#B392F0">  skip</span><span style="color:#F97583">?:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">req</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> boolean</span></span>
+<span class="line"><span style="color:#B392F0">  handler</span><span style="color:#F97583">?:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">req</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">res</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> void</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createRateLimiter</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  redis</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Redis</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  config</span><span style="color:#F97583">:</span><span style="color:#B392F0"> RateLimitConfig</span></span>
+<span class="line"><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> limiter</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> RedisSlidingWindow</span><span style="color:#E1E4E8">(redis)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    windowMs</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    max</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    message</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'Too many requests'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    statusCode</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 429</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    keyGenerator</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> req.ip,</span></span>
+<span class="line"><span style="color:#79B8FF">    skip</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    handler</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> config</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">req</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">res</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">next</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextFunction</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">skip</span><span style="color:#E1E4E8">(req)) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#B392F0"> next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> keyGenerator</span><span style="color:#E1E4E8">(req)</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> allowed</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> limiter.</span><span style="color:#B392F0">isAllowed</span><span style="color:#E1E4E8">(key, max, windowMs)</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> info</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> limiter.</span><span style="color:#B392F0">getInfo</span><span style="color:#E1E4E8">(key, max, windowMs)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // レートリミットヘッダーを設定</span></span>
+<span class="line"><span style="color:#E1E4E8">    res.</span><span style="color:#B392F0">setHeader</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'X-RateLimit-Limit'</span><span style="color:#E1E4E8">, info.limit)</span></span>
+<span class="line"><span style="color:#E1E4E8">    res.</span><span style="color:#B392F0">setHeader</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'X-RateLimit-Remaining'</span><span style="color:#E1E4E8">, info.remaining)</span></span>
+<span class="line"><span style="color:#E1E4E8">    res.</span><span style="color:#B392F0">setHeader</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'X-RateLimit-Reset'</span><span style="color:#E1E4E8">, Math.</span><span style="color:#B392F0">ceil</span><span style="color:#E1E4E8">(info.resetAt </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">allowed) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      res.</span><span style="color:#B392F0">setHeader</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Retry-After'</span><span style="color:#E1E4E8">, info.retryAfter)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (handler) {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> handler</span><span style="color:#E1E4E8">(req, res)</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> res.</span><span style="color:#B392F0">status</span><span style="color:#E1E4E8">(statusCode).</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        error: message,</span></span>
+<span class="line"><span style="color:#E1E4E8">        retryAfter: info.retryAfter,</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="使用例">使用例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> express </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'express'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'ioredis'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createRateLimiter } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './express-rate-limit'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> app</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> express</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> redis</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Redis</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// グローバルレート制限</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">createRateLimiter</span><span style="color:#E1E4E8">(redis, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  windowMs: </span><span style="color:#79B8FF">15</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 15分</span></span>
+<span class="line"><span style="color:#E1E4E8">  max: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 100リクエスト</span></span>
+<span class="line"><span style="color:#E1E4E8">}))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// API固有のレート制限</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> apiLimiter</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createRateLimiter</span><span style="color:#E1E4E8">(redis, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  windowMs: </span><span style="color:#79B8FF">60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 1分</span></span>
+<span class="line"><span style="color:#E1E4E8">  max: </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 10リクエスト</span></span>
+<span class="line"><span style="color:#B392F0">  keyGenerator</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> req.user?.id </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> req.ip,</span></span>
+<span class="line"><span style="color:#B392F0">  skip</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> req.user?.tier </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'enterprise'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/'</span><span style="color:#E1E4E8">, apiLimiter)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// エンドポイント固有のレート制限</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> strictLimiter</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createRateLimiter</span><span style="color:#E1E4E8">(redis, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  windowMs: </span><span style="color:#79B8FF">60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 1分</span></span>
+<span class="line"><span style="color:#E1E4E8">  max: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 5リクエスト</span></span>
+<span class="line"><span style="color:#E1E4E8">  message: </span><span style="color:#9ECBFF">'Too many login attempts'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/login'</span><span style="color:#E1E4E8">, strictLimiter, (</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">res</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">  // ログイン処理</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h2 id="hono対応">Hono対応</h2>
+<h3 id="honoミドルウェア">Honoミドルウェア</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// hono-rate-limit.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Context, Next } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'ioredis'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { RedisSlidingWindow } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './redis-sliding-window'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> HonoRateLimitConfig</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#FFAB70">  max</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#FFAB70">  message</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  statusCode</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#B392F0">  keyGenerator</span><span style="color:#F97583">?:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Context</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#B392F0">  skip</span><span style="color:#F97583">?:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Context</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> boolean</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> rateLimiter</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  redis</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Redis</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  config</span><span style="color:#F97583">:</span><span style="color:#B392F0"> HonoRateLimitConfig</span></span>
+<span class="line"><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> limiter</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> RedisSlidingWindow</span><span style="color:#E1E4E8">(redis)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    windowMs</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    max</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    message</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'Too many requests'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    statusCode</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 429</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    keyGenerator</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-forwarded-for'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'unknown'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    skip</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> config</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">next</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Next</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">skip</span><span style="color:#E1E4E8">(c)) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#B392F0"> next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> keyGenerator</span><span style="color:#E1E4E8">(c)</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> allowed</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> limiter.</span><span style="color:#B392F0">isAllowed</span><span style="color:#E1E4E8">(key, max, windowMs)</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> info</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> limiter.</span><span style="color:#B392F0">getInfo</span><span style="color:#E1E4E8">(key, max, windowMs)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // レートリミットヘッダーを設定</span></span>
+<span class="line"><span style="color:#E1E4E8">    c.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'X-RateLimit-Limit'</span><span style="color:#E1E4E8">, info.limit.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">    c.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'X-RateLimit-Remaining'</span><span style="color:#E1E4E8">, info.remaining.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">    c.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'X-RateLimit-Reset'</span><span style="color:#E1E4E8">, Math.</span><span style="color:#B392F0">ceil</span><span style="color:#E1E4E8">(info.resetAt </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">allowed) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      c.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Retry-After'</span><span style="color:#E1E4E8">, info.retryAfter.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        error: message,</span></span>
+<span class="line"><span style="color:#E1E4E8">        retryAfter: info.retryAfter,</span></span>
+<span class="line"><span style="color:#E1E4E8">      }, statusCode)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#B392F0"> next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="hono使用例">Hono使用例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Hono } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'ioredis'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { rateLimiter } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './hono-rate-limit'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> app</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Hono</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> redis</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Redis</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// グローバルレート制限</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'*'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">rateLimiter</span><span style="color:#E1E4E8">(redis, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  windowMs: </span><span style="color:#79B8FF">15</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  max: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// API固有のレート制限</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/*'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">rateLimiter</span><span style="color:#E1E4E8">(redis, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  windowMs: </span><span style="color:#79B8FF">60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  max: </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">  keyGenerator</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'userId'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-forwarded-for'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'unknown'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// エンドポイント固有のレート制限</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> strictLimiter</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> rateLimiter</span><span style="color:#E1E4E8">(redis, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  windowMs: </span><span style="color:#79B8FF">60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  max: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  message: </span><span style="color:#9ECBFF">'Too many login attempts'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/login'</span><span style="color:#E1E4E8">, strictLimiter, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">  // ログイン処理</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ message: </span><span style="color:#9ECBFF">'Login successful'</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> app</span></span></code></pre>
+<h2 id="分散環境での実装">分散環境での実装</h2>
+<h3 id="redisクラスター対応">Redisクラスター対応</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// distributed-rate-limiter.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Cluster } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'ioredis'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> DistributedRateLimiter</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">private</span><span style="color:#FFAB70"> cluster</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Cluster</span><span style="color:#E1E4E8">) {}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> isAllowed</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">boolean</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> windowKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `rate:${</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> windowStart</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> windowMs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ハッシュタグを使用して同じスロットに配置</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> slotKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `{${</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}}`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> script</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `</span></span>
+<span class="line"><span style="color:#9ECBFF">      local key = KEYS[1]</span></span>
+<span class="line"><span style="color:#9ECBFF">      local limit = tonumber(ARGV[1])</span></span>
+<span class="line"><span style="color:#9ECBFF">      local windowStart = tonumber(ARGV[2])</span></span>
+<span class="line"><span style="color:#9ECBFF">      local now = tonumber(ARGV[3])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">      redis.call('ZREMRANGEBYSCORE', key, 0, windowStart)</span></span>
+<span class="line"><span style="color:#9ECBFF">      local count = redis.call('ZCARD', key)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">      if count &#x3C; limit then</span></span>
+<span class="line"><span style="color:#9ECBFF">        redis.call('ZADD', key, now, now)</span></span>
+<span class="line"><span style="color:#9ECBFF">        redis.call('EXPIRE', key, 3600)</span></span>
+<span class="line"><span style="color:#9ECBFF">        return 1</span></span>
+<span class="line"><span style="color:#9ECBFF">      else</span></span>
+<span class="line"><span style="color:#9ECBFF">        return 0</span></span>
+<span class="line"><span style="color:#9ECBFF">      end</span></span>
+<span class="line"><span style="color:#9ECBFF">    `</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.cluster.</span><span style="color:#B392F0">eval</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      script,</span></span>
+<span class="line"><span style="color:#79B8FF">      1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      `${</span><span style="color:#E1E4E8">slotKey</span><span style="color:#9ECBFF">}:${</span><span style="color:#E1E4E8">windowKey</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      limit,</span></span>
+<span class="line"><span style="color:#E1E4E8">      windowStart,</span></span>
+<span class="line"><span style="color:#E1E4E8">      now</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="マルチリージョン対応">マルチリージョン対応</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// multi-region-limiter.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'ioredis'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> MultiRegionLimiter</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">    private</span><span style="color:#FFAB70"> primaryRedis</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Redis</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    private</span><span style="color:#FFAB70"> replicaRedis</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Redis</span></span>
+<span class="line"><span style="color:#E1E4E8">  ) {}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> isAllowed</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">boolean</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // プライマリで書き込み</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">checkLimit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.primaryRedis, key, limit, windowMs)</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Primary Redis error:'</span><span style="color:#E1E4E8">, error)</span></span>
+<span class="line"><span style="color:#6A737D">      // フェイルオーバー</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">checkLimit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.replicaRedis, key, limit, windowMs)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#F97583"> async</span><span style="color:#B392F0"> checkLimit</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    redis</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Redis</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    windowMs</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">boolean</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> windowKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `rate:${</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> windowStart</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> windowMs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> script</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `</span></span>
+<span class="line"><span style="color:#9ECBFF">      local key = KEYS[1]</span></span>
+<span class="line"><span style="color:#9ECBFF">      local limit = tonumber(ARGV[1])</span></span>
+<span class="line"><span style="color:#9ECBFF">      local windowStart = tonumber(ARGV[2])</span></span>
+<span class="line"><span style="color:#9ECBFF">      local now = tonumber(ARGV[3])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">      redis.call('ZREMRANGEBYSCORE', key, 0, windowStart)</span></span>
+<span class="line"><span style="color:#9ECBFF">      local count = redis.call('ZCARD', key)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">      if count &#x3C; limit then</span></span>
+<span class="line"><span style="color:#9ECBFF">        redis.call('ZADD', key, now, now)</span></span>
+<span class="line"><span style="color:#9ECBFF">        redis.call('EXPIRE', key, 3600)</span></span>
+<span class="line"><span style="color:#9ECBFF">        return 1</span></span>
+<span class="line"><span style="color:#9ECBFF">      else</span></span>
+<span class="line"><span style="color:#9ECBFF">        return 0</span></span>
+<span class="line"><span style="color:#9ECBFF">      end</span></span>
+<span class="line"><span style="color:#9ECBFF">    `</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">eval</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      script,</span></span>
+<span class="line"><span style="color:#79B8FF">      1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      windowKey,</span></span>
+<span class="line"><span style="color:#E1E4E8">      limit,</span></span>
+<span class="line"><span style="color:#E1E4E8">      windowStart,</span></span>
+<span class="line"><span style="color:#E1E4E8">      now</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="ベストプラクティス">ベストプラクティス</h2>
+<h3 id="レート制限の設計">レート制限の設計</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// rate-limit-config.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> RATE_LIMITS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">  // グローバル制限</span></span>
+<span class="line"><span style="color:#E1E4E8">  global: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    windowMs: </span><span style="color:#79B8FF">15</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 15分</span></span>
+<span class="line"><span style="color:#E1E4E8">    max: </span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 認証エンドポイント</span></span>
+<span class="line"><span style="color:#E1E4E8">  auth: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    windowMs: </span><span style="color:#79B8FF">60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 1分</span></span>
+<span class="line"><span style="color:#E1E4E8">    max: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // API階層別</span></span>
+<span class="line"><span style="color:#E1E4E8">  tiers: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    free: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      windowMs: </span><span style="color:#79B8FF">60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 1時間</span></span>
+<span class="line"><span style="color:#E1E4E8">      max: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    pro: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      windowMs: </span><span style="color:#79B8FF">60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      max: </span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    enterprise: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      windowMs: </span><span style="color:#79B8FF">60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      max: </span><span style="color:#79B8FF">10000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // コストベース</span></span>
+<span class="line"><span style="color:#E1E4E8">  costs: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    read: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    write: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    search: </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    export: </span><span style="color:#79B8FF">50</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="エラーハンドリング">エラーハンドリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// error-handling.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> handleRateLimitError</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  remaining</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  resetAt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  retryAfter</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    error: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      code: </span><span style="color:#9ECBFF">'RATE_LIMIT_EXCEEDED'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      message: </span><span style="color:#9ECBFF">'Rate limit exceeded'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      details: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        limit: </span><span style="color:#9ECBFF">'Request limit has been exceeded'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        remaining,</span></span>
+<span class="line"><span style="color:#E1E4E8">        resetAt: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(resetAt).</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">        retryAfter,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="モニタリング">モニタリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// monitoring.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> trackRateLimit</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  allowed</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  info</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#FFAB70">    remaining</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#FFAB70">    resetAt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">  // メトリクスを記録</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> metrics.</span><span style="color:#B392F0">increment</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'rate_limit.requests'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    key,</span></span>
+<span class="line"><span style="color:#E1E4E8">    allowed: allowed.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">allowed) {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> metrics.</span><span style="color:#B392F0">increment</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'rate_limit.exceeded'</span><span style="color:#E1E4E8">, { key })</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 使用率を記録</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> usage</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> ((info.limit </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> info.remaining) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> info.limit) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> metrics.</span><span style="color:#B392F0">gauge</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'rate_limit.usage'</span><span style="color:#E1E4E8">, usage, { key })</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>APIレートリミティングは、サービスの安定性とセキュリティに不可欠な機能です。</p>
+<p><strong>主要なアルゴリズム</strong>:</p>
+<ol>
+<li><strong>固定ウィンドウ</strong>: シンプルだが境界問題あり</li>
+<li><strong>スライディングウィンドウ</strong>: 正確だが計算コスト高</li>
+<li><strong>トークンバケット</strong>: 柔軟でバースト対応</li>
+<li><strong>リーキーバケット</strong>: 一定レートで処理</li>
+</ol>
+<p><strong>2026年のベストプラクティス</strong>:</p>
+<ul>
+<li>Redisで分散環境対応</li>
+<li>適切なアルゴリズム選択</li>
+<li>階層型レート制限</li>
+<li>レスポンスヘッダーの設定</li>
+<li>モニタリングとアラート</li>
+</ul>
+<p>適切なレートリミティングを実装して、安定したAPIサービスを提供しましょう。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

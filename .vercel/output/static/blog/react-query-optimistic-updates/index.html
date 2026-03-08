@@ -1,0 +1,638 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/react-query-optimistic-updates/"><!-- Primary Meta Tags --><title>TanStack Query楽観的更新パターン: リアルタイムUXの実装テクニック</title><meta name="title" content="TanStack Query楽観的更新パターン: リアルタイムUXの実装テクニック"><meta name="description" content="TanStack Query (React Query) の楽観的更新を使って、即座に反応する最高のユーザー体験を実現する方法を、実践的なパターンとコード例で解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/react-query-optimistic-updates/"><meta property="og:title" content="TanStack Query楽観的更新パターン: リアルタイムUXの実装テクニック"><meta property="og:description" content="TanStack Query (React Query) の楽観的更新を使って、即座に反応する最高のユーザー体験を実現する方法を、実践的なパターンとコード例で解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/react-query-optimistic-updates/"><meta name="twitter:title" content="TanStack Query楽観的更新パターン: リアルタイムUXの実装テクニック"><meta name="twitter:description" content="TanStack Query (React Query) の楽観的更新を使って、即座に反応する最高のユーザー体験を実現する方法を、実践的なパターンとコード例で解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/react-query-optimistic-updates/"},"headline":"TanStack Query楽観的更新パターン: リアルタイムUXの実装テクニック","description":"TanStack Query (React Query) の楽観的更新を使って、即座に反応する最高のユーザー体験を実現する方法を、実践的なパターンとコード例で解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。","datePublished":"2025-06-25T00:00:00.000Z","dateModified":"2025-06-25T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"React, TanStack Query, UX, パフォーマンス, フロントエンド"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"TanStack Query楽観的更新パターン: リアルタイムUXの実装テクニック"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-06-25T00:00:00.000Z"> Jun 24, 2025 </time> <div class="last-updated-on" data-astro-cid-bvzihdzo>
+Last updated on <time datetime="2025-06-25T00:00:00.000Z"> Jun 24, 2025 </time> </div> </div> <h1 data-astro-cid-bvzihdzo>TanStack Query楽観的更新パターン: リアルタイムUXの実装テクニック</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/React" class="article-tag" data-astro-cid-bvzihdzo>
+#React </a><a href="/blog/tag/TanStack%20Query" class="article-tag" data-astro-cid-bvzihdzo>
+#TanStack Query </a><a href="/blog/tag/UX" class="article-tag" data-astro-cid-bvzihdzo>
+#UX </a><a href="/blog/tag/%E3%83%91%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%B3%E3%82%B9" class="article-tag" data-astro-cid-bvzihdzo>
+#パフォーマンス </a><a href="/blog/tag/%E3%83%95%E3%83%AD%E3%83%B3%E3%83%88%E3%82%A8%E3%83%B3%E3%83%89" class="article-tag" data-astro-cid-bvzihdzo>
+#フロントエンド </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>ユーザーがボタンをクリックした瞬間に、サーバーからのレスポンスを待たずにUIを更新する「楽観的更新(Optimistic Updates)」は、モダンなWebアプリケーションには欠かせないUXテクニックです。本記事では、TanStack Queryを使った楽観的更新の実装方法を、実践的なパターンとともに解説します。</p>
+<h2 id="楽観的更新とは">楽観的更新とは</h2>
+<h3 id="従来のフロー">従来のフロー</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ユーザーがクリック</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>ローディング表示</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>サーバーにリクエスト (500ms~2s)</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>レスポンス受信</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>UI更新</span></span></code></pre>
+<p>ユーザーは更新が完了するまで待たされ、操作感が重くなります。</p>
+<h3 id="楽観的更新のフロー">楽観的更新のフロー</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ユーザーがクリック</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>即座にUI更新 (楽観的)</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>バックグラウンドでサーバーにリクエスト</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>成功 → そのまま</span></span>
+<span class="line"><span>失敗 → 元に戻す(ロールバック)</span></span></code></pre>
+<p>ユーザーは待たされることなく、瞬時にフィードバックを得られます。</p>
+<h2 id="基本的な楽観的更新">基本的な楽観的更新</h2>
+<h3 id="1-シンプルないいね機能">1. シンプルな「いいね」機能</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// hooks/useLikePost.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useMutation, useQueryClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@tanstack/react-query'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> Post</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  title</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  likes</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  isLiked</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useLikePost</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> queryClient</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useQueryClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> useMutation</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">    mutationFn</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/api/posts/${</span><span style="color:#E1E4E8">postId</span><span style="color:#9ECBFF">}/like`</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        method: </span><span style="color:#9ECBFF">'POST'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">response.ok) {</span></span>
+<span class="line"><span style="color:#F97583">        throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Failed to like post'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 楽観的更新</span></span>
+<span class="line"><span style="color:#B392F0">    onMutate</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">postId</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // 進行中のクエリをキャンセル</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">cancelQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">, postId] });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // 現在のデータを取得（ロールバック用）</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> previousPost</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">getQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">>([</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">, postId]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // 楽観的にUIを更新</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">>([</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">, postId], (</span><span style="color:#FFAB70">old</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">old) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> old;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">          ...</span><span style="color:#E1E4E8">old,</span></span>
+<span class="line"><span style="color:#E1E4E8">          likes: old.isLiked </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> old.likes </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> :</span><span style="color:#E1E4E8"> old.likes </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          isLiked: </span><span style="color:#F97583">!</span><span style="color:#E1E4E8">old.isLiked,</span></span>
+<span class="line"><span style="color:#E1E4E8">        };</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // ロールバック用のデータを返す</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> { previousPost };</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // エラー時のロールバック</span></span>
+<span class="line"><span style="color:#B392F0">    onError</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">postId</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">context</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // 元のデータに戻す</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">, postId], context?.previousPost);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // エラー通知</span></span>
+<span class="line"><span style="color:#E1E4E8">      toast.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'いいねに失敗しました'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 成功時の処理（オプション）</span></span>
+<span class="line"><span style="color:#B392F0">    onSuccess</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">postId</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // サーバーからの正確なデータで更新</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">, postId], data);</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 完了時の処理</span></span>
+<span class="line"><span style="color:#B392F0">    onSettled</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">postId</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // リスト全体を再検証</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">invalidateQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">] });</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// コンポーネントでの使用</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> PostCard</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">post</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">post</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Post</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> likePost</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useLikePost</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"post-card"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">h3</span><span style="color:#E1E4E8">>{post.title}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">h3</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#FFAB70">button</span></span>
+<span class="line"><span style="color:#E1E4E8">        onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{() => likePost.mutate(post.id)}</span></span>
+<span class="line"><span style="color:#E1E4E8">        disabled</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{likePost.isPending}</span></span>
+<span class="line"><span style="color:#E1E4E8">        className</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{post.isLiked ? </span><span style="color:#9ECBFF">'liked'</span><span style="color:#E1E4E8"> : </span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">      ></span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#FFAB70">post</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">isLiked</span><span style="color:#E1E4E8"> ? </span><span style="color:#9ECBFF">'❤️'</span><span style="color:#E1E4E8"> : </span><span style="color:#9ECBFF">'🤍'</span><span style="color:#E1E4E8">} {</span><span style="color:#FFAB70">post</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">likes</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-リストの楽観的更新">2. リストの楽観的更新</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// hooks/useAddTodo.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useMutation, useQueryClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@tanstack/react-query'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> Todo</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  text</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  completed</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  createdAt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useAddTodo</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> queryClient</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useQueryClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> useMutation</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">    mutationFn</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">text</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/todos'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        method: </span><span style="color:#9ECBFF">'POST'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        headers: { </span><span style="color:#9ECBFF">'Content-Type'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'application/json'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">({ text }),</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">response.ok) {</span></span>
+<span class="line"><span style="color:#F97583">        throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Failed to add todo'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onMutate</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">text</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">cancelQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'todos'</span><span style="color:#E1E4E8">] });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> previousTodos</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">getQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Todo</span><span style="color:#E1E4E8">[]>([</span><span style="color:#9ECBFF">'todos'</span><span style="color:#E1E4E8">]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // 一時的なIDで楽観的に追加</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> optimisticTodo</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Todo</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        id: </span><span style="color:#9ECBFF">`temp-${</span><span style="color:#E1E4E8">Date</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">now</span><span style="color:#9ECBFF">()</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        text,</span></span>
+<span class="line"><span style="color:#E1E4E8">        completed: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        createdAt: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Todo</span><span style="color:#E1E4E8">[]>([</span><span style="color:#9ECBFF">'todos'</span><span style="color:#E1E4E8">], (</span><span style="color:#FFAB70">old</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> []) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">        optimisticTodo,</span></span>
+<span class="line"><span style="color:#F97583">        ...</span><span style="color:#E1E4E8">old,</span></span>
+<span class="line"><span style="color:#E1E4E8">      ]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> { previousTodos };</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onError</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">text</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">context</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'todos'</span><span style="color:#E1E4E8">], context?.previousTodos);</span></span>
+<span class="line"><span style="color:#E1E4E8">      toast.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'追加に失敗しました'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onSuccess</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">newTodo</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // 一時IDを実際のIDに置き換え</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Todo</span><span style="color:#E1E4E8">[]>([</span><span style="color:#9ECBFF">'todos'</span><span style="color:#E1E4E8">], (</span><span style="color:#FFAB70">old</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> []) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">        old.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">todo</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">          todo.id.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'temp-'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> newTodo </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> todo</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">      );</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> TodoForm</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">text</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setText</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> addTodo</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useAddTodo</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> handleSubmit</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">e</span><span style="color:#F97583">:</span><span style="color:#B392F0"> React</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">FormEvent</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    e.</span><span style="color:#B392F0">preventDefault</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">text.</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">()) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    addTodo.</span><span style="color:#B392F0">mutate</span><span style="color:#E1E4E8">(text, {</span></span>
+<span class="line"><span style="color:#B392F0">      onSuccess</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#B392F0"> setText</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">form onSubmit</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleSubmit}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#FFAB70">input</span></span>
+<span class="line"><span style="color:#E1E4E8">        type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text"</span></span>
+<span class="line"><span style="color:#E1E4E8">        value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{text}</span></span>
+<span class="line"><span style="color:#E1E4E8">        onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{(e) => </span><span style="color:#B392F0">setText</span><span style="color:#E1E4E8">(e.target.value)}</span></span>
+<span class="line"><span style="color:#E1E4E8">        placeholder</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"新しいタスク"</span></span>
+<span class="line"><span style="color:#F97583">      /></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">button type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"submit"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">追加</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">form</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="高度なパターン">高度なパターン</h2>
+<h3 id="1-複数のクエリを同時に更新">1. 複数のクエリを同時に更新</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// hooks/useUpdateUserProfile.ts</span></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> User</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  avatar</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  bio</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> Post</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  author</span><span style="color:#F97583">:</span><span style="color:#B392F0"> User</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  content</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useUpdateUserProfile</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> queryClient</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useQueryClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> useMutation</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">    mutationFn</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">updates</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Partial</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">>) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/user/profile'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        method: </span><span style="color:#9ECBFF">'PATCH'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        headers: { </span><span style="color:#9ECBFF">'Content-Type'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'application/json'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(updates),</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">response.ok) </span><span style="color:#F97583">throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Failed to update profile'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onMutate</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">updates</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // 複数のクエリをキャンセル</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">cancelQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">] });</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">cancelQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">] });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> previousUser</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">getQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">>([</span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">]);</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> previousPosts</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">getQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">[]>([</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // ユーザープロフィールを更新</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">>([</span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">], (</span><span style="color:#FFAB70">old</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">old) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> old;</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8">old, </span><span style="color:#F97583">...</span><span style="color:#E1E4E8">updates };</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // ユーザーの投稿すべての著者情報を更新</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">[]>([</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">], (</span><span style="color:#FFAB70">old</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> []) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">        old.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">post</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#F97583">          ...</span><span style="color:#E1E4E8">post,</span></span>
+<span class="line"><span style="color:#E1E4E8">          author: { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8">post.author, </span><span style="color:#F97583">...</span><span style="color:#E1E4E8">updates },</span></span>
+<span class="line"><span style="color:#E1E4E8">        }))</span></span>
+<span class="line"><span style="color:#E1E4E8">      );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> { previousUser, previousPosts };</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onError</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">updates</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">context</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // すべてロールバック</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (context?.previousUser) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">], context.previousUser);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (context?.previousPosts) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">], context.previousPosts);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      toast.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'プロフィール更新に失敗しました'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onSettled</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // 関連するクエリを再検証</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">invalidateQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">] });</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">invalidateQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">] });</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-無限スクロールリストの楽観的更新">2. 無限スクロールリストの楽観的更新</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// hooks/useDeletePost.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useDeletePost</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> queryClient</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useQueryClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> useMutation</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">    mutationFn</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/api/posts/${</span><span style="color:#E1E4E8">postId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, { method: </span><span style="color:#9ECBFF">'DELETE'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onMutate</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">postId</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">cancelQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">] });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // 無限クエリのデータ構造を取得</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> previousData</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">getQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">InfiniteData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">[]>>([</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // すべてのページから該当の投稿を削除</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">InfiniteData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">[]>>([</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">], (</span><span style="color:#FFAB70">old</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">old) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> old;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">          ...</span><span style="color:#E1E4E8">old,</span></span>
+<span class="line"><span style="color:#E1E4E8">          pages: old.pages.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">page</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">            page.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">post</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> post.id </span><span style="color:#F97583">!==</span><span style="color:#E1E4E8"> postId)</span></span>
+<span class="line"><span style="color:#E1E4E8">          ),</span></span>
+<span class="line"><span style="color:#E1E4E8">        };</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> { previousData };</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onError</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">postId</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">context</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (context?.previousData) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">], context.previousData);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">      toast.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'削除に失敗しました'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onSettled</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">invalidateQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">] });</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="3-ドラッグドロップの順序変更">3. ドラッグ&#x26;ドロップの順序変更</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// hooks/useReorderTodos.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useReorderTodos</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> queryClient</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useQueryClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> useMutation</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">    mutationFn</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">newOrder</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">[]) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/todos/reorder'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        method: </span><span style="color:#9ECBFF">'PUT'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        headers: { </span><span style="color:#9ECBFF">'Content-Type'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'application/json'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">({ order: newOrder }),</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">response.ok) </span><span style="color:#F97583">throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Failed to reorder'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onMutate</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">newOrder</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">cancelQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'todos'</span><span style="color:#E1E4E8">] });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> previousTodos</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">getQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Todo</span><span style="color:#E1E4E8">[]>([</span><span style="color:#9ECBFF">'todos'</span><span style="color:#E1E4E8">]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // 新しい順序でTodoを並び替え</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Todo</span><span style="color:#E1E4E8">[]>([</span><span style="color:#9ECBFF">'todos'</span><span style="color:#E1E4E8">], (</span><span style="color:#FFAB70">old</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> []) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> todoMap</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">(old.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">todo</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> [todo.id, todo]));</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> newOrder.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> todoMap.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(id)</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(Boolean);</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> { previousTodos };</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onError</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">newOrder</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">context</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'todos'</span><span style="color:#E1E4E8">], context?.previousTodos);</span></span>
+<span class="line"><span style="color:#E1E4E8">      toast.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'並び替えに失敗しました'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// React DnDとの統合例</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> TodoList</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">todos</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [] } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useQuery</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'todos'</span><span style="color:#E1E4E8">] });</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> reorderTodos</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useReorderTodos</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> handleDragEnd</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">result</span><span style="color:#F97583">:</span><span style="color:#B392F0"> DropResult</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">result.destination) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> items</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Array.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(todos);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">removed</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> items.</span><span style="color:#B392F0">splice</span><span style="color:#E1E4E8">(result.source.index, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    items.</span><span style="color:#B392F0">splice</span><span style="color:#E1E4E8">(result.destination.index, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, removed);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> newOrder</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> items.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">item</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> item.id);</span></span>
+<span class="line"><span style="color:#E1E4E8">    reorderTodos.</span><span style="color:#B392F0">mutate</span><span style="color:#E1E4E8">(newOrder);</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">DragDropContext onDragEnd</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleDragEnd}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">Droppable droppableId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"todos"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        {(</span><span style="color:#FFAB70">provided</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;</span><span style="color:#E1E4E8">div {</span><span style="color:#F97583">...</span><span style="color:#FFAB70">provided</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">droppableProps</span><span style="color:#E1E4E8">} ref</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{provided.innerRef}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">            {</span><span style="color:#FFAB70">todos</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">todo</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">index</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">              &#x3C;</span><span style="color:#E1E4E8">Draggable key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{todo.id} draggableId</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{todo.id} index</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{index}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">                {(</span><span style="color:#FFAB70">provided</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">                  &#x3C;</span><span style="color:#FFAB70">div</span></span>
+<span class="line"><span style="color:#E1E4E8">                    ref</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{provided.innerRef}</span></span>
+<span class="line"><span style="color:#E1E4E8">                    {</span><span style="color:#F97583">...</span><span style="color:#FFAB70">provided</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">draggableProps</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">                    {</span><span style="color:#F97583">...</span><span style="color:#FFAB70">provided</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">dragHandleProps</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">                  ></span></span>
+<span class="line"><span style="color:#E1E4E8">                    {</span><span style="color:#FFAB70">todo</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">text</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">                  &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">                )}</span></span>
+<span class="line"><span style="color:#F97583">              &#x3C;/</span><span style="color:#E1E4E8">Draggable</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">            ))}</span></span>
+<span class="line"><span style="color:#E1E4E8">            {</span><span style="color:#FFAB70">provided</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">placeholder</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        )}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">Droppable</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">DragDropContext</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="4-リアルタイムコラボレーション">4. リアルタイムコラボレーション</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// hooks/useCollaborativeDocument.ts</span></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> Document</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  title</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  content</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  version</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  lastModified</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useUpdateDocument</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> queryClient</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useQueryClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> useMutation</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">    mutationFn</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">      id,</span></span>
+<span class="line"><span style="color:#E1E4E8">      content,</span></span>
+<span class="line"><span style="color:#E1E4E8">      version,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">      id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">      content</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">      version</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/api/documents/${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        method: </span><span style="color:#9ECBFF">'PATCH'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        headers: { </span><span style="color:#9ECBFF">'Content-Type'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'application/json'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">({ content, version }),</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">response.ok) {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> error</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">        throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(error.message);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onMutate</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">content</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">cancelQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'document'</span><span style="color:#E1E4E8">, id] });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> previousDoc</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">getQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Document</span><span style="color:#E1E4E8">>([</span><span style="color:#9ECBFF">'document'</span><span style="color:#E1E4E8">, id]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // 楽観的に更新</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Document</span><span style="color:#E1E4E8">>([</span><span style="color:#9ECBFF">'document'</span><span style="color:#E1E4E8">, id], (</span><span style="color:#FFAB70">old</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">old) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> old;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">          ...</span><span style="color:#E1E4E8">old,</span></span>
+<span class="line"><span style="color:#E1E4E8">          content,</span></span>
+<span class="line"><span style="color:#E1E4E8">          version: old.version </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          lastModified: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">        };</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> { previousDoc };</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onError</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, { </span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8"> }, </span><span style="color:#FFAB70">context</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // バージョンコンフリクトの場合は特別な処理</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (err.message.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'version conflict'</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        toast.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'他のユーザーが編集しています。最新版を取得します。'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">        queryClient.</span><span style="color:#B392F0">invalidateQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'document'</span><span style="color:#E1E4E8">, id] });</span></span>
+<span class="line"><span style="color:#E1E4E8">      } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // 通常のロールバック</span></span>
+<span class="line"><span style="color:#E1E4E8">        queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'document'</span><span style="color:#E1E4E8">, id], context?.previousDoc);</span></span>
+<span class="line"><span style="color:#E1E4E8">        toast.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'保存に失敗しました'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onSuccess</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">, { </span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // サーバーからの正確なバージョンで更新</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'document'</span><span style="color:#E1E4E8">, id], data);</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// デバウンスを使った自動保存</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> DocumentEditor</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">documentId</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">documentId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">document</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useQuery</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    queryKey: [</span><span style="color:#9ECBFF">'document'</span><span style="color:#E1E4E8">, documentId],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> updateDocument</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useUpdateDocument</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">content</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setContent</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(document?.content </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // デバウンスされた保存</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> debouncedUpdate</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    () </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#B392F0">      debounce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">newContent</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        updateDocument.</span><span style="color:#B392F0">mutate</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          id: documentId,</span></span>
+<span class="line"><span style="color:#E1E4E8">          content: newContent,</span></span>
+<span class="line"><span style="color:#E1E4E8">          version: document?.version </span><span style="color:#F97583">||</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"><span style="color:#E1E4E8">      }, </span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    [documentId, document?.version]</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (content </span><span style="color:#F97583">!==</span><span style="color:#E1E4E8"> document?.content) {</span></span>
+<span class="line"><span style="color:#B392F0">      debouncedUpdate</span><span style="color:#E1E4E8">(content);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [content, debouncedUpdate]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#FFAB70">textarea</span></span>
+<span class="line"><span style="color:#E1E4E8">        value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{content}</span></span>
+<span class="line"><span style="color:#E1E4E8">        onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{(e) => </span><span style="color:#B392F0">setContent</span><span style="color:#E1E4E8">(e.target.value)}</span></span>
+<span class="line"><span style="color:#E1E4E8">        className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"w-full h-96 p-4"</span></span>
+<span class="line"><span style="color:#F97583">      /></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-sm text-gray-500"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#FFAB70">updateDocument</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">isPending</span><span style="color:#E1E4E8"> &#x26;&#x26; '</span><span style="color:#FFAB70">保存中</span><span style="color:#E1E4E8">...'}</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#FFAB70">updateDocument</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">isSuccess</span><span style="color:#E1E4E8"> &#x26;&#x26; '</span><span style="color:#FFAB70">保存しました</span><span style="color:#E1E4E8">'}</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#FFAB70">updateDocument</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">isError</span><span style="color:#E1E4E8"> &#x26;&#x26; '</span><span style="color:#FFAB70">保存に失敗しました</span><span style="color:#E1E4E8">'}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="アニメーションとの統合">アニメーションとの統合</h2>
+<h3 id="楽観的更新--framer-motion">楽観的更新 + Framer Motion</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// components/TodoItem.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { motion, AnimatePresence } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'framer-motion'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> TodoItem</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">todo</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">todo</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Todo</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> deleteTodo</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useDeleteTodo</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> toggleTodo</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useToggleTodo</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">AnimatePresence</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">motion.div</span></span>
+<span class="line"><span style="color:#FFAB70">        layout</span></span>
+<span class="line"><span style="color:#E1E4E8">        initial</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{{ </span><span style="color:#B392F0">opacity</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">y</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">-</span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">        animate</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{{ </span><span style="color:#B392F0">opacity</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">y</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">        exit</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{{ </span><span style="color:#B392F0">opacity</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">x</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">-</span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">        transition</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{{ </span><span style="color:#B392F0">duration</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0.2</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">        className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"todo-item"</span></span>
+<span class="line"><span style="color:#F97583">      ></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">motion.input</span></span>
+<span class="line"><span style="color:#E1E4E8">          type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"checkbox"</span></span>
+<span class="line"><span style="color:#E1E4E8">          checked</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{todo.completed}</span></span>
+<span class="line"><span style="color:#E1E4E8">          onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{() => toggleTodo.mutate(todo.id)}</span></span>
+<span class="line"><span style="color:#E1E4E8">          whileTap</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{{ </span><span style="color:#B392F0">scale</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1.2</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#F97583">        /></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">span className</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{todo.completed ? </span><span style="color:#9ECBFF">'line-through'</span><span style="color:#E1E4E8"> : </span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">          {</span><span style="color:#FFAB70">todo</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">text</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">span</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">motion.button</span></span>
+<span class="line"><span style="color:#E1E4E8">          whileHover</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{{ </span><span style="color:#B392F0">scale</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1.1</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">          whileTap</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{{ </span><span style="color:#B392F0">scale</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0.9</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">          onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{() => deleteTodo.mutate(todo.id)}</span></span>
+<span class="line"><span style="color:#F97583">        ></span></span>
+<span class="line"><span style="color:#FFAB70">          削除</span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">motion.button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">motion.div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">AnimatePresence</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="エラーハンドリングのベストプラクティス">エラーハンドリングのベストプラクティス</h2>
+<h3 id="1-リトライ戦略">1. リトライ戦略</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useLikePostWithRetry</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> queryClient</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useQueryClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> useMutation</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    mutationFn: likePost,</span></span>
+<span class="line"><span style="color:#E1E4E8">    onMutate: </span><span style="color:#6A737D">/* 楽観的更新 */</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    retry: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 3回までリトライ</span></span>
+<span class="line"><span style="color:#B392F0">    retryDelay</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">attemptIndex</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1000</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 2</span><span style="color:#F97583"> **</span><span style="color:#E1E4E8"> attemptIndex, </span><span style="color:#79B8FF">30000</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onError</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">postId</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">context</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // 最終的に失敗した場合のみロールバック</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">, postId], context?.previousPost);</span></span>
+<span class="line"><span style="color:#E1E4E8">      toast.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'いいねに失敗しました。後でもう一度お試しください。'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-オフライン対応">2. オフライン対応</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { onlineManager } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@tanstack/react-query'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useOfflineAwareMutation</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> queryClient</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useQueryClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> isOnline</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> onlineManager.</span><span style="color:#B392F0">isOnline</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> useMutation</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    mutationFn: updateData,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    onMutate</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">newData</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // オフライン時は楽観的更新のみ</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">isOnline) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        toast.</span><span style="color:#B392F0">info</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'オフラインです。オンライン復帰時に同期されます。'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // 楽観的更新</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">cancelQueries</span><span style="color:#E1E4E8">({ queryKey: [</span><span style="color:#9ECBFF">'data'</span><span style="color:#E1E4E8">] });</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> previousData</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> queryClient.</span><span style="color:#B392F0">getQueryData</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'data'</span><span style="color:#E1E4E8">]);</span></span>
+<span class="line"><span style="color:#E1E4E8">      queryClient.</span><span style="color:#B392F0">setQueryData</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'data'</span><span style="color:#E1E4E8">], newData);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> { previousData };</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // オンライン復帰時に自動的に再試行</span></span>
+<span class="line"><span style="color:#E1E4E8">    networkMode: </span><span style="color:#9ECBFF">'offlineFirst'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>TanStack Queryの楽観的更新を活用することで、以下が実現できます:</p>
+<ul>
+<li><strong>即座のフィードバック</strong>: ユーザーは待たされない</li>
+<li><strong>スムーズなUX</strong>: ローディング状態が目立たない</li>
+<li><strong>安全なロールバック</strong>: エラー時は自動的に元に戻る</li>
+<li><strong>複雑な状態管理</strong>: 複数のクエリを一貫性を保ちながら更新</li>
+<li><strong>リアルタイム感</strong>: コラボレーション機能も実現可能</li>
+</ul>
+<p>楽観的更新は、モダンなWebアプリケーションに欠かせないテクニックです。ユーザー体験を劇的に向上させるために、ぜひ実装してみてください。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

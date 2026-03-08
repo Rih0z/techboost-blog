@@ -1,0 +1,490 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/container-patterns-docker/"><!-- Primary Meta Tags --><title>Dockerコンテナパターン集: マルチステージビルドからヘルスチェックまで</title><meta name="title" content="Dockerコンテナパターン集: マルチステージビルドからヘルスチェックまで"><meta name="description" content="本番環境で使えるDockerfileのベストプラクティスとデザインパターンを徹底解説。マルチステージビルド、ヘルスチェック、セキュリティ対策など実践的なテクニックを紹介します。Docker・Container・DevOpsに関する実践情報。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/container-patterns-docker/"><meta property="og:title" content="Dockerコンテナパターン集: マルチステージビルドからヘルスチェックまで"><meta property="og:description" content="本番環境で使えるDockerfileのベストプラクティスとデザインパターンを徹底解説。マルチステージビルド、ヘルスチェック、セキュリティ対策など実践的なテクニックを紹介します。Docker・Container・DevOpsに関する実践情報。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/container-patterns-docker/"><meta name="twitter:title" content="Dockerコンテナパターン集: マルチステージビルドからヘルスチェックまで"><meta name="twitter:description" content="本番環境で使えるDockerfileのベストプラクティスとデザインパターンを徹底解説。マルチステージビルド、ヘルスチェック、セキュリティ対策など実践的なテクニックを紹介します。Docker・Container・DevOpsに関する実践情報。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/container-patterns-docker/"},"headline":"Dockerコンテナパターン集: マルチステージビルドからヘルスチェックまで","description":"本番環境で使えるDockerfileのベストプラクティスとデザインパターンを徹底解説。マルチステージビルド、ヘルスチェック、セキュリティ対策など実践的なテクニックを紹介します。Docker・Container・DevOpsに関する実践情報。","datePublished":"2025-02-05T00:00:00.000Z","dateModified":"2025-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Docker, Container, DevOps, Best Practices, Security"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Dockerコンテナパターン集: マルチステージビルドからヘルスチェックまで"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-05T00:00:00.000Z"> Feb 4, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>Dockerコンテナパターン集: マルチステージビルドからヘルスチェックまで</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Docker" class="article-tag" data-astro-cid-bvzihdzo>
+#Docker </a><a href="/blog/tag/Container" class="article-tag" data-astro-cid-bvzihdzo>
+#Container </a><a href="/blog/tag/DevOps" class="article-tag" data-astro-cid-bvzihdzo>
+#DevOps </a><a href="/blog/tag/Best%20Practices" class="article-tag" data-astro-cid-bvzihdzo>
+#Best Practices </a><a href="/blog/tag/Security" class="article-tag" data-astro-cid-bvzihdzo>
+#Security </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Dockerコンテナは現代のアプリケーション開発に欠かせません。しかし、シンプルなDockerfileを書くのと、本番環境で運用できる最適化されたコンテナを作るのは別物です。本記事では、2026年の最新ベストプラクティスに基づいた実践的なDockerパターンを解説します。</p>
+<h2 id="マルチステージビルドパターン">マルチステージビルドパターン</h2>
+<h3 id="基本パターン-nodejs">基本パターン: Node.js</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># ビルドステージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 依存関係のインストール（キャッシュ活用）</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci --only=production &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    npm cache clean --force</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ソースコードのコピーとビルド</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 本番ステージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> production</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># セキュリティ: 非rootユーザーで実行</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> addgroup -g 1001 -S nodejs &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    adduser -S nodejs -u 1001</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ビルド成果物のみコピー</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder --chown=nodejs:nodejs /app/dist ./dist</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder --chown=nodejs:nodejs /app/package*.json ./</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> nodejs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 3000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ヘルスチェック</span></span>
+<span class="line"><span style="color:#F97583">HEALTHCHECK</span><span style="color:#E1E4E8"> --interval=30s --timeout=3s --start-period=5s --retries=3 \</span></span>
+<span class="line"><span style="color:#F97583">  CMD</span><span style="color:#E1E4E8"> node -e </span><span style="color:#9ECBFF">"require('http').get('http://localhost:3000/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"dist/main.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h3 id="高度なパターン-nextjs">高度なパターン: Next.js</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># 依存関係ステージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> deps</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> apk add --no-cache libc6-compat</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package.json package-lock.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ビルダーステージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=deps /app/node_modules ./node_modules</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 環境変数（ビルド時のみ必要なもの）</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> NEXT_TELEMETRY_DISABLED 1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 本番依存関係ステージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> prod-deps</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package.json package-lock.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci --only=production &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    npm cache clean --force</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ランナーステージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> runner</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> NODE_ENV production</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> NEXT_TELEMETRY_DISABLED 1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> addgroup --system --gid 1001 nodejs &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    adduser --system --uid 1001 nextjs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># public, .next/static をコピー</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/public ./public</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder --chown=nextjs:nodejs /app/.next/standalone ./</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> nextjs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 3000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> PORT 3000</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> HOSTNAME </span><span style="color:#9ECBFF">"0.0.0.0"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">HEALTHCHECK</span><span style="color:#E1E4E8"> --interval=30s --timeout=3s --start-period=10s \</span></span>
+<span class="line"><span style="color:#F97583">  CMD</span><span style="color:#E1E4E8"> node -e </span><span style="color:#9ECBFF">"require('http').get('http://localhost:3000/api/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"server.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h2 id="python-webアプリケーションパターン">Python Webアプリケーションパターン</h2>
+<h3 id="fastapi--poetry">FastAPI + Poetry</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># ベースイメージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> python:3.12-slim </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> base</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> PYTHONUNBUFFERED=1 \</span></span>
+<span class="line"><span style="color:#E1E4E8">    PYTHONDONTWRITEBYTECODE=1 \</span></span>
+<span class="line"><span style="color:#E1E4E8">    PIP_NO_CACHE_DIR=1 \</span></span>
+<span class="line"><span style="color:#E1E4E8">    PIP_DISABLE_PIP_VERSION_CHECK=1 \</span></span>
+<span class="line"><span style="color:#E1E4E8">    POETRY_VERSION=1.7.1 \</span></span>
+<span class="line"><span style="color:#E1E4E8">    POETRY_HOME=</span><span style="color:#9ECBFF">"/opt/poetry"</span><span style="color:#E1E4E8"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">    POETRY_NO_INTERACTION=1 \</span></span>
+<span class="line"><span style="color:#E1E4E8">    POETRY_VIRTUALENVS_CREATE=false</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> PATH=</span><span style="color:#9ECBFF">"$POETRY_HOME/bin:$PATH"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ビルダーステージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> base </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> apt-get update &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    apt-get install -y --no-install-recommends \</span></span>
+<span class="line"><span style="color:#E1E4E8">    curl \</span></span>
+<span class="line"><span style="color:#E1E4E8">    build-essential &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    curl -sSL https://install.python-poetry.org | python3 - &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    apt-get purge -y --auto-remove curl &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    rm -rf /var/lib/apt/lists/*</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> pyproject.toml poetry.lock ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> poetry install --only main --no-root</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> poetry install --only main</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 本番ステージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> base </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> production</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> apt-get update &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    apt-get install -y --no-install-recommends \</span></span>
+<span class="line"><span style="color:#E1E4E8">    libpq5 &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    rm -rf /var/lib/apt/lists/* &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    useradd -m -u 1001 appuser</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /usr/local/bin /usr/local/bin</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder --chown=appuser:appuser /app /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> appuser</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 8000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">HEALTHCHECK</span><span style="color:#E1E4E8"> --interval=30s --timeout=3s --start-period=5s \</span></span>
+<span class="line"><span style="color:#F97583">  CMD</span><span style="color:#E1E4E8"> python -c </span><span style="color:#9ECBFF">"import requests; requests.get('http://localhost:8000/health').raise_for_status()"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"uvicorn"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"app.main:app"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"--host"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"0.0.0.0"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"--port"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"8000"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h2 id="go-アプリケーションパターン">Go アプリケーションパターン</h2>
+<h3 id="最小サイズイメージ">最小サイズイメージ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># ビルドステージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> golang:1.22-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> apk add --no-cache git ca-certificates tzdata</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 依存関係のキャッシュ</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> go.mod go.sum ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> go mod download</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ビルド</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \</span></span>
+<span class="line"><span style="color:#E1E4E8">    -ldflags=</span><span style="color:#9ECBFF">'-w -s -extldflags "-static"'</span><span style="color:#E1E4E8"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">    -a \</span></span>
+<span class="line"><span style="color:#E1E4E8">    -o app \</span></span>
+<span class="line"><span style="color:#E1E4E8">    ./cmd/server</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 本番ステージ（scratch使用）</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> scratch</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># タイムゾーンデータとCA証明書をコピー</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /usr/share/zoneinfo /usr/share/zoneinfo</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /etc/passwd /etc/passwd</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /etc/group /etc/group</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># バイナリのみコピー</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /build/app /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 非rootユーザー（builder内で作成）</span></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> nobody:nobody</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 8080</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">HEALTHCHECK</span><span style="color:#E1E4E8"> --interval=30s --timeout=3s --start-period=5s \</span></span>
+<span class="line"><span style="color:#F97583">  CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"/app"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"healthcheck"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">ENTRYPOINT</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"/app"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h3 id="distrolessパターン">Distrolessパターン</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> golang:1.22-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /build</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> go.mod go.sum ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> go mod download</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> CGO_ENABLED=0 go build -o app ./cmd/server</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Distroless（最小限のOS）</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> gcr.io/distroless/static-debian12</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /build/app /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> nonroot:nonroot</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 8080</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">ENTRYPOINT</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"/app"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h2 id="ヘルスチェックパターン">ヘルスチェックパターン</h2>
+<h3 id="nodejs-httpヘルスチェック">Node.js HTTPヘルスチェック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># Dockerfileで定義</span></span>
+<span class="line"><span style="color:#F97583">HEALTHCHECK</span><span style="color:#E1E4E8"> --interval=30s --timeout=3s --start-period=10s --retries=3 \</span></span>
+<span class="line"><span style="color:#F97583">  CMD</span><span style="color:#E1E4E8"> node /healthcheck.js</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// healthcheck.js</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> http</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'http'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> options</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  host: </span><span style="color:#9ECBFF">'localhost'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  port: process.env.</span><span style="color:#79B8FF">PORT</span><span style="color:#F97583"> ||</span><span style="color:#79B8FF"> 3000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  path: </span><span style="color:#9ECBFF">'/health'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  timeout: </span><span style="color:#79B8FF">2000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> request</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> http.</span><span style="color:#B392F0">request</span><span style="color:#E1E4E8">(options, (</span><span style="color:#FFAB70">res</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Health check status: ${</span><span style="color:#E1E4E8">res</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">statusCode</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(res.statusCode </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 200</span><span style="color:#F97583"> ?</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> :</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">request.</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'error'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Health check failed:'</span><span style="color:#E1E4E8">, err);</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">request.</span><span style="color:#B392F0">end</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h3 id="postgresql接続チェック">PostgreSQL接続チェック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">HEALTHCHECK</span><span style="color:#E1E4E8"> --interval=30s --timeout=3s \</span></span>
+<span class="line"><span style="color:#F97583">  CMD</span><span style="color:#E1E4E8"> pg_isready -U $POSTGRES_USER -d $POSTGRES_DB || exit 1</span></span></code></pre>
+<h3 id="redis接続チェック">Redis接続チェック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">HEALTHCHECK</span><span style="color:#E1E4E8"> --interval=30s --timeout=3s \</span></span>
+<span class="line"><span style="color:#F97583">  CMD</span><span style="color:#E1E4E8"> redis-cli ping || exit 1</span></span></code></pre>
+<h2 id="セキュリティパターン">セキュリティパターン</h2>
+<h3 id="最小権限の原則">最小権限の原則</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 1. セキュリティアップデート</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> apk upgrade --no-cache</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 2. 非rootユーザー作成</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> addgroup -g 1001 -S nodejs &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    adduser -S nodejs -u 1001</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 3. ファイルの適切な権限設定</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --chown=nodejs:nodejs package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci --only=production &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    npm cache clean --force</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --chown=nodejs:nodejs . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 4. 読み取り専用ファイルシステム（可能な場合）</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> mkdir -p /app/tmp &#x26;&#x26; chown nodejs:nodejs /app/tmp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> nodejs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 5. 不要なポート公開を避ける</span></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 3000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"server.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h3 id="シークレット管理">シークレット管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># ビルド時のシークレット使用（BuildKit）</span></span>
+<span class="line"><span style="color:#6A737D"># docker buildx build --secret id=npmrc,src=$HOME/.npmrc .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># シークレットを一時的にマウント</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> --mount=type=secret,id=npmrc,target=/root/.npmrc \</span></span>
+<span class="line"><span style="color:#E1E4E8">    npm ci</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># シークレットは本番イメージに含まれない</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/dist ./dist</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"dist/main.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h2 id="キャッシュ最適化パターン">キャッシュ最適化パターン</h2>
+<h3 id="レイヤーキャッシュの活用">レイヤーキャッシュの活用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 1. 依存関係定義のみコピー（変更頻度が低い）</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 2. 依存関係インストール（キャッシュされる）</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci --only=production</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 3. ソースコード（変更頻度が高い）</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"server.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h3 id="buildkit-キャッシュマウント">BuildKit キャッシュマウント</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># syntax=docker/dockerfile:1.4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># npm キャッシュをマウント</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> --mount=type=cache,target=/root/.npm \</span></span>
+<span class="line"><span style="color:#E1E4E8">    npm ci --only=production</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"server.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h2 id="マルチアーキテクチャビルド">マルチアーキテクチャビルド</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># syntax=docker/dockerfile:1.4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> --platform=$BUILDPLATFORM node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">ARG</span><span style="color:#E1E4E8"> TARGETPLATFORM</span></span>
+<span class="line"><span style="color:#F97583">ARG</span><span style="color:#E1E4E8"> BUILDPLATFORM</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> echo </span><span style="color:#9ECBFF">"Building on $BUILDPLATFORM for $TARGETPLATFORM"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/dist ./dist</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/node_modules ./node_modules</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"dist/main.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># ビルド</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> buildx</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --platform</span><span style="color:#9ECBFF"> linux/amd64,linux/arm64,linux/arm/v7</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -t</span><span style="color:#9ECBFF"> myapp:latest</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --push</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  .</span></span></code></pre>
+<h2 id="開発環境最適化">開発環境最適化</h2>
+<h3 id="ホットリロード対応">ホットリロード対応</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># Dockerfile.dev</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># グローバルツールのインストール</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm install -g nodemon</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 依存関係</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm install</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ソースはvolume マウント</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"nodemon"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"--watch"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"src"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"src/index.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># docker-compose.yml</span></span>
+<span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.8'</span></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    build</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      context</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">.</span></span>
+<span class="line"><span style="color:#85E89D">      dockerfile</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Dockerfile.dev</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">./src:/app/src</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/app/node_modules</span><span style="color:#6A737D">  # node_modulesは除外</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"3000:3000"</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">NODE_ENV=development</span></span></code></pre>
+<h2 id="モノレポ対応パターン">モノレポ対応パターン</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># syntax=docker/dockerfile:1.4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> base</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ルートの依存関係</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> turbo.json ./</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> packages/shared/package*.json ./packages/shared/</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 特定アプリの依存関係</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> apps/api/package*.json ./apps/api/</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm install</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ビルド</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> base </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 特定アプリのみビルド</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npx turbo run build --filter=api</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 本番</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/apps/api/dist ./dist</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/node_modules ./node_modules</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"dist/main.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h2 id="デバッグパターン">デバッグパターン</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm install</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># デバッグポート公開</span></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 3000 9229</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># デバッグモードで起動</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"--inspect=0.0.0.0:9229"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"src/index.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># docker-compose.debug.yml</span></span>
+<span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.8'</span></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    build</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">.</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"3000:3000"</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"9229:9229"</span><span style="color:#6A737D">  # デバッガー接続用</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">./src:/app/src</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>本記事で紹介したDockerパターンを適切に使うことで、以下が実現できます。</p>
+<p><strong>パフォーマンス</strong></p>
+<ul>
+<li>マルチステージビルドでイメージサイズを削減</li>
+<li>レイヤーキャッシュで高速ビルド</li>
+<li>BuildKitで並列ビルド</li>
+</ul>
+<p><strong>セキュリティ</strong></p>
+<ul>
+<li>非rootユーザー実行</li>
+<li>最小限のベースイメージ</li>
+<li>シークレット漏洩防止</li>
+</ul>
+<p><strong>運用性</strong></p>
+<ul>
+<li>ヘルスチェックで自動復旧</li>
+<li>マルチアーキテクチャ対応</li>
+<li>開発環境と本番環境の分離</li>
+</ul>
+<p>2026年現在、これらのパターンは本番環境での運用に欠かせないベストプラクティスとなっています。</p>
+<p><strong>参考リンク</strong></p>
+<ul>
+<li><a href="https://docs.docker.com/develop/dev-best-practices/">Docker Best Practices</a></li>
+<li><a href="https://docs.docker.com/engine/reference/builder/">Dockerfile Reference</a></li>
+<li><a href="https://docs.docker.com/build/buildkit/">BuildKit</a></li>
+</ul>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

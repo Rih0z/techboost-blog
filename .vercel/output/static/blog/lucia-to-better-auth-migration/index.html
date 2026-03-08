@@ -1,0 +1,562 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/lucia-to-better-auth-migration/"><!-- Primary Meta Tags --><title>Lucia Auth → Better Authへの移行ガイド：認証ライブラリの選択肢</title><meta name="title" content="Lucia Auth → Better Authへの移行ガイド：認証ライブラリの選択肢"><meta name="description" content="Lucia Authの非推奨化を受けて、Better AuthやAuth.jsへの移行パス、セッション管理の実装、各ライブラリの比較を詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/lucia-to-better-auth-migration/"><meta property="og:title" content="Lucia Auth → Better Authへの移行ガイド：認証ライブラリの選択肢"><meta property="og:description" content="Lucia Authの非推奨化を受けて、Better AuthやAuth.jsへの移行パス、セッション管理の実装、各ライブラリの比較を詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/lucia-to-better-auth-migration/"><meta name="twitter:title" content="Lucia Auth → Better Authへの移行ガイド：認証ライブラリの選択肢"><meta name="twitter:description" content="Lucia Authの非推奨化を受けて、Better AuthやAuth.jsへの移行パス、セッション管理の実装、各ライブラリの比較を詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/lucia-to-better-auth-migration/"},"headline":"Lucia Auth → Better Authへの移行ガイド：認証ライブラリの選択肢","description":"Lucia Authの非推奨化を受けて、Better AuthやAuth.jsへの移行パス、セッション管理の実装、各ライブラリの比較を詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。","datePublished":"2026-02-05T00:00:00.000Z","dateModified":"2026-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Lucia Auth, Better Auth, Auth.js, 認証, Next.js"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Lucia Auth → Better Authへの移行ガイド：認証ライブラリの選択肢"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-05T00:00:00.000Z"> Feb 4, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Lucia Auth → Better Authへの移行ガイド：認証ライブラリの選択肢</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Lucia%20Auth" class="article-tag" data-astro-cid-bvzihdzo>
+#Lucia Auth </a><a href="/blog/tag/Better%20Auth" class="article-tag" data-astro-cid-bvzihdzo>
+#Better Auth </a><a href="/blog/tag/Auth.js" class="article-tag" data-astro-cid-bvzihdzo>
+#Auth.js </a><a href="/blog/tag/%E8%AA%8D%E8%A8%BC" class="article-tag" data-astro-cid-bvzihdzo>
+#認証 </a><a href="/blog/tag/Next.js" class="article-tag" data-astro-cid-bvzihdzo>
+#Next.js </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>2024年、Lucia Authの作者は開発終了を発表しました。多くの開発者がLucia Authを使用していたため、代替ライブラリへの移行が必要になりました。この記事では、Lucia Authから主要な代替ライブラリへの移行方法と、各ライブラリの比較を詳しく解説します。</p>
+<h2 id="lucia-authとは何だったのか">Lucia Authとは何だったのか</h2>
+<p>Lucia Authは、型安全性とシンプルさを重視したセッション管理ライブラリでした。主な特徴は以下の通りです。</p>
+<h3 id="lucia-authの特徴">Lucia Authの特徴</h3>
+<ul>
+<li><strong>型安全</strong>: TypeScriptファーストな設計</li>
+<li><strong>フレームワーク非依存</strong>: Next.js、SvelteKit、Astro等で使用可能</li>
+<li><strong>シンプルなAPI</strong>: 認証の基本に焦点</li>
+<li><strong>柔軟なデータベース対応</strong>: Prisma、Drizzle、生SQL等をサポート</li>
+<li><strong>プリミティブ</strong>: 低レベルAPIで完全な制御が可能</li>
+</ul>
+<h3 id="なぜ開発終了したのか">なぜ開発終了したのか</h3>
+<p>作者のブログ投稿によると：</p>
+<ol>
+<li><strong>メンテナンスの負担</strong>: 多数のアダプターとプラグインの維持</li>
+<li><strong>スコープクリープ</strong>: 本来のシンプルさが失われつつあった</li>
+<li><strong>より良い代替案の登場</strong>: Better Auth、Auth.js等が成熟</li>
+</ol>
+<h2 id="代替ライブラリの選択肢">代替ライブラリの選択肢</h2>
+<h3 id="1-better-auth">1. Better Auth</h3>
+<p><strong>概要</strong>: Lucia Authの精神的後継者。型安全性とシンプルさを継承。</p>
+<p><strong>特徴</strong>:</p>
+<ul>
+<li>TypeScriptファースト</li>
+<li>Next.js、SvelteKit、Astro対応</li>
+<li>プラグインシステム</li>
+<li>OAuth、メール/パスワード、マジックリンク</li>
+<li>セッション管理</li>
+</ul>
+<p><strong>適している場合</strong>:</p>
+<ul>
+<li>Lucia Authの体験に近いものを求めている</li>
+<li>型安全性を重視</li>
+<li>Next.jsをメインに使用</li>
+</ul>
+<h3 id="2-authjs-nextauthjs-v5">2. Auth.js (NextAuth.js v5)</h3>
+<p><strong>概要</strong>: Next.jsのデファクトスタンダード認証ライブラリ。</p>
+<p><strong>特徴</strong>:</p>
+<ul>
+<li>大規模なエコシステム</li>
+<li>50以上のOAuthプロバイダー</li>
+<li>Edge Runtime対応</li>
+<li>データベースセッションとJWT両方サポート</li>
+</ul>
+<p><strong>適している場合</strong>:</p>
+<ul>
+<li>Next.jsのみ使用</li>
+<li>多数のOAuthプロバイダーが必要</li>
+<li>成熟したエコシステムを求めている</li>
+</ul>
+<h3 id="3-clerk">3. Clerk</h3>
+<p><strong>概要</strong>: 完全ホスト型の認証サービス。</p>
+<p><strong>特徴</strong>:</p>
+<ul>
+<li>完全ホスト型（SaaS）</li>
+<li>UI コンポーネント提供</li>
+<li>ユーザー管理画面</li>
+<li>多要素認証、組織管理等の高度な機能</li>
+</ul>
+<p><strong>適している場合</strong>:</p>
+<ul>
+<li>認証インフラを自前で管理したくない</li>
+<li>UIコンポーネントが欲しい</li>
+<li>予算がある（有料プランが必要になる可能性）</li>
+</ul>
+<h3 id="4-自前実装">4. 自前実装</h3>
+<p><strong>概要</strong>: セッション管理を自分で実装。</p>
+<p><strong>特徴</strong>:</p>
+<ul>
+<li>完全な制御</li>
+<li>依存関係なし</li>
+<li>学習機会</li>
+</ul>
+<p><strong>適している場合</strong>:</p>
+<ul>
+<li>シンプルな要件</li>
+<li>完全な制御が必要</li>
+<li>認証の仕組みを深く理解したい</li>
+</ul>
+<h2 id="lucia-auth--better-auth-移行ガイド">Lucia Auth → Better Auth 移行ガイド</h2>
+<p>最も多くのユースケースで推奨されるBetter Authへの移行を詳しく見ていきます。</p>
+<h3 id="1-インストール">1. インストール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> uninstall</span><span style="color:#9ECBFF"> lucia</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> better-auth</span></span></code></pre>
+<h3 id="2-設定ファイルの移行">2. 設定ファイルの移行</h3>
+<p><strong>Lucia Auth（before）</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/auth.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { lucia } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "lucia"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { prisma } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@lucia-auth/adapter-prisma"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { PrismaClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@prisma/client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> client</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PrismaClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> auth</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> lucia</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  adapter: </span><span style="color:#B392F0">prisma</span><span style="color:#E1E4E8">(client),</span></span>
+<span class="line"><span style="color:#E1E4E8">  env: process.env.</span><span style="color:#79B8FF">NODE_ENV</span><span style="color:#F97583"> ===</span><span style="color:#9ECBFF"> "production"</span><span style="color:#F97583"> ?</span><span style="color:#9ECBFF"> "PROD"</span><span style="color:#F97583"> :</span><span style="color:#9ECBFF"> "DEV"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  middleware: </span><span style="color:#B392F0">nextjs</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  sessionCookie: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    expires: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#B392F0">  getUserAttributes</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      email: data.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">      name: data.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> type</span><span style="color:#B392F0"> Auth</span><span style="color:#F97583"> =</span><span style="color:#F97583"> typeof</span><span style="color:#E1E4E8"> auth;</span></span></code></pre>
+<p><strong>Better Auth（after）</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/auth.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { betterAuth } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "better-auth"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { prismaAdapter } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "better-auth/adapters/prisma"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { PrismaClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@prisma/client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> prisma</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PrismaClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> auth</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> betterAuth</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  database: </span><span style="color:#B392F0">prismaAdapter</span><span style="color:#E1E4E8">(prisma),</span></span>
+<span class="line"><span style="color:#E1E4E8">  emailAndPassword: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    enabled: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  user: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    additionalFields: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      name: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        type: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        required: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> type</span><span style="color:#B392F0"> Auth</span><span style="color:#F97583"> =</span><span style="color:#F97583"> typeof</span><span style="color:#E1E4E8"> auth;</span></span></code></pre>
+<h3 id="3-データベーススキーマの移行">3. データベーススキーマの移行</h3>
+<p><strong>Lucia Auth（before）</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="prisma"><code><span class="line"><span style="color:#F97583">model</span><span style="color:#B392F0"> User</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id       </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">    @id</span><span style="color:#B392F0"> @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">cuid</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">  email    </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">    @unique</span></span>
+<span class="line"><span style="color:#E1E4E8">  name     </span><span style="color:#79B8FF">String</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">  sessions </span><span style="color:#79B8FF">Session</span><span style="color:#F97583">[]</span></span>
+<span class="line"><span style="color:#E1E4E8">  keys     </span><span style="color:#79B8FF">Key</span><span style="color:#F97583">[]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">model</span><span style="color:#B392F0"> Session</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id             </span><span style="color:#79B8FF">String</span><span style="color:#B392F0"> @id</span><span style="color:#B392F0"> @unique</span></span>
+<span class="line"><span style="color:#E1E4E8">  user_id        </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  active_expires </span><span style="color:#79B8FF">BigInt</span></span>
+<span class="line"><span style="color:#E1E4E8">  idle_expires   </span><span style="color:#79B8FF">BigInt</span></span>
+<span class="line"><span style="color:#E1E4E8">  user           </span><span style="color:#79B8FF">User</span><span style="color:#B392F0">   @relation</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">references</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">id</span><span style="color:#E1E4E8">], </span><span style="color:#FFAB70">fields</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">user_id</span><span style="color:#E1E4E8">], </span><span style="color:#FFAB70">onDelete</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">Cascade</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">model</span><span style="color:#B392F0"> Key</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id              </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">  @id</span><span style="color:#B392F0"> @unique</span></span>
+<span class="line"><span style="color:#E1E4E8">  hashed_password </span><span style="color:#79B8FF">String</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">  user_id         </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  user            </span><span style="color:#79B8FF">User</span><span style="color:#B392F0">    @relation</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">references</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">id</span><span style="color:#E1E4E8">], </span><span style="color:#FFAB70">fields</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">user_id</span><span style="color:#E1E4E8">], </span><span style="color:#FFAB70">onDelete</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">Cascade</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>Better Auth（after）</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="prisma"><code><span class="line"><span style="color:#F97583">model</span><span style="color:#B392F0"> User</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id            </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">    @id</span><span style="color:#B392F0"> @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">cuid</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">  email         </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">    @unique</span></span>
+<span class="line"><span style="color:#E1E4E8">  emailVerified </span><span style="color:#79B8FF">DateTime</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">  name          </span><span style="color:#79B8FF">String</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">  image         </span><span style="color:#79B8FF">String</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">  createdAt     </span><span style="color:#79B8FF">DateTime</span><span style="color:#B392F0">  @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">now</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">  updatedAt     </span><span style="color:#79B8FF">DateTime</span><span style="color:#B392F0">  @updatedAt</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  accounts      </span><span style="color:#79B8FF">Account</span><span style="color:#F97583">[]</span></span>
+<span class="line"><span style="color:#E1E4E8">  sessions      </span><span style="color:#79B8FF">Session</span><span style="color:#F97583">[]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">model</span><span style="color:#B392F0"> Account</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id                </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">  @id</span><span style="color:#B392F0"> @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">cuid</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">  userId            </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  type              </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  provider          </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  providerAccountId </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  refresh_token     </span><span style="color:#79B8FF">String</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">  access_token      </span><span style="color:#79B8FF">String</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">  expires_at        </span><span style="color:#79B8FF">Int</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">  token_type        </span><span style="color:#79B8FF">String</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">  scope             </span><span style="color:#79B8FF">String</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">  id_token          </span><span style="color:#79B8FF">String</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">  session_state     </span><span style="color:#79B8FF">String</span><span style="color:#F97583">?</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  user </span><span style="color:#79B8FF">User</span><span style="color:#B392F0"> @relation</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">fields</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">userId</span><span style="color:#E1E4E8">], </span><span style="color:#FFAB70">references</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">id</span><span style="color:#E1E4E8">], </span><span style="color:#FFAB70">onDelete</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">Cascade</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  @@unique</span><span style="color:#E1E4E8">([</span><span style="color:#79B8FF">provider</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">providerAccountId</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">model</span><span style="color:#B392F0"> Session</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id           </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">   @id</span><span style="color:#B392F0"> @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">cuid</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">  sessionToken </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">   @unique</span></span>
+<span class="line"><span style="color:#E1E4E8">  userId       </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  expires      </span><span style="color:#79B8FF">DateTime</span></span>
+<span class="line"><span style="color:#E1E4E8">  user         </span><span style="color:#79B8FF">User</span><span style="color:#B392F0">     @relation</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">fields</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">userId</span><span style="color:#E1E4E8">], </span><span style="color:#FFAB70">references</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">id</span><span style="color:#E1E4E8">], </span><span style="color:#FFAB70">onDelete</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">Cascade</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">model</span><span style="color:#B392F0"> VerificationToken</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  identifier </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  token      </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">   @unique</span></span>
+<span class="line"><span style="color:#E1E4E8">  expires    </span><span style="color:#79B8FF">DateTime</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  @@unique</span><span style="color:#E1E4E8">([</span><span style="color:#79B8FF">identifier</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">token</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>マイグレーション実行:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> prisma</span><span style="color:#9ECBFF"> migrate</span><span style="color:#9ECBFF"> dev</span><span style="color:#79B8FF"> --name</span><span style="color:#9ECBFF"> migrate-to-better-auth</span></span></code></pre>
+<h3 id="4-データマイグレーション">4. データマイグレーション</h3>
+<p>既存のユーザーデータを新しいスキーマに移行する必要があります。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// scripts/migrate-users.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { PrismaClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@prisma/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> bcrypt </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'bcrypt'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> prisma</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PrismaClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> migrateUsers</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">  // Lucia Authの既存ユーザーを取得</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> oldUsers</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> prisma.</span><span style="color:#B392F0">$queryRaw</span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">    SELECT u.id, u.email, u.name, k.hashed_password</span></span>
+<span class="line"><span style="color:#9ECBFF">    FROM "User" u</span></span>
+<span class="line"><span style="color:#9ECBFF">    LEFT JOIN "Key" k ON k.user_id = u.id</span></span>
+<span class="line"><span style="color:#9ECBFF">    WHERE k.id LIKE 'email:%'</span></span>
+<span class="line"><span style="color:#9ECBFF">  `</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> oldUser</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> oldUsers </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">[]) {</span></span>
+<span class="line"><span style="color:#6A737D">    // Better Auth形式でユーザーを作成</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> prisma.user.</span><span style="color:#B392F0">upsert</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      where: { id: oldUser.id },</span></span>
+<span class="line"><span style="color:#E1E4E8">      update: {},</span></span>
+<span class="line"><span style="color:#E1E4E8">      create: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        id: oldUser.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">        email: oldUser.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: oldUser.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">        emailVerified: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(), </span><span style="color:#6A737D">// 既存ユーザーは検証済みとみなす</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // パスワードアカウントを作成</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (oldUser.hashed_password) {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> prisma.account.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          userId: user.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">          type: </span><span style="color:#9ECBFF">'credentials'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          provider: </span><span style="color:#9ECBFF">'credentials'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          providerAccountId: user.email,</span></span>
+<span class="line"><span style="color:#6A737D">          // Better Authはパスワードを別のフィールドで管理</span></span>
+<span class="line"><span style="color:#6A737D">          // カスタムフィールドとして追加する必要がある場合があります</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Migration completed'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">migrateUsers</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">catch</span><span style="color:#E1E4E8">(console.error)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">finally</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> prisma.</span><span style="color:#B392F0">$disconnect</span><span style="color:#E1E4E8">());</span></span></code></pre>
+<h3 id="5-api-routesの移行">5. API Routesの移行</h3>
+<p><strong>Lucia Auth（before）</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/auth/signup/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { auth } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@/lib/auth"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> POST</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">email</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">password</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">name</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> request.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> auth.</span><span style="color:#B392F0">createUser</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      key: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        providerId: </span><span style="color:#9ECBFF">"email"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        providerUserId: email,</span></span>
+<span class="line"><span style="color:#E1E4E8">        password,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      attributes: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        email,</span></span>
+<span class="line"><span style="color:#E1E4E8">        name,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> auth.</span><span style="color:#B392F0">createSession</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      userId: user.userId,</span></span>
+<span class="line"><span style="color:#E1E4E8">      attributes: {},</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> sessionCookie</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> auth.</span><span style="color:#B392F0">createSessionCookie</span><span style="color:#E1E4E8">(session);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">      status: </span><span style="color:#79B8FF">302</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      headers: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        Location: </span><span style="color:#9ECBFF">"/"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "Set-Cookie"</span><span style="color:#E1E4E8">: sessionCookie.</span><span style="color:#B392F0">serialize</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Email already exists"</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">400</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>Better Auth（after）</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/auth/[...all]/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { auth } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@/lib/auth"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">GET</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">POST</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> auth.handler;</span></span></code></pre>
+<p>Better Authは自動的にすべての認証エンドポイントを作成します：</p>
+<ul>
+<li><code>/api/auth/signin</code></li>
+<li><code>/api/auth/signup</code></li>
+<li><code>/api/auth/signout</code></li>
+<li><code>/api/auth/session</code></li>
+</ul>
+<h3 id="6-クライアントコードの移行">6. クライアントコードの移行</h3>
+<p><strong>Lucia Auth（before）</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// components/signup-form.tsx</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> handleSignup</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">password</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"/api/auth/signup"</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    method: </span><span style="color:#9ECBFF">"POST"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers: { </span><span style="color:#9ECBFF">"Content-Type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"application/json"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">({ email, password, name }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">response.ok) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Signup failed"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>Better Auth（after）</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// components/signup-form.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { authClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@/lib/auth-client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> handleSignup</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">password</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> authClient.signUp.</span><span style="color:#B392F0">email</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    email,</span></span>
+<span class="line"><span style="color:#E1E4E8">    password,</span></span>
+<span class="line"><span style="color:#E1E4E8">    name,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (result.error) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(result.error.message);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="7-セッション取得の移行">7. セッション取得の移行</h3>
+<p><strong>Lucia Auth（before）</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/dashboard/page.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { auth } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@/lib/auth"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cookies } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "next/headers"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> DashboardPage</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sessionId</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(auth.sessionCookieName)?.value </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">sessionId) {</span></span>
+<span class="line"><span style="color:#B392F0">    redirect</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"/signin"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">session</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">user</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> auth.</span><span style="color:#B392F0">validateSession</span><span style="color:#E1E4E8">(sessionId);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">session) {</span></span>
+<span class="line"><span style="color:#B392F0">    redirect</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"/signin"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>Welcome, {user.name}</span><span style="color:#F97583">!&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>Better Auth（after）</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/dashboard/page.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { auth } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@/lib/auth"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cookies } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "next/headers"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redirect } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "next/navigation"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> DashboardPage</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> auth.api.</span><span style="color:#B392F0">getSession</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers: </span><span style="color:#F97583">await</span><span style="color:#B392F0"> cookies</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">session) {</span></span>
+<span class="line"><span style="color:#B392F0">    redirect</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"/signin"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>Welcome, {session.user.name}</span><span style="color:#F97583">!&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="lucia-auth--authjs-移行ガイド">Lucia Auth → Auth.js 移行ガイド</h2>
+<p>Auth.jsも人気の選択肢です。</p>
+<h3 id="インストール">インストール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> uninstall</span><span style="color:#9ECBFF"> lucia</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> next-auth@beta</span><span style="color:#9ECBFF"> @auth/prisma-adapter</span></span></code></pre>
+<h3 id="設定">設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// auth.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> NextAuth </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "next-auth"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { PrismaAdapter } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@auth/prisma-adapter"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { PrismaClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@prisma/client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Credentials </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "next-auth/providers/credentials"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> bcrypt </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "bcrypt"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> prisma</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PrismaClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">handlers</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">auth</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">signIn</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">signOut</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> NextAuth</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  adapter: </span><span style="color:#B392F0">PrismaAdapter</span><span style="color:#E1E4E8">(prisma),</span></span>
+<span class="line"><span style="color:#E1E4E8">  providers: [</span></span>
+<span class="line"><span style="color:#B392F0">    Credentials</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      credentials: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        email: { label: </span><span style="color:#9ECBFF">"Email"</span><span style="color:#E1E4E8">, type: </span><span style="color:#9ECBFF">"email"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        password: { label: </span><span style="color:#9ECBFF">"Password"</span><span style="color:#E1E4E8">, type: </span><span style="color:#9ECBFF">"password"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#F97583">      async</span><span style="color:#B392F0"> authorize</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">credentials</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> prisma.user.</span><span style="color:#B392F0">findUnique</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          where: { email: credentials.email </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">user) </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> account</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> prisma.account.</span><span style="color:#B392F0">findFirst</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          where: {</span></span>
+<span class="line"><span style="color:#E1E4E8">            userId: user.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">            provider: </span><span style="color:#9ECBFF">"credentials"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          },</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">account) </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> passwordMatch</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> bcrypt.</span><span style="color:#B392F0">compare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">          credentials.password </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          account.password </span><span style="color:#6A737D">// カスタムフィールド</span></span>
+<span class="line"><span style="color:#E1E4E8">        );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">passwordMatch) </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> user;</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#E1E4E8">  session: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    strategy: </span><span style="color:#9ECBFF">"jwt"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="api-routes">API Routes</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/auth/[...nextauth]/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { handlers } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@/auth"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">GET</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">POST</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> handlers;</span></span></code></pre>
+<h3 id="セッション取得">セッション取得</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/dashboard/page.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { auth } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@/auth"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redirect } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "next/navigation"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> DashboardPage</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> auth</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">session) {</span></span>
+<span class="line"><span style="color:#B392F0">    redirect</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"/signin"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>Welcome, {session.user.name}</span><span style="color:#F97583">!&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="自前実装のアプローチ">自前実装のアプローチ</h2>
+<p>シンプルなセッション管理を自前で実装することもできます。</p>
+<h3 id="セッション管理の基本実装">セッション管理の基本実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/session.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { SignJWT, jwtVerify } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "jose"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cookies } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "next/headers"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> secret</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> TextEncoder</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">encode</span><span style="color:#E1E4E8">(process.env.</span><span style="color:#79B8FF">SESSION_SECRET</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createSession</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> token</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> SignJWT</span><span style="color:#E1E4E8">({ userId })</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">setProtectedHeader</span><span style="color:#E1E4E8">({ alg: </span><span style="color:#9ECBFF">"HS256"</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">setExpirationTime</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"7d"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">sign</span><span style="color:#E1E4E8">(secret);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"session"</span><span style="color:#E1E4E8">, token, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    httpOnly: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    secure: process.env.</span><span style="color:#79B8FF">NODE_ENV</span><span style="color:#F97583"> ===</span><span style="color:#9ECBFF"> "production"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    sameSite: </span><span style="color:#9ECBFF">"lax"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    maxAge: </span><span style="color:#79B8FF">60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 24</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 7</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 7 days</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> token;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getSession</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> token</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"session"</span><span style="color:#E1E4E8">)?.value;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">token) </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">payload</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> jwtVerify</span><span style="color:#E1E4E8">(token, secret);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> payload.userId </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> deleteSession</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#B392F0">  cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"session"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="サインアップ実装">サインアップ実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/actions/auth.ts</span></span>
+<span class="line"><span style="color:#9ECBFF">"use server"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { prisma } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@/lib/db"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> bcrypt </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "bcrypt"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createSession } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@/lib/session"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redirect } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "next/navigation"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> signUp</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">formData</span><span style="color:#F97583">:</span><span style="color:#B392F0"> FormData</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> email</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> formData.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"email"</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> password</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> formData.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"password"</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> name</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> formData.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"name"</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> existingUser</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> prisma.user.</span><span style="color:#B392F0">findUnique</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    where: { email },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (existingUser) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Email already exists"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> hashedPassword</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> bcrypt.</span><span style="color:#B392F0">hash</span><span style="color:#E1E4E8">(password, </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> prisma.user.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      email,</span></span>
+<span class="line"><span style="color:#E1E4E8">      name,</span></span>
+<span class="line"><span style="color:#E1E4E8">      password: hashedPassword,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> createSession</span><span style="color:#E1E4E8">(user.id);</span></span>
+<span class="line"><span style="color:#B392F0">  redirect</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"/dashboard"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Lucia Authの開発終了は残念ですが、優れた代替案が複数存在します。</p>
+<h3 id="推奨される選択肢">推奨される選択肢</h3>
+<p><strong>Better Auth</strong>:</p>
+<ul>
+<li>Lucia Authの精神的後継者</li>
+<li>型安全性とシンプルさ</li>
+<li>Next.js、SvelteKit等で使用可能</li>
+</ul>
+<p><strong>Auth.js</strong>:</p>
+<ul>
+<li>Next.js専用ならベスト</li>
+<li>大規模なエコシステム</li>
+<li>多数のOAuthプロバイダー</li>
+</ul>
+<p><strong>自前実装</strong>:</p>
+<ul>
+<li>シンプルな要件の場合</li>
+<li>完全な制御が必要</li>
+<li>学習目的</li>
+</ul>
+<p>移行は手間がかかりますが、長期的にはより良いソリューションを使用できるようになります。プロジェクトの要件に応じて、最適な代替案を選択してください。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/edge-config-vercel-guide/"><!-- Primary Meta Tags --><title>Vercel Edge Config実践: グローバル設定のリアルタイム管理</title><meta name="title" content="Vercel Edge Config実践: グローバル設定のリアルタイム管理"><meta name="description" content="Vercel Edge Configを使ったグローバル設定のリアルタイム管理手法を実践的に解説。Feature Flag、A/Bテスト、動的設定の実装パターンとパフォーマンス最適化テクニックを紹介します。現場で使える知識を体系的にまとめました。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/edge-config-vercel-guide/"><meta property="og:title" content="Vercel Edge Config実践: グローバル設定のリアルタイム管理"><meta property="og:description" content="Vercel Edge Configを使ったグローバル設定のリアルタイム管理手法を実践的に解説。Feature Flag、A/Bテスト、動的設定の実装パターンとパフォーマンス最適化テクニックを紹介します。現場で使える知識を体系的にまとめました。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/edge-config-vercel-guide/"><meta name="twitter:title" content="Vercel Edge Config実践: グローバル設定のリアルタイム管理"><meta name="twitter:description" content="Vercel Edge Configを使ったグローバル設定のリアルタイム管理手法を実践的に解説。Feature Flag、A/Bテスト、動的設定の実装パターンとパフォーマンス最適化テクニックを紹介します。現場で使える知識を体系的にまとめました。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/edge-config-vercel-guide/"},"headline":"Vercel Edge Config実践: グローバル設定のリアルタイム管理","description":"Vercel Edge Configを使ったグローバル設定のリアルタイム管理手法を実践的に解説。Feature Flag、A/Bテスト、動的設定の実装パターンとパフォーマンス最適化テクニックを紹介します。現場で使える知識を体系的にまとめました。","datePublished":"2025-09-15T00:00:00.000Z","dateModified":"2025-09-15T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"vercel, edge-config, Edge Computing, Performance, feature-flag, インフラ"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Vercel Edge Config実践: グローバル設定のリアルタイム管理"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-09-15T00:00:00.000Z"> Sep 14, 2025 </time> <div class="last-updated-on" data-astro-cid-bvzihdzo>
+Last updated on <time datetime="2025-09-15T00:00:00.000Z"> Sep 14, 2025 </time> </div> </div> <h1 data-astro-cid-bvzihdzo>Vercel Edge Config実践: グローバル設定のリアルタイム管理</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/vercel" class="article-tag" data-astro-cid-bvzihdzo>
+#vercel </a><a href="/blog/tag/edge-config" class="article-tag" data-astro-cid-bvzihdzo>
+#edge-config </a><a href="/blog/tag/Edge%20Computing" class="article-tag" data-astro-cid-bvzihdzo>
+#Edge Computing </a><a href="/blog/tag/Performance" class="article-tag" data-astro-cid-bvzihdzo>
+#Performance </a><a href="/blog/tag/feature-flag" class="article-tag" data-astro-cid-bvzihdzo>
+#feature-flag </a><a href="/blog/tag/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#インフラ </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="edge-configとは">Edge Configとは</h2>
+<p>Vercel Edge Configは、エッジランタイムで高速にアクセスできるグローバルなKey-Valueストアです。従来のデータベースやAPIコールと異なり、超低レイテンシ(1ms以下)でデータを取得できるため、Feature Flag、A/Bテスト、動的設定に最適です。</p>
+<h3 id="主な特徴">主な特徴</h3>
+<ul>
+<li><strong>超低レイテンシ</strong>: エッジネットワーク全体にレプリケーション</li>
+<li><strong>リアルタイム更新</strong>: 数秒でグローバルに反映</li>
+<li><strong>バージョン管理</strong>: 設定変更履歴の追跡</li>
+<li><strong>SDKサポート</strong>: Next.js、SvelteKit等で簡単に利用可能</li>
+</ul>
+<h3 id="従来の設定管理との比較">従来の設定管理との比較</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 従来: 環境変数 (デプロイが必要)</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> FEATURE_ENABLED</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> process.env.</span><span style="color:#79B8FF">NEXT_PUBLIC_FEATURE_ENABLED</span><span style="color:#F97583"> ===</span><span style="color:#9ECBFF"> 'true'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 従来: データベース (レイテンシが高い)</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.config.</span><span style="color:#B392F0">findUnique</span><span style="color:#E1E4E8">({ where: { key: </span><span style="color:#9ECBFF">'feature'</span><span style="color:#E1E4E8"> } });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Edge Config: リアルタイム + 低レイテンシ</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { get } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@vercel/edge-config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> featureEnabled</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'feature_enabled'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h2 id="セットアップ">セットアップ</h2>
+<h3 id="1-edge-config作成">1. Edge Config作成</h3>
+<p>Vercelダッシュボードまたはコマンドラインで作成します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Vercel CLIでプロジェクトにEdge Configを接続</span></span>
+<span class="line"><span style="color:#B392F0">vercel</span><span style="color:#9ECBFF"> env</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> EDGE_CONFIG</span></span>
+<span class="line"><span style="color:#6A737D"># コンソールで生成されたEdge Config URLを貼り付け</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># または直接作成</span></span>
+<span class="line"><span style="color:#B392F0">vercel</span><span style="color:#9ECBFF"> edge-config</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> my-config</span></span></code></pre>
+<h3 id="2-nextjsプロジェクトへの統合">2. Next.jsプロジェクトへの統合</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> @vercel/edge-config</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/edge-config.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@vercel/edge-config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> edgeConfig</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">(process.env.</span><span style="color:#79B8FF">EDGE_CONFIG</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 型安全なラッパー</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> AppConfig</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  featureFlags</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    newDashboard</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    betaFeatures</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    maintenanceMode</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#FFAB70">  abTests</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    pricingPageVariant</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 'A'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'B'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'C'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#FFAB70">  limits</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    maxUploadSize</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    rateLimit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getConfig</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">K</span><span style="color:#F97583"> extends</span><span style="color:#F97583"> keyof</span><span style="color:#B392F0"> AppConfig</span><span style="color:#E1E4E8">>(</span></span>
+<span class="line"><span style="color:#FFAB70">  key</span><span style="color:#F97583">:</span><span style="color:#B392F0"> K</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">AppConfig</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">|</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> edgeConfig.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">AppConfig</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">]>(key);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// すべての設定を一度に取得</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getAllConfig</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Partial</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">AppConfig</span><span style="color:#E1E4E8">>> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> edgeConfig.</span><span style="color:#B392F0">getAll</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">AppConfig</span><span style="color:#E1E4E8">>();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="3-edge-runtime対応ミドルウェア">3. Edge Runtime対応ミドルウェア</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middleware.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { get } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@vercel/edge-config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> middleware</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">  // メンテナンスモードチェック</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> maintenanceMode</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">boolean</span><span style="color:#E1E4E8">>(</span><span style="color:#9ECBFF">'maintenanceMode'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (maintenanceMode </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">request.nextUrl.pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/maintenance'</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/maintenance'</span><span style="color:#E1E4E8">, request.url));</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // Feature Flagによるルーティング</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> newDashboard</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">boolean</span><span style="color:#E1E4E8">>(</span><span style="color:#9ECBFF">'featureFlags.newDashboard'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (newDashboard </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> request.nextUrl.pathname </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> '/dashboard'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">rewrite</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/dashboard-v2'</span><span style="color:#E1E4E8">, request.url));</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  matcher: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    '/((?!api|_next/static|_next/image|favicon.ico).*)'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h2 id="feature-flag実装パターン">Feature Flag実装パターン</h2>
+<h3 id="1-コンポーネントレベルのfeature-flag">1. コンポーネントレベルのFeature Flag</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// components/feature-flag.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/edge-config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> FeatureFlagProps</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  flag</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  children</span><span style="color:#F97583">:</span><span style="color:#B392F0"> React</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ReactNode</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  fallback</span><span style="color:#F97583">?:</span><span style="color:#B392F0"> React</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ReactNode</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> FeatureFlag</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">flag</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">children</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fallback</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> FeatureFlagProps</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> flags</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getConfig</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'featureFlags'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> isEnabled</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> flags?.[flag </span><span style="color:#F97583">as</span><span style="color:#F97583"> keyof</span><span style="color:#F97583"> typeof</span><span style="color:#E1E4E8"> flags] </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">isEnabled) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> fallback </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> &#x3C;>{fallback}</span><span style="color:#F97583">&#x3C;/></span><span style="color:#F97583"> :</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;>{children}</span><span style="color:#F97583">&#x3C;/></span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> DashboardPage</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">h1</span><span style="color:#E1E4E8">>Dashboard</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">h1</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#FFAB70">FeatureFlag</span></span>
+<span class="line"><span style="color:#E1E4E8">        flag</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"newDashboard"</span></span>
+<span class="line"><span style="color:#E1E4E8">        fallback</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{&#x3C;LegacyDashboard />}</span></span>
+<span class="line"><span style="color:#F97583">      ></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">NewDashboard </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">FeatureFlag</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-ユーザーセグメント別feature-flag">2. ユーザーセグメント別Feature Flag</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/feature-flag.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/edge-config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getServerSession } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> isFeatureEnabled</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  featureName</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  userId</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">boolean</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getConfig</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'featureFlags'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> feature</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> config?.[featureName];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">feature) </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // シンプルなBoolean</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> feature </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'boolean'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> feature;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ロールアウト率指定</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> feature </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'object'</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#9ECBFF"> 'rollout'</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> feature) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> rollout</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> feature.rollout </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">; </span><span style="color:#6A737D">// 0-100</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">userId) </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ユーザーIDをハッシュして一貫性のあるロールアウト</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> hash</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Array.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(userId).</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      (</span><span style="color:#FFAB70">acc</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">char</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> acc </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> char.</span><span style="color:#B392F0">charCodeAt</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#79B8FF">      0</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (hash </span><span style="color:#F97583">%</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> rollout;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 許可リスト</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> feature </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'object'</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#9ECBFF"> 'allowList'</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> feature) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> allowList</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> feature.allowList </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">[];</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> userId </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> allowList.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(userId) </span><span style="color:#F97583">:</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Edge Config設定例</span></span>
+<span class="line"><span style="color:#6A737D">/*</span></span>
+<span class="line"><span style="color:#6A737D">{</span></span>
+<span class="line"><span style="color:#6A737D">  "featureFlags": {</span></span>
+<span class="line"><span style="color:#6A737D">    "newDashboard": true,</span></span>
+<span class="line"><span style="color:#6A737D">    "betaFeatures": {</span></span>
+<span class="line"><span style="color:#6A737D">      "rollout": 25</span></span>
+<span class="line"><span style="color:#6A737D">    },</span></span>
+<span class="line"><span style="color:#6A737D">    "premiumFeature": {</span></span>
+<span class="line"><span style="color:#6A737D">      "allowList": ["user-123", "user-456"]</span></span>
+<span class="line"><span style="color:#6A737D">    }</span></span>
+<span class="line"><span style="color:#6A737D">  }</span></span>
+<span class="line"><span style="color:#6A737D">}</span></span>
+<span class="line"><span style="color:#6A737D">*/</span></span></code></pre>
+<h3 id="3-abテスト実装">3. A/Bテスト実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/ab-test.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/edge-config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cookies } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/headers'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> type</span><span style="color:#B392F0"> Variant</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'A'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'B'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'C'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getVariant</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  testName</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  userId</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Variant</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cookieStore</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> cookies</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> variantCookie</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> cookieStore.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`ab_${</span><span style="color:#E1E4E8">testName</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 既存のバリアントがあればそれを使用</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (variantCookie) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> variantCookie.value </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Variant</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // Edge Configから配分設定を取得</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> abTests</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getConfig</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'abTests'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> distribution</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> abTests?.[testName] </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> { A: </span><span style="color:#79B8FF">50</span><span style="color:#E1E4E8">, B: </span><span style="color:#79B8FF">50</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ランダムに割り当て</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> variant</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> assignVariant</span><span style="color:#E1E4E8">(distribution, userId);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // Cookieに保存(クライアント側で設定)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> variant;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> assignVariant</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  distribution</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Variant</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">number</span><span style="color:#E1E4E8">>,</span></span>
+<span class="line"><span style="color:#FFAB70">  userId</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Variant</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> random</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> userId</span></span>
+<span class="line"><span style="color:#F97583">    ?</span><span style="color:#B392F0"> hashString</span><span style="color:#E1E4E8">(userId) </span><span style="color:#F97583">%</span><span style="color:#79B8FF"> 100</span></span>
+<span class="line"><span style="color:#F97583">    :</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">floor</span><span style="color:#E1E4E8">(Math.</span><span style="color:#B392F0">random</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> cumulative </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">variant</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">percentage</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">of</span><span style="color:#E1E4E8"> Object.</span><span style="color:#B392F0">entries</span><span style="color:#E1E4E8">(distribution)) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    cumulative </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> percentage;</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (random </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> cumulative) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> variant </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Variant</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#9ECBFF"> 'A'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> hashString</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">str</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> Array.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(str).</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">acc</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">char</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> acc </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> char.</span><span style="color:#B392F0">charCodeAt</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">), </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> PricingPage</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> variant</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getVariant</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'pricingPageTest'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">variant</span><span style="color:#E1E4E8"> === '</span><span style="color:#FFAB70">A</span><span style="color:#E1E4E8">' &#x26;&#x26; &#x3C;</span><span style="color:#FFAB70">PricingTableA</span><span style="color:#E1E4E8"> />}</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">variant</span><span style="color:#E1E4E8"> === '</span><span style="color:#FFAB70">B</span><span style="color:#E1E4E8">' &#x26;&#x26; &#x3C;</span><span style="color:#FFAB70">PricingTableB</span><span style="color:#E1E4E8"> />}</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">variant</span><span style="color:#E1E4E8"> === '</span><span style="color:#FFAB70">C</span><span style="color:#E1E4E8">' &#x26;&#x26; &#x3C;</span><span style="color:#FFAB70">PricingTableC</span><span style="color:#E1E4E8"> />}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="動的設定管理">動的設定管理</h2>
+<h3 id="レート制限の動的調整">レート制限の動的調整</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/rate-limit.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { get } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@vercel/edge-config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Ratelimit } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@upstash/ratelimit'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@upstash/redis'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> redis</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Redis</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: process.env.</span><span style="color:#79B8FF">UPSTASH_REDIS_REST_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  token: process.env.</span><span style="color:#79B8FF">UPSTASH_REDIS_REST_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createRateLimiter</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">  // Edge Configから動的に取得</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> limits</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> get</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">rateLimit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> }>(</span><span style="color:#9ECBFF">'limits'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> requestsPerMinute</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> limits?.rateLimit </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Ratelimit</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    redis,</span></span>
+<span class="line"><span style="color:#E1E4E8">    limiter: Ratelimit.</span><span style="color:#B392F0">slidingWindow</span><span style="color:#E1E4E8">(requestsPerMinute, </span><span style="color:#9ECBFF">'1 m'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// API Routeでの使用</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextRequest, NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> POST</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ratelimit</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> createRateLimiter</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> identifier</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.ip </span><span style="color:#F97583">??</span><span style="color:#9ECBFF"> 'anonymous'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">success</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">limit</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">remaining</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> ratelimit.</span><span style="color:#B392F0">limit</span><span style="color:#E1E4E8">(identifier);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">success) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      { error: </span><span style="color:#9ECBFF">'Too many requests'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        status: </span><span style="color:#79B8FF">429</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">          'X-RateLimit-Limit'</span><span style="color:#E1E4E8">: limit.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#9ECBFF">          'X-RateLimit-Remaining'</span><span style="color:#E1E4E8">: remaining.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 処理を続行</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="緊急メンテナンスモード">緊急メンテナンスモード</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/layout.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { get } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@vercel/edge-config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MaintenanceBanner </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/components/maintenance-banner'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> RootLayout</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#FFAB70">  children</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  children</span><span style="color:#F97583">:</span><span style="color:#B392F0"> React</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ReactNode</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> maintenance</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> get</span><span style="color:#E1E4E8">&#x3C;{</span></span>
+<span class="line"><span style="color:#FFAB70">    enabled</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    message</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    scheduledAt</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }>(</span><span style="color:#9ECBFF">'maintenance'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">html lang</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"ja"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">body</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#FFAB70">maintenance</span><span style="color:#E1E4E8">?.</span><span style="color:#FFAB70">enabled</span><span style="color:#E1E4E8"> &#x26;&#x26; (</span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#FFAB70">MaintenanceBanner</span><span style="color:#FFAB70"> message</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{maintenance.message} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#E1E4E8">        )}</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#FFAB70">children</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">body</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">html</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="パフォーマンス最適化">パフォーマンス最適化</h2>
+<h3 id="1-バッチ取得で通信回数を削減">1. バッチ取得で通信回数を削減</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ❌ 非効率: 複数回の取得</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> feature1</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'feature1'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> feature2</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'feature2'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> feature3</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'feature3'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 効率的: 一度に取得</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getAll</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'feature1'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'feature2'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'feature3'</span><span style="color:#E1E4E8">]);</span></span></code></pre>
+<h3 id="2-edge-functionでのキャッシング">2. Edge Functionでのキャッシング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/cached-config.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { unstable_cache } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/cache'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './edge-config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> getCachedConfig</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> unstable_cache</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> getConfig</span><span style="color:#E1E4E8">(key),</span></span>
+<span class="line"><span style="color:#E1E4E8">  [</span><span style="color:#9ECBFF">'edge-config'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    revalidate: </span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 60秒キャッシュ</span></span>
+<span class="line"><span style="color:#E1E4E8">    tags: [</span><span style="color:#9ECBFF">'config'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 必要に応じて手動で再検証</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { revalidateTag } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/cache'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> refreshConfig</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#B392F0">  revalidateTag</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'config'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="3-クライアント側での利用">3. クライアント側での利用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/config/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/edge-config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> GET</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> publicConfig</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getConfig</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'publicSettings'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(publicConfig, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">      'Cache-Control'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'public, s-maxage=60, stale-while-revalidate=120'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// クライアント側</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> useSWR </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'swr'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> usePublicConfig</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> useSWR</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/config'</span><span style="color:#E1E4E8">, fetch);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="設定更新のベストプラクティス">設定更新のベストプラクティス</h2>
+<h3 id="vercel-apiを使った自動更新">Vercel APIを使った自動更新</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// scripts/update-config.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { fetch } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'undici'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> updateEdgeConfig</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">updates</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">any</span><span style="color:#E1E4E8">>) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> edgeConfigId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> process.env.</span><span style="color:#79B8FF">EDGE_CONFIG_ID</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> token</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> process.env.</span><span style="color:#79B8FF">VERCEL_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    `https://api.vercel.com/v1/edge-config/${</span><span style="color:#E1E4E8">edgeConfigId</span><span style="color:#9ECBFF">}/items`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      method: </span><span style="color:#9ECBFF">'PATCH'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      headers: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        Authorization: </span><span style="color:#9ECBFF">`Bearer ${</span><span style="color:#E1E4E8">token</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        'Content-Type'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'application/json'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        items: Object.</span><span style="color:#B392F0">entries</span><span style="color:#E1E4E8">(updates).</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(([</span><span style="color:#FFAB70">key</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">value</span><span style="color:#E1E4E8">]) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">          operation: </span><span style="color:#9ECBFF">'update'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          key,</span></span>
+<span class="line"><span style="color:#E1E4E8">          value,</span></span>
+<span class="line"><span style="color:#E1E4E8">        })),</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">response.ok) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Failed to update Edge Config: ${</span><span style="color:#F97583">await</span><span style="color:#E1E4E8"> response</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">text</span><span style="color:#9ECBFF">()</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// GitHub Actionsでの使用例</span></span>
+<span class="line"><span style="color:#6A737D">/*</span></span>
+<span class="line"><span style="color:#6A737D">name: Update Feature Flags</span></span>
+<span class="line"><span style="color:#6A737D">on:</span></span>
+<span class="line"><span style="color:#6A737D">  workflow_dispatch:</span></span>
+<span class="line"><span style="color:#6A737D">    inputs:</span></span>
+<span class="line"><span style="color:#6A737D">      feature:</span></span>
+<span class="line"><span style="color:#6A737D">        description: 'Feature name'</span></span>
+<span class="line"><span style="color:#6A737D">        required: true</span></span>
+<span class="line"><span style="color:#6A737D">      enabled:</span></span>
+<span class="line"><span style="color:#6A737D">        description: 'Enable feature'</span></span>
+<span class="line"><span style="color:#6A737D">        type: boolean</span></span>
+<span class="line"><span style="color:#6A737D">        required: true</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">jobs:</span></span>
+<span class="line"><span style="color:#6A737D">  update:</span></span>
+<span class="line"><span style="color:#6A737D">    runs-on: ubuntu-latest</span></span>
+<span class="line"><span style="color:#6A737D">    steps:</span></span>
+<span class="line"><span style="color:#6A737D">      - name: Update Edge Config</span></span>
+<span class="line"><span style="color:#6A737D">        run: |</span></span>
+<span class="line"><span style="color:#6A737D">          curl -X PATCH \</span></span>
+<span class="line"><span style="color:#6A737D">            "https://api.vercel.com/v1/edge-config/${{ secrets.EDGE_CONFIG_ID }}/items" \</span></span>
+<span class="line"><span style="color:#6A737D">            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \</span></span>
+<span class="line"><span style="color:#6A737D">            -H "Content-Type: application/json" \</span></span>
+<span class="line"><span style="color:#6A737D">            -d '{</span></span>
+<span class="line"><span style="color:#6A737D">              "items": [{</span></span>
+<span class="line"><span style="color:#6A737D">                "operation": "update",</span></span>
+<span class="line"><span style="color:#6A737D">                "key": "featureFlags.${{ inputs.feature }}",</span></span>
+<span class="line"><span style="color:#6A737D">                "value": ${{ inputs.enabled }}</span></span>
+<span class="line"><span style="color:#6A737D">              }]</span></span>
+<span class="line"><span style="color:#6A737D">            }'</span></span>
+<span class="line"><span style="color:#6A737D">*/</span></span></code></pre>
+<h3 id="設定スキーマ検証">設定スキーマ検証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/config-schema.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { z } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'zod'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> ConfigSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  featureFlags: z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    newDashboard: z.</span><span style="color:#B392F0">boolean</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    betaFeatures: z.</span><span style="color:#B392F0">boolean</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    maintenanceMode: z.</span><span style="color:#B392F0">boolean</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  abTests: z.</span><span style="color:#B392F0">record</span><span style="color:#E1E4E8">(z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(), z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">()),</span></span>
+<span class="line"><span style="color:#E1E4E8">  limits: z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    maxUploadSize: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">positive</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    rateLimit: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">positive</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  }),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> type</span><span style="color:#B392F0"> ValidatedConfig</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> z</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">infer</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> ConfigSchema>;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 安全な取得関数</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getAll } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@vercel/edge-config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getValidatedConfig</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">ValidatedConfig</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getAll</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> ConfigSchema.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(config);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="実践例-カナリアリリース">実践例: カナリアリリース</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middleware.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { get } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@vercel/edge-config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> middleware</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> canaryConfig</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> get</span><span style="color:#E1E4E8">&#x3C;{</span></span>
+<span class="line"><span style="color:#FFAB70">    enabled</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    percentage</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }>(</span><span style="color:#9ECBFF">'canary'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">canaryConfig?.enabled) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ユーザーをカナリアグループに振り分け</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> userId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.cookies.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'user_id'</span><span style="color:#E1E4E8">)?.value;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> isCanary</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> userId</span></span>
+<span class="line"><span style="color:#F97583">    ?</span><span style="color:#B392F0"> hashString</span><span style="color:#E1E4E8">(userId) </span><span style="color:#F97583">%</span><span style="color:#79B8FF"> 100</span><span style="color:#F97583"> &#x3C;</span><span style="color:#E1E4E8"> canaryConfig.percentage</span></span>
+<span class="line"><span style="color:#F97583">    :</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">random</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#F97583"> &#x3C;</span><span style="color:#E1E4E8"> canaryConfig.percentage;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (isCanary) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 新バージョンにルーティング</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.nextUrl.</span><span style="color:#B392F0">clone</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    url.pathname </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> `/canary${</span><span style="color:#E1E4E8">url</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">pathname</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">rewrite</span><span style="color:#E1E4E8">(url);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> hashString</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">str</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> Array.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(str).</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">acc</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">char</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> acc </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> char.</span><span style="color:#B392F0">charCodeAt</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">), </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Vercel Edge Configを活用することで、デプロイ不要でアプリケーション設定をリアルタイムに変更できます。Feature Flag、A/Bテスト、動的レート制限など、現代的なWebアプリケーションに必要な機能を低レイテンシで実現できる強力なツールです。</p>
+<h3 id="次のステップ">次のステップ</h3>
+<ul>
+<li>Edge Configと環境変数の使い分けを検討</li>
+<li>Feature Flagの段階的ロールアウト戦略を設計</li>
+<li>A/Bテスト結果の分析基盤構築</li>
+<li>設定変更の監査ログ整備</li>
+</ul>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

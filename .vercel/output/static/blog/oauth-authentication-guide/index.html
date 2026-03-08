@@ -1,0 +1,1084 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/oauth-authentication-guide/"><!-- Primary Meta Tags --><title>OAuth 2.0 / OpenID Connect 実装ガイド — 安全な認証システムの作り方</title><meta name="title" content="OAuth 2.0 / OpenID Connect 実装ガイド — 安全な認証システムの作り方"><meta name="description" content="OAuth 2.0とOpenID Connectを使った安全な認証・認可システムの実装方法を完全解説。Next.js + NextAuthの実装例やセキュリティベストプラクティスも紹介します。OAuth・認証・セキュリティに関する実践情報。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/oauth-authentication-guide/"><meta property="og:title" content="OAuth 2.0 / OpenID Connect 実装ガイド — 安全な認証システムの作り方"><meta property="og:description" content="OAuth 2.0とOpenID Connectを使った安全な認証・認可システムの実装方法を完全解説。Next.js + NextAuthの実装例やセキュリティベストプラクティスも紹介します。OAuth・認証・セキュリティに関する実践情報。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/oauth-authentication-guide/"><meta name="twitter:title" content="OAuth 2.0 / OpenID Connect 実装ガイド — 安全な認証システムの作り方"><meta name="twitter:description" content="OAuth 2.0とOpenID Connectを使った安全な認証・認可システムの実装方法を完全解説。Next.js + NextAuthの実装例やセキュリティベストプラクティスも紹介します。OAuth・認証・セキュリティに関する実践情報。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/oauth-authentication-guide/"},"headline":"OAuth 2.0 / OpenID Connect 実装ガイド — 安全な認証システムの作り方","description":"OAuth 2.0とOpenID Connectを使った安全な認証・認可システムの実装方法を完全解説。Next.js + NextAuthの実装例やセキュリティベストプラクティスも紹介します。OAuth・認証・セキュリティに関する実践情報。","datePublished":"2026-02-06T00:00:00.000Z","dateModified":"2026-02-06T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"OAuth, 認証, セキュリティ, OpenID Connect, JWT, プログラミング"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"OAuth 2.0 / OpenID Connect 実装ガイド — 安全な認証システムの作り方"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-06T00:00:00.000Z"> Feb 5, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>OAuth 2.0 / OpenID Connect 実装ガイド — 安全な認証システムの作り方</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/OAuth" class="article-tag" data-astro-cid-bvzihdzo>
+#OAuth </a><a href="/blog/tag/%E8%AA%8D%E8%A8%BC" class="article-tag" data-astro-cid-bvzihdzo>
+#認証 </a><a href="/blog/tag/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3" class="article-tag" data-astro-cid-bvzihdzo>
+#セキュリティ </a><a href="/blog/tag/OpenID%20Connect" class="article-tag" data-astro-cid-bvzihdzo>
+#OpenID Connect </a><a href="/blog/tag/JWT" class="article-tag" data-astro-cid-bvzihdzo>
+#JWT </a><a href="/blog/tag/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="article-tag" data-astro-cid-bvzihdzo>
+#プログラミング </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>現代のWebアプリケーションにおいて、安全な認証・認可システムの実装は必須要件です。本記事では、業界標準となったOAuth 2.0とOpenID Connectの仕組みから実装まで、セキュリティベストプラクティスを含めて徹底解説します。</p>
+<h2 id="目次">目次</h2>
+<ol>
+<li>認証と認可の基礎知識</li>
+<li>OAuth 2.0の仕組み</li>
+<li>OpenID Connectとは</li>
+<li>各種フローの詳細</li>
+<li>PKCE（Proof Key for Code Exchange）</li>
+<li>JWTとトークン管理</li>
+<li>Next.js + NextAuthでの実装</li>
+<li>セキュリティベストプラクティス</li>
+<li>実践的な実装例</li>
+</ol>
+<h2 id="1-認証と認可の基礎知識">1. 認証と認可の基礎知識</h2>
+<h3 id="認証authenticationと認可authorizationの違い">認証（Authentication）と認可（Authorization）の違い</h3>
+<p><strong>認証（Authentication）</strong></p>
+<ul>
+<li><strong>What</strong>: 「あなたは誰？」を確認</li>
+<li><strong>例</strong>: ログイン、パスワード入力、生体認証</li>
+<li><strong>目的</strong>: ユーザーのアイデンティティを証明</li>
+</ul>
+<p><strong>認可（Authorization）</strong></p>
+<ul>
+<li><strong>What</strong>: 「何ができる？」を決定</li>
+<li><strong>例</strong>: アクセス権限、スコープ、ロール</li>
+<li><strong>目的</strong>: リソースへのアクセス制御</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>認証 → 「田中太郎さんですね」</span></span>
+<span class="line"><span>認可 → 「管理者権限があるので全ての操作が可能です」</span></span></code></pre>
+<h3 id="なぜoauthが必要なのか">なぜOAuthが必要なのか</h3>
+<p><strong>従来の問題点</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ユーザー → パスワードを第三者アプリに渡す</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>第三者アプリがパスワードを保存</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>セキュリティリスク大</span></span></code></pre>
+<p><strong>OAuthの解決策</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ユーザー → 認証サーバーでログイン</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>アクセストークンを発行</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>第三者アプリはトークンでAPI呼び出し</span></span>
+<span class="line"><span>（パスワード不要）</span></span></code></pre>
+<h2 id="2-oauth-20の仕組み">2. OAuth 2.0の仕組み</h2>
+<h3 id="主要な登場人物4つのロール">主要な登場人物（4つのロール）</h3>
+<ol>
+<li>
+<p><strong>Resource Owner（リソースオーナー）</strong></p>
+<ul>
+<li>エンドユーザー</li>
+<li>リソースの所有者</li>
+</ul>
+</li>
+<li>
+<p><strong>Client（クライアント）</strong></p>
+<ul>
+<li>アプリケーション</li>
+<li>リソースにアクセスしたい</li>
+</ul>
+</li>
+<li>
+<p><strong>Authorization Server（認可サーバー）</strong></p>
+<ul>
+<li>トークンを発行</li>
+<li>例: Google, GitHub, Auth0</li>
+</ul>
+</li>
+<li>
+<p><strong>Resource Server（リソースサーバー）</strong></p>
+<ul>
+<li>保護されたリソースを提供</li>
+<li>例: Google Drive API, GitHub API</li>
+</ul>
+</li>
+</ol>
+<h3 id="oauth-20の基本フロー">OAuth 2.0の基本フロー</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>+----------+                                   +---------------+</span></span>
+<span class="line"><span>|          |--(A)- Authorization Request ----->|   Resource    |</span></span>
+<span class="line"><span>|          |                                   |     Owner     |</span></span>
+<span class="line"><span>|          |&#x3C;-(B)-- Authorization Grant -------|               |</span></span>
+<span class="line"><span>|          |                                   +---------------+</span></span>
+<span class="line"><span>|          |</span></span>
+<span class="line"><span>|          |                                   +---------------+</span></span>
+<span class="line"><span>|          |--(C)-- Authorization Grant ------>| Authorization |</span></span>
+<span class="line"><span>| Client   |                                   |     Server    |</span></span>
+<span class="line"><span>|          |&#x3C;-(D)----- Access Token -----------|               |</span></span>
+<span class="line"><span>|          |                                   +---------------+</span></span>
+<span class="line"><span>|          |</span></span>
+<span class="line"><span>|          |                                   +---------------+</span></span>
+<span class="line"><span>|          |--(E)----- Access Token ---------->|   Resource    |</span></span>
+<span class="line"><span>|          |                                   |     Server    |</span></span>
+<span class="line"><span>|          |&#x3C;-(F)--- Protected Resource -------|               |</span></span>
+<span class="line"><span>+----------+                                   +---------------+</span></span></code></pre>
+<h3 id="主要なグラントタイプ">主要なグラントタイプ</h3>
+<p><strong>1. Authorization Code Grant（推奨）</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>User → 認可サーバーにリダイレクト</span></span>
+<span class="line"><span>     → ログイン・同意</span></span>
+<span class="line"><span>     → コールバックURL + 認可コード</span></span>
+<span class="line"><span>     → クライアントが認可コードをトークンに交換</span></span></code></pre>
+<p><strong>使用例</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>https://auth.example.com/authorize?</span></span>
+<span class="line"><span>  response_type=code&#x26;</span></span>
+<span class="line"><span>  client_id=abc123&#x26;</span></span>
+<span class="line"><span>  redirect_uri=https://myapp.com/callback&#x26;</span></span>
+<span class="line"><span>  scope=read:user&#x26;</span></span>
+<span class="line"><span>  state=xyz789</span></span></code></pre>
+<p><strong>2. Implicit Grant（非推奨）</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>User → 認可サーバーにリダイレクト</span></span>
+<span class="line"><span>     → 直接トークンを返す（危険）</span></span></code></pre>
+<p><strong>3. Resource Owner Password Credentials（レガシー）</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ユーザー名とパスワードを直接送信</span></span>
+<span class="line"><span>→ トークン取得</span></span></code></pre>
+<p><strong>4. Client Credentials</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>サーバー間通信用</span></span>
+<span class="line"><span>→ クライアントID + シークレットでトークン取得</span></span></code></pre>
+<h2 id="3-openid-connectとは">3. OpenID Connectとは</h2>
+<h3 id="oauth-20との違い">OAuth 2.0との違い</h3>
+<p><strong>OAuth 2.0</strong></p>
+<ul>
+<li>認可フレームワーク</li>
+<li>「何ができるか」を制御</li>
+</ul>
+<p><strong>OpenID Connect (OIDC)</strong></p>
+<ul>
+<li>OAuth 2.0の上に構築された認証レイヤー</li>
+<li>「誰か」を特定</li>
+</ul>
+<h3 id="openid-connectの追加要素">OpenID Connectの追加要素</h3>
+<p><strong>1. ID Token</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "iss"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://auth.example.com"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "sub"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user123"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "aud"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"client_id_abc"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "exp"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1735689600</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "iat"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1735686000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"田中太郎"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "email"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"tanaka@example.com"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "email_verified"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "picture"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://example.com/photo.jpg"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>2. UserInfo Endpoint</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>GET /userinfo</span></span>
+<span class="line"><span>Authorization: Bearer ACCESS_TOKEN</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Response:</span></span>
+<span class="line"><span>{</span></span>
+<span class="line"><span>  "sub": "user123",</span></span>
+<span class="line"><span>  "name": "田中太郎",</span></span>
+<span class="line"><span>  "email": "tanaka@example.com",</span></span>
+<span class="line"><span>  "email_verified": true</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="openid-connectのフロー">OpenID Connectのフロー</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Client → /authorize（認証リクエスト）</span></span>
+<span class="line"><span>       → User ログイン</span></span>
+<span class="line"><span>       → Callback + 認可コード</span></span>
+<span class="line"><span>       → /token（トークンエンドポイント）</span></span>
+<span class="line"><span>       ← ID Token + Access Token</span></span>
+<span class="line"><span>       → /userinfo（ユーザー情報取得）</span></span>
+<span class="line"><span>       ← ユーザー情報</span></span></code></pre>
+<h2 id="4-各種フローの詳細">4. 各種フローの詳細</h2>
+<h3 id="authorization-code-flow標準フロー">Authorization Code Flow（標準フロー）</h3>
+<p><strong>Step 1: 認可リクエスト</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="http"><code><span class="line"><span style="color:#F97583">GET</span><span style="color:#E1E4E8"> /authorize?</span></span>
+<span class="line"><span style="color:#E1E4E8">  response_type=code&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  client_id=YOUR_CLIENT_ID&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  redirect_uri=https://yourapp.com/callback&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  scope=openid profile email&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  state=RANDOM_STRING&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  nonce=RANDOM_NONCE</span></span></code></pre>
+<p><strong>パラメータ解説</strong></p>
+<ul>
+<li><code>response_type=code</code>: 認可コードフロー</li>
+<li><code>client_id</code>: アプリの識別子</li>
+<li><code>redirect_uri</code>: コールバックURL</li>
+<li><code>scope</code>: 要求する権限</li>
+<li><code>state</code>: CSRF対策用のランダム文字列</li>
+<li><code>nonce</code>: リプレイ攻撃対策</li>
+</ul>
+<p><strong>Step 2: ユーザー認証と同意</strong></p>
+<p>ユーザーがログインして権限に同意すると、認可サーバーがコールバックURLにリダイレクト。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>https://yourapp.com/callback?</span></span>
+<span class="line"><span>  code=AUTH_CODE&#x26;</span></span>
+<span class="line"><span>  state=RANDOM_STRING</span></span></code></pre>
+<p><strong>Step 3: トークン交換</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="http"><code><span class="line"><span style="color:#F97583">POST</span><span style="color:#E1E4E8"> /token</span></span>
+<span class="line"><span style="color:#85E89D">Content-Type</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> application/x-www-form-urlencoded</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">grant_type=authorization_code&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">code=AUTH_CODE&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">redirect_uri=https://yourapp.com/callback&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">client_id=YOUR_CLIENT_ID&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">client_secret=YOUR_CLIENT_SECRET</span></span></code></pre>
+<p><strong>Step 4: トークン取得</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "access_token"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "id_token"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "refresh_token"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"refresh_token_here"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "token_type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Bearer"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "expires_in"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3600</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "scope"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"openid profile email"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="implicit-flowspa向け非推奨">Implicit Flow（SPA向け、非推奨）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="http"><code><span class="line"><span style="color:#F97583">GET</span><span style="color:#E1E4E8"> /authorize?</span></span>
+<span class="line"><span style="color:#E1E4E8">  response_type=id_token token&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  client_id=YOUR_CLIENT_ID&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  redirect_uri=https://yourapp.com/callback&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  scope=openid profile&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  state=RANDOM_STRING&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  nonce=RANDOM_NONCE</span></span></code></pre>
+<p><strong>問題点</strong></p>
+<ul>
+<li>トークンがURLフラグメントに含まれる</li>
+<li>ブラウザ履歴に残る可能性</li>
+<li>XSS脆弱性のリスク</li>
+</ul>
+<p><strong>推奨</strong>: 代わりにPKCEを使用</p>
+<h3 id="hybrid-flow">Hybrid Flow</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="http"><code><span class="line"><span style="color:#F97583">GET</span><span style="color:#E1E4E8"> /authorize?</span></span>
+<span class="line"><span style="color:#E1E4E8">  response_type=code id_token&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  client_id=YOUR_CLIENT_ID&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  redirect_uri=https://yourapp.com/callback&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  scope=openid profile&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  state=RANDOM_STRING&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  nonce=RANDOM_NONCE</span></span></code></pre>
+<p>認可コードとID Tokenの両方を返す。</p>
+<h2 id="5-pkceproof-key-for-code-exchange">5. PKCE（Proof Key for Code Exchange）</h2>
+<h3 id="pkceとは">PKCEとは</h3>
+<p>Authorization Code Flowの拡張で、クライアントシークレットを使わずに安全性を確保。</p>
+<p><strong>使用例</strong></p>
+<ul>
+<li>SPAアプリケーション</li>
+<li>モバイルアプリ</li>
+<li>パブリッククライアント</li>
+</ul>
+<h3 id="pkceのフロー">PKCEのフロー</h3>
+<p><strong>Step 1: Code Verifierの生成</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// ランダムな43-128文字の文字列</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> codeVerifier</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> generateRandomString</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">128</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">// 例: "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"</span></span></code></pre>
+<p><strong>Step 2: Code Challengeの生成</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> crypto </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'crypto'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> generateCodeChallenge</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">codeVerifier</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> crypto</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">createHash</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'sha256'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">(codeVerifier)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">digest</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'base64'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">replace</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#85E89D;font-weight:bold">\+</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">g</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'-'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">replace</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#85E89D;font-weight:bold">\/</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">g</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'_'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">replace</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#DBEDFF">=</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">g</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> codeChallenge</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> generateCodeChallenge</span><span style="color:#E1E4E8">(codeVerifier);</span></span></code></pre>
+<p><strong>Step 3: 認可リクエスト</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="http"><code><span class="line"><span style="color:#F97583">GET</span><span style="color:#E1E4E8"> /authorize?</span></span>
+<span class="line"><span style="color:#E1E4E8">  response_type=code&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  client_id=YOUR_CLIENT_ID&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  redirect_uri=https://yourapp.com/callback&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  scope=openid profile&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  state=RANDOM_STRING&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  code_challenge=CODE_CHALLENGE&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">  code_challenge_method=S256</span></span></code></pre>
+<p><strong>Step 4: トークン交換（Code Verifierを送信）</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="http"><code><span class="line"><span style="color:#F97583">POST</span><span style="color:#E1E4E8"> /token</span></span>
+<span class="line"><span style="color:#85E89D">Content-Type</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> application/x-www-form-urlencoded</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">grant_type=authorization_code&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">code=AUTH_CODE&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">redirect_uri=https://yourapp.com/callback&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">client_id=YOUR_CLIENT_ID&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">code_verifier=CODE_VERIFIER</span></span></code></pre>
+<p>認可サーバーがCode VerifierからCode Challengeを再計算して検証。</p>
+<h3 id="pkce実装例javascript">PKCE実装例（JavaScript）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// pkce.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> crypto </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'crypto'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> generateCodeVerifier</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> base64URLEncode</span><span style="color:#E1E4E8">(crypto.</span><span style="color:#B392F0">randomBytes</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">32</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> generateCodeChallenge</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">verifier</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> base64URLEncode</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    crypto.</span><span style="color:#B392F0">createHash</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'sha256'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">(verifier).</span><span style="color:#B392F0">digest</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> base64URLEncode</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">buffer</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> buffer</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'base64'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">replace</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#85E89D;font-weight:bold">\+</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">g</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'-'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">replace</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#85E89D;font-weight:bold">\/</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">g</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'_'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">replace</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#DBEDFF">=</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">g</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> verifier</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> generateCodeVerifier</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> challenge</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> generateCodeChallenge</span><span style="color:#E1E4E8">(verifier);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// verifierはセッションに保存</span></span>
+<span class="line"><span style="color:#E1E4E8">sessionStorage.</span><span style="color:#B392F0">setItem</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'code_verifier'</span><span style="color:#E1E4E8">, verifier);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// challengeを認可リクエストに含める</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> authUrl</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `https://auth.example.com/authorize?`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `response_type=code&#x26;`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `client_id=${</span><span style="color:#79B8FF">CLIENT_ID</span><span style="color:#9ECBFF">}&#x26;`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `redirect_uri=${</span><span style="color:#79B8FF">REDIRECT_URI</span><span style="color:#9ECBFF">}&#x26;`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `scope=openid profile&#x26;`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `code_challenge=${</span><span style="color:#E1E4E8">challenge</span><span style="color:#9ECBFF">}&#x26;`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `code_challenge_method=S256&#x26;`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `state=${</span><span style="color:#E1E4E8">state</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h2 id="6-jwtとトークン管理">6. JWTとトークン管理</h2>
+<h3 id="jwtの構造">JWTの構造</h3>
+<p>JWT（JSON Web Token）は3つの部分で構成されます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Header.Payload.Signature</span></span></code></pre>
+<p><strong>Header（ヘッダー）</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "alg"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"RS256"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "typ"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"JWT"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "kid"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"key-id-1"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>Payload（ペイロード）</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "iss"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://auth.example.com"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "sub"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user123"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "aud"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"client_id_abc"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "exp"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1735689600</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "iat"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1735686000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"田中太郎"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "email"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"tanaka@example.com"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "scope"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"openid profile email"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>Signature（署名）</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>HMACSHA256(</span></span>
+<span class="line"><span>  base64UrlEncode(header) + "." + base64UrlEncode(payload),</span></span>
+<span class="line"><span>  secret</span></span>
+<span class="line"><span>)</span></span></code></pre>
+<h3 id="jwtの検証">JWTの検証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> jwt </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'jsonwebtoken'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> jwksClient </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'jwks-rsa'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> client</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> jwksClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  jwksUri: </span><span style="color:#9ECBFF">'https://auth.example.com/.well-known/jwks.json'</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> getKey</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">header</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">callback</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  client.</span><span style="color:#B392F0">getSigningKey</span><span style="color:#E1E4E8">(header.kid, (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">key</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> signingKey</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> key.publicKey </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> key.rsaPublicKey;</span></span>
+<span class="line"><span style="color:#B392F0">    callback</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">, signingKey);</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ID Tokenの検証</span></span>
+<span class="line"><span style="color:#E1E4E8">jwt.</span><span style="color:#B392F0">verify</span><span style="color:#E1E4E8">(idToken, getKey, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  audience: </span><span style="color:#9ECBFF">'YOUR_CLIENT_ID'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  issuer: </span><span style="color:#9ECBFF">'https://auth.example.com'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  algorithms: [</span><span style="color:#9ECBFF">'RS256'</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">}, (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">decoded</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (err) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Invalid token:'</span><span style="color:#E1E4E8">, err);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Valid token:'</span><span style="color:#E1E4E8">, decoded);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="トークンの種類と用途">トークンの種類と用途</h3>
+<p><strong>1. Access Token（アクセストークン）</strong></p>
+<ul>
+<li><strong>用途</strong>: APIへのアクセス</li>
+<li><strong>有効期限</strong>: 短い（15分〜1時間）</li>
+<li><strong>保存場所</strong>: メモリ、セッションストレージ</li>
+<li><strong>形式</strong>: JWT or Opaque Token</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// API呼び出し例</span></span>
+<span class="line"><span style="color:#B392F0">fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://api.example.com/user/profile'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">    'Authorization'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">`Bearer ${</span><span style="color:#E1E4E8">accessToken</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<p><strong>2. Refresh Token（リフレッシュトークン）</strong></p>
+<ul>
+<li><strong>用途</strong>: Access Tokenの再発行</li>
+<li><strong>有効期限</strong>: 長い（7日〜30日）</li>
+<li><strong>保存場所</strong>: HttpOnly Cookie（推奨）</li>
+<li><strong>形式</strong>: Opaque Token</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// Refresh Token を使った更新</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> refreshAccessToken</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">refreshToken</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://auth.example.com/token'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    method: </span><span style="color:#9ECBFF">'POST'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers: { </span><span style="color:#9ECBFF">'Content-Type'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'application/x-www-form-urlencoded'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    body: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> URLSearchParams</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      grant_type: </span><span style="color:#9ECBFF">'refresh_token'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      refresh_token: refreshToken,</span></span>
+<span class="line"><span style="color:#E1E4E8">      client_id: </span><span style="color:#9ECBFF">'YOUR_CLIENT_ID'</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> data.access_token;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>3. ID Token（IDトークン）</strong></p>
+<ul>
+<li><strong>用途</strong>: ユーザー認証情報</li>
+<li><strong>有効期限</strong>: 短い（1時間程度）</li>
+<li><strong>保存場所</strong>: セッション</li>
+<li><strong>形式</strong>: JWT</li>
+</ul>
+<h3 id="トークンのセキュアな保存">トークンのセキュアな保存</h3>
+<p><strong>ブラウザでの保存方法</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>保存場所</th><th>Access Token</th><th>Refresh Token</th><th>ID Token</th></tr></thead><tbody><tr><td>localStorage</td><td>❌ XSSリスク</td><td>❌ 絶対NG</td><td>❌</td></tr><tr><td>sessionStorage</td><td>△ 許容範囲</td><td>❌</td><td>△</td></tr><tr><td>Memory</td><td>✅ 推奨</td><td>❌</td><td>✅</td></tr><tr><td>HttpOnly Cookie</td><td>✅ 最適</td><td>✅ 推奨</td><td>✅</td></tr></tbody></table>
+<p><strong>推奨実装</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// Access Token: メモリに保存</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> accessToken </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> login</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/auth/login'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // メモリに保存</span></span>
+<span class="line"><span style="color:#E1E4E8">  accessToken </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> data.access_token;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // Refresh Tokenは HttpOnly Cookie でサーバーが設定</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// API呼び出し</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> callAPI</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> response </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/data'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">      'Authorization'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">`Bearer ${</span><span style="color:#E1E4E8">accessToken</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // トークン期限切れの場合</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (response.status </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 401</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    accessToken </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> refreshAccessToken</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/data'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">      headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">        'Authorization'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">`Bearer ${</span><span style="color:#E1E4E8">accessToken</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="7-nextjs--nextauthでの実装">7. Next.js + NextAuthでの実装</h2>
+<h3 id="nextauthjs-のセットアップ">NextAuth.js のセットアップ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> next-auth</span></span></code></pre>
+<h3 id="基本設定">基本設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/auth/[...nextauth]/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> NextAuth </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextAuthOptions } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> GoogleProvider </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth/providers/google'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> GitHubProvider </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth/providers/github'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> authOptions</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextAuthOptions</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  providers: [</span></span>
+<span class="line"><span style="color:#B392F0">    GoogleProvider</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientId: process.env.</span><span style="color:#79B8FF">GOOGLE_CLIENT_ID</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientSecret: process.env.</span><span style="color:#79B8FF">GOOGLE_CLIENT_SECRET</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      authorization: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        params: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          prompt: </span><span style="color:#9ECBFF">'consent'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          access_type: </span><span style="color:#9ECBFF">'offline'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          response_type: </span><span style="color:#9ECBFF">'code'</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#B392F0">    GitHubProvider</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientId: process.env.</span><span style="color:#79B8FF">GITHUB_ID</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientSecret: process.env.</span><span style="color:#79B8FF">GITHUB_SECRET</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  callbacks: {</span></span>
+<span class="line"><span style="color:#F97583">    async</span><span style="color:#B392F0"> jwt</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">token</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">account</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">profile</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#6A737D">      // 初回ログイン時</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (account) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        token.accessToken </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> account.access_token;</span></span>
+<span class="line"><span style="color:#E1E4E8">        token.refreshToken </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> account.refresh_token;</span></span>
+<span class="line"><span style="color:#E1E4E8">        token.accessTokenExpires </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> account.expires_at</span><span style="color:#F97583">!</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // Access Token が有効</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> (token.accessTokenExpires </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> token;</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // Access Token を更新</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#B392F0"> refreshAccessToken</span><span style="color:#E1E4E8">(token);</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    async</span><span style="color:#B392F0"> session</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">session</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">token</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      session.accessToken </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> token.accessToken;</span></span>
+<span class="line"><span style="color:#E1E4E8">      session.error </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> token.error;</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> session;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  pages: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    signIn: </span><span style="color:#9ECBFF">'/auth/signin'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    error: </span><span style="color:#9ECBFF">'/auth/error'</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  session: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    strategy: </span><span style="color:#9ECBFF">'jwt'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    maxAge: </span><span style="color:#79B8FF">30</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 24</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#6A737D"> // 30日</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  secret: process.env.</span><span style="color:#79B8FF">NEXTAUTH_SECRET</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> handler</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> NextAuth</span><span style="color:#E1E4E8">(authOptions);</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> { handler </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> GET, handler </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> POST };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Refresh Token 処理</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> refreshAccessToken</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">token</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'https://oauth2.googleapis.com/token'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(url, {</span></span>
+<span class="line"><span style="color:#E1E4E8">      method: </span><span style="color:#9ECBFF">'POST'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      headers: { </span><span style="color:#9ECBFF">'Content-Type'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'application/x-www-form-urlencoded'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      body: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> URLSearchParams</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        client_id: process.env.</span><span style="color:#79B8FF">GOOGLE_CLIENT_ID</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        client_secret: process.env.</span><span style="color:#79B8FF">GOOGLE_CLIENT_SECRET</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        grant_type: </span><span style="color:#9ECBFF">'refresh_token'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        refresh_token: token.refreshToken</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> refreshedTokens</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">response.ok) {</span></span>
+<span class="line"><span style="color:#F97583">      throw</span><span style="color:#E1E4E8"> refreshedTokens;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      ...</span><span style="color:#E1E4E8">token,</span></span>
+<span class="line"><span style="color:#E1E4E8">      accessToken: refreshedTokens.access_token,</span></span>
+<span class="line"><span style="color:#E1E4E8">      accessTokenExpires: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> refreshedTokens.expires_in </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      refreshToken: refreshedTokens.refresh_token </span><span style="color:#F97583">??</span><span style="color:#E1E4E8"> token.refreshToken</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      ...</span><span style="color:#E1E4E8">token,</span></span>
+<span class="line"><span style="color:#E1E4E8">      error: </span><span style="color:#9ECBFF">'RefreshAccessTokenError'</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="環境変数設定">環境変数設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># .env.local</span></span>
+<span class="line"><span style="color:#E1E4E8">NEXTAUTH_URL</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">http://localhost:3000</span></span>
+<span class="line"><span style="color:#E1E4E8">NEXTAUTH_SECRET</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your-secret-key-here</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">GOOGLE_CLIENT_ID</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your-google-client-id</span></span>
+<span class="line"><span style="color:#E1E4E8">GOOGLE_CLIENT_SECRET</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your-google-client-secret</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">GITHUB_ID</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your-github-client-id</span></span>
+<span class="line"><span style="color:#E1E4E8">GITHUB_SECRET</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your-github-client-secret</span></span></code></pre>
+<h3 id="クライアントコンポーネントでの使用">クライアントコンポーネントでの使用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/components/LoginButton.tsx</span></span>
+<span class="line"><span style="color:#9ECBFF">'use client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { signIn, signOut, useSession } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth/react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> LoginButton</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">session</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">status</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useSession</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (status </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'loading'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>Loading</span><span style="color:#F97583">...&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (session) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#B392F0">p</span><span style="color:#E1E4E8">></span><span style="color:#FFAB70">Welcome</span><span style="color:#E1E4E8">, {</span><span style="color:#FFAB70">session</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">?.</span><span style="color:#FFAB70">name</span><span style="color:#E1E4E8">}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">p</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">button onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{() => </span><span style="color:#B392F0">signOut</span><span style="color:#E1E4E8">()}</span><span style="color:#F97583">></span><span style="color:#E1E4E8">Sign out</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">button onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{() => </span><span style="color:#B392F0">signIn</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'google'</span><span style="color:#E1E4E8">)}</span><span style="color:#F97583">></span><span style="color:#E1E4E8">Sign </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> with Google</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">button onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{() => </span><span style="color:#B392F0">signIn</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'github'</span><span style="color:#E1E4E8">)}</span><span style="color:#F97583">></span><span style="color:#E1E4E8">Sign </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> with GitHub</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="サーバーコンポーネントでの使用">サーバーコンポーネントでの使用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/dashboard/page.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getServerSession } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { authOptions } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/app/api/auth/[...nextauth]/route'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redirect } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/navigation'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> Dashboard</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getServerSession</span><span style="color:#E1E4E8">(authOptions);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">session) {</span></span>
+<span class="line"><span style="color:#B392F0">    redirect</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/auth/signin'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">h1</span><span style="color:#E1E4E8">>Dashboard</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">h1</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">p</span><span style="color:#E1E4E8">></span><span style="color:#FFAB70">Welcome</span><span style="color:#E1E4E8">, {</span><span style="color:#FFAB70">session</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">?.</span><span style="color:#FFAB70">name</span><span style="color:#E1E4E8">}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">p</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="api-route-の保護">API Route の保護</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/protected/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getServerSession } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { authOptions } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/app/api/auth/[...nextauth]/route'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> GET</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getServerSession</span><span style="color:#E1E4E8">(authOptions);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">session) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      { error: </span><span style="color:#9ECBFF">'Unauthorized'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { status: </span><span style="color:#79B8FF">401</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // API処理</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    message: </span><span style="color:#9ECBFF">'Protected data'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    user: session.user</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ミドルウェアでの認証チェック">ミドルウェアでの認証チェック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middleware.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { withAuth } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth/middleware'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#B392F0"> withAuth</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  callbacks: {</span></span>
+<span class="line"><span style="color:#B392F0">    authorized</span><span style="color:#E1E4E8">: ({ </span><span style="color:#FFAB70">token</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // /admin パスは管理者のみ</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (req.nextUrl.pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/admin'</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> token?.role </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'admin'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // その他の保護されたパスは認証済みであればOK</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> !!</span><span style="color:#E1E4E8">token;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  matcher: [</span><span style="color:#9ECBFF">'/dashboard/:path*'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'/admin/:path*'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'/api/protected/:path*'</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h2 id="8-セキュリティベストプラクティス">8. セキュリティベストプラクティス</h2>
+<h3 id="1-state-パラメータによるcsrf対策">1. State パラメータによるCSRF対策</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// 認可リクエスト前に state を生成</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> state</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> crypto.</span><span style="color:#B392F0">randomBytes</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">16</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'hex'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">sessionStorage.</span><span style="color:#B392F0">setItem</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'oauth_state'</span><span style="color:#E1E4E8">, state);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> authUrl</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `https://auth.example.com/authorize?`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `response_type=code&#x26;`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `client_id=${</span><span style="color:#79B8FF">CLIENT_ID</span><span style="color:#9ECBFF">}&#x26;`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `state=${</span><span style="color:#E1E4E8">state</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// コールバック時に検証</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> urlParams</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URLSearchParams</span><span style="color:#E1E4E8">(window.location.search);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> returnedState</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> urlParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'state'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> savedState</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> sessionStorage.</span><span style="color:#B392F0">getItem</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'oauth_state'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (returnedState </span><span style="color:#F97583">!==</span><span style="color:#E1E4E8"> savedState) {</span></span>
+<span class="line"><span style="color:#F97583">  throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'State mismatch - possible CSRF attack'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-nonce-によるリプレイ攻撃対策">2. Nonce によるリプレイ攻撃対策</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// 認可リクエスト前に nonce を生成</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nonce</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> crypto.</span><span style="color:#B392F0">randomBytes</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">16</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'hex'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">sessionStorage.</span><span style="color:#B392F0">setItem</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'oauth_nonce'</span><span style="color:#E1E4E8">, nonce);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ID Token 検証時に nonce をチェック</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> decodedToken</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> jwt.</span><span style="color:#B392F0">decode</span><span style="color:#E1E4E8">(idToken);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> savedNonce</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> sessionStorage.</span><span style="color:#B392F0">getItem</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'oauth_nonce'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (decodedToken.nonce </span><span style="color:#F97583">!==</span><span style="color:#E1E4E8"> savedNonce) {</span></span>
+<span class="line"><span style="color:#F97583">  throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Nonce mismatch - possible replay attack'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="3-リダイレクトuriの厳格な検証">3. リダイレクトURIの厳格な検証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// サーバー側での検証</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> ALLOWED_REDIRECT_URIS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#9ECBFF">  'https://yourapp.com/callback'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'https://yourapp.com/auth/callback'</span></span>
+<span class="line"><span style="color:#E1E4E8">];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> validateRedirectUri</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">uri</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#79B8FF"> ALLOWED_REDIRECT_URIS</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(uri);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 認可リクエスト処理</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#B392F0">validateRedirectUri</span><span style="color:#E1E4E8">(redirect_uri)) {</span></span>
+<span class="line"><span style="color:#F97583">  throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Invalid redirect URI'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="4-トークンの適切な検証">4. トークンの適切な検証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> jwt </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'jsonwebtoken'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> validateIdToken</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">idToken</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">clientId</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">issuer</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> decoded</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> jwt.</span><span style="color:#B392F0">verify</span><span style="color:#E1E4E8">(idToken, </span><span style="color:#B392F0">getPublicKey</span><span style="color:#E1E4E8">(), {</span></span>
+<span class="line"><span style="color:#E1E4E8">      audience: clientId,</span></span>
+<span class="line"><span style="color:#E1E4E8">      issuer: issuer,</span></span>
+<span class="line"><span style="color:#E1E4E8">      algorithms: [</span><span style="color:#9ECBFF">'RS256'</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 追加のチェック</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (decoded.exp </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Token expired'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (decoded.iat </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Token issued in the future'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> decoded;</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Invalid ID token'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="5-httpsの強制">5. HTTPSの強制</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// Next.js middleware</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> middleware</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">  // 本番環境でHTTPSを強制</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (process.env.</span><span style="color:#79B8FF">NODE_ENV</span><span style="color:#F97583"> ===</span><span style="color:#9ECBFF"> 'production'</span><span style="color:#F97583"> &#x26;&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">      request.headers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-forwarded-proto'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">!==</span><span style="color:#9ECBFF"> 'https'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">      `https://${</span><span style="color:#E1E4E8">request</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">headers</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">get</span><span style="color:#9ECBFF">(</span><span style="color:#9ECBFF">'host'</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">}${</span><span style="color:#E1E4E8">request</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">nextUrl</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">pathname</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      301</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="6-refresh-token-のローテーション">6. Refresh Token のローテーション</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// Refresh Token 使用時に新しい Refresh Token を発行</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> refreshTokens</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">refreshToken</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://auth.example.com/token'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    method: </span><span style="color:#9ECBFF">'POST'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers: { </span><span style="color:#9ECBFF">'Content-Type'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'application/x-www-form-urlencoded'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    body: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> URLSearchParams</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      grant_type: </span><span style="color:#9ECBFF">'refresh_token'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      refresh_token: refreshToken,</span></span>
+<span class="line"><span style="color:#E1E4E8">      client_id: </span><span style="color:#79B8FF">CLIENT_ID</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> tokens</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 古い Refresh Token を無効化し、新しいものを使用</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    accessToken: tokens.access_token,</span></span>
+<span class="line"><span style="color:#E1E4E8">    refreshToken: tokens.refresh_token, </span><span style="color:#6A737D">// 新しいリフレッシュトークン</span></span>
+<span class="line"><span style="color:#E1E4E8">    expiresIn: tokens.expires_in</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="7-scope-の最小権限原則">7. Scope の最小権限原則</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// 必要最小限の scope のみリクエスト</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> authUrl</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `https://auth.example.com/authorize?`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `response_type=code&#x26;`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `client_id=${</span><span style="color:#79B8FF">CLIENT_ID</span><span style="color:#9ECBFF">}&#x26;`</span><span style="color:#F97583"> +</span></span>
+<span class="line"><span style="color:#9ECBFF">  `scope=openid profile email&#x26;`</span><span style="color:#F97583"> +</span><span style="color:#6A737D"> // read:all ではなく必要なものだけ</span></span>
+<span class="line"><span style="color:#9ECBFF">  `state=${</span><span style="color:#E1E4E8">state</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="8-トークンの安全な保存">8. トークンの安全な保存</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// ❌ 悪い例</span></span>
+<span class="line"><span style="color:#E1E4E8">localStorage.</span><span style="color:#B392F0">setItem</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'access_token'</span><span style="color:#E1E4E8">, accessToken);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 良い例: HttpOnly Cookie</span></span>
+<span class="line"><span style="color:#6A737D">// サーバー側</span></span>
+<span class="line"><span style="color:#E1E4E8">res.</span><span style="color:#B392F0">setHeader</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Set-Cookie'</span><span style="color:#E1E4E8">, [</span></span>
+<span class="line"><span style="color:#9ECBFF">  `refresh_token=${</span><span style="color:#E1E4E8">refreshToken</span><span style="color:#9ECBFF">}; HttpOnly; Secure; SameSite=Strict; Max-Age=604800; Path=/`</span></span>
+<span class="line"><span style="color:#E1E4E8">]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// クライアント側: メモリに保存</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> accessToken </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> setAccessToken</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">token</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  accessToken </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> token;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> getAccessToken</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> accessToken;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="9-実践的な実装例">9. 実践的な実装例</h2>
+<h3 id="カスタムoauthプロバイダーの実装">カスタムOAuthプロバイダーの実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/oauth-provider.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { OAuthConfig, OAuthUserConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth/providers'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> CustomProfile</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  avatar</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> CustomProvider</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">P</span><span style="color:#F97583"> extends</span><span style="color:#B392F0"> CustomProfile</span><span style="color:#E1E4E8">>(</span></span>
+<span class="line"><span style="color:#FFAB70">  options</span><span style="color:#F97583">:</span><span style="color:#B392F0"> OAuthUserConfig</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">P</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> OAuthConfig</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">P</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: </span><span style="color:#9ECBFF">'custom'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    name: </span><span style="color:#9ECBFF">'Custom OAuth Provider'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    type: </span><span style="color:#9ECBFF">'oauth'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    authorization: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      url: </span><span style="color:#9ECBFF">'https://auth.custom.com/authorize'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      params: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        scope: </span><span style="color:#9ECBFF">'openid profile email'</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    token: </span><span style="color:#9ECBFF">'https://auth.custom.com/token'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    userinfo: </span><span style="color:#9ECBFF">'https://auth.custom.com/userinfo'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    profile</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">profile</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        id: profile.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: profile.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">        email: profile.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">        image: profile.avatar</span></span>
+<span class="line"><span style="color:#E1E4E8">      };</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#F97583">    ...</span><span style="color:#E1E4E8">options</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="マルチテナント対応">マルチテナント対応</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/auth/[...nextauth]/route.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> authOptions</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextAuthOptions</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  providers: [</span></span>
+<span class="line"><span style="color:#B392F0">    GoogleProvider</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientId: process.env.</span><span style="color:#79B8FF">GOOGLE_CLIENT_ID</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientSecret: process.env.</span><span style="color:#79B8FF">GOOGLE_CLIENT_SECRET</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  callbacks: {</span></span>
+<span class="line"><span style="color:#F97583">    async</span><span style="color:#B392F0"> signIn</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">account</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">profile</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#6A737D">      // テナントの検証</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> email</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> user.email;</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> domain</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> email?.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'@'</span><span style="color:#E1E4E8">)[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> tenant</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.tenant.</span><span style="color:#B392F0">findUnique</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        where: { domain }</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">tenant) {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">; </span><span style="color:#6A737D">// ログイン拒否</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // ユーザー情報にテナントIDを追加</span></span>
+<span class="line"><span style="color:#E1E4E8">      user.tenantId </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> tenant.id;</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    async</span><span style="color:#B392F0"> jwt</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">token</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (user) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        token.tenantId </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> user.tenantId;</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> token;</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    async</span><span style="color:#B392F0"> session</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">session</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">token</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      session.user.tenantId </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> token.tenantId;</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> session;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h3 id="ロールベースアクセス制御rbac">ロールベースアクセス制御（RBAC）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/rbac.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> enum</span><span style="color:#B392F0"> Role</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">  USER</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'user'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  ADMIN</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'admin'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  SUPERADMIN</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'superadmin'</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> enum</span><span style="color:#B392F0"> Permission</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">  READ_USERS</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'read:users'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  WRITE_USERS</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'write:users'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  DELETE_USERS</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'delete:users'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  MANAGE_SETTINGS</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'manage:settings'</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> ROLE_PERMISSIONS</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Role</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Permission</span><span style="color:#E1E4E8">[]> </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  [Role.</span><span style="color:#79B8FF">USER</span><span style="color:#E1E4E8">]: [Permission.</span><span style="color:#79B8FF">READ_USERS</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  [Role.</span><span style="color:#79B8FF">ADMIN</span><span style="color:#E1E4E8">]: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    Permission.</span><span style="color:#79B8FF">READ_USERS</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    Permission.</span><span style="color:#79B8FF">WRITE_USERS</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    Permission.</span><span style="color:#79B8FF">MANAGE_SETTINGS</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#E1E4E8">  [Role.</span><span style="color:#79B8FF">SUPERADMIN</span><span style="color:#E1E4E8">]: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    Permission.</span><span style="color:#79B8FF">READ_USERS</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    Permission.</span><span style="color:#79B8FF">WRITE_USERS</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    Permission.</span><span style="color:#79B8FF">DELETE_USERS</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    Permission.</span><span style="color:#79B8FF">MANAGE_SETTINGS</span></span>
+<span class="line"><span style="color:#E1E4E8">  ]</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> hasPermission</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">role</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Role</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">permission</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Permission</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#79B8FF"> ROLE_PERMISSIONS</span><span style="color:#E1E4E8">[role]?.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(permission) </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// app/api/users/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getServerSession } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { hasPermission, Role, Permission } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/rbac'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> DELETE</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getServerSession</span><span style="color:#E1E4E8">(authOptions);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">session) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Unauthorized'</span><span style="color:#E1E4E8"> }, { status: </span><span style="color:#79B8FF">401</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#B392F0">hasPermission</span><span style="color:#E1E4E8">(session.user.role </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Role</span><span style="color:#E1E4E8">, Permission.</span><span style="color:#79B8FF">DELETE_USERS</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Forbidden'</span><span style="color:#E1E4E8"> }, { status: </span><span style="color:#79B8FF">403</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ユーザー削除処理</span></span>
+<span class="line"><span style="color:#6A737D">  // ...</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ソーシャルログインの統合">ソーシャルログインの統合</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/auth/[...nextauth]/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> NextAuth </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> GoogleProvider </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth/providers/google'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> GitHubProvider </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth/providers/github'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FacebookProvider </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth/providers/facebook'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> TwitterProvider </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next-auth/providers/twitter'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> authOptions</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextAuthOptions</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  providers: [</span></span>
+<span class="line"><span style="color:#B392F0">    GoogleProvider</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientId: process.env.</span><span style="color:#79B8FF">GOOGLE_CLIENT_ID</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientSecret: process.env.</span><span style="color:#79B8FF">GOOGLE_CLIENT_SECRET</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#B392F0">    GitHubProvider</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientId: process.env.</span><span style="color:#79B8FF">GITHUB_ID</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientSecret: process.env.</span><span style="color:#79B8FF">GITHUB_SECRET</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#B392F0">    FacebookProvider</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientId: process.env.</span><span style="color:#79B8FF">FACEBOOK_ID</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientSecret: process.env.</span><span style="color:#79B8FF">FACEBOOK_SECRET</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#B392F0">    TwitterProvider</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientId: process.env.</span><span style="color:#79B8FF">TWITTER_ID</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientSecret: process.env.</span><span style="color:#79B8FF">TWITTER_SECRET</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      version: </span><span style="color:#9ECBFF">'2.0'</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  callbacks: {</span></span>
+<span class="line"><span style="color:#F97583">    async</span><span style="color:#B392F0"> signIn</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">account</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">profile</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#6A737D">      // アカウント連携の処理</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> existingUser</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.user.</span><span style="color:#B392F0">findUnique</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        where: { email: user.email }</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (existingUser) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 既存ユーザーにアカウント連携</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#E1E4E8"> db.account.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">            userId: existingUser.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">            provider: account.provider,</span></span>
+<span class="line"><span style="color:#E1E4E8">            providerAccountId: account.providerAccountId,</span></span>
+<span class="line"><span style="color:#E1E4E8">            accessToken: account.access_token,</span></span>
+<span class="line"><span style="color:#E1E4E8">            refreshToken: account.refresh_token</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"><span style="color:#E1E4E8">      } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // 新規ユーザー作成</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#E1E4E8"> db.user.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">            email: user.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">            name: user.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">            image: user.image,</span></span>
+<span class="line"><span style="color:#E1E4E8">            accounts: {</span></span>
+<span class="line"><span style="color:#E1E4E8">              create: {</span></span>
+<span class="line"><span style="color:#E1E4E8">                provider: account.provider,</span></span>
+<span class="line"><span style="color:#E1E4E8">                providerAccountId: account.providerAccountId,</span></span>
+<span class="line"><span style="color:#E1E4E8">                accessToken: account.access_token,</span></span>
+<span class="line"><span style="color:#E1E4E8">                refreshToken: account.refresh_token</span></span>
+<span class="line"><span style="color:#E1E4E8">              }</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>OAuth 2.0 / OpenID Connectを使った認証・認可システムの実装では、以下のポイントを押さえましょう。</p>
+<p><strong>重要なポイント</strong></p>
+<ol>
+<li>
+<p><strong>適切なフローの選択</strong></p>
+<ul>
+<li>SPA/モバイル: Authorization Code + PKCE</li>
+<li>サーバーサイド: Authorization Code</li>
+<li>サーバー間: Client Credentials</li>
+</ul>
+</li>
+<li>
+<p><strong>セキュリティ対策</strong></p>
+<ul>
+<li>PKCE の使用</li>
+<li>State と Nonce の検証</li>
+<li>HTTPS の強制</li>
+<li>トークンの適切な保存</li>
+</ul>
+</li>
+<li>
+<p><strong>トークン管理</strong></p>
+<ul>
+<li>Access Token: 短い有効期限</li>
+<li>Refresh Token: HttpOnly Cookie</li>
+<li>定期的なローテーション</li>
+</ul>
+</li>
+<li>
+<p><strong>NextAuth.js の活用</strong></p>
+<ul>
+<li>簡単なセットアップ</li>
+<li>多様なプロバイダー対応</li>
+<li>セキュアなデフォルト設定</li>
+</ul>
+</li>
+</ol>
+<p>OAuth 2.0とOpenID Connectを正しく実装することで、安全で使いやすい認証システムを構築できます。本記事のベストプラクティスを参考に、セキュアなアプリケーションを開発してください。</p>
+<h2 id="参考リンク">参考リンク</h2>
+<ul>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc6749">OAuth 2.0 RFC 6749</a></li>
+<li><a href="https://openid.net/specs/openid-connect-core-1_0.html">OpenID Connect Core</a></li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc7636">PKCE RFC 7636</a></li>
+<li><a href="https://next-auth.js.org/">NextAuth.js Documentation</a></li>
+<li><a href="https://jwt.io/">JWT.io</a></li>
+</ul>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

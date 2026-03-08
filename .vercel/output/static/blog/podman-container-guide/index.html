@@ -1,0 +1,461 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/podman-container-guide/"><!-- Primary Meta Tags --><title>Podman入門ガイド - Docker互換のデーモンレスコンテナエンジン</title><meta name="title" content="Podman入門ガイド - Docker互換のデーモンレスコンテナエンジン"><meta name="description" content="PodmanはRed Hat社開発のDocker互換コンテナエンジンです。デーモンレス・ルートレス設計でセキュリティに優れ、Docker CLIと同じコマンドが使えます。Dockerからの移行方法、Pod機能、Systemd統合、Quadlet設定から本番運用まで解説します。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/podman-container-guide/"><meta property="og:title" content="Podman入門ガイド - Docker互換のデーモンレスコンテナエンジン"><meta property="og:description" content="PodmanはRed Hat社開発のDocker互換コンテナエンジンです。デーモンレス・ルートレス設計でセキュリティに優れ、Docker CLIと同じコマンドが使えます。Dockerからの移行方法、Pod機能、Systemd統合、Quadlet設定から本番運用まで解説します。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/podman-container-guide/"><meta name="twitter:title" content="Podman入門ガイド - Docker互換のデーモンレスコンテナエンジン"><meta name="twitter:description" content="PodmanはRed Hat社開発のDocker互換コンテナエンジンです。デーモンレス・ルートレス設計でセキュリティに優れ、Docker CLIと同じコマンドが使えます。Dockerからの移行方法、Pod機能、Systemd統合、Quadlet設定から本番運用まで解説します。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/podman-container-guide/"},"headline":"Podman入門ガイド - Docker互換のデーモンレスコンテナエンジン","description":"PodmanはRed Hat社開発のDocker互換コンテナエンジンです。デーモンレス・ルートレス設計でセキュリティに優れ、Docker CLIと同じコマンドが使えます。Dockerからの移行方法、Pod機能、Systemd統合、Quadlet設定から本番運用まで解説します。","datePublished":"2026-03-05T00:00:00.000Z","dateModified":"2026-03-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Docker, Linux, コンテナ, インフラ"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Podman入門ガイド - Docker互換のデーモンレスコンテナエンジン"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-03-05T00:00:00.000Z"> Mar 4, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Podman入門ガイド - Docker互換のデーモンレスコンテナエンジン</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Docker" class="article-tag" data-astro-cid-bvzihdzo>
+#Docker </a><a href="/blog/tag/Linux" class="article-tag" data-astro-cid-bvzihdzo>
+#Linux </a><a href="/blog/tag/%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A" class="article-tag" data-astro-cid-bvzihdzo>
+#コンテナ </a><a href="/blog/tag/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#インフラ </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p><strong>Podman</strong>は、Red Hat社が開発するオープンソースのコンテナエンジンです。Docker互換のCLIを持ちながら、デーモンレス・ルートレス設計によりセキュリティと運用性が向上しています。</p>
+<p>本記事では、PodmanのインストールからDocker移行、Podman Compose、本番運用のポイントまで解説します。</p>
+<h2 id="podmanとは">Podmanとは？</h2>
+<p>Podmanは<strong>OCI（Open Container Initiative）準拠</strong>のコンテナエンジンです。Docker Engineの代替として、特にセキュリティを重視する環境で採用が進んでいます。</p>
+<h3 id="主な特徴">主な特徴</h3>
+<ul>
+<li><strong>デーモンレス</strong>: バックグラウンドプロセス（デーモン）が不要</li>
+<li><strong>ルートレス</strong>: root権限なしでコンテナを実行可能</li>
+<li><strong>Docker互換</strong>: <code>docker</code> コマンドをそのまま置き換え可能</li>
+<li><strong>Pod概念</strong>: Kubernetesと同じPod単位の管理</li>
+<li><strong>Systemd統合</strong>: コンテナをSystemdサービスとして管理</li>
+<li><strong>セキュリティ強化</strong>: SELinux/Seccomp対応</li>
+</ul>
+<h3 id="dockerとの比較">Dockerとの比較</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>項目</th><th>Podman</th><th>Docker</th></tr></thead><tbody><tr><td>アーキテクチャ</td><td>デーモンレス</td><td>デーモン必須</td></tr><tr><td>ルートレス</td><td>ネイティブ対応</td><td>追加設定が必要</td></tr><tr><td>CLI互換性</td><td>Docker互換</td><td>-</td></tr><tr><td>Pod対応</td><td>ネイティブ</td><td>なし</td></tr><tr><td>Docker Compose</td><td>podman-compose</td><td>docker compose</td></tr><tr><td>Systemd統合</td><td>ネイティブ</td><td>手動設定</td></tr><tr><td>ライセンス</td><td>Apache 2.0</td><td>Apache 2.0</td></tr><tr><td>セキュリティ</td><td>強い</td><td>標準</td></tr><tr><td>デスクトップGUI</td><td>Podman Desktop</td><td>Docker Desktop</td></tr></tbody></table>
+<h3 id="なぜpodmanを選ぶのか">なぜPodmanを選ぶのか？</h3>
+<p>Dockerは長年コンテナのデファクトスタンダードですが、以下のケースでPodmanが優位です:</p>
+<ol>
+<li><strong>Docker Desktop有料化への対応</strong>: 大企業でのDocker Desktop利用は有料ライセンスが必要</li>
+<li><strong>セキュリティ要件</strong>: デーモンのroot権限が問題になる環境</li>
+<li><strong>Kubernetes移行</strong>: Pod概念でK8sとの親和性が高い</li>
+<li><strong>RHEL/Fedora環境</strong>: 標準パッケージとして提供</li>
+</ol>
+<h2 id="インストール">インストール</h2>
+<h3 id="macos">macOS</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Homebrew</span></span>
+<span class="line"><span style="color:#B392F0">brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> podman</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Podmanマシンの初期化（macOSではLinux VMが必要）</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> machine</span><span style="color:#9ECBFF"> init</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> machine</span><span style="color:#9ECBFF"> start</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 動作確認</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> info</span></span></code></pre>
+<h3 id="linuxubuntudebian">Linux（Ubuntu/Debian）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Ubuntu 22.04以降</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> apt</span><span style="color:#9ECBFF"> update</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> apt</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -y</span><span style="color:#9ECBFF"> podman</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 動作確認</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#79B8FF"> --version</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> info</span></span></code></pre>
+<h3 id="linuxfedorarhel">Linux（Fedora/RHEL）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Fedora（プリインストール済み）</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> dnf</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -y</span><span style="color:#9ECBFF"> podman</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># RHEL 8+</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> dnf</span><span style="color:#9ECBFF"> module</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -y</span><span style="color:#9ECBFF"> container-tools</span></span></code></pre>
+<h3 id="windows">Windows</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># winget</span></span>
+<span class="line"><span style="color:#B392F0">winget</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> RedHat.Podman</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># または Podman Desktop をインストール</span></span>
+<span class="line"><span style="color:#B392F0">winget</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> RedHat.Podman-Desktop</span></span></code></pre>
+<h3 id="podman-desktop">Podman Desktop</h3>
+<p>GUIでコンテナを管理したい場合は、Podman Desktopをインストールします。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># macOS</span></span>
+<span class="line"><span style="color:#B392F0">brew</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> --cask</span><span style="color:#9ECBFF"> podman-desktop</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 公式サイトからダウンロード</span></span>
+<span class="line"><span style="color:#6A737D"># https://podman-desktop.io/</span></span></code></pre>
+<h2 id="基本的な使い方">基本的な使い方</h2>
+<p>DockerユーザーはPodmanをすぐに使いこなせます。CLIが互換なので、<code>docker</code> を <code>podman</code> に置き換えるだけです。</p>
+<h3 id="コンテナの実行">コンテナの実行</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># コンテナ実行（Dockerと同じ）</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -d</span><span style="color:#79B8FF"> --name</span><span style="color:#9ECBFF"> nginx</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> 8080:80</span><span style="color:#9ECBFF"> nginx:alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># コンテナ一覧</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> ps</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ログ確認</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> logs</span><span style="color:#9ECBFF"> nginx</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># コンテナに入る</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> exec</span><span style="color:#79B8FF"> -it</span><span style="color:#9ECBFF"> nginx</span><span style="color:#9ECBFF"> sh</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 停止と削除</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> stop</span><span style="color:#9ECBFF"> nginx</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> rm</span><span style="color:#9ECBFF"> nginx</span></span></code></pre>
+<h3 id="イメージ管理">イメージ管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># イメージ取得</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> pull</span><span style="color:#9ECBFF"> node:22-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># イメージ一覧</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> images</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># イメージビルド</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> -t</span><span style="color:#9ECBFF"> my-app:latest</span><span style="color:#9ECBFF"> .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># イメージ削除</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> rmi</span><span style="color:#9ECBFF"> my-app:latest</span></span></code></pre>
+<h3 id="dockerfileの使用">Dockerfileの使用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># Dockerfile（Dockerと完全互換）</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:22-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:22-alpine</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/dist ./dist</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/node_modules ./node_modules</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/package.json ./</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 3000</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"dist/index.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># ビルド</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> -t</span><span style="color:#9ECBFF"> my-app:latest</span><span style="color:#9ECBFF"> .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 実行</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -d</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> 3000:3000</span><span style="color:#9ECBFF"> my-app:latest</span></span></code></pre>
+<h2 id="dockerからの移行">Dockerからの移行</h2>
+<h3 id="エイリアス設定">エイリアス設定</h3>
+<p>最も簡単な移行方法は、エイリアスを設定することです。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># ~/.bashrc または ~/.zshrc</span></span>
+<span class="line"><span style="color:#F97583">alias</span><span style="color:#E1E4E8"> docker</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">podman</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># docker-compose互換</span></span>
+<span class="line"><span style="color:#F97583">alias</span><span style="color:#E1E4E8"> docker-compose</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">podman-compose</span></span></code></pre>
+<h3 id="docker-socketの互換設定">Docker Socketの互換設定</h3>
+<p>DockerのAPIソケットに依存するツールのために、互換ソケットを有効化できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Podmanソケットの有効化</span></span>
+<span class="line"><span style="color:#B392F0">systemctl</span><span style="color:#79B8FF"> --user</span><span style="color:#9ECBFF"> enable</span><span style="color:#79B8FF"> --now</span><span style="color:#9ECBFF"> podman.socket</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ソケットパスの確認</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> info</span><span style="color:#79B8FF"> --format</span><span style="color:#9ECBFF"> '{{.Host.RemoteSocket.Path}}'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># DOCKER_HOST環境変数の設定</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> DOCKER_HOST</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">unix:///run/user/$(</span><span style="color:#B392F0">id</span><span style="color:#79B8FF"> -u</span><span style="color:#E1E4E8">)/podman/podman.sock</span></span></code></pre>
+<h3 id="docker-composeからの移行">docker-composeからの移行</h3>
+<p>Podmanはpodman-composeと、Docker Compose v2の両方に対応しています。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># podman-compose のインストール</span></span>
+<span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> podman-compose</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 使い方（docker-composeと同じ）</span></span>
+<span class="line"><span style="color:#B392F0">podman-compose</span><span style="color:#9ECBFF"> up</span><span style="color:#79B8FF"> -d</span></span>
+<span class="line"><span style="color:#B392F0">podman-compose</span><span style="color:#9ECBFF"> ps</span></span>
+<span class="line"><span style="color:#B392F0">podman-compose</span><span style="color:#9ECBFF"> down</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Docker Compose v2もPodmanで使用可能</span></span>
+<span class="line"><span style="color:#6A737D"># DOCKER_HOSTを設定した状態で</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> compose</span><span style="color:#9ECBFF"> up</span><span style="color:#79B8FF"> -d</span></span></code></pre>
+<h2 id="pod機能">Pod機能</h2>
+<p>PodmanのPodは、Kubernetesと同じ概念です。複数のコンテナを1つのPodとしてグループ化し、ネットワーク名前空間を共有します。</p>
+<h3 id="podの作成と管理">Podの作成と管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Pod作成</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> pod</span><span style="color:#9ECBFF"> create</span><span style="color:#79B8FF"> --name</span><span style="color:#9ECBFF"> my-app-pod</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> 3000:3000</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> 5432:5432</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Pod内でコンテナを起動</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -d</span><span style="color:#79B8FF"> --pod</span><span style="color:#9ECBFF"> my-app-pod</span><span style="color:#79B8FF"> --name</span><span style="color:#9ECBFF"> db</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -e</span><span style="color:#9ECBFF"> POSTGRES_PASSWORD=secret</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  postgres:16-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -d</span><span style="color:#79B8FF"> --pod</span><span style="color:#9ECBFF"> my-app-pod</span><span style="color:#79B8FF"> --name</span><span style="color:#9ECBFF"> app</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -e</span><span style="color:#9ECBFF"> DATABASE_URL=postgresql://postgres:secret@localhost:5432/mydb</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  my-app:latest</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Pod状態の確認</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> pod</span><span style="color:#9ECBFF"> ps</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> pod</span><span style="color:#9ECBFF"> inspect</span><span style="color:#9ECBFF"> my-app-pod</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Pod内のコンテナ一覧</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> ps</span><span style="color:#79B8FF"> --pod</span><span style="color:#79B8FF"> --filter</span><span style="color:#9ECBFF"> pod=my-app-pod</span></span></code></pre>
+<h3 id="kubernetes-yaml生成">Kubernetes YAML生成</h3>
+<p>PodmanのPodからKubernetesマニフェストを自動生成できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Pod定義をKubernetes YAMLとしてエクスポート</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> generate</span><span style="color:#9ECBFF"> kube</span><span style="color:#9ECBFF"> my-app-pod</span><span style="color:#F97583"> ></span><span style="color:#9ECBFF"> deployment.yaml</span></span></code></pre>
+<p>生成されるYAML:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># deployment.yaml（自動生成）</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Pod</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">my-app-pod</span></span>
+<span class="line"><span style="color:#85E89D">spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  containers</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">db</span></span>
+<span class="line"><span style="color:#85E89D">      image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">postgres:16-alpine</span></span>
+<span class="line"><span style="color:#85E89D">      env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">POSTGRES_PASSWORD</span></span>
+<span class="line"><span style="color:#85E89D">          value</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">secret</span></span>
+<span class="line"><span style="color:#85E89D">      ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">containerPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">5432</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">app</span></span>
+<span class="line"><span style="color:#85E89D">      image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">my-app:latest</span></span>
+<span class="line"><span style="color:#85E89D">      env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">DATABASE_URL</span></span>
+<span class="line"><span style="color:#85E89D">          value</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">postgresql://postgres:secret@localhost:5432/mydb</span></span>
+<span class="line"><span style="color:#85E89D">      ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">containerPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3000</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Kubernetes YAMLからPodを起動</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> play</span><span style="color:#9ECBFF"> kube</span><span style="color:#9ECBFF"> deployment.yaml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Pod削除</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> play</span><span style="color:#9ECBFF"> kube</span><span style="color:#9ECBFF"> deployment.yaml</span><span style="color:#79B8FF"> --down</span></span></code></pre>
+<h2 id="ルートレスコンテナ">ルートレスコンテナ</h2>
+<p>Podmanの最大のセキュリティ機能は、root権限なしでコンテナを実行できることです。</p>
+<h3 id="ルートレスモードの仕組み">ルートレスモードの仕組み</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Docker:</span></span>
+<span class="line"><span>  ユーザー → Docker CLI → Docker Daemon (root) → コンテナ (root)</span></span>
+<span class="line"><span>                           ↑ 単一障害点・権限昇格リスク</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Podman:</span></span>
+<span class="line"><span>  ユーザー → Podman CLI → コンテナ (ユーザー権限)</span></span>
+<span class="line"><span>             ↑ デーモンなし・権限最小化</span></span></code></pre>
+<h3 id="ルートレスの設定確認">ルートレスの設定確認</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># ルートレスモードで実行されているか確認</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> info</span><span style="color:#79B8FF"> --format</span><span style="color:#9ECBFF"> '{{.Host.Security.Rootless}}'</span></span>
+<span class="line"><span style="color:#6A737D"># true</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ユーザー名前空間の確認</span></span>
+<span class="line"><span style="color:#B392F0">cat</span><span style="color:#9ECBFF"> /etc/subuid</span></span>
+<span class="line"><span style="color:#6A737D"># user:100000:65536</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">cat</span><span style="color:#9ECBFF"> /etc/subgid</span></span>
+<span class="line"><span style="color:#6A737D"># user:100000:65536</span></span></code></pre>
+<h3 id="ルートレスでの注意点">ルートレスでの注意点</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># ポート1024未満はルートレスでバインドできない（デフォルト）</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> 80:80</span><span style="color:#9ECBFF"> nginx</span><span style="color:#6A737D">  # エラー</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 解決策1: 高番号ポートを使う</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> 8080:80</span><span style="color:#9ECBFF"> nginx</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 解決策2: net.ipv4.ip_unprivileged_port_start を変更</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> sysctl</span><span style="color:#9ECBFF"> net.ipv4.ip_unprivileged_port_start=</span><span style="color:#79B8FF">80</span></span></code></pre>
+<h2 id="systemd統合">Systemd統合</h2>
+<p>PodmanはSystemdとの統合が強力で、コンテナをサービスとして管理できます。</p>
+<h3 id="systemdサービスの自動生成">Systemdサービスの自動生成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># コンテナからSystemdユニットファイルを生成</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> generate</span><span style="color:#9ECBFF"> systemd</span><span style="color:#79B8FF"> --new</span><span style="color:#79B8FF"> --name</span><span style="color:#9ECBFF"> nginx</span><span style="color:#F97583"> ></span><span style="color:#9ECBFF"> ~/.config/systemd/user/container-nginx.service</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># サービスの有効化</span></span>
+<span class="line"><span style="color:#B392F0">systemctl</span><span style="color:#79B8FF"> --user</span><span style="color:#9ECBFF"> daemon-reload</span></span>
+<span class="line"><span style="color:#B392F0">systemctl</span><span style="color:#79B8FF"> --user</span><span style="color:#9ECBFF"> enable</span><span style="color:#79B8FF"> --now</span><span style="color:#9ECBFF"> container-nginx.service</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 状態確認</span></span>
+<span class="line"><span style="color:#B392F0">systemctl</span><span style="color:#79B8FF"> --user</span><span style="color:#9ECBFF"> status</span><span style="color:#9ECBFF"> container-nginx.service</span></span></code></pre>
+<h3 id="quadlet推奨方法">Quadlet（推奨方法）</h3>
+<p>Podman 4.4以降では、Quadletという宣言的な設定形式が推奨されています。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ini"><code><span class="line"><span style="color:#6A737D"># ~/.config/containers/systemd/webapp.container</span></span>
+<span class="line"><span style="color:#B392F0">[Container]</span></span>
+<span class="line"><span style="color:#F97583">Image</span><span style="color:#E1E4E8">=my-app:latest</span></span>
+<span class="line"><span style="color:#F97583">PublishPort</span><span style="color:#E1E4E8">=3000:3000</span></span>
+<span class="line"><span style="color:#F97583">Environment</span><span style="color:#E1E4E8">=</span><span style="color:#F97583">NODE_ENV</span><span style="color:#E1E4E8">=production</span></span>
+<span class="line"><span style="color:#F97583">Environment</span><span style="color:#E1E4E8">=</span><span style="color:#F97583">DATABASE_URL</span><span style="color:#E1E4E8">=postgresql://localhost:5432/mydb</span></span>
+<span class="line"><span style="color:#F97583">Volume</span><span style="color:#E1E4E8">=app-data:/app/data</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">[Service]</span></span>
+<span class="line"><span style="color:#F97583">Restart</span><span style="color:#E1E4E8">=always</span></span>
+<span class="line"><span style="color:#F97583">TimeoutStartSec</span><span style="color:#E1E4E8">=30</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">[Install]</span></span>
+<span class="line"><span style="color:#F97583">WantedBy</span><span style="color:#E1E4E8">=default.target</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Quadletファイルを配置後</span></span>
+<span class="line"><span style="color:#B392F0">systemctl</span><span style="color:#79B8FF"> --user</span><span style="color:#9ECBFF"> daemon-reload</span></span>
+<span class="line"><span style="color:#B392F0">systemctl</span><span style="color:#79B8FF"> --user</span><span style="color:#9ECBFF"> start</span><span style="color:#9ECBFF"> webapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ログ確認</span></span>
+<span class="line"><span style="color:#B392F0">journalctl</span><span style="color:#79B8FF"> --user</span><span style="color:#79B8FF"> -u</span><span style="color:#9ECBFF"> webapp</span><span style="color:#79B8FF"> -f</span></span></code></pre>
+<h2 id="セキュリティ設定">セキュリティ設定</h2>
+<h3 id="seccompプロファイル">Seccompプロファイル</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># デフォルトSeccompプロファイルで実行（推奨）</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> --security-opt</span><span style="color:#9ECBFF"> seccomp=default</span><span style="color:#9ECBFF"> nginx</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># カスタムプロファイル</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> --security-opt</span><span style="color:#9ECBFF"> seccomp=custom-profile.json</span><span style="color:#9ECBFF"> nginx</span></span></code></pre>
+<h3 id="selinux">SELinux</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># SELinuxラベル付きボリュームマウント</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -v</span><span style="color:#9ECBFF"> /data:/data:Z</span><span style="color:#9ECBFF"> nginx</span><span style="color:#6A737D">  # プライベートラベル</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -v</span><span style="color:#9ECBFF"> /data:/data:z</span><span style="color:#9ECBFF"> nginx</span><span style="color:#6A737D">  # 共有ラベル</span></span></code></pre>
+<h3 id="read-onlyファイルシステム">read-onlyファイルシステム</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 読み取り専用コンテナ</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> --read-only</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --tmpfs</span><span style="color:#9ECBFF"> /tmp</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --tmpfs</span><span style="color:#9ECBFF"> /var/cache/nginx</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -p</span><span style="color:#9ECBFF"> 8080:80</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  nginx:alpine</span></span></code></pre>
+<h2 id="podman-compose実践">Podman Compose実践</h2>
+<h3 id="webアプリケーションスタック">Webアプリケーションスタック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># docker-compose.yml（Podmanでもそのまま使用可能）</span></span>
+<span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.8'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    build</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">.</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"3000:3000"</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">NODE_ENV=production</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">DATABASE_URL=postgresql://postgres:secret@db:5432/myapp</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">REDIS_URL=redis://redis:6379</span></span>
+<span class="line"><span style="color:#85E89D">    depends_on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      db</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        condition</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">service_healthy</span></span>
+<span class="line"><span style="color:#85E89D">      redis</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        condition</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">service_started</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  db</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">postgres:16-alpine</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">POSTGRES_PASSWORD=secret</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">POSTGRES_DB=myapp</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">pgdata:/var/lib/postgresql/data</span></span>
+<span class="line"><span style="color:#85E89D">    healthcheck</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      test</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"CMD-SHELL"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"pg_isready -U postgres"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#85E89D">      interval</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">5s</span></span>
+<span class="line"><span style="color:#85E89D">      timeout</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">5s</span></span>
+<span class="line"><span style="color:#85E89D">      retries</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">5</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  redis</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">redis:7-alpine</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">redisdata:/data</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  pgdata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  redisdata</span><span style="color:#E1E4E8">:</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># podman-composeで起動</span></span>
+<span class="line"><span style="color:#B392F0">podman-compose</span><span style="color:#9ECBFF"> up</span><span style="color:#79B8FF"> -d</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 状態確認</span></span>
+<span class="line"><span style="color:#B392F0">podman-compose</span><span style="color:#9ECBFF"> ps</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ログ</span></span>
+<span class="line"><span style="color:#B392F0">podman-compose</span><span style="color:#9ECBFF"> logs</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> app</span></span></code></pre>
+<h2 id="cicdでのpodman">CI/CDでのPodman</h2>
+<h3 id="github-actionsでの利用">GitHub Actionsでの利用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># .github/workflows/build.yml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Build with Podman</span></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">push</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  build</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Build image</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">          podman build -t my-app:${{ github.sha }} .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Run tests</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">          podman run --rm my-app:${{ github.sha }} npm test</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Push to registry</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">          podman login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}</span></span>
+<span class="line"><span style="color:#9ECBFF">          podman tag my-app:${{ github.sha }} ghcr.io/${{ github.repository }}/my-app:latest</span></span>
+<span class="line"><span style="color:#9ECBFF">          podman push ghcr.io/${{ github.repository }}/my-app:latest</span></span></code></pre>
+<h2 id="トラブルシューティング">トラブルシューティング</h2>
+<h3 id="よくあるエラーと解決法">よくあるエラーと解決法</h3>
+<p><strong><code>WARN[0000] "/" is not a shared mount</code></strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># マウントの共有設定</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> mount</span><span style="color:#79B8FF"> --make-rshared</span><span style="color:#9ECBFF"> /</span></span></code></pre>
+<p><strong><code>Error: short-name resolution enforced</code></strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 完全なレジストリ名を指定</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> pull</span><span style="color:#9ECBFF"> docker.io/library/nginx:alpine</span></span>
+<span class="line"><span style="color:#6A737D"># または設定で短縮名を許可</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> 'unqualified-search-registries = ["docker.io"]'</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> sudo</span><span style="color:#9ECBFF"> tee</span><span style="color:#79B8FF"> -a</span><span style="color:#9ECBFF"> /etc/containers/registries.conf</span></span></code></pre>
+<p><strong>ルートレスでボリュームの権限エラー</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># UID/GIDマッピングの確認</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> unshare</span><span style="color:#9ECBFF"> cat</span><span style="color:#9ECBFF"> /proc/self/uid_map</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 権限修正</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> unshare</span><span style="color:#9ECBFF"> chown</span><span style="color:#79B8FF"> -R</span><span style="color:#9ECBFF"> 1000:1000</span><span style="color:#9ECBFF"> /path/to/volume</span></span></code></pre>
+<h3 id="パフォーマンスチューニング">パフォーマンスチューニング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># ストレージドライバの確認（overlayが推奨）</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> info</span><span style="color:#79B8FF"> --format</span><span style="color:#9ECBFF"> '{{.Store.GraphDriverName}}'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 不要なイメージ・コンテナの削除</span></span>
+<span class="line"><span style="color:#B392F0">podman</span><span style="color:#9ECBFF"> system</span><span style="color:#9ECBFF"> prune</span><span style="color:#79B8FF"> -af</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Podmanは<strong>Docker互換でありながらセキュリティに優れた</strong>コンテナエンジンです。</p>
+<h3 id="podmanを選ぶべきケース">Podmanを選ぶべきケース</h3>
+<ul>
+<li><strong>セキュリティ重視</strong>: ルートレス・デーモンレスでリスクを最小化</li>
+<li><strong>Docker Desktop代替</strong>: ライセンスコスト削減</li>
+<li><strong>Kubernetes移行準備</strong>: Pod概念・YAML生成でスムーズな移行</li>
+<li><strong>RHEL/Fedora環境</strong>: 標準コンポーネントとして提供</li>
+</ul>
+<h3 id="dockerから移行すべきか">Dockerから移行すべきか？</h3>
+<p>既存のDockerワークフローが問題なく動作しているなら、無理に移行する必要はありません。ただし、新規プロジェクトやセキュリティ要件が厳しい環境では、Podmanの採用を検討する価値があります。</p>
+<h3 id="学習リソース">学習リソース</h3>
+<ul>
+<li><a href="https://docs.podman.io/">Podman公式ドキュメント</a></li>
+<li><a href="https://podman-desktop.io/">Podman Desktop</a></li>
+<li><a href="https://github.com/containers/podman">GitHub: containers/podman</a></li>
+<li><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/">Red Hat Podman Guide</a></li>
+</ul>
+<p>Docker CLIと互換性があるため、移行のハードルは非常に低いです。まずは <code>alias docker=podman</code> から始めてみてください。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

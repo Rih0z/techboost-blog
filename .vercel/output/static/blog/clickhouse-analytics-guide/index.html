@@ -1,0 +1,507 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/clickhouse-analytics-guide/"><!-- Primary Meta Tags --><title>ClickHouse分析データベース入門ガイド - 高速集計とリアルタイム分析</title><meta name="title" content="ClickHouse分析データベース入門ガイド - 高速集計とリアルタイム分析"><meta name="description" content="ClickHouseでビッグデータを高速分析。カラムナストレージ、分散処理、リアルタイム集計の実装方法を実例付きで解説します。PostgreSQLの100倍高速な分析クエリを実現。ClickHouse・Database・Analyticsに関する実践情報。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/clickhouse-analytics-guide/"><meta property="og:title" content="ClickHouse分析データベース入門ガイド - 高速集計とリアルタイム分析"><meta property="og:description" content="ClickHouseでビッグデータを高速分析。カラムナストレージ、分散処理、リアルタイム集計の実装方法を実例付きで解説します。PostgreSQLの100倍高速な分析クエリを実現。ClickHouse・Database・Analyticsに関する実践情報。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/clickhouse-analytics-guide/"><meta name="twitter:title" content="ClickHouse分析データベース入門ガイド - 高速集計とリアルタイム分析"><meta name="twitter:description" content="ClickHouseでビッグデータを高速分析。カラムナストレージ、分散処理、リアルタイム集計の実装方法を実例付きで解説します。PostgreSQLの100倍高速な分析クエリを実現。ClickHouse・Database・Analyticsに関する実践情報。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/clickhouse-analytics-guide/"},"headline":"ClickHouse分析データベース入門ガイド - 高速集計とリアルタイム分析","description":"ClickHouseでビッグデータを高速分析。カラムナストレージ、分散処理、リアルタイム集計の実装方法を実例付きで解説します。PostgreSQLの100倍高速な分析クエリを実現。ClickHouse・Database・Analyticsに関する実践情報。","datePublished":"2025-02-06T00:00:00.000Z","dateModified":"2025-02-06T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"ClickHouse, Database, Analytics, BigData, OLAP, インフラ"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"ClickHouse分析データベース入門ガイド - 高速集計とリアルタイム分析"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-06T00:00:00.000Z"> Feb 5, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>ClickHouse分析データベース入門ガイド - 高速集計とリアルタイム分析</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/ClickHouse" class="article-tag" data-astro-cid-bvzihdzo>
+#ClickHouse </a><a href="/blog/tag/Database" class="article-tag" data-astro-cid-bvzihdzo>
+#Database </a><a href="/blog/tag/Analytics" class="article-tag" data-astro-cid-bvzihdzo>
+#Analytics </a><a href="/blog/tag/BigData" class="article-tag" data-astro-cid-bvzihdzo>
+#BigData </a><a href="/blog/tag/OLAP" class="article-tag" data-astro-cid-bvzihdzo>
+#OLAP </a><a href="/blog/tag/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#インフラ </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>ClickHouseは、Yandex社が開発したオープンソースのカラムナデータベースです。億単位のレコードでも秒単位で集計でき、リアルタイム分析に最適です。本記事では、ClickHouseの導入から実践的な使い方まで解説します。</p>
+<h2 id="clickhouseとは">ClickHouseとは</h2>
+<p>ClickHouseは<strong>OLAP</strong>（Online Analytical Processing）に特化したカラムナストレージデータベースです。</p>
+<h3 id="主な特徴">主な特徴</h3>
+<ul>
+<li><strong>超高速集計</strong>: PostgreSQLの100〜1000倍高速</li>
+<li><strong>カラムナストレージ</strong>: データを列単位で保存し圧縮率が高い</li>
+<li><strong>水平スケーリング</strong>: 分散処理で数千台まで拡張可能</li>
+<li><strong>リアルタイム挿入</strong>: 秒間数百万行の挿入が可能</li>
+<li><strong>SQL対応</strong>: 標準SQLに近い構文</li>
+</ul>
+<h3 id="postgresql-vs-clickhouse">PostgreSQL vs ClickHouse</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 同じクエリでのパフォーマンス比較</span></span>
+<span class="line"><span style="color:#6A737D">-- データ: 1億件のアクセスログ</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- PostgreSQL: 約45秒</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> date</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> views</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> page_views</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#F97583"> date</span><span style="color:#F97583"> >=</span><span style="color:#9ECBFF"> '2025-01-01'</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#F97583"> date</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> date</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ClickHouse: 約0.3秒</span></span>
+<span class="line"><span style="color:#6A737D">-- 150倍高速！</span></span></code></pre>
+<h3 id="ユースケース">ユースケース</h3>
+<ul>
+<li>Webアクセス解析</li>
+<li>ログ分析</li>
+<li>メトリクス集計</li>
+<li>リアルタイムダッシュボード</li>
+<li>時系列データ分析</li>
+<li>ビジネスインテリジェンス</li>
+</ul>
+<h2 id="インストール">インストール</h2>
+<h3 id="docker推奨">Docker（推奨）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># ClickHouseサーバー起動</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -d</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> clickhouse-server</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --ulimit</span><span style="color:#9ECBFF"> nofile=262144:262144</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -p</span><span style="color:#9ECBFF"> 8123:8123</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -p</span><span style="color:#9ECBFF"> 9000:9000</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  clickhouse/clickhouse-server</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># クライアント接続</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> exec</span><span style="color:#79B8FF"> -it</span><span style="color:#9ECBFF"> clickhouse-server</span><span style="color:#9ECBFF"> clickhouse-client</span></span></code></pre>
+<h3 id="macos">macOS</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> clickhouse</span></span>
+<span class="line"><span style="color:#B392F0">clickhouse-server</span></span></code></pre>
+<h3 id="linux">Linux</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">curl</span><span style="color:#9ECBFF"> https://clickhouse.com/</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> sh</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> ./clickhouse</span><span style="color:#9ECBFF"> install</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> clickhouse</span><span style="color:#9ECBFF"> start</span></span></code></pre>
+<h3 id="接続確認">接続確認</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># HTTPインターフェース</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#9ECBFF"> http://localhost:8123</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># クライアント接続</span></span>
+<span class="line"><span style="color:#B392F0">clickhouse-client</span><span style="color:#79B8FF"> --host</span><span style="color:#9ECBFF"> localhost</span><span style="color:#79B8FF"> --port</span><span style="color:#79B8FF"> 9000</span></span></code></pre>
+<h2 id="基本的な使い方">基本的な使い方</h2>
+<h3 id="データベース作成">データベース作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- データベース作成</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> DATABASE</span><span style="color:#B392F0"> analytics</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 使用するデータベースを選択</span></span>
+<span class="line"><span style="color:#F97583">USE</span><span style="color:#E1E4E8"> analytics;</span></span></code></pre>
+<h3 id="テーブル作成">テーブル作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- ページビューテーブル</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> page_views</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    event_time </span><span style="color:#F97583">DateTime</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id UInt32,</span></span>
+<span class="line"><span style="color:#E1E4E8">    page_url String,</span></span>
+<span class="line"><span style="color:#E1E4E8">    country String,</span></span>
+<span class="line"><span style="color:#E1E4E8">    device String,</span></span>
+<span class="line"><span style="color:#E1E4E8">    duration UInt32</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MergeTree()</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> (event_time, user_id);</span></span></code></pre>
+<p><strong>ポイント</strong>:</p>
+<ul>
+<li><code>ENGINE = MergeTree()</code>: 最も一般的なテーブルエンジン</li>
+<li><code>ORDER BY</code>: ソート順を指定（クエリ高速化の鍵）</li>
+<li>データ型は厳密に指定（パフォーマンスに影響）</li>
+</ul>
+<h3 id="データ挿入">データ挿入</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 1件挿入</span></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> page_views </span><span style="color:#F97583">VALUES</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#F97583">now</span><span style="color:#E1E4E8">(), </span><span style="color:#79B8FF">1001</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'/home'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'Japan'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'Mobile'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">45</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 複数行挿入</span></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> page_views </span><span style="color:#F97583">VALUES</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#F97583">now</span><span style="color:#E1E4E8">(), </span><span style="color:#79B8FF">1002</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'/products'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'USA'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'Desktop'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">120</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#F97583">now</span><span style="color:#E1E4E8">(), </span><span style="color:#79B8FF">1003</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'/about'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'Japan'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'Tablet'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">30</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#F97583">now</span><span style="color:#E1E4E8">(), </span><span style="color:#79B8FF">1001</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'/contact'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'Japan'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'Mobile'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="データ取得">データ取得</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 基本的なSELECT</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> page_views </span><span style="color:#F97583">LIMIT</span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 集計</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    country,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> views,</span></span>
+<span class="line"><span style="color:#79B8FF">    AVG</span><span style="color:#E1E4E8">(duration) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> avg_duration</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> page_views</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#E1E4E8"> country</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> views </span><span style="color:#F97583">DESC</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h2 id="データ型">データ型</h2>
+<h3 id="数値型">数値型</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 整数</span></span>
+<span class="line"><span style="color:#E1E4E8">Int8, Int16, Int32, Int64      </span><span style="color:#6A737D">-- 符号付き</span></span>
+<span class="line"><span style="color:#E1E4E8">UInt8, UInt16, UInt32, UInt64  </span><span style="color:#6A737D">-- 符号なし</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 浮動小数点</span></span>
+<span class="line"><span style="color:#E1E4E8">Float32, Float64</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 例</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> metrics</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    id UInt64,</span></span>
+<span class="line"><span style="color:#F97583">    value</span><span style="color:#E1E4E8"> Float64,</span></span>
+<span class="line"><span style="color:#E1E4E8">    count UInt32</span></span>
+<span class="line"><span style="color:#E1E4E8">) ENGINE </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MergeTree() </span><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> id;</span></span></code></pre>
+<h3 id="文字列型">文字列型</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 固定長文字列（高速）</span></span>
+<span class="line"><span style="color:#E1E4E8">FixedString(N)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 可変長文字列</span></span>
+<span class="line"><span style="color:#E1E4E8">String</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 例</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> users</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id UInt64,</span></span>
+<span class="line"><span style="color:#E1E4E8">    username String,</span></span>
+<span class="line"><span style="color:#E1E4E8">    country_code FixedString(</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">) ENGINE </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MergeTree() </span><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> user_id;</span></span></code></pre>
+<h3 id="日付時刻型">日付・時刻型</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 日付（YYYY-MM-DD）</span></span>
+<span class="line"><span style="color:#F97583">Date</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 日時（秒精度）</span></span>
+<span class="line"><span style="color:#F97583">DateTime</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 日時（マイクロ秒精度）</span></span>
+<span class="line"><span style="color:#E1E4E8">DateTime64(</span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">)  </span><span style="color:#6A737D">-- ミリ秒</span></span>
+<span class="line"><span style="color:#E1E4E8">DateTime64(</span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">)  </span><span style="color:#6A737D">-- マイクロ秒</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 例</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> events</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    event_time </span><span style="color:#F97583">DateTime</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    event_date </span><span style="color:#F97583">Date</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    precise_time DateTime64(</span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">) ENGINE </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MergeTree() </span><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> event_time;</span></span></code></pre>
+<h3 id="配列型">配列型</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 配列</span></span>
+<span class="line"><span style="color:#F97583">Array</span><span style="color:#E1E4E8">(T)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 例</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> user_actions</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id UInt64,</span></span>
+<span class="line"><span style="color:#E1E4E8">    tags </span><span style="color:#F97583">Array</span><span style="color:#E1E4E8">(String),</span></span>
+<span class="line"><span style="color:#E1E4E8">    scores </span><span style="color:#F97583">Array</span><span style="color:#E1E4E8">(Float64)</span></span>
+<span class="line"><span style="color:#E1E4E8">) ENGINE </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MergeTree() </span><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> user_id;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> user_actions </span><span style="color:#F97583">VALUES</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, ['tech', 'news'], [0.8, 0.6]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 配列操作</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    arrayJoin(tags) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> tag  </span><span style="color:#6A737D">-- 配列を展開</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> user_actions;</span></span></code></pre>
+<h2 id="実践アクセスログ分析">実践：アクセスログ分析</h2>
+<h3 id="テーブル設計">テーブル設計</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> access_log</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">    timestamp</span><span style="color:#F97583"> DateTime</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    date</span><span style="color:#F97583"> Date</span><span style="color:#F97583"> DEFAULT</span><span style="color:#E1E4E8"> toDate(</span><span style="color:#F97583">timestamp</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id UInt32,</span></span>
+<span class="line"><span style="color:#E1E4E8">    session_id String,</span></span>
+<span class="line"><span style="color:#F97583">    url</span><span style="color:#E1E4E8"> String,</span></span>
+<span class="line"><span style="color:#E1E4E8">    referer String,</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_agent String,</span></span>
+<span class="line"><span style="color:#E1E4E8">    ip String,</span></span>
+<span class="line"><span style="color:#E1E4E8">    country String,</span></span>
+<span class="line"><span style="color:#E1E4E8">    city String,</span></span>
+<span class="line"><span style="color:#E1E4E8">    device_type LowCardinality(String),</span></span>
+<span class="line"><span style="color:#E1E4E8">    browser LowCardinality(String),</span></span>
+<span class="line"><span style="color:#E1E4E8">    http_status UInt16,</span></span>
+<span class="line"><span style="color:#E1E4E8">    response_time UInt32,</span></span>
+<span class="line"><span style="color:#E1E4E8">    bytes_sent UInt64</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MergeTree()</span></span>
+<span class="line"><span style="color:#F97583">PARTITION</span><span style="color:#F97583"> BY</span><span style="color:#E1E4E8"> toYYYYMM(</span><span style="color:#F97583">date</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">date</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">timestamp</span><span style="color:#E1E4E8">, user_id)</span></span>
+<span class="line"><span style="color:#E1E4E8">SETTINGS index_granularity </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 8192</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<p><strong>ポイント</strong>:</p>
+<ul>
+<li><code>PARTITION BY toYYYYMM(date)</code>: 月ごとにデータを分割</li>
+<li><code>LowCardinality</code>: カーディナリティが低いカラムの圧縮最適化</li>
+<li><code>ORDER BY</code>: クエリで頻繁に使う列を指定</li>
+</ul>
+<h3 id="サンプルデータ挿入">サンプルデータ挿入</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- ダミーデータ生成</span></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> access_log</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#F97583">    now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> INTERVAL (</span><span style="color:#79B8FF">rand</span><span style="color:#E1E4E8">() % </span><span style="color:#79B8FF">86400</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">SECOND</span><span style="color:#F97583"> as</span><span style="color:#F97583"> timestamp</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    toDate(</span><span style="color:#F97583">timestamp</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#F97583"> date</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    rand</span><span style="color:#E1E4E8">() % </span><span style="color:#79B8FF">10000</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> user_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    toString(</span><span style="color:#79B8FF">rand</span><span style="color:#E1E4E8">()) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> session_id,</span></span>
+<span class="line"><span style="color:#79B8FF">    concat</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/page'</span><span style="color:#E1E4E8">, toString(</span><span style="color:#79B8FF">rand</span><span style="color:#E1E4E8">() % </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">as</span><span style="color:#F97583"> url</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    concat</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://example.com/ref'</span><span style="color:#E1E4E8">, toString(</span><span style="color:#79B8FF">rand</span><span style="color:#E1E4E8">() % </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> referer,</span></span>
+<span class="line"><span style="color:#9ECBFF">    'Mozilla/5.0'</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> user_agent,</span></span>
+<span class="line"><span style="color:#79B8FF">    concat</span><span style="color:#E1E4E8">(toString(</span><span style="color:#79B8FF">rand</span><span style="color:#E1E4E8">() % </span><span style="color:#79B8FF">255</span><span style="color:#E1E4E8">), </span><span style="color:#9ECBFF">'.'</span><span style="color:#E1E4E8">, toString(</span><span style="color:#79B8FF">rand</span><span style="color:#E1E4E8">() % </span><span style="color:#79B8FF">255</span><span style="color:#E1E4E8">), </span><span style="color:#9ECBFF">'.0.1'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> ip,</span></span>
+<span class="line"><span style="color:#E1E4E8">    ['Japan', 'USA', 'UK', 'Germany'][rand() % 4 + 1] </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> country,</span></span>
+<span class="line"><span style="color:#E1E4E8">    ['Tokyo', 'New York', 'London', 'Berlin'][rand() % 4 + 1] </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> city,</span></span>
+<span class="line"><span style="color:#E1E4E8">    ['Mobile', 'Desktop', 'Tablet'][rand() % 3 + 1] </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> device_type,</span></span>
+<span class="line"><span style="color:#E1E4E8">    ['Chrome', 'Safari', 'Firefox'][rand() % 3 + 1] </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> browser,</span></span>
+<span class="line"><span style="color:#E1E4E8">    [200, 404, 500][rand() % 3 + 1] </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> http_status,</span></span>
+<span class="line"><span style="color:#79B8FF">    rand</span><span style="color:#E1E4E8">() % </span><span style="color:#79B8FF">5000</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> response_time,</span></span>
+<span class="line"><span style="color:#79B8FF">    rand</span><span style="color:#E1E4E8">() % </span><span style="color:#79B8FF">1000000</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> bytes_sent</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> numbers(</span><span style="color:#79B8FF">1000000</span><span style="color:#E1E4E8">);  </span><span style="color:#6A737D">-- 100万件のダミーデータ</span></span></code></pre>
+<h3 id="基本的な集計クエリ">基本的な集計クエリ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 1. 日別アクセス数</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#F97583">    date</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> views,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">DISTINCT</span><span style="color:#E1E4E8"> user_id) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> unique_users</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> access_log</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#F97583"> date</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> date</span><span style="color:#F97583"> DESC</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 2. デバイス別集計</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    device_type,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> views,</span></span>
+<span class="line"><span style="color:#79B8FF">    AVG</span><span style="color:#E1E4E8">(response_time) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> avg_response_time,</span></span>
+<span class="line"><span style="color:#79B8FF">    SUM</span><span style="color:#E1E4E8">(bytes_sent) </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1024</span><span style="color:#F97583"> /</span><span style="color:#79B8FF"> 1024</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> total_mb</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> access_log</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#E1E4E8"> device_type</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> views </span><span style="color:#F97583">DESC</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 3. 時間帯別アクセス</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    toHour(</span><span style="color:#F97583">timestamp</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#F97583"> hour</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> views</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> access_log</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#F97583"> hour</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> hour</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="高度な分析クエリ">高度な分析クエリ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 4. 国・デバイス別の詳細分析</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    country,</span></span>
+<span class="line"><span style="color:#E1E4E8">    device_type,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> views,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">DISTINCT</span><span style="color:#E1E4E8"> user_id) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> unique_users,</span></span>
+<span class="line"><span style="color:#79B8FF">    AVG</span><span style="color:#E1E4E8">(response_time) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> avg_response,</span></span>
+<span class="line"><span style="color:#E1E4E8">    quantile(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">)(response_time) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> median_response,</span></span>
+<span class="line"><span style="color:#E1E4E8">    quantile(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">95</span><span style="color:#E1E4E8">)(response_time) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> p95_response</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> access_log</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#F97583"> date</span><span style="color:#F97583"> >=</span><span style="color:#E1E4E8"> today() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> INTERVAL </span><span style="color:#79B8FF">7</span><span style="color:#F97583"> DAY</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#E1E4E8"> country, device_type</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> views </span><span style="color:#F97583">DESC</span></span>
+<span class="line"><span style="color:#F97583">LIMIT</span><span style="color:#79B8FF"> 20</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 5. ファネル分析（ページ遷移）</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    arrayJoin(['/', '/products', '/cart', '/checkout']) </span><span style="color:#F97583">as</span><span style="color:#F97583"> page</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    countIf(</span><span style="color:#F97583">url</span><span style="color:#F97583"> LIKE</span><span style="color:#F97583"> page</span><span style="color:#F97583"> ||</span><span style="color:#9ECBFF"> '%'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> views</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> access_log</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#F97583"> date</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> today();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 6. リテンションコホート分析</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    toStartOfWeek(first_visit) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> cohort_week,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">DISTINCT</span><span style="color:#E1E4E8"> user_id) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> users,</span></span>
+<span class="line"><span style="color:#E1E4E8">    countIf(last_visit </span><span style="color:#F97583">>=</span><span style="color:#E1E4E8"> first_visit </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> INTERVAL </span><span style="color:#79B8FF">7</span><span style="color:#F97583"> DAY</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> retained_week1,</span></span>
+<span class="line"><span style="color:#E1E4E8">    countIf(last_visit </span><span style="color:#F97583">>=</span><span style="color:#E1E4E8"> first_visit </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> INTERVAL </span><span style="color:#79B8FF">14</span><span style="color:#F97583"> DAY</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> retained_week2</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">        user_id,</span></span>
+<span class="line"><span style="color:#79B8FF">        MIN</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">date</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> first_visit,</span></span>
+<span class="line"><span style="color:#79B8FF">        MAX</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">date</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> last_visit</span></span>
+<span class="line"><span style="color:#F97583">    FROM</span><span style="color:#E1E4E8"> access_log</span></span>
+<span class="line"><span style="color:#F97583">    GROUP BY</span><span style="color:#E1E4E8"> user_id</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#E1E4E8"> cohort_week</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> cohort_week </span><span style="color:#F97583">DESC</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h2 id="時系列データ分析">時系列データ分析</h2>
+<h3 id="ウィンドウ関数">ウィンドウ関数</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 移動平均（7日間）</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#F97583">    date</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> daily_views,</span></span>
+<span class="line"><span style="color:#79B8FF">    AVG</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">OVER</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">        ORDER BY</span><span style="color:#F97583"> date</span></span>
+<span class="line"><span style="color:#F97583">        ROWS</span><span style="color:#F97583"> BETWEEN</span><span style="color:#79B8FF"> 6</span><span style="color:#F97583"> PRECEDING</span><span style="color:#F97583"> AND</span><span style="color:#E1E4E8"> CURRENT </span><span style="color:#F97583">ROW</span></span>
+<span class="line"><span style="color:#E1E4E8">    ) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> moving_avg_7days</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> access_log</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#F97583"> date</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> date</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 前日比</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#F97583">    date</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> views,</span></span>
+<span class="line"><span style="color:#E1E4E8">    lagInFrame(</span><span style="color:#79B8FF">COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">OVER</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> date</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> prev_day_views,</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#79B8FF">COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> lagInFrame(</span><span style="color:#79B8FF">COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">))) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> lagInFrame(</span><span style="color:#79B8FF">COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> growth_rate</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> access_log</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#F97583"> date</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> date</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="マテリアライズドビュー集計の高速化">マテリアライズドビュー（集計の高速化）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 日次集計のマテリアライズドビュー</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#E1E4E8"> MATERIALIZED VIEW daily_stats</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> SummingMergeTree()</span></span>
+<span class="line"><span style="color:#F97583">PARTITION</span><span style="color:#F97583"> BY</span><span style="color:#E1E4E8"> toYYYYMM(</span><span style="color:#F97583">date</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">date</span><span style="color:#E1E4E8">, country, device_type)</span></span>
+<span class="line"><span style="color:#F97583">AS</span><span style="color:#F97583"> SELECT</span></span>
+<span class="line"><span style="color:#F97583">    date</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    country,</span></span>
+<span class="line"><span style="color:#E1E4E8">    device_type,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> views,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">DISTINCT</span><span style="color:#E1E4E8"> user_id) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> unique_users,</span></span>
+<span class="line"><span style="color:#79B8FF">    SUM</span><span style="color:#E1E4E8">(response_time) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> total_response_time,</span></span>
+<span class="line"><span style="color:#79B8FF">    SUM</span><span style="color:#E1E4E8">(bytes_sent) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> total_bytes</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> access_log</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#F97583"> date</span><span style="color:#E1E4E8">, country, device_type;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- マテリアライズドビューからクエリ（超高速）</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#F97583">    date</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    SUM</span><span style="color:#E1E4E8">(views) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> total_views,</span></span>
+<span class="line"><span style="color:#79B8FF">    SUM</span><span style="color:#E1E4E8">(unique_users) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> total_users</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> daily_stats</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#F97583"> date</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> date</span><span style="color:#F97583"> DESC</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h2 id="パフォーマンス最適化">パフォーマンス最適化</h2>
+<h3 id="インデックス活用">インデックス活用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- スキップインデックス（特定値の検索高速化）</span></span>
+<span class="line"><span style="color:#F97583">ALTER</span><span style="color:#F97583"> TABLE</span><span style="color:#E1E4E8"> access_log</span></span>
+<span class="line"><span style="color:#F97583">ADD</span><span style="color:#F97583"> INDEX</span><span style="color:#E1E4E8"> idx_url </span><span style="color:#F97583">url</span><span style="color:#F97583"> TYPE</span><span style="color:#E1E4E8"> bloom_filter GRANULARITY </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- クエリで活用</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> access_log </span><span style="color:#F97583">WHERE</span><span style="color:#F97583"> url</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> '/products/123'</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="パーティション管理">パーティション管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 古いパーティションを削除</span></span>
+<span class="line"><span style="color:#F97583">ALTER</span><span style="color:#F97583"> TABLE</span><span style="color:#E1E4E8"> access_log </span><span style="color:#F97583">DROP</span><span style="color:#F97583"> PARTITION</span><span style="color:#9ECBFF"> '202401'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- パーティションの確認</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#F97583">    partition</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    rows</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    bytes_on_disk</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#79B8FF"> system</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">parts</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#F97583"> table</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'access_log'</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> partition</span><span style="color:#F97583"> DESC</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="クエリ最適化">クエリ最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- Bad: SELECT *は遅い</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> access_log;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Good: 必要なカラムのみ取得</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> date</span><span style="color:#E1E4E8">, country, </span><span style="color:#79B8FF">COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> access_log </span><span style="color:#F97583">GROUP BY</span><span style="color:#F97583"> date</span><span style="color:#E1E4E8">, country;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Bad: WHERE句で関数を使う</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> access_log </span><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> toDate(</span><span style="color:#F97583">timestamp</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> '2025-02-06'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Good: パーティションキーをそのまま使う</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> access_log </span><span style="color:#F97583">WHERE</span><span style="color:#F97583"> date</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> '2025-02-06'</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h2 id="外部データソース連携">外部データソース連携</h2>
+<h3 id="mysqlからデータ取得">MySQLからデータ取得</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- MySQL Engineテーブル</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> mysql_users</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MySQL(</span><span style="color:#9ECBFF">'mysql_host:3306'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'database'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'password'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- MySQLデータをClickHouseにコピー</span></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> clickhouse_users</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> mysql_users;</span></span></code></pre>
+<h3 id="postgresqlからデータ取得">PostgreSQLからデータ取得</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- PostgreSQL Engine</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> pg_orders</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> PostgreSQL(</span><span style="color:#9ECBFF">'pg_host:5432'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'database'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'orders'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'password'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- データ取得</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> pg_orders </span><span style="color:#F97583">WHERE</span><span style="color:#F97583"> date</span><span style="color:#F97583"> >=</span><span style="color:#E1E4E8"> today() </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 7</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="csvファイルのインポート">CSVファイルのインポート</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># コマンドラインからCSVインポート</span></span>
+<span class="line"><span style="color:#B392F0">clickhouse-client</span><span style="color:#79B8FF"> --query=</span><span style="color:#9ECBFF">"INSERT INTO access_log FORMAT CSV"</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF"> data.csv</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># HTTPインターフェース経由</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -F</span><span style="color:#9ECBFF"> 'data=@data.csv'</span><span style="color:#9ECBFF"> 'http://localhost:8123/?query=INSERT INTO access_log FORMAT CSV'</span></span></code></pre>
+<h2 id="nodejsからclickhouseを使う">Node.jsからClickHouseを使う</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> @clickhouse/client</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">createClient</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'@clickhouse/client'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> client</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  host: </span><span style="color:#9ECBFF">'http://localhost:8123'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  database: </span><span style="color:#9ECBFF">'analytics'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// データ挿入</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> insertData</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">insert</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    table: </span><span style="color:#9ECBFF">'access_log'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    values: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        timestamp: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">        user_id: </span><span style="color:#79B8FF">1001</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        url: </span><span style="color:#9ECBFF">'/home'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        country: </span><span style="color:#9ECBFF">'Japan'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        device_type: </span><span style="color:#9ECBFF">'Mobile'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        response_time: </span><span style="color:#79B8FF">120</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">    format: </span><span style="color:#9ECBFF">'JSONEachRow'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// クエリ実行</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> queryData</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    query: </span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">      SELECT country, COUNT(*) as views</span></span>
+<span class="line"><span style="color:#9ECBFF">      FROM access_log</span></span>
+<span class="line"><span style="color:#9ECBFF">      WHERE date >= today() - 7</span></span>
+<span class="line"><span style="color:#9ECBFF">      GROUP BY country</span></span>
+<span class="line"><span style="color:#9ECBFF">      ORDER BY views DESC</span></span>
+<span class="line"><span style="color:#9ECBFF">    `</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    format: </span><span style="color:#9ECBFF">'JSONEachRow'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> result.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(data);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 実行</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> insertData</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> queryData</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">close</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">})();</span></span></code></pre>
+<h2 id="運用のベストプラクティス">運用のベストプラクティス</h2>
+<h3 id="1-データ型の選択">1. データ型の選択</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- Good: 適切なデータ型</span></span>
+<span class="line"><span style="color:#E1E4E8">user_id UInt32        </span><span style="color:#6A737D">-- 最大42億</span></span>
+<span class="line"><span style="color:#E1E4E8">country LowCardinality(String)  </span><span style="color:#6A737D">-- 少数の値</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Bad: 過剰なデータ型</span></span>
+<span class="line"><span style="color:#E1E4E8">user_id UInt64        </span><span style="color:#6A737D">-- 不要に大きい</span></span>
+<span class="line"><span style="color:#E1E4E8">country String        </span><span style="color:#6A737D">-- 圧縮効率が悪い</span></span></code></pre>
+<h3 id="2-パーティション設計">2. パーティション設計</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- Good: 月単位のパーティション</span></span>
+<span class="line"><span style="color:#F97583">PARTITION</span><span style="color:#F97583"> BY</span><span style="color:#E1E4E8"> toYYYYMM(</span><span style="color:#F97583">date</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Bad: 日単位（パーティションが多すぎる）</span></span>
+<span class="line"><span style="color:#F97583">PARTITION</span><span style="color:#F97583"> BY</span><span style="color:#F97583"> date</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Bad: パーティションなし（削除が遅い）</span></span></code></pre>
+<h3 id="3-order-by-の最適化">3. ORDER BY の最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- Good: よく使うフィルタを先頭に</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">date</span><span style="color:#E1E4E8">, country, user_id)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Bad: カーディナリティの高い列を先頭に</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> (user_id, </span><span style="color:#F97583">date</span><span style="color:#E1E4E8">, country)</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>ClickHouseは以下の点で優れています。</p>
+<p><strong>メリット</strong>:</p>
+<ul>
+<li>超高速な集計クエリ（PostgreSQLの100倍以上）</li>
+<li>優れた圧縮率（ディスク容量を大幅削減）</li>
+<li>水平スケーリング対応</li>
+<li>リアルタイム挿入可能</li>
+<li>SQL互換性が高い</li>
+</ul>
+<p><strong>適したユースケース</strong>:</p>
+<ul>
+<li>ログ分析</li>
+<li>メトリクス集計</li>
+<li>リアルタイムダッシュボード</li>
+<li>ビッグデータ分析</li>
+</ul>
+<p><strong>注意点</strong>:</p>
+<ul>
+<li>トランザクション非対応</li>
+<li>UPDATE/DELETEが遅い</li>
+<li>OLTP用途には不向き</li>
+</ul>
+<p>アクセスログ分析やメトリクス集計には、ClickHouseが最適です。ぜひ試してみてください。</p>
+<p><strong>参考リンク</strong>:</p>
+<ul>
+<li><a href="https://clickhouse.com/docs/">ClickHouse公式ドキュメント</a></li>
+<li><a href="https://github.com/ClickHouse/ClickHouse">ClickHouse GitHub</a></li>
+<li><a href="https://play.clickhouse.com/">ClickHouse Playground</a></li>
+</ul>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

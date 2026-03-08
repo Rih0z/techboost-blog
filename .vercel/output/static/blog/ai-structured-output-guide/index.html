@@ -1,0 +1,649 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/ai-structured-output-guide/"><!-- Primary Meta Tags --><title>AI構造化出力実践: LLMからJSON/TypeScriptの型安全なレスポンスを取得</title><meta name="title" content="AI構造化出力実践: LLMからJSON/TypeScriptの型安全なレスポンスを取得"><meta name="description" content="OpenAI、Anthropic、GeminiなどのLLMから構造化出力を取得する実践ガイド。Zod、TypeBox、JSON Schemaを使った型安全な実装、エラーハンドリング、パフォーマンス最適化まで解説。ベストプラクティスと注意点も紹介します。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/ai-structured-output-guide/"><meta property="og:title" content="AI構造化出力実践: LLMからJSON/TypeScriptの型安全なレスポンスを取得"><meta property="og:description" content="OpenAI、Anthropic、GeminiなどのLLMから構造化出力を取得する実践ガイド。Zod、TypeBox、JSON Schemaを使った型安全な実装、エラーハンドリング、パフォーマンス最適化まで解説。ベストプラクティスと注意点も紹介します。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/ai-structured-output-guide/"><meta name="twitter:title" content="AI構造化出力実践: LLMからJSON/TypeScriptの型安全なレスポンスを取得"><meta name="twitter:description" content="OpenAI、Anthropic、GeminiなどのLLMから構造化出力を取得する実践ガイド。Zod、TypeBox、JSON Schemaを使った型安全な実装、エラーハンドリング、パフォーマンス最適化まで解説。ベストプラクティスと注意点も紹介します。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/ai-structured-output-guide/"},"headline":"AI構造化出力実践: LLMからJSON/TypeScriptの型安全なレスポンスを取得","description":"OpenAI、Anthropic、GeminiなどのLLMから構造化出力を取得する実践ガイド。Zod、TypeBox、JSON Schemaを使った型安全な実装、エラーハンドリング、パフォーマンス最適化まで解説。ベストプラクティスと注意点も紹介します。","datePublished":"2025-12-12T00:00:00.000Z","dateModified":"2025-12-12T08:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"AI, LLM, TypeScript, OpenAI, Claude"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"AI構造化出力実践: LLMからJSON/TypeScriptの型安全なレスポンスを取得"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-12-12T00:00:00.000Z"> Dec 11, 2025 </time> <div class="last-updated-on" data-astro-cid-bvzihdzo>
+Last updated on <time datetime="2025-12-12T08:00:00.000Z"> Dec 12, 2025 </time> </div> </div> <h1 data-astro-cid-bvzihdzo>AI構造化出力実践: LLMからJSON/TypeScriptの型安全なレスポンスを取得</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/AI" class="article-tag" data-astro-cid-bvzihdzo>
+#AI </a><a href="/blog/tag/LLM" class="article-tag" data-astro-cid-bvzihdzo>
+#LLM </a><a href="/blog/tag/TypeScript" class="article-tag" data-astro-cid-bvzihdzo>
+#TypeScript </a><a href="/blog/tag/OpenAI" class="article-tag" data-astro-cid-bvzihdzo>
+#OpenAI </a><a href="/blog/tag/Claude" class="article-tag" data-astro-cid-bvzihdzo>
+#Claude </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>LLM（Large Language Model）からの出力を構造化データとして扱うことで、アプリケーション統合が劇的に容易になります。この記事では、OpenAI、Anthropic Claude、Google Geminiから型安全な構造化出力を取得する実践的な方法を解説します。</p>
+<h2 id="構造化出力とは">構造化出力とは</h2>
+<h3 id="従来の問題点">従来の問題点</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 従来のプロンプト</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> prompt</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "Extract the user's name, email, and age from this text: ..."</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> openai.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  model: </span><span style="color:#9ECBFF">"gpt-4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  messages: [{ role: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, content: prompt }]</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// レスポンス例</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> text</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content</span></span>
+<span class="line"><span style="color:#6A737D">// "The user's name is John, email is john@example.com, and age is 30."</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// パースが必要（エラーの可能性）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> extracted</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> parseText</span><span style="color:#E1E4E8">(text) </span><span style="color:#6A737D">// 手動実装が必要</span></span></code></pre>
+<h3 id="構造化出力のメリット">構造化出力のメリット</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 構造化出力</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> openai.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  model: </span><span style="color:#9ECBFF">"gpt-4o-2024-08-06"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  messages: [{ role: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, content: </span><span style="color:#9ECBFF">"Extract user info from: ..."</span><span style="color:#E1E4E8"> }],</span></span>
+<span class="line"><span style="color:#E1E4E8">  response_format: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    type: </span><span style="color:#9ECBFF">"json_schema"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    json_schema: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      name: </span><span style="color:#9ECBFF">"user_extraction"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      schema: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        type: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        properties: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          name: { type: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">          email: { type: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">          age: { type: </span><span style="color:#9ECBFF">"number"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        required: [</span><span style="color:#9ECBFF">"name"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"email"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">        additionalProperties: </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 直接JSONとして取得</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content)</span></span>
+<span class="line"><span style="color:#6A737D">// { name: "John", email: "john@example.com", age: 30 }</span></span></code></pre>
+<h2 id="openai-structured-outputs">OpenAI Structured Outputs</h2>
+<h3 id="基本的な使い方">基本的な使い方</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> OpenAI </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'openai'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { z } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'zod'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { zodToJsonSchema } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'zod-to-json-schema'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> openai</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> OpenAI</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  apiKey: process.env.</span><span style="color:#79B8FF">OPENAI_API_KEY</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Zodスキーマ定義</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> UserSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  email: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">email</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  age: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">int</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">150</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">optional</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  interests: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">()).</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> User</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> z</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">infer</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> UserSchema></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 構造化出力を取得</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> extractUser</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">text</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> openai.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: </span><span style="color:#9ECBFF">"gpt-4o-2024-08-06"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        role: </span><span style="color:#9ECBFF">"system"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: </span><span style="color:#9ECBFF">"You are a data extraction assistant. Extract user information from the provided text."</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        role: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: text</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">    response_format: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      type: </span><span style="color:#9ECBFF">"json_schema"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      json_schema: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: </span><span style="color:#9ECBFF">"user_extraction"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        schema: </span><span style="color:#B392F0">zodToJsonSchema</span><span style="color:#E1E4E8">(UserSchema),</span></span>
+<span class="line"><span style="color:#E1E4E8">        strict: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> UserSchema.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(data) </span><span style="color:#6A737D">// Zodでバリデーション</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> extractUser</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">  "My name is Alice, I'm 28 years old. Contact me at alice@example.com. I love programming and hiking."</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(result)</span></span>
+<span class="line"><span style="color:#6A737D">// { name: "Alice", email: "alice@example.com", age: 28, interests: ["programming", "hiking"] }</span></span></code></pre>
+<h3 id="複雑なスキーマ">複雑なスキーマ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ネストされた構造</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> BlogPostSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  title: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  summary: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">200</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  author: z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    name: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    bio: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">optional</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  tags: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">()).</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  sections: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      heading: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      content: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      subsections: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          heading: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">          content: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">        })</span></span>
+<span class="line"><span style="color:#E1E4E8">      ).</span><span style="color:#B392F0">optional</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  ),</span></span>
+<span class="line"><span style="color:#E1E4E8">  metadata: z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    readTime: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">int</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">positive</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    difficulty: z.</span><span style="color:#B392F0">enum</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'beginner'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'intermediate'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'advanced'</span><span style="color:#E1E4E8">]),</span></span>
+<span class="line"><span style="color:#E1E4E8">    publishDate: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">datetime</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> BlogPost</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> z</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">infer</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> BlogPostSchema></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> generateBlogPost</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">topic</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">BlogPost</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> openai.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: </span><span style="color:#9ECBFF">"gpt-4o-2024-08-06"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        role: </span><span style="color:#9ECBFF">"system"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: </span><span style="color:#9ECBFF">"You are a technical blog writer. Generate a detailed blog post structure."</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        role: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: </span><span style="color:#9ECBFF">`Create a blog post about: ${</span><span style="color:#E1E4E8">topic</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">    response_format: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      type: </span><span style="color:#9ECBFF">"json_schema"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      json_schema: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: </span><span style="color:#9ECBFF">"blog_post"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        schema: </span><span style="color:#B392F0">zodToJsonSchema</span><span style="color:#E1E4E8">(BlogPostSchema),</span></span>
+<span class="line"><span style="color:#E1E4E8">        strict: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> BlogPostSchema.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(data)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="リスト抽出">リスト抽出</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> ProductListSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  products: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      name: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      price: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">positive</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      category: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      inStock: z.</span><span style="color:#B392F0">boolean</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      rating: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">optional</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> ProductList</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> z</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">infer</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> ProductListSchema></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> extractProducts</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">html</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">ProductList</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> openai.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: </span><span style="color:#9ECBFF">"gpt-4o-2024-08-06"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        role: </span><span style="color:#9ECBFF">"system"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: </span><span style="color:#9ECBFF">"Extract all product information from the HTML."</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        role: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: html</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">    response_format: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      type: </span><span style="color:#9ECBFF">"json_schema"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      json_schema: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: </span><span style="color:#9ECBFF">"product_list"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        schema: </span><span style="color:#B392F0">zodToJsonSchema</span><span style="color:#E1E4E8">(ProductListSchema),</span></span>
+<span class="line"><span style="color:#E1E4E8">        strict: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> ProductListSchema.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(data)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="anthropic-claude-structured-outputs">Anthropic Claude Structured Outputs</h2>
+<h3 id="claude-35-sonnet">Claude 3.5 Sonnet</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Anthropic </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@anthropic-ai/sdk'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { z } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'zod'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> anthropic</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Anthropic</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  apiKey: process.env.</span><span style="color:#79B8FF">ANTHROPIC_API_KEY</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> RecipeSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  description: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  servings: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">int</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">positive</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  prepTime: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">int</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">positive</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  cookTime: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">int</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">positive</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  ingredients: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      name: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      amount: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      unit: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  ),</span></span>
+<span class="line"><span style="color:#E1E4E8">  instructions: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">()),</span></span>
+<span class="line"><span style="color:#E1E4E8">  difficulty: z.</span><span style="color:#B392F0">enum</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'easy'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'medium'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'hard'</span><span style="color:#E1E4E8">]),</span></span>
+<span class="line"><span style="color:#E1E4E8">  tags: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Recipe</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> z</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">infer</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> RecipeSchema></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> generateRecipe</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">dish</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Recipe</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> anthropic.messages.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: </span><span style="color:#9ECBFF">'claude-3-5-sonnet-20241022'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    max_tokens: </span><span style="color:#79B8FF">2000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: </span><span style="color:#9ECBFF">`Generate a detailed recipe for ${</span><span style="color:#E1E4E8">dish</span><span style="color:#9ECBFF">}. Return ONLY valid JSON matching this schema:</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">${</span><span style="color:#79B8FF">JSON</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">stringify</span><span style="color:#9ECBFF">(</span><span style="color:#E1E4E8">RecipeSchema</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">shape</span><span style="color:#9ECBFF">, </span><span style="color:#79B8FF">null</span><span style="color:#9ECBFF">, </span><span style="color:#79B8FF">2</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> content</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> response.content[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (content.type </span><span style="color:#F97583">!==</span><span style="color:#9ECBFF"> 'text'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Expected text response'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // JSON抽出（コードブロック内の場合）</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> jsonText </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> content.text</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> jsonMatch</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> jsonText.</span><span style="color:#B392F0">match</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#DBEDFF">```json</span><span style="color:#79B8FF">\n</span><span style="color:#DBEDFF">(</span><span style="color:#79B8FF">[\s\S]</span><span style="color:#F97583">*?</span><span style="color:#DBEDFF">)</span><span style="color:#79B8FF">\n</span><span style="color:#DBEDFF">```</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (jsonMatch) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    jsonText </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> jsonMatch[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(jsonText)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> RecipeSchema.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(data)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="tool-usefunction-calling">Tool Use（Function Calling）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> tools</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    name: </span><span style="color:#9ECBFF">'extract_contact_info'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    description: </span><span style="color:#9ECBFF">'Extracts contact information from text'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    input_schema: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      type: </span><span style="color:#9ECBFF">'object'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      properties: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        email: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        phone: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        company: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      required: [</span><span style="color:#9ECBFF">'name'</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">] </span><span style="color:#F97583">as</span><span style="color:#F97583"> const</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> extractContactInfo</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">text</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> anthropic.messages.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: </span><span style="color:#9ECBFF">'claude-3-5-sonnet-20241022'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    max_tokens: </span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    tools,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: </span><span style="color:#9ECBFF">`Extract contact information from: ${</span><span style="color:#E1E4E8">text</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> toolUse</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> response.content.</span><span style="color:#B392F0">find</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">block</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> block.type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'tool_use'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">toolUse </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> toolUse.type </span><span style="color:#F97583">!==</span><span style="color:#9ECBFF"> 'tool_use'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'No tool use found'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> toolUse.input </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">    email</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">    phone</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">    company</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> contact</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> extractContactInfo</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">  "John Smith works at Acme Corp. Email: john@acme.com, Phone: 555-1234"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D">// { name: "John Smith", email: "john@acme.com", phone: "555-1234", company: "Acme Corp" }</span></span></code></pre>
+<h2 id="google-gemini-structured-outputs">Google Gemini Structured Outputs</h2>
+<h3 id="gemini-20">Gemini 2.0</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { GoogleGenerativeAI } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@google/generative-ai'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { z } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'zod'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> genAI</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> GoogleGenerativeAI</span><span style="color:#E1E4E8">(process.env.</span><span style="color:#79B8FF">GOOGLE_API_KEY</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> EventSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  title: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  description: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  startDate: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">datetime</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  endDate: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">datetime</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  location: z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    name: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    address: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    coordinates: z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      latitude: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      longitude: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    }).</span><span style="color:#B392F0">optional</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  attendees: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      name: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      email: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">email</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      role: z.</span><span style="color:#B392F0">enum</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'organizer'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'speaker'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'attendee'</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  ),</span></span>
+<span class="line"><span style="color:#E1E4E8">  categories: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Event</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> z</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">infer</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> EventSchema></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> extractEvent</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">text</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Event</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> model</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> genAI.</span><span style="color:#B392F0">getGenerativeModel</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: </span><span style="color:#9ECBFF">'gemini-2.0-flash-exp'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    generationConfig: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      responseMimeType: </span><span style="color:#9ECBFF">'application/json'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      responseSchema: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        type: </span><span style="color:#9ECBFF">'object'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        properties: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          title: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">          description: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">          startDate: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">          endDate: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">          location: {</span></span>
+<span class="line"><span style="color:#E1E4E8">            type: </span><span style="color:#9ECBFF">'object'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            properties: {</span></span>
+<span class="line"><span style="color:#E1E4E8">              name: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">              address: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">          },</span></span>
+<span class="line"><span style="color:#E1E4E8">          attendees: {</span></span>
+<span class="line"><span style="color:#E1E4E8">            type: </span><span style="color:#9ECBFF">'array'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            items: {</span></span>
+<span class="line"><span style="color:#E1E4E8">              type: </span><span style="color:#9ECBFF">'object'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">              properties: {</span></span>
+<span class="line"><span style="color:#E1E4E8">                name: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">                email: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">                role: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8">, enum: [</span><span style="color:#9ECBFF">'organizer'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'speaker'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'attendee'</span><span style="color:#E1E4E8">] }</span></span>
+<span class="line"><span style="color:#E1E4E8">              }</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">          },</span></span>
+<span class="line"><span style="color:#E1E4E8">          categories: { type: </span><span style="color:#9ECBFF">'array'</span><span style="color:#E1E4E8">, items: { type: </span><span style="color:#9ECBFF">'string'</span><span style="color:#E1E4E8"> } }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> model.</span><span style="color:#B392F0">generateContent</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    `Extract event information from: ${</span><span style="color:#E1E4E8">text</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(result.response.</span><span style="color:#B392F0">text</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> EventSchema.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(data)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="typebox統合">TypeBox統合</h2>
+<h3 id="typeboxスキーマ">TypeBoxスキーマ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Type, Static } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@sinclair/typebox'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Value } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@sinclair/typebox/value'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// TypeBoxスキーマ定義</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> TaskSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Type.</span><span style="color:#B392F0">Object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  id: Type.</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">({ format: </span><span style="color:#9ECBFF">'uuid'</span><span style="color:#E1E4E8"> }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  title: Type.</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">({ minLength: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, maxLength: </span><span style="color:#79B8FF">200</span><span style="color:#E1E4E8"> }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  description: Type.</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  priority: Type.</span><span style="color:#B392F0">Union</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">    Type.</span><span style="color:#B392F0">Literal</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'low'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    Type.</span><span style="color:#B392F0">Literal</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'medium'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    Type.</span><span style="color:#B392F0">Literal</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'high'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    Type.</span><span style="color:#B392F0">Literal</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'urgent'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  ]),</span></span>
+<span class="line"><span style="color:#E1E4E8">  dueDate: Type.</span><span style="color:#B392F0">Optional</span><span style="color:#E1E4E8">(Type.</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">({ format: </span><span style="color:#9ECBFF">'date-time'</span><span style="color:#E1E4E8"> })),</span></span>
+<span class="line"><span style="color:#E1E4E8">  assignees: Type.</span><span style="color:#B392F0">Array</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    Type.</span><span style="color:#B392F0">Object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      id: Type.</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      name: Type.</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      email: Type.</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">({ format: </span><span style="color:#9ECBFF">'email'</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  ),</span></span>
+<span class="line"><span style="color:#E1E4E8">  tags: Type.</span><span style="color:#B392F0">Array</span><span style="color:#E1E4E8">(Type.</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">(), { maxItems: </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8"> }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  completed: Type.</span><span style="color:#B392F0">Boolean</span><span style="color:#E1E4E8">({ default: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Task</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> Static</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> TaskSchema></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> generateTasks</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">projectDescription</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Task</span><span style="color:#E1E4E8">[]> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> TaskListSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Type.</span><span style="color:#B392F0">Object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    tasks: Type.</span><span style="color:#B392F0">Array</span><span style="color:#E1E4E8">(TaskSchema)</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> openai.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: </span><span style="color:#9ECBFF">'gpt-4o-2024-08-06'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        role: </span><span style="color:#9ECBFF">'system'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: </span><span style="color:#9ECBFF">'Generate a task list for the given project description.'</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: projectDescription</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">    response_format: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      type: </span><span style="color:#9ECBFF">'json_schema'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      json_schema: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: </span><span style="color:#9ECBFF">'task_list'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        schema: TaskListSchema </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        strict: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // TypeBoxでバリデーション</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">Value.</span><span style="color:#B392F0">Check</span><span style="color:#E1E4E8">(TaskListSchema, data)) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> errors</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">Value.</span><span style="color:#B392F0">Errors</span><span style="color:#E1E4E8">(TaskListSchema, data)]</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Validation failed: ${</span><span style="color:#79B8FF">JSON</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">stringify</span><span style="color:#9ECBFF">(</span><span style="color:#E1E4E8">errors</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> data.tasks</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="エラーハンドリング">エラーハンドリング</h2>
+<h3 id="リトライロジック">リトライロジック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> pRetry </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'p-retry'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> extractWithRetry</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">>(</span></span>
+<span class="line"><span style="color:#FFAB70">  schema</span><span style="color:#F97583">:</span><span style="color:#B392F0"> z</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ZodType</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">>,</span></span>
+<span class="line"><span style="color:#FFAB70">  prompt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  maxRetries</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 3</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> pRetry</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">    async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> openai.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        model: </span><span style="color:#9ECBFF">'gpt-4o-2024-08-06'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        messages: [{ role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">, content: prompt }],</span></span>
+<span class="line"><span style="color:#E1E4E8">        response_format: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          type: </span><span style="color:#9ECBFF">'json_schema'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          json_schema: {</span></span>
+<span class="line"><span style="color:#E1E4E8">            name: </span><span style="color:#9ECBFF">'extraction'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            schema: </span><span style="color:#B392F0">zodToJsonSchema</span><span style="color:#E1E4E8">(schema),</span></span>
+<span class="line"><span style="color:#E1E4E8">            strict: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // Zodバリデーション（失敗時は自動リトライ）</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> schema.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(data)</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      retries: maxRetries,</span></span>
+<span class="line"><span style="color:#B392F0">      onFailedAttempt</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">          `Attempt ${</span><span style="color:#E1E4E8">error</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">attemptNumber</span><span style="color:#9ECBFF">} failed. ${</span><span style="color:#E1E4E8">error</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">retriesLeft</span><span style="color:#9ECBFF">} retries left.`</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="フォールバック処理">フォールバック処理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> extractUserWithFallback</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">text</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 構造化出力を試行</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> extractUser</span><span style="color:#E1E4E8">(text)</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Structured output failed, falling back to manual parsing:'</span><span style="color:#E1E4E8">, error)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // フォールバック: 通常のプロンプト</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> openai.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      model: </span><span style="color:#9ECBFF">'gpt-4o-mini'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      messages: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#E1E4E8">          role: </span><span style="color:#9ECBFF">'system'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          content: </span><span style="color:#9ECBFF">'Extract user info and respond with: name, email, age, interests (comma-separated).'</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#E1E4E8">          role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          content: text</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      ]</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 手動パース</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> content</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> lines</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> content.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Partial</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> line</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> lines) {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (line.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'name:'</span><span style="color:#E1E4E8">)) user.name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> line.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">':'</span><span style="color:#E1E4E8">)[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">].</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (line.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'email:'</span><span style="color:#E1E4E8">)) user.email </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> line.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">':'</span><span style="color:#E1E4E8">)[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">].</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (line.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'age:'</span><span style="color:#E1E4E8">)) user.age </span><span style="color:#F97583">=</span><span style="color:#B392F0"> parseInt</span><span style="color:#E1E4E8">(line.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">':'</span><span style="color:#E1E4E8">)[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (line.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'interests:'</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        user.interests </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> line.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">':'</span><span style="color:#E1E4E8">)[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">].</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">','</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">s</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> s.</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> user.name </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> user.email </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> (user </span><span style="color:#F97583">as</span><span style="color:#B392F0"> User</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">:</span><span style="color:#79B8FF"> null</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="パフォーマンス最適化">パフォーマンス最適化</h2>
+<h3 id="バッチ処理">バッチ処理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> extractMultipleUsers</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">texts</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">[])</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">[]> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> batchSize</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 5</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> results</span><span style="color:#F97583">:</span><span style="color:#B392F0"> User</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> texts.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> batchSize) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> batch</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> texts.</span><span style="color:#B392F0">slice</span><span style="color:#E1E4E8">(i, i </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> batchSize)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 並列実行</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> batchResults</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      batch.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">text</span><span style="color:#F97583"> =></span><span style="color:#B392F0"> extractUser</span><span style="color:#E1E4E8">(text))</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    results.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">batchResults)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> results</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="キャッシング">キャッシング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> NodeCache </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'node-cache'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> cache</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> NodeCache</span><span style="color:#E1E4E8">({ stdTTL: </span><span style="color:#79B8FF">3600</span><span style="color:#E1E4E8"> }) </span><span style="color:#6A737D">// 1時間キャッシュ</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> extractUserCached</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">text</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cacheKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `user_${</span><span style="color:#B392F0">hashText</span><span style="color:#9ECBFF">(</span><span style="color:#E1E4E8">text</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // キャッシュチェック</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cached</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> cache.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">>(cacheKey)</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (cached) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> cached</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // API呼び出し</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> extractUser</span><span style="color:#E1E4E8">(text)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // キャッシュに保存</span></span>
+<span class="line"><span style="color:#E1E4E8">  cache.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(cacheKey, user)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> user</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> hashText</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">text</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'crypto'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">createHash</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'md5'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">(text).</span><span style="color:#B392F0">digest</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'hex'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="実世界のユースケース">実世界のユースケース</h2>
+<h3 id="フォーム自動入力">フォーム自動入力</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> FormDataSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  personalInfo: z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    firstName: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    lastName: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    dateOfBirth: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">regex</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">^</span><span style="color:#79B8FF">\d</span><span style="color:#F97583">{4}</span><span style="color:#DBEDFF">-</span><span style="color:#79B8FF">\d</span><span style="color:#F97583">{2}</span><span style="color:#DBEDFF">-</span><span style="color:#79B8FF">\d</span><span style="color:#F97583">{2}$</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    nationality: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  contactInfo: z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    email: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">email</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    phone: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    address: z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      street: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      city: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      postalCode: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      country: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  employment: z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    company: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    position: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    startDate: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">regex</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">^</span><span style="color:#79B8FF">\d</span><span style="color:#F97583">{4}</span><span style="color:#DBEDFF">-</span><span style="color:#79B8FF">\d</span><span style="color:#F97583">{2}</span><span style="color:#DBEDFF">-</span><span style="color:#79B8FF">\d</span><span style="color:#F97583">{2}$</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    salary: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">optional</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> fillFormFromCV</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">cvText</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> formData</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> extractWithRetry</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    FormDataSchema,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `Extract information from this CV and fill the form:</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">${</span><span style="color:#E1E4E8">cvText</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> formData</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="データクリーニング">データクリーニング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> CleanedProductSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  normalizedPrice: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  currency: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  category: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  specifications: z.</span><span style="color:#B392F0">record</span><span style="color:#E1E4E8">(z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> cleanProductData</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">rawData</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">[])</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> CleanedProductSchema[]> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> extractMultipleUsers</span><span style="color:#E1E4E8">(rawData) </span><span style="color:#6A737D">// 並列バッチ処理</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<h3 id="構造化出力の利点">構造化出力の利点</h3>
+<ol>
+<li><strong>型安全性</strong> - TypeScriptの型システムと統合</li>
+<li><strong>エラー削減</strong> - パースエラーの排除</li>
+<li><strong>開発効率</strong> - 手動パース不要</li>
+<li><strong>保守性</strong> - スキーマ駆動開発</li>
+</ol>
+<h3 id="モデル選択の指針">モデル選択の指針</h3>
+<ul>
+<li><strong>OpenAI GPT-4o</strong> - 最も強力、複雑なスキーマに対応</li>
+<li><strong>Claude 3.5 Sonnet</strong> - バランスが良い、Tool Use対応</li>
+<li><strong>Gemini 2.0</strong> - コスト効率が高い、JSON Schema対応</li>
+</ul>
+<h3 id="ベストプラクティス">ベストプラクティス</h3>
+<ol>
+<li><strong>スキーマは明確に</strong> - 曖昧な定義を避ける</li>
+<li><strong>バリデーション必須</strong> - Zod/TypeBoxで二重チェック</li>
+<li><strong>エラーハンドリング</strong> - リトライとフォールバックを実装</li>
+<li><strong>キャッシング活用</strong> - コスト削減とレスポンス向上</li>
+</ol>
+<p>構造化出力は、LLMをアプリケーションに統合する際の強力な武器です。適切なスキーマ設計とエラーハンドリングにより、本番環境で信頼性の高いAI機能を実現できます。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

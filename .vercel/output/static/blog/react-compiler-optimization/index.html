@@ -1,0 +1,572 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/react-compiler-optimization/"><!-- Primary Meta Tags --><title>React Compiler実践ガイド: 自動メモ化で実現するパフォーマンス最適化の新時代</title><meta name="title" content="React Compiler実践ガイド: 自動メモ化で実現するパフォーマンス最適化の新時代"><meta name="description" content="React Compilerを使った自動最適化の実践ガイド。手動のuseMemo/useCallbackが不要になる自動メモ化、最適化の仕組み、導入方法、ベンチマーク、トラブルシューティングを徹底解説。具体的なコード例とともに詳しく紹介します。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/react-compiler-optimization/"><meta property="og:title" content="React Compiler実践ガイド: 自動メモ化で実現するパフォーマンス最適化の新時代"><meta property="og:description" content="React Compilerを使った自動最適化の実践ガイド。手動のuseMemo/useCallbackが不要になる自動メモ化、最適化の仕組み、導入方法、ベンチマーク、トラブルシューティングを徹底解説。具体的なコード例とともに詳しく紹介します。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/react-compiler-optimization/"><meta name="twitter:title" content="React Compiler実践ガイド: 自動メモ化で実現するパフォーマンス最適化の新時代"><meta name="twitter:description" content="React Compilerを使った自動最適化の実践ガイド。手動のuseMemo/useCallbackが不要になる自動メモ化、最適化の仕組み、導入方法、ベンチマーク、トラブルシューティングを徹底解説。具体的なコード例とともに詳しく紹介します。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/react-compiler-optimization/"},"headline":"React Compiler実践ガイド: 自動メモ化で実現するパフォーマンス最適化の新時代","description":"React Compilerを使った自動最適化の実践ガイド。手動のuseMemo/useCallbackが不要になる自動メモ化、最適化の仕組み、導入方法、ベンチマーク、トラブルシューティングを徹底解説。具体的なコード例とともに詳しく紹介します。","datePublished":"2025-08-05T00:00:00.000Z","dateModified":"2025-08-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"React, React-Compiler, パフォーマンス, 最適化, メモ化"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"React Compiler実践ガイド: 自動メモ化で実現するパフォーマンス最適化の新時代"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-08-05T00:00:00.000Z"> Aug 4, 2025 </time> <div class="last-updated-on" data-astro-cid-bvzihdzo>
+Last updated on <time datetime="2025-08-05T00:00:00.000Z"> Aug 4, 2025 </time> </div> </div> <h1 data-astro-cid-bvzihdzo>React Compiler実践ガイド: 自動メモ化で実現するパフォーマンス最適化の新時代</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/React" class="article-tag" data-astro-cid-bvzihdzo>
+#React </a><a href="/blog/tag/React-Compiler" class="article-tag" data-astro-cid-bvzihdzo>
+#React-Compiler </a><a href="/blog/tag/%E3%83%91%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%B3%E3%82%B9" class="article-tag" data-astro-cid-bvzihdzo>
+#パフォーマンス </a><a href="/blog/tag/%E6%9C%80%E9%81%A9%E5%8C%96" class="article-tag" data-astro-cid-bvzihdzo>
+#最適化 </a><a href="/blog/tag/%E3%83%A1%E3%83%A2%E5%8C%96" class="article-tag" data-astro-cid-bvzihdzo>
+#メモ化 </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>React Compilerは、手動の<code>useMemo</code>や<code>useCallback</code>を不要にする革新的なコンパイラです。</p>
+<p>本記事では、React Compilerの仕組み、導入方法、実践的な最適化テクニック、ベンチマーク、トラブルシューティングまで徹底解説します。</p>
+<h2 id="react-compilerとは">React Compilerとは</h2>
+<h3 id="従来のパフォーマンス最適化の課題">従来のパフォーマンス最適化の課題</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// 従来: 手動でメモ化が必要</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> TodoList</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">todos</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">filter</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#6A737D">    // これを忘れると毎回再計算</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> filteredTodos</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> todos.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">todo</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> (filter </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'completed'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> todo.completed;</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> (filter </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'active'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">todo.completed;</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, [todos, filter]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // これも忘れると子コンポーネントが再レンダリング</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> handleToggle</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useCallback</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // ...</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, []);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">            {filteredTodos.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">todo</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">                &#x3C;</span><span style="color:#79B8FF">TodoItem</span></span>
+<span class="line"><span style="color:#B392F0">                    key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{todo.id}</span></span>
+<span class="line"><span style="color:#B392F0">                    todo</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{todo}</span></span>
+<span class="line"><span style="color:#B392F0">                    onToggle</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleToggle}</span></span>
+<span class="line"><span style="color:#E1E4E8">                /></span></span>
+<span class="line"><span style="color:#E1E4E8">            ))}</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// さらに子コンポーネントもメモ化</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> TodoItem</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> memo</span><span style="color:#E1E4E8">(({ </span><span style="color:#FFAB70">todo</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">onToggle</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#B392F0"> onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{() </span><span style="color:#F97583">=></span><span style="color:#B392F0"> onToggle</span><span style="color:#E1E4E8">(todo.id)}></span></span>
+<span class="line"><span style="color:#E1E4E8">            {todo.text}</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<p>問題点:</p>
+<ul>
+<li><strong>メンテナンス負担</strong>: 依存配列の管理が煩雑</li>
+<li><strong>パフォーマンスリスク</strong>: メモ化忘れによる無駄な再レンダリング</li>
+<li><strong>コード可読性低下</strong>: 最適化コードがロジックを隠す</li>
+<li><strong>学習コスト</strong>: 初心者には難解</li>
+</ul>
+<h3 id="react-compilerの革新">React Compilerの革新</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// React Compiler: 自動で最適化される</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> TodoList</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">todos</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">filter</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#6A737D">    // コンパイラが自動でメモ化</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> filteredTodos</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> todos.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">todo</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (filter </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'completed'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> todo.completed;</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (filter </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'active'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">todo.completed;</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // これも自動で最適化</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#B392F0"> handleToggle</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // ...</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">            {filteredTodos.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">todo</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">                &#x3C;</span><span style="color:#79B8FF">TodoItem</span></span>
+<span class="line"><span style="color:#B392F0">                    key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{todo.id}</span></span>
+<span class="line"><span style="color:#B392F0">                    todo</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{todo}</span></span>
+<span class="line"><span style="color:#B392F0">                    onToggle</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleToggle}</span></span>
+<span class="line"><span style="color:#E1E4E8">                /></span></span>
+<span class="line"><span style="color:#E1E4E8">            ))}</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// memo()も不要</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> TodoItem</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">todo</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">onToggle</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#B392F0"> onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{() </span><span style="color:#F97583">=></span><span style="color:#B392F0"> onToggle</span><span style="color:#E1E4E8">(todo.id)}></span></span>
+<span class="line"><span style="color:#E1E4E8">            {todo.text}</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>メリット:</p>
+<ul>
+<li><strong>自動最適化</strong>: コンパイラが賢く判断</li>
+<li><strong>シンプルなコード</strong>: メモ化のボイラープレート不要</li>
+<li><strong>保守性向上</strong>: 依存配列の管理から解放</li>
+<li><strong>パフォーマンス向上</strong>: 最適化の抜け漏れ防止</li>
+</ul>
+<h2 id="react-compilerの仕組み">React Compilerの仕組み</h2>
+<h3 id="コンパイル時の変換">コンパイル時の変換</h3>
+<p>React Compilerは、コード内の以下を自動検出します:</p>
+<ol>
+<li><strong>値の再計算</strong>: 高コストな処理を自動でメモ化</li>
+<li><strong>関数の再生成</strong>: コールバックを自動で安定化</li>
+<li><strong>コンポーネントの再レンダリング</strong>: 不要な再描画を防止</li>
+<li><strong>JSXの再構築</strong>: 仮想DOMの差分を最小化</li>
+</ol>
+<h3 id="内部動作の例">内部動作の例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// 元のコード</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> processed</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> data.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">item</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> item.value </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#79B8FF">List</span><span style="color:#B392F0"> items</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{processed} />;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>コンパイラによる変換（イメージ）:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// コンパイル後（概念的な例）</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> processed</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemoInternal</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> data.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">item</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> item.value </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, [data]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> jsx</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemoInternal</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#79B8FF">List</span><span style="color:#B392F0"> items</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{processed} />;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, [processed]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> jsx;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="導入方法">導入方法</h2>
+<h3 id="前提条件">前提条件</h3>
+<ul>
+<li>React 19以降</li>
+<li>Node.js 18以降</li>
+<li>Babel 7.24以降 または ESBuild/SWC対応版</li>
+</ul>
+<h3 id="インストールnextjs">インストール（Next.js）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> next@latest</span><span style="color:#9ECBFF"> react@latest</span><span style="color:#9ECBFF"> react-dom@latest</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// next.config.js</span></span>
+<span class="line"><span style="color:#6A737D">/** </span><span style="color:#F97583">@type</span><span style="color:#B392F0"> {import('next').NextConfig}</span><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nextConfig</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    experimental: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        reactCompiler: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">module</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">exports</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> nextConfig;</span></span></code></pre>
+<h3 id="インストールvite">インストール（Vite）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> vite-plugin-react-compiler</span><span style="color:#79B8FF"> -D</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// vite.config.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { defineConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'vite'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> react </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@vitejs/plugin-react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> reactCompiler </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'vite-plugin-react-compiler'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#B392F0"> defineConfig</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    plugins: [</span></span>
+<span class="line"><span style="color:#B392F0">        react</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#B392F0">        reactCompiler</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="インストールcra--カスタムwebpack">インストール（CRA / カスタムWebpack）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> babel-plugin-react-compiler</span><span style="color:#79B8FF"> -D</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// babel.config.js</span></span>
+<span class="line"><span style="color:#79B8FF">module</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">exports</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    plugins: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        [</span><span style="color:#9ECBFF">'babel-plugin-react-compiler'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#6A737D">            // オプション設定</span></span>
+<span class="line"><span style="color:#E1E4E8">        }],</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h3 id="eslintプラグイン">ESLintプラグイン</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> eslint-plugin-react-compiler</span><span style="color:#79B8FF"> -D</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// .eslintrc.js</span></span>
+<span class="line"><span style="color:#79B8FF">module</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">exports</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    plugins: [</span><span style="color:#9ECBFF">'react-compiler'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">    rules: {</span></span>
+<span class="line"><span style="color:#9ECBFF">        'react-compiler/react-compiler'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'error'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h2 id="実践的な最適化例">実践的な最適化例</h2>
+<h3 id="1-リスト処理の最適化">1. リスト処理の最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// Before: 手動メモ化</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> ProductList</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">products</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">searchTerm</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">sortBy</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> filtered</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> products.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">p</span><span style="color:#F97583"> =></span></span>
+<span class="line"><span style="color:#E1E4E8">            p.name.</span><span style="color:#B392F0">toLowerCase</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(searchTerm.</span><span style="color:#B392F0">toLowerCase</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">        );</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, [products, searchTerm]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> sorted</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> [</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">filtered].</span><span style="color:#B392F0">sort</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">a</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> (sortBy </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'price'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> a.price </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> b.price;</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> (sortBy </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'name'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> a.name.</span><span style="color:#B392F0">localeCompare</span><span style="color:#E1E4E8">(b.name);</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, [filtered, sortBy]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">            {sorted.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">product</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">                &#x3C;</span><span style="color:#79B8FF">ProductCard</span><span style="color:#B392F0"> key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{product.id} </span><span style="color:#B392F0">product</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{product} /></span></span>
+<span class="line"><span style="color:#E1E4E8">            ))}</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// After: React Compilerが自動最適化</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> ProductList</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">products</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">searchTerm</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">sortBy</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> filtered</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> products.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">p</span><span style="color:#F97583"> =></span></span>
+<span class="line"><span style="color:#E1E4E8">        p.name.</span><span style="color:#B392F0">toLowerCase</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(searchTerm.</span><span style="color:#B392F0">toLowerCase</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> sorted</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">filtered].</span><span style="color:#B392F0">sort</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">a</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (sortBy </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'price'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> a.price </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> b.price;</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (sortBy </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'name'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> a.name.</span><span style="color:#B392F0">localeCompare</span><span style="color:#E1E4E8">(b.name);</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">            {sorted.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">product</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">                &#x3C;</span><span style="color:#79B8FF">ProductCard</span><span style="color:#B392F0"> key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{product.id} </span><span style="color:#B392F0">product</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{product} /></span></span>
+<span class="line"><span style="color:#E1E4E8">            ))}</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-イベントハンドラの最適化">2. イベントハンドラの最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// Before: useCallbackだらけ</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Form</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">onSubmit</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">initialValues</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">values</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setValues</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(initialValues);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> handleChange</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useCallback</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">field</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">value</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        setValues</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">prev</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> ({ </span><span style="color:#F97583">...</span><span style="color:#E1E4E8">prev, [field]: value }));</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, []);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> handleSubmit</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useCallback</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">e</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        e.</span><span style="color:#B392F0">preventDefault</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#B392F0">        onSubmit</span><span style="color:#E1E4E8">(values);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, [values, onSubmit]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> handleReset</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useCallback</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        setValues</span><span style="color:#E1E4E8">(initialValues);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, [initialValues]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#85E89D">form</span><span style="color:#B392F0"> onSubmit</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleSubmit}></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#79B8FF">Input</span></span>
+<span class="line"><span style="color:#B392F0">                value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{values.name}</span></span>
+<span class="line"><span style="color:#B392F0">                onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{(</span><span style="color:#FFAB70">v</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> handleChange</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'name'</span><span style="color:#E1E4E8">, v)}</span></span>
+<span class="line"><span style="color:#E1E4E8">            /></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#79B8FF">Button</span><span style="color:#B392F0"> type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"submit"</span><span style="color:#E1E4E8">>Submit&#x3C;/</span><span style="color:#79B8FF">Button</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#79B8FF">Button</span><span style="color:#B392F0"> onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleReset}>Reset&#x3C;/</span><span style="color:#79B8FF">Button</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#85E89D">form</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// After: シンプルに</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Form</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">onSubmit</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">initialValues</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">values</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setValues</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(initialValues);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#B392F0"> handleChange</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">field</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">value</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        setValues</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">prev</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> ({ </span><span style="color:#F97583">...</span><span style="color:#E1E4E8">prev, [field]: value }));</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#B392F0"> handleSubmit</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">e</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        e.</span><span style="color:#B392F0">preventDefault</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#B392F0">        onSubmit</span><span style="color:#E1E4E8">(values);</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#B392F0"> handleReset</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        setValues</span><span style="color:#E1E4E8">(initialValues);</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#85E89D">form</span><span style="color:#B392F0"> onSubmit</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleSubmit}></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#79B8FF">Input</span></span>
+<span class="line"><span style="color:#B392F0">                value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{values.name}</span></span>
+<span class="line"><span style="color:#B392F0">                onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{(</span><span style="color:#FFAB70">v</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> handleChange</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'name'</span><span style="color:#E1E4E8">, v)}</span></span>
+<span class="line"><span style="color:#E1E4E8">            /></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#79B8FF">Button</span><span style="color:#B392F0"> type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"submit"</span><span style="color:#E1E4E8">>Submit&#x3C;/</span><span style="color:#79B8FF">Button</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#79B8FF">Button</span><span style="color:#B392F0"> onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleReset}>Reset&#x3C;/</span><span style="color:#79B8FF">Button</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#85E89D">form</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="3-複雑な計算の最適化">3. 複雑な計算の最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// Before: ネストしたuseMemo</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Dashboard</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">users</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">orders</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">startDate</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">endDate</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> filteredOrders</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> orders.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">o</span><span style="color:#F97583"> =></span></span>
+<span class="line"><span style="color:#E1E4E8">            o.date </span><span style="color:#F97583">>=</span><span style="color:#E1E4E8"> startDate </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> o.date </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> endDate</span></span>
+<span class="line"><span style="color:#E1E4E8">        );</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, [orders, startDate, endDate]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> stats</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> revenue</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> filteredOrders.</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">sum</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">o</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> sum </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> o.total, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> avgOrderValue</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> revenue </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> filteredOrders.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> topCustomers</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> calculateTopCustomers</span><span style="color:#E1E4E8">(filteredOrders, users);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> { revenue, avgOrderValue, topCustomers };</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, [filteredOrders, users]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> chartData</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> prepareChartData</span><span style="color:#E1E4E8">(filteredOrders);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, [filteredOrders]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#79B8FF">Stats</span><span style="color:#B392F0"> data</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{stats} /></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#79B8FF">Chart</span><span style="color:#B392F0"> data</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{chartData} /></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// After: クリーンなロジック</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Dashboard</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">users</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">orders</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">startDate</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">endDate</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> filteredOrders</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> orders.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">o</span><span style="color:#F97583"> =></span></span>
+<span class="line"><span style="color:#E1E4E8">        o.date </span><span style="color:#F97583">>=</span><span style="color:#E1E4E8"> startDate </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> o.date </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> endDate</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> revenue</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> filteredOrders.</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">sum</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">o</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> sum </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> o.total, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> avgOrderValue</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> revenue </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> filteredOrders.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> topCustomers</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> calculateTopCustomers</span><span style="color:#E1E4E8">(filteredOrders, users);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> stats</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> { revenue, avgOrderValue, topCustomers };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> chartData</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> prepareChartData</span><span style="color:#E1E4E8">(filteredOrders);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#79B8FF">Stats</span><span style="color:#B392F0"> data</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{stats} /></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#79B8FF">Chart</span><span style="color:#B392F0"> data</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{chartData} /></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="4-context使用時の最適化">4. Context使用時の最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// Before: memo()とuseCallbackが必要</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> UserContext</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createContext</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> UserProvider</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">children</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">user</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setUser</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> login</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useCallback</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">credentials</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // API call</span></span>
+<span class="line"><span style="color:#B392F0">        setUser</span><span style="color:#E1E4E8">(userData);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, []);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> logout</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useCallback</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        setUser</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, []);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> value</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">        user,</span></span>
+<span class="line"><span style="color:#E1E4E8">        login,</span></span>
+<span class="line"><span style="color:#E1E4E8">        logout,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }), [user, login, logout]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#79B8FF">UserContext.Provider</span><span style="color:#B392F0"> value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{value}></span></span>
+<span class="line"><span style="color:#E1E4E8">            {children}</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#79B8FF">UserContext.Provider</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> UserProfile</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> memo</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">function</span><span style="color:#B392F0"> UserProfile</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">user</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useContext</span><span style="color:#E1E4E8">(UserContext);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>{user?.name}&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// After: 自然な記述</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> UserContext</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createContext</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> UserProvider</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">children</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">user</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setUser</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#B392F0"> login</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">credentials</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // API call</span></span>
+<span class="line"><span style="color:#B392F0">        setUser</span><span style="color:#E1E4E8">(userData);</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#B392F0"> logout</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        setUser</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#79B8FF">UserContext.Provider</span><span style="color:#B392F0"> value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{{ user, login, logout }}></span></span>
+<span class="line"><span style="color:#E1E4E8">            {children}</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#79B8FF">UserContext.Provider</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> UserProfile</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">user</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useContext</span><span style="color:#E1E4E8">(UserContext);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>{user?.name}&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="最適化の限界と注意点">最適化の限界と注意点</h2>
+<h3 id="compilerが最適化できないケース">Compilerが最適化できないケース</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// 1. 副作用を含む処理</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#6A737D">    // これは最適化されない（毎回実行される）</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> data.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">item</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(item); </span><span style="color:#6A737D">// 副作用</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> item </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>{result}&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 2. ランダム値や日時</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">    // 毎回異なる値になるため最適化不可</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> random</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">random</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>{random}&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 3. 外部変数の参照</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> globalCounter </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#6A737D">    // グローバル変数の変更は追跡不可</span></span>
+<span class="line"><span style="color:#E1E4E8">    globalCounter</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>{globalCounter}&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="手動最適化が必要な場合">手動最適化が必要な場合</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// 明示的に最適化を抑制したい場合</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 'use no memo' ディレクティブ（将来的な機能）</span></span>
+<span class="line"><span style="color:#9ECBFF">    'use no memo'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> expensiveOperation</span><span style="color:#E1E4E8">(data);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>{result}&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="パフォーマンス計測">パフォーマンス計測</h2>
+<h3 id="react-devtoolsでの確認">React DevToolsでの確認</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// Profilerでレンダリング回数を計測</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Profiler } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> App</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#79B8FF">Profiler</span></span>
+<span class="line"><span style="color:#B392F0">            id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"TodoList"</span></span>
+<span class="line"><span style="color:#B392F0">            onRender</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{(</span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">phase</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">actualDuration</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">                console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">} rendered in ${</span><span style="color:#E1E4E8">actualDuration</span><span style="color:#9ECBFF">}ms`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">            }}</span></span>
+<span class="line"><span style="color:#E1E4E8">        ></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#79B8FF">TodoList</span><span style="color:#E1E4E8"> /></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#79B8FF">Profiler</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ベンチマーク例">ベンチマーク例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// Before Compiler: 100アイテムのリスト</span></span>
+<span class="line"><span style="color:#6A737D">// - 平均レンダリング時間: 45ms</span></span>
+<span class="line"><span style="color:#6A737D">// - 再レンダリング回数: 検索ごとに全リスト</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// After Compiler: 100アイテムのリスト</span></span>
+<span class="line"><span style="color:#6A737D">// - 平均レンダリング時間: 12ms (73%改善)</span></span>
+<span class="line"><span style="color:#6A737D">// - 再レンダリング回数: 変更されたアイテムのみ</span></span></code></pre>
+<h3 id="実際の測定コード">実際の測定コード</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> BenchmarkComponent</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">data</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setData</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">generateLargeData</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">filter</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setFilter</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> start</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> performance.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> filtered</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> data.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">item</span><span style="color:#F97583"> =></span></span>
+<span class="line"><span style="color:#E1E4E8">        item.name.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(filter)</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> end</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> performance.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Filter took ${</span><span style="color:#E1E4E8">end</span><span style="color:#F97583"> -</span><span style="color:#E1E4E8"> start</span><span style="color:#9ECBFF">}ms`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#85E89D">input</span></span>
+<span class="line"><span style="color:#B392F0">                value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{filter}</span></span>
+<span class="line"><span style="color:#B392F0">                onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#FFAB70">e</span><span style="color:#F97583"> =></span><span style="color:#B392F0"> setFilter</span><span style="color:#E1E4E8">(e.target.value)}</span></span>
+<span class="line"><span style="color:#E1E4E8">            /></span></span>
+<span class="line"><span style="color:#E1E4E8">            {filtered.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">item</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">                &#x3C;</span><span style="color:#79B8FF">Item</span><span style="color:#B392F0"> key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{item.id} </span><span style="color:#B392F0">item</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{item} /></span></span>
+<span class="line"><span style="color:#E1E4E8">            ))}</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="トラブルシューティング">トラブルシューティング</h2>
+<h3 id="eslintエラーの対処">ESLintエラーの対処</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// react-compiler/react-compiler エラーが出る場合</span></span>
+<span class="line"><span style="color:#6A737D">// 原因: Compilerが最適化できないパターン</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ❌ Bad</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> sum </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    data.</span><span style="color:#B392F0">forEach</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">item</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> sum </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> item.value); </span><span style="color:#6A737D">// ミュータブルな変数</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>{sum}&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ Good</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> sum</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> data.</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">acc</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">item</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> acc </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> item.value, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>{sum}&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ビルドエラーの対処">ビルドエラーの対処</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Compilerのバージョンを確認</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> list</span><span style="color:#9ECBFF"> babel-plugin-react-compiler</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># キャッシュクリア</span></span>
+<span class="line"><span style="color:#B392F0">rm</span><span style="color:#79B8FF"> -rf</span><span style="color:#9ECBFF"> node_modules/.cache</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> build</span></span></code></pre>
+<h3 id="デバッグモード">デバッグモード</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// next.config.js</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nextConfig</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    experimental: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        reactCompiler: {</span></span>
+<span class="line"><span style="color:#E1E4E8">            compilationMode: </span><span style="color:#9ECBFF">'annotation'</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 'all' | 'annotation'</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// 特定コンポーネントのみ有効化</span></span>
+<span class="line"><span style="color:#9ECBFF">'use memo'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">    // このコンポーネントのみCompiler適用</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="マイグレーション戦略">マイグレーション戦略</h2>
+<h3 id="段階的導入">段階的導入</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// Step 1: 新規コンポーネントのみ有効化</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nextConfig</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    experimental: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        reactCompiler: {</span></span>
+<span class="line"><span style="color:#E1E4E8">            compilationMode: </span><span style="color:#9ECBFF">'annotation'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// Step 2: アノテーション追加</span></span>
+<span class="line"><span style="color:#9ECBFF">'use memo'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> NewComponent</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">    // React Compilerが適用される</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="既存コードのリファクタリング">既存コードのリファクタリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsx"><code><span class="line"><span style="color:#6A737D">// Before</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> Component</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> memo</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">function</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> processed</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#B392F0"> process</span><span style="color:#E1E4E8">(data), [data]);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> handler</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useCallback</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {}, []);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>{processed}&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// After: 段階的に削除</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> processed</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> process</span><span style="color:#E1E4E8">(data);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#B392F0"> handler</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>{processed}&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>React Compilerの実践的な活用方法を解説しました。</p>
+<h3 id="キーポイント">キーポイント</h3>
+<ul>
+<li><strong>自動最適化</strong>: useMemo/useCallback/memo不要</li>
+<li><strong>シンプルなコード</strong>: 可読性とパフォーマンスの両立</li>
+<li><strong>段階的導入</strong>: 既存プロジェクトにも適用可能</li>
+<li><strong>ESLint連携</strong>: 最適化不可パターンを検出</li>
+</ul>
+<h3 id="導入のベストプラクティス">導入のベストプラクティス</h3>
+<ol>
+<li><strong>新規プロジェクトから</strong>: フルに活用</li>
+<li><strong>既存プロジェクト</strong>: annotationモードで段階的に</li>
+<li><strong>ESLint設定</strong>: 早期にエラーを検出</li>
+<li><strong>計測</strong>: React DevToolsでパフォーマンス確認</li>
+</ol>
+<p>React Compilerで、よりシンプルで高速なReactアプリケーションを開発しましょう。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

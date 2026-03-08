@@ -1,0 +1,583 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/trpc-v11-server-functions/"><!-- Primary Meta Tags --><title>tRPC v11実践: Server Functionsとの統合による型安全なフルスタック開発</title><meta name="title" content="tRPC v11実践: Server Functionsとの統合による型安全なフルスタック開発"><meta name="description" content="tRPC v11の新機能Server Functionsを活用し、Next.js App RouterやReact Server Componentsと完全統合する実践ガイド。従来のRPC方式との違いや移行戦略も解説。開発効率を上げるヒントが満載です。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/trpc-v11-server-functions/"><meta property="og:title" content="tRPC v11実践: Server Functionsとの統合による型安全なフルスタック開発"><meta property="og:description" content="tRPC v11の新機能Server Functionsを活用し、Next.js App RouterやReact Server Componentsと完全統合する実践ガイド。従来のRPC方式との違いや移行戦略も解説。開発効率を上げるヒントが満載です。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/trpc-v11-server-functions/"><meta name="twitter:title" content="tRPC v11実践: Server Functionsとの統合による型安全なフルスタック開発"><meta name="twitter:description" content="tRPC v11の新機能Server Functionsを活用し、Next.js App RouterやReact Server Componentsと完全統合する実践ガイド。従来のRPC方式との違いや移行戦略も解説。開発効率を上げるヒントが満載です。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/trpc-v11-server-functions/"},"headline":"tRPC v11実践: Server Functionsとの統合による型安全なフルスタック開発","description":"tRPC v11の新機能Server Functionsを活用し、Next.js App RouterやReact Server Componentsと完全統合する実践ガイド。従来のRPC方式との違いや移行戦略も解説。開発効率を上げるヒントが満載です。","datePublished":"2025-11-18T00:00:00.000Z","dateModified":"2025-11-18T08:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"tRPC, TypeScript, Next.js, React Server Components"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"tRPC v11実践: Server Functionsとの統合による型安全なフルスタック開発"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-11-18T00:00:00.000Z"> Nov 17, 2025 </time> <div class="last-updated-on" data-astro-cid-bvzihdzo>
+Last updated on <time datetime="2025-11-18T08:00:00.000Z"> Nov 18, 2025 </time> </div> </div> <h1 data-astro-cid-bvzihdzo>tRPC v11実践: Server Functionsとの統合による型安全なフルスタック開発</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/tRPC" class="article-tag" data-astro-cid-bvzihdzo>
+#tRPC </a><a href="/blog/tag/TypeScript" class="article-tag" data-astro-cid-bvzihdzo>
+#TypeScript </a><a href="/blog/tag/Next.js" class="article-tag" data-astro-cid-bvzihdzo>
+#Next.js </a><a href="/blog/tag/React%20Server%20Components" class="article-tag" data-astro-cid-bvzihdzo>
+#React Server Components </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>tRPC v11では、React Server Components（RSC）やNext.js App Routerとのシームレスな統合を実現する「Server Functions」が導入されました。この記事では、従来のRPC方式とServer Functionsの違い、実装パターン、パフォーマンス最適化まで徹底解説します。</p>
+<h2 id="trpc-v11の新機能-server-functions">tRPC v11の新機能: Server Functions</h2>
+<h3 id="従来のtrpcとの違い">従来のtRPCとの違い</h3>
+<p>従来のtRPCは、HTTPエンドポイントを経由してクライアント・サーバー間でRPCコールを実行していました。tRPC v11のServer Functionsは、React Server ActionsやNext.js Server Actionsと同様のパラダイムを採用し、より直感的なサーバーサイドロジック呼び出しを実現します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 従来のtRPC (v10)</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> users</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> trpc.user.list.</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">() </span><span style="color:#6A737D">// HTTPリクエスト経由</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// tRPC v11 Server Functions</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> users</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getUserList</span><span style="color:#E1E4E8">() </span><span style="color:#6A737D">// 直接サーバー関数を呼び出し</span></span></code></pre>
+<h3 id="server-functionsの利点">Server Functionsの利点</h3>
+<ol>
+<li><strong>ゼロコストRPC</strong> - バンドルサイズの削減（クライアント側コード不要）</li>
+<li><strong>サーバーコンポーネントとの完全統合</strong> - async/awaitでシームレスに利用</li>
+<li><strong>型安全性の維持</strong> - TypeScriptの型推論がそのまま機能</li>
+<li><strong>ストリーミング対応</strong> - React 19のSuspenseやStreaming SSR対応</li>
+<li><strong>コロケーション</strong> - サーバーロジックとUIコンポーネントを近接配置</li>
+</ol>
+<h2 id="セットアップ">セットアップ</h2>
+<h3 id="インストール">インストール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> @trpc/server@next</span><span style="color:#9ECBFF"> @trpc/client@next</span><span style="color:#9ECBFF"> @trpc/react-query@next</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> @trpc/next@next</span><span style="color:#9ECBFF"> @tanstack/react-query</span><span style="color:#9ECBFF"> zod</span></span></code></pre>
+<h3 id="プロジェクト構造">プロジェクト構造</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>src/</span></span>
+<span class="line"><span>├── app/</span></span>
+<span class="line"><span>│   ├── (routes)/</span></span>
+<span class="line"><span>│   │   ├── users/</span></span>
+<span class="line"><span>│   │   │   ├── page.tsx</span></span>
+<span class="line"><span>│   │   │   └── actions.ts        # Server Functions</span></span>
+<span class="line"><span>│   │   └── posts/</span></span>
+<span class="line"><span>│   │       ├── page.tsx</span></span>
+<span class="line"><span>│   │       └── actions.ts</span></span>
+<span class="line"><span>│   ├── api/trpc/[trpc]/route.ts  # 従来のRPCエンドポイント（オプション）</span></span>
+<span class="line"><span>│   └── layout.tsx</span></span>
+<span class="line"><span>├── server/</span></span>
+<span class="line"><span>│   ├── routers/</span></span>
+<span class="line"><span>│   │   ├── user.ts</span></span>
+<span class="line"><span>│   │   └── post.ts</span></span>
+<span class="line"><span>│   ├── functions/                # Server Functions定義</span></span>
+<span class="line"><span>│   │   ├── user.ts</span></span>
+<span class="line"><span>│   │   └── post.ts</span></span>
+<span class="line"><span>│   ├── trpc.ts</span></span>
+<span class="line"><span>│   └── index.ts</span></span>
+<span class="line"><span>└── lib/</span></span>
+<span class="line"><span>    └── trpc.ts</span></span></code></pre>
+<h3 id="サーバー設定">サーバー設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/server/trpc.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { initTRPC } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@trpc/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cache } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cookies, headers } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/headers'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Server Functions用のコンテキスト作成（React cacheでメモ化）</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> createContext</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> cache</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cookieStore</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> cookies</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> headersList</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> headers</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    cookies: cookieStore,</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers: headersList,</span></span>
+<span class="line"><span style="color:#6A737D">    // 認証情報など</span></span>
+<span class="line"><span style="color:#E1E4E8">    userId: cookieStore.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'userId'</span><span style="color:#E1E4E8">)?.value,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> type</span><span style="color:#B392F0"> Context</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> Awaited</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">ReturnType</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> createContext>></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> t</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> initTRPC.</span><span style="color:#B392F0">context</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">>().</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  transformer: {</span></span>
+<span class="line"><span style="color:#B392F0">    serialize</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">object</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(object),</span></span>
+<span class="line"><span style="color:#B392F0">    deserialize</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">object</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(object),</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> router</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> t.router</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> publicProcedure</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> t.procedure</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> createCallerFactory</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> t.createCallerFactory</span></span></code></pre>
+<h3 id="server-functions定義">Server Functions定義</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/server/functions/user.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { z } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'zod'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createContext, createCallerFactory, router, publicProcedure } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../trpc'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { db } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/db'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ルーター定義</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> userRouter</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> router</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  list: publicProcedure</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">input</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        limit: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">        cursor: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">optional</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">input</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> users</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.user.</span><span style="color:#B392F0">findMany</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        take: input.limit </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        cursor: input.cursor </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> { id: input.cursor } </span><span style="color:#F97583">:</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        orderBy: { createdAt: </span><span style="color:#9ECBFF">'desc'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      let</span><span style="color:#E1E4E8"> nextCursor</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> undefined</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (users.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ></span><span style="color:#E1E4E8"> input.limit) {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> nextItem</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> users.</span><span style="color:#B392F0">pop</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">        nextCursor </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> nextItem</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">.id</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        users,</span></span>
+<span class="line"><span style="color:#E1E4E8">        nextCursor,</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  getById: publicProcedure</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">input</span><span style="color:#E1E4E8">(z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({ id: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">() }))</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">input</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.user.</span><span style="color:#B392F0">findUnique</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        where: { id: input.id },</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">user) {</span></span>
+<span class="line"><span style="color:#F97583">        throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'User not found'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> user</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  create: publicProcedure</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">input</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">        email: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">email</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">mutation</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">input</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.user.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: input,</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Server Function用のcaller作成</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> createCaller</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createCallerFactory</span><span style="color:#E1E4E8">(userRouter)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Reactコンポーネントから直接呼び出せるServer Functions</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getUserList</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">input</span><span style="color:#F97583">?:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">limit</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">cursor</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ctx</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> createContext</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> caller</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createCaller</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> caller.</span><span style="color:#B392F0">list</span><span style="color:#E1E4E8">(input </span><span style="color:#F97583">??</span><span style="color:#E1E4E8"> {})</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getUserById</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ctx</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> createContext</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> caller</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createCaller</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> caller.</span><span style="color:#B392F0">getById</span><span style="color:#E1E4E8">({ id })</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createUser</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">input</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#9ECBFF">  'use server'</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ctx</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> createContext</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> caller</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createCaller</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> caller.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">(input)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="react-server-componentsでの利用">React Server Componentsでの利用</h2>
+<h3 id="基本的な使い方">基本的な使い方</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/app/users/page.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getUserList } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/server/functions/user'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Suspense } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> UserList</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">users</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getUserList</span><span style="color:#E1E4E8">({ limit: </span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">ul</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">users</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">li key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{user.id}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">          {</span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">name</span><span style="color:#E1E4E8">} ({user.email})</span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">li</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      ))}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">ul</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> UsersPage</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">h1</span><span style="color:#E1E4E8">>Users</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">h1</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">Suspense fallback</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{&#x3C;div>Loading users</span><span style="color:#F97583">...&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span><span style="color:#E1E4E8">}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">UserList </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">Suspense</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="パラレルデータフェッチング">パラレルデータフェッチング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/app/dashboard/page.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getUserStats } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/server/functions/user'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getPostStats } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/server/functions/post'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getAnalytics } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/server/functions/analytics'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> DashboardPage</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">  // 並列実行でパフォーマンス最適化</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">userStats</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">postStats</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">analytics</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#B392F0">    getUserStats</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#B392F0">    getPostStats</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#B392F0">    getAnalytics</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  ])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">StatCard title</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Users"</span><span style="color:#E1E4E8"> data</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{userStats} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">StatCard title</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Posts"</span><span style="color:#E1E4E8"> data</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{postStats} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">AnalyticsChart data</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{analytics} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ストリーミングssr">ストリーミングSSR</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/app/posts/page.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Suspense } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getRecentPosts, getTrendingPosts } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/server/functions/post'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> RecentPosts</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> posts</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getRecentPosts</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">PostList</span><span style="color:#B392F0"> posts</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#FFAB70">posts</span><span style="color:#E1E4E8">} /></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">async function TrendingPosts() {</span></span>
+<span class="line"><span style="color:#6A737D">  // 重い処理でもストリーミングで段階的レンダリング</span></span>
+<span class="line"><span style="color:#E1E4E8">  const posts </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getTrendingPosts</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  return &#x3C;PostList posts</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{posts} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> PostsPage</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">section</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#B392F0">h2</span><span style="color:#E1E4E8">>Recent Posts</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">h2</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">Suspense fallback</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{&#x3C;Skeleton />}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;</span><span style="color:#E1E4E8">RecentPosts </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">Suspense</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">section</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">section</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#B392F0">h2</span><span style="color:#E1E4E8">>Trending Posts</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">h2</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">Suspense fallback</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{&#x3C;Skeleton />}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;</span><span style="color:#E1E4E8">TrendingPosts </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">Suspense</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">section</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="client-componentsでの利用server-actions">Client Componentsでの利用（Server Actions）</h2>
+<h3 id="フォーム送信">フォーム送信</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/app/users/new/page.tsx</span></span>
+<span class="line"><span style="color:#9ECBFF">'use client'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createUser } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/server/functions/user'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useActionState } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> NewUserPage</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">state</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">formAction</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">isPending</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useActionState</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">    async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">prevState</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">formData</span><span style="color:#F97583">:</span><span style="color:#B392F0"> FormData</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> createUser</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          name: formData.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'name'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          email: formData.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'email'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        })</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> { success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">, user: result }</span></span>
+<span class="line"><span style="color:#E1E4E8">      } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">          success: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          error: error </span><span style="color:#F97583">instanceof</span><span style="color:#B392F0"> Error</span><span style="color:#F97583"> ?</span><span style="color:#E1E4E8"> error.message </span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 'Unknown error'</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { success: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">form action</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{formAction}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">input name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"name"</span><span style="color:#E1E4E8"> required placeholder</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Name"</span><span style="color:#F97583"> /></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">input name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"email"</span><span style="color:#E1E4E8"> type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"email"</span><span style="color:#E1E4E8"> required placeholder</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Email"</span><span style="color:#F97583"> /></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">button type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"submit"</span><span style="color:#E1E4E8"> disabled</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{isPending}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#FFAB70">isPending</span><span style="color:#E1E4E8"> ? </span><span style="color:#9ECBFF">'Creating...'</span><span style="color:#E1E4E8"> : </span><span style="color:#9ECBFF">'Create User'</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">state</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8"> &#x26;&#x26; &#x3C;</span><span style="color:#FFAB70">p</span><span style="color:#FFAB70"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"error"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">{state.error}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">p</span><span style="color:#F97583">></span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">state</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">success</span><span style="color:#E1E4E8"> &#x26;&#x26; &#x3C;</span><span style="color:#FFAB70">p</span><span style="color:#FFAB70"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"success"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">User created</span><span style="color:#F97583">!&#x3C;/</span><span style="color:#E1E4E8">p</span><span style="color:#F97583">></span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">form</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="optimistic-updates">Optimistic Updates</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/app/posts/[id]/like-button.tsx</span></span>
+<span class="line"><span style="color:#9ECBFF">'use client'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { toggleLike } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/server/functions/post'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useOptimistic, useTransition } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> LikeButton</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">postId</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">initialLikes</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">initialLikes</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">isPending</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">startTransition</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useTransition</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">optimisticLikes</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">addOptimisticLike</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useOptimistic</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    initialLikes,</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">currentLikes</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">amount</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> currentLikes </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> amount</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> handleLike</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    startTransition</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">      addOptimisticLike</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">) </span><span style="color:#6A737D">// 即座にUIを更新</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> toggleLike</span><span style="color:#E1E4E8">({ postId })</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">button onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleLike} disabled</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{isPending}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      ❤️ {</span><span style="color:#FFAB70">optimisticLikes</span><span style="color:#E1E4E8">} </span><span style="color:#FFAB70">Likes</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="認証とミドルウェア">認証とミドルウェア</h2>
+<h3 id="コンテキストベース認証">コンテキストベース認証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/server/trpc.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { TRPCError } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@trpc/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getServerSession } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/auth'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> createContext</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> cache</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getServerSession</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    session,</span></span>
+<span class="line"><span style="color:#E1E4E8">    userId: session?.user?.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 認証ミドルウェア</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> isAuthenticated</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> t.</span><span style="color:#B392F0">middleware</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">ctx</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">next</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">ctx.userId) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> TRPCError</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      code: </span><span style="color:#9ECBFF">'UNAUTHORIZED'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      message: </span><span style="color:#9ECBFF">'You must be logged in'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> next</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctx: {</span></span>
+<span class="line"><span style="color:#F97583">      ...</span><span style="color:#E1E4E8">ctx,</span></span>
+<span class="line"><span style="color:#E1E4E8">      userId: ctx.userId, </span><span style="color:#6A737D">// 型を確定</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> protectedProcedure</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> t.procedure.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(isAuthenticated)</span></span></code></pre>
+<h3 id="認証が必要なserver-function">認証が必要なServer Function</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/server/functions/post.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { protectedProcedure, router, createCallerFactory, createContext } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../trpc'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { z } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'zod'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> postRouter</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> router</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  createDraft: protectedProcedure</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">input</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        title: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">mutation</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">ctx</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">input</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.post.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: {</span></span>
+<span class="line"><span style="color:#F97583">          ...</span><span style="color:#E1E4E8">input,</span></span>
+<span class="line"><span style="color:#E1E4E8">          authorId: ctx.userId, </span><span style="color:#6A737D">// 型安全</span></span>
+<span class="line"><span style="color:#E1E4E8">          published: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> createCaller</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createCallerFactory</span><span style="color:#E1E4E8">(postRouter)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createDraft</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">input</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">title</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">content</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#9ECBFF">  'use server'</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ctx</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> createContext</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> caller</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createCaller</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> caller.</span><span style="color:#B392F0">createDraft</span><span style="color:#E1E4E8">(input)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="ハイブリッド構成-rpcとserver-functionsの併用">ハイブリッド構成: RPCとServer Functionsの併用</h2>
+<h3 id="使い分けのガイドライン">使い分けのガイドライン</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Server Functions: サーバーコンポーネント・Server Actionsで使用</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getUserProfile</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ctx</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> createContext</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> caller</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createCaller</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> caller.</span><span style="color:#B392F0">getById</span><span style="color:#E1E4E8">({ id })</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 従来のRPC: クライアントコンポーネントでのリアルタイムデータ取得</span></span>
+<span class="line"><span style="color:#6A737D">// src/app/api/trpc/[trpc]/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { fetchRequestHandler } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@trpc/server/adapters/fetch'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { appRouter } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> handler</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">req</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#B392F0">  fetchRequestHandler</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    endpoint: </span><span style="color:#9ECBFF">'/api/trpc'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    req,</span></span>
+<span class="line"><span style="color:#E1E4E8">    router: appRouter,</span></span>
+<span class="line"><span style="color:#E1E4E8">    createContext,</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> { handler </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> GET, handler </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> POST }</span></span></code></pre>
+<h3 id="クライアント側でのrpc利用">クライアント側でのRPC利用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/app/users/[id]/real-time-activity.tsx</span></span>
+<span class="line"><span style="color:#9ECBFF">'use client'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { trpc } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/trpc'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> RealTimeActivity</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">userId</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#6A737D">  // リアルタイムデータはRPCで取得</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">activity</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> trpc.user.getActivity.</span><span style="color:#B392F0">useQuery</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    { userId },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      refetchInterval: </span><span style="color:#79B8FF">5000</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 5秒ごとに更新</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">h3</span><span style="color:#E1E4E8">>Recent Activity</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">h3</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">activity</span><span style="color:#E1E4E8">?.</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">item</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">ActivityItem key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{item.id} item</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{item} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#E1E4E8">      ))}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="パフォーマンス最適化">パフォーマンス最適化</h2>
+<h3 id="react-cache活用">React Cache活用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/server/functions/user.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cache } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { unstable_cache } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/cache'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// リクエスト単位でのキャッシュ</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> getUserById</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> cache</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ctx</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> createContext</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> caller</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createCaller</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> caller.</span><span style="color:#B392F0">getById</span><span style="color:#E1E4E8">({ id })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Next.js Data Cacheでの永続化</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> getCachedUserStats</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> unstable_cache</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> ctx</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> createContext</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> caller</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createCaller</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> caller.</span><span style="color:#B392F0">getStats</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  [</span><span style="color:#9ECBFF">'user-stats'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    revalidate: </span><span style="color:#79B8FF">3600</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 1時間キャッシュ</span></span>
+<span class="line"><span style="color:#E1E4E8">    tags: [</span><span style="color:#9ECBFF">'user-stats'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<h3 id="prefetchingとパラレルフェッチ">Prefetchingとパラレルフェッチ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/app/posts/[id]/page.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getPostById, getRelatedPosts } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/server/functions/post'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> generateStaticParams</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">  // ビルド時に静的生成するパスを指定</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> posts</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getAllPostIds</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> posts.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({ id }))</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> PostPage</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">params</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">params</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> } }) {</span></span>
+<span class="line"><span style="color:#6A737D">  // 並列取得</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">post</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">relatedPosts</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#B392F0">    getPostById</span><span style="color:#E1E4E8">(params.id),</span></span>
+<span class="line"><span style="color:#B392F0">    getRelatedPosts</span><span style="color:#E1E4E8">(params.id),</span></span>
+<span class="line"><span style="color:#E1E4E8">  ])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">article</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">h1</span><span style="color:#E1E4E8">>{post.title}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">h1</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>{post.content}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">aside</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#B392F0">h2</span><span style="color:#E1E4E8">>Related Posts</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">h2</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">RelatedPostList posts</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{relatedPosts} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">aside</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">article</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="partial-prerendering-ppr">Partial Prerendering (PPR)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/app/dashboard/page.tsx</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> experimental_ppr</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> DashboardPage</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">  // 静的部分: ビルド時に生成</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> staticData</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getStaticDashboardData</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">StaticHeader data</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{staticData} </span><span style="color:#F97583">/></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#6A737D">/* 動的部分: リクエスト時に生成 */</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">Suspense fallback</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{&#x3C;Skeleton />}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">DynamicUserStats </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">Suspense</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> DynamicUserStats</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> stats</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getUserStats</span><span style="color:#E1E4E8">() </span><span style="color:#6A737D">// 動的データ取得</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">UserStatsCard</span><span style="color:#B392F0"> stats</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#FFAB70">stats</span><span style="color:#E1E4E8">} /></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="エラーハンドリング">エラーハンドリング</h2>
+<h3 id="server-functionのエラー処理">Server Functionのエラー処理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/server/functions/post.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { TRPCError } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@trpc/server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> publishPost</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#9ECBFF">  'use server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> ctx</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> createContext</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> caller</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createCaller</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> caller.</span><span style="color:#B392F0">publish</span><span style="color:#E1E4E8">({ id })</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (error </span><span style="color:#F97583">instanceof</span><span style="color:#B392F0"> TRPCError</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">      // tRPCエラーをReact Server Action形式に変換</span></span>
+<span class="line"><span style="color:#F97583">      throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(error.message)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#E1E4E8"> error</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="クライアント側でのエラーハンドリング">クライアント側でのエラーハンドリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/app/posts/[id]/publish-button.tsx</span></span>
+<span class="line"><span style="color:#9ECBFF">'use client'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { publishPost } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/server/functions/post'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useTransition } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> PublishButton</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">postId</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">isPending</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">startTransition</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useTransition</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">error</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setError</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">>(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> handlePublish</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    setError</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#B392F0">    startTransition</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#B392F0"> publishPost</span><span style="color:#E1E4E8">(postId)</span></span>
+<span class="line"><span style="color:#E1E4E8">      } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (err) {</span></span>
+<span class="line"><span style="color:#B392F0">        setError</span><span style="color:#E1E4E8">(err </span><span style="color:#F97583">instanceof</span><span style="color:#B392F0"> Error</span><span style="color:#F97583"> ?</span><span style="color:#E1E4E8"> err.message </span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 'Failed to publish'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">button onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handlePublish} disabled</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{isPending}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#FFAB70">isPending</span><span style="color:#E1E4E8"> ? </span><span style="color:#9ECBFF">'Publishing...'</span><span style="color:#E1E4E8"> : </span><span style="color:#9ECBFF">'Publish'</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8"> &#x26;&#x26; &#x3C;</span><span style="color:#FFAB70">p</span><span style="color:#FFAB70"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"error"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">{error}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">p</span><span style="color:#F97583">></span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>tRPC v11のServer Functionsは、React Server ComponentsとServer Actionsのパラダイムに完全適合し、以下の利点を提供します。</p>
+<h3 id="主な利点">主な利点</h3>
+<ol>
+<li><strong>バンドルサイズの削減</strong> - クライアント側のRPCコードが不要</li>
+<li><strong>シームレスな統合</strong> - RSC/Server Actionsとネイティブに統合</li>
+<li><strong>型安全性の維持</strong> - TypeScriptの型推論がそのまま機能</li>
+<li><strong>柔軟性</strong> - RPCとServer Functionsのハイブリッド構成が可能</li>
+</ol>
+<h3 id="使い分けの推奨">使い分けの推奨</h3>
+<ul>
+<li><strong>Server Functions</strong>: 初期ページロード、フォーム送信、サーバーコンポーネント</li>
+<li><strong>従来のRPC</strong>: リアルタイムデータ、クライアント側のインタラクティブ機能、WebSocket</li>
+</ul>
+<p>tRPC v11は、Next.js App Routerの能力を最大限活用し、モダンなフルスタック開発を実現する強力なツールです。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

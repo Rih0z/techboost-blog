@@ -1,0 +1,539 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/openrouter-api-llm-guide/"><!-- Primary Meta Tags --><title>OpenRouter API入門 - 複数LLMを統一APIで使い分ける方法</title><meta name="title" content="OpenRouter API入門 - 複数LLMを統一APIで使い分ける方法"><meta name="description" content="OpenRouterは複数のLLMプロバイダーを統一APIで利用できるルーティングサービスです。Claude・GPT-4o・Gemini・Llama等200以上のモデル切替、コスト最適化、フォールバック設定からTypeScript・Pythonでの実装パターンまで実践的に解説します。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/openrouter-api-llm-guide/"><meta property="og:title" content="OpenRouter API入門 - 複数LLMを統一APIで使い分ける方法"><meta property="og:description" content="OpenRouterは複数のLLMプロバイダーを統一APIで利用できるルーティングサービスです。Claude・GPT-4o・Gemini・Llama等200以上のモデル切替、コスト最適化、フォールバック設定からTypeScript・Pythonでの実装パターンまで実践的に解説します。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/openrouter-api-llm-guide/"><meta name="twitter:title" content="OpenRouter API入門 - 複数LLMを統一APIで使い分ける方法"><meta name="twitter:description" content="OpenRouterは複数のLLMプロバイダーを統一APIで利用できるルーティングサービスです。Claude・GPT-4o・Gemini・Llama等200以上のモデル切替、コスト最適化、フォールバック設定からTypeScript・Pythonでの実装パターンまで実践的に解説します。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/openrouter-api-llm-guide/"},"headline":"OpenRouter API入門 - 複数LLMを統一APIで使い分ける方法","description":"OpenRouterは複数のLLMプロバイダーを統一APIで利用できるルーティングサービスです。Claude・GPT-4o・Gemini・Llama等200以上のモデル切替、コスト最適化、フォールバック設定からTypeScript・Pythonでの実装パターンまで実践的に解説します。","datePublished":"2026-03-05T00:00:00.000Z","dateModified":"2026-03-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"AI, API, LLM, 開発ツール"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"OpenRouter API入門 - 複数LLMを統一APIで使い分ける方法"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-03-05T00:00:00.000Z"> Mar 4, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>OpenRouter API入門 - 複数LLMを統一APIで使い分ける方法</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/AI" class="article-tag" data-astro-cid-bvzihdzo>
+#AI </a><a href="/blog/tag/API" class="article-tag" data-astro-cid-bvzihdzo>
+#API </a><a href="/blog/tag/LLM" class="article-tag" data-astro-cid-bvzihdzo>
+#LLM </a><a href="/blog/tag/%E9%96%8B%E7%99%BA%E3%83%84%E3%83%BC%E3%83%AB" class="article-tag" data-astro-cid-bvzihdzo>
+#開発ツール </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p><strong>OpenRouter</strong>は、OpenAI・Anthropic・Google・Meta等の複数LLMプロバイダーを<strong>統一されたAPI</strong>で利用できるサービスです。モデルの切り替え、コスト比較、フォールバック設定をシンプルなAPIで実現します。</p>
+<p>本記事では、OpenRouter APIの基本的な使い方からモデル選択戦略、TypeScript/Pythonでの実装パターンまで解説します。</p>
+<h2 id="openrouterとは">OpenRouterとは？</h2>
+<p>OpenRouterは、<strong>LLMのルーティングサービス</strong>です。1つのAPIキーで200以上のモデルにアクセスでき、用途に応じてモデルを切り替えられます。</p>
+<h3 id="主な特徴">主な特徴</h3>
+<ul>
+<li><strong>統一API</strong>: OpenAI互換のAPIで全モデルにアクセス</li>
+<li><strong>200+モデル対応</strong>: Claude、GPT-4o、Gemini、Llama、Mistralなど</li>
+<li><strong>従量課金</strong>: 使った分だけの支払い</li>
+<li><strong>フォールバック</strong>: モデル障害時に自動で別モデルに切り替え</li>
+<li><strong>コスト最適化</strong>: 同一品質で最安のモデルを自動選択</li>
+<li><strong>無料モデル</strong>: 一部モデルは無料で利用可能</li>
+</ul>
+<h3 id="直接apiとの比較">直接APIとの比較</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>項目</th><th>OpenRouter</th><th>直接API（各社個別）</th></tr></thead><tbody><tr><td>APIキー管理</td><td>1つ</td><td>プロバイダーごとに個別</td></tr><tr><td>モデル切替</td><td>model名変更のみ</td><td>エンドポイント・認証の変更</td></tr><tr><td>フォールバック</td><td>組み込み</td><td>自前実装が必要</td></tr><tr><td>価格比較</td><td>ダッシュボードで一覧</td><td>各社サイトで確認</td></tr><tr><td>レート制限</td><td>統合管理</td><td>各社個別に管理</td></tr><tr><td>追加コスト</td><td>約0-5%のマージン</td><td>なし</td></tr></tbody></table>
+<h2 id="セットアップ">セットアップ</h2>
+<h3 id="apiキーの取得">APIキーの取得</h3>
+<ol>
+<li><a href="https://openrouter.ai/">openrouter.ai</a> でアカウント作成</li>
+<li>ダッシュボードの「Keys」からAPIキーを生成</li>
+<li>クレジットをチャージ（最低$5から）</li>
+</ol>
+<h3 id="基本的なapiリクエスト">基本的なAPIリクエスト</h3>
+<p>OpenRouterはOpenAI互換APIなので、既存のコードをほぼそのまま使えます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">curl</span><span style="color:#9ECBFF"> https://openrouter.ai/api/v1/chat/completions</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -H</span><span style="color:#9ECBFF"> "Content-Type: application/json"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -H</span><span style="color:#9ECBFF"> "Authorization: Bearer </span><span style="color:#E1E4E8">$OPENROUTER_API_KEY</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -d</span><span style="color:#9ECBFF"> '{</span></span>
+<span class="line"><span style="color:#9ECBFF">    "model": "anthropic/claude-sonnet-4-20250514",</span></span>
+<span class="line"><span style="color:#9ECBFF">    "messages": [</span></span>
+<span class="line"><span style="color:#9ECBFF">      {"role": "user", "content": "TypeScriptの型推論について説明してください"}</span></span>
+<span class="line"><span style="color:#9ECBFF">    ]</span></span>
+<span class="line"><span style="color:#9ECBFF">  }'</span></span></code></pre>
+<h2 id="typescriptでの実装">TypeScriptでの実装</h2>
+<h3 id="openai-sdkを使う方法推奨">OpenAI SDKを使う方法（推奨）</h3>
+<p>OpenRouter APIはOpenAI互換なので、OpenAI SDKをそのまま使えます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> OpenAI </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'openai'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> client</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> OpenAI</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  baseURL: </span><span style="color:#9ECBFF">'https://openrouter.ai/api/v1'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  apiKey: process.env.</span><span style="color:#79B8FF">OPENROUTER_API_KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  defaultHeaders: {</span></span>
+<span class="line"><span style="color:#9ECBFF">    'HTTP-Referer'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'https://your-app.com'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    'X-Title'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'Your App Name'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> chat</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">message</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">model</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: [{ role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">, content: message }],</span></span>
+<span class="line"><span style="color:#E1E4E8">    temperature: </span><span style="color:#79B8FF">0.7</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    max_tokens: </span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> answer</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> chat</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'ReactのuseEffectの注意点を教えて'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(answer);</span></span></code></pre>
+<h3 id="モデルの動的切替">モデルの動的切替</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// モデル定義</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> MODELS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">  // 高品質（複雑な推論、コード生成）</span></span>
+<span class="line"><span style="color:#E1E4E8">  premium: </span><span style="color:#9ECBFF">'anthropic/claude-opus-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#6A737D">  // バランス（一般的なタスク）</span></span>
+<span class="line"><span style="color:#E1E4E8">  standard: </span><span style="color:#9ECBFF">'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#6A737D">  // 高速・低コスト（分類、要約、簡単なタスク）</span></span>
+<span class="line"><span style="color:#E1E4E8">  fast: </span><span style="color:#9ECBFF">'anthropic/claude-haiku-4-5-20251001'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#6A737D">  // コーディング特化</span></span>
+<span class="line"><span style="color:#E1E4E8">  coding: </span><span style="color:#9ECBFF">'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#6A737D">  // 長文処理</span></span>
+<span class="line"><span style="color:#E1E4E8">  longContext: </span><span style="color:#9ECBFF">'google/gemini-2.0-flash-001'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">} </span><span style="color:#F97583">as</span><span style="color:#F97583"> const</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> ModelTier</span><span style="color:#F97583"> =</span><span style="color:#F97583"> keyof</span><span style="color:#F97583"> typeof</span><span style="color:#79B8FF"> MODELS</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> smartChat</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  message</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  tier</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ModelTier</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'standard'</span></span>
+<span class="line"><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> model</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> MODELS</span><span style="color:#E1E4E8">[tier];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: [{ role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">, content: message }],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    content: response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content,</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: response.model,</span></span>
+<span class="line"><span style="color:#E1E4E8">    usage: response.usage,</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 用途に応じてモデルを選択</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> simpleAnswer</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> smartChat</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'こんにちは'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'fast'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> codeReview</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> smartChat</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'このコードをレビューして...'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'coding'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> analysis</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> smartChat</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'この論文を分析して...'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'premium'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="ストリーミング対応">ストリーミング対応</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> streamChat</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">message</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> stream</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: </span><span style="color:#9ECBFF">'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: [{ role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">, content: message }],</span></span>
+<span class="line"><span style="color:#E1E4E8">    stream: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> fullContent </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> chunk</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> stream) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> delta</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> chunk.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]?.delta?.content </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    fullContent </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> delta;</span></span>
+<span class="line"><span style="color:#E1E4E8">    process.stdout.</span><span style="color:#B392F0">write</span><span style="color:#E1E4E8">(delta);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> fullContent;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="フォールバック実装">フォールバック実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> chatWithFallback</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  message</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  models</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#9ECBFF">    'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    'openai/gpt-4o'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    'google/gemini-2.0-flash-001'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  ]</span></span>
+<span class="line"><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> model</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> models) {</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        model,</span></span>
+<span class="line"><span style="color:#E1E4E8">        messages: [{ role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">, content: message }],</span></span>
+<span class="line"><span style="color:#E1E4E8">        timeout: </span><span style="color:#79B8FF">30000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content,</span></span>
+<span class="line"><span style="color:#E1E4E8">        model: response.model,</span></span>
+<span class="line"><span style="color:#E1E4E8">        fallback: model </span><span style="color:#F97583">!==</span><span style="color:#E1E4E8"> models[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">      };</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">warn</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Model ${</span><span style="color:#E1E4E8">model</span><span style="color:#9ECBFF">} failed, trying next...`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">      continue</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'All models failed'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="pythonでの実装">Pythonでの実装</h2>
+<h3 id="openaiライブラリを使用">OpenAIライブラリを使用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> openai </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> OpenAI</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> OpenAI(</span></span>
+<span class="line"><span style="color:#FFAB70">    base_url</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"https://openrouter.ai/api/v1"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    api_key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">os.environ[</span><span style="color:#9ECBFF">"OPENROUTER_API_KEY"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    default_headers</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        "HTTP-Referer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://your-app.com"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "X-Title"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Your App Name"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> chat</span><span style="color:#E1E4E8">(message: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, model: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "anthropic/claude-sonnet-4-20250514"</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.chat.completions.create(</span></span>
+<span class="line"><span style="color:#FFAB70">        model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">model,</span></span>
+<span class="line"><span style="color:#FFAB70">        messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[{</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: message}],</span></span>
+<span class="line"><span style="color:#FFAB70">        temperature</span><span style="color:#F97583">=</span><span style="color:#79B8FF">0.7</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ストリーミング</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> stream_chat</span><span style="color:#E1E4E8">(message: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">    stream </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.chat.completions.create(</span></span>
+<span class="line"><span style="color:#FFAB70">        model</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"anthropic/claude-sonnet-4-20250514"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[{</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: message}],</span></span>
+<span class="line"><span style="color:#FFAB70">        stream</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    full_content </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> chunk </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> stream:</span></span>
+<span class="line"><span style="color:#E1E4E8">        delta </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> chunk.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].delta.content </span><span style="color:#F97583">or</span><span style="color:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#E1E4E8">        full_content </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> delta</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(delta, </span><span style="color:#FFAB70">end</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">""</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">flush</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> full_content</span></span></code></pre>
+<h3 id="langchainとの連携">LangChainとの連携</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain_openai </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> ChatOpenAI</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">llm </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ChatOpenAI(</span></span>
+<span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"anthropic/claude-sonnet-4-20250514"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    openai_api_key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">os.environ[</span><span style="color:#9ECBFF">"OPENROUTER_API_KEY"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    openai_api_base</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"https://openrouter.ai/api/v1"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    default_headers</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        "HTTP-Referer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://your-app.com"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> llm.invoke(</span><span style="color:#9ECBFF">"TypeScriptの型ガードについて説明して"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(response.content)</span></span></code></pre>
+<h2 id="モデル選択戦略">モデル選択戦略</h2>
+<h3 id="コスト比較2026年3月時点の参考価格">コスト比較（2026年3月時点の参考価格）</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>モデル</th><th>入力/1M tokens</th><th>出力/1M tokens</th><th>特徴</th></tr></thead><tbody><tr><td>Claude Opus 4</td><td>$15.00</td><td>$75.00</td><td>最高品質の推論</td></tr><tr><td>Claude Sonnet 4</td><td>$3.00</td><td>$15.00</td><td>バランス型</td></tr><tr><td>Claude Haiku 4.5</td><td>$0.80</td><td>$4.00</td><td>高速・低コスト</td></tr><tr><td>GPT-4o</td><td>$2.50</td><td>$10.00</td><td>マルチモーダル</td></tr><tr><td>GPT-4o mini</td><td>$0.15</td><td>$0.60</td><td>超低コスト</td></tr><tr><td>Gemini 2.0 Flash</td><td>$0.10</td><td>$0.40</td><td>長文・低コスト</td></tr><tr><td>Llama 3.3 70B</td><td>$0.50</td><td>$0.70</td><td>オープンソース</td></tr></tbody></table>
+<blockquote>
+<p>価格は参考値です。最新の正確な価格は<a href="https://openrouter.ai/models">OpenRouterの価格ページ</a>で確認してください。</p>
+</blockquote>
+<h3 id="用途別おすすめモデル">用途別おすすめモデル</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// タスクに応じたモデル選択ロジック</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> selectModel</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">task</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> taskMap</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 高度な推論・分析</span></span>
+<span class="line"><span style="color:#9ECBFF">    'analysis'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'anthropic/claude-opus-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    'research'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'anthropic/claude-opus-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // コーディング</span></span>
+<span class="line"><span style="color:#9ECBFF">    'code-generation'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    'code-review'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    'debugging'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 一般的な対話</span></span>
+<span class="line"><span style="color:#9ECBFF">    'chat'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    'qa'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'anthropic/claude-haiku-4-5-20251001'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // テキスト処理</span></span>
+<span class="line"><span style="color:#9ECBFF">    'summarization'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'anthropic/claude-haiku-4-5-20251001'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    'classification'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'anthropic/claude-haiku-4-5-20251001'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    'translation'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'anthropic/claude-haiku-4-5-20251001'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 長文処理</span></span>
+<span class="line"><span style="color:#9ECBFF">    'long-document'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'google/gemini-2.0-flash-001'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 低コスト大量処理</span></span>
+<span class="line"><span style="color:#9ECBFF">    'batch'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'openai/gpt-4o-mini'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> taskMap[task] </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="実践パターン">実践パターン</h2>
+<h3 id="パターン1-ai機能付きwebアプリ">パターン1: AI機能付きWebアプリ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Next.js API Route</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextRequest, NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> OpenAI </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'openai'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> client</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> OpenAI</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  baseURL: </span><span style="color:#9ECBFF">'https://openrouter.ai/api/v1'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  apiKey: process.env.</span><span style="color:#79B8FF">OPENROUTER_API_KEY</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> POST</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">req</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">message</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">context</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> req.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> stream</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: </span><span style="color:#9ECBFF">'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      { role: </span><span style="color:#9ECBFF">'system'</span><span style="color:#E1E4E8">, content: context },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">, content: message },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">    stream: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> encoder</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> TextEncoder</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> readable</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> ReadableStream</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#F97583">    async</span><span style="color:#B392F0"> start</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">controller</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> chunk</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> stream) {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> text</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> chunk.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]?.delta?.content </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">        controller.</span><span style="color:#B392F0">enqueue</span><span style="color:#E1E4E8">(encoder.</span><span style="color:#B392F0">encode</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`data: ${</span><span style="color:#79B8FF">JSON</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">stringify</span><span style="color:#9ECBFF">({ </span><span style="color:#E1E4E8">text</span><span style="color:#9ECBFF"> })</span><span style="color:#9ECBFF">}</span><span style="color:#79B8FF">\n\n</span><span style="color:#9ECBFF">`</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">      controller.</span><span style="color:#B392F0">enqueue</span><span style="color:#E1E4E8">(encoder.</span><span style="color:#B392F0">encode</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'data: [DONE]</span><span style="color:#79B8FF">\n\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#E1E4E8">      controller.</span><span style="color:#B392F0">close</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> NextResponse</span><span style="color:#E1E4E8">(readable, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">      'Content-Type'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'text/event-stream'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      'Cache-Control'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'no-cache'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="パターン2-コスト管理付きチャットボット">パターン2: コスト管理付きチャットボット</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> CostAwareChatbot</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> totalCost</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> maxBudget</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">maxBudgetUSD</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.maxBudget </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> maxBudgetUSD;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> chat</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">message</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 予算チェック</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.totalCost </span><span style="color:#F97583">>=</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.maxBudget) {</span></span>
+<span class="line"><span style="color:#F97583">      throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Budget exceeded: $${</span><span style="color:#79B8FF">this</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">totalCost</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">toFixed</span><span style="color:#9ECBFF">(</span><span style="color:#79B8FF">4</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // メッセージの長さに応じてモデルを選択</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> model</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> message.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ></span><span style="color:#79B8FF"> 2000</span></span>
+<span class="line"><span style="color:#F97583">      ?</span><span style="color:#9ECBFF"> 'anthropic/claude-haiku-4-5-20251001'</span><span style="color:#6A737D">  // 長文は安いモデル</span></span>
+<span class="line"><span style="color:#F97583">      :</span><span style="color:#9ECBFF"> 'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      model,</span></span>
+<span class="line"><span style="color:#E1E4E8">      messages: [{ role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">, content: message }],</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // コスト計算（概算）</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> usage</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> response.usage;</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (usage) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> cost</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">estimateCost</span><span style="color:#E1E4E8">(model, usage.prompt_tokens, usage.completion_tokens);</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.totalCost </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> cost;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#B392F0"> estimateCost</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">model</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">inputTokens</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">outputTokens</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> pricing</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, { </span><span style="color:#FFAB70">input</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">output</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> }> </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">      'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">: { input: </span><span style="color:#79B8FF">3</span><span style="color:#F97583"> /</span><span style="color:#79B8FF"> 1_000_000</span><span style="color:#E1E4E8">, output: </span><span style="color:#79B8FF">15</span><span style="color:#F97583"> /</span><span style="color:#79B8FF"> 1_000_000</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#9ECBFF">      'anthropic/claude-haiku-4-5-20251001'</span><span style="color:#E1E4E8">: { input: </span><span style="color:#79B8FF">0.8</span><span style="color:#F97583"> /</span><span style="color:#79B8FF"> 1_000_000</span><span style="color:#E1E4E8">, output: </span><span style="color:#79B8FF">4</span><span style="color:#F97583"> /</span><span style="color:#79B8FF"> 1_000_000</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> price</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> pricing[model] </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> { input: </span><span style="color:#79B8FF">0.01</span><span style="color:#E1E4E8">, output: </span><span style="color:#79B8FF">0.03</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> (inputTokens </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> price.input) </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> (outputTokens </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> price.output);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  getCost</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.totalCost;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="パターン3-構造化出力">パターン3: 構造化出力</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { z } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'zod'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> ProductReviewSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  summary: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  pros: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">()),</span></span>
+<span class="line"><span style="color:#E1E4E8">  cons: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">()),</span></span>
+<span class="line"><span style="color:#E1E4E8">  rating: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  recommendation: z.</span><span style="color:#B392F0">enum</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'strongly_recommend'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'recommend'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'neutral'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'not_recommend'</span><span style="color:#E1E4E8">]),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> analyzeReview</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">reviewText</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: </span><span style="color:#9ECBFF">'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        role: </span><span style="color:#9ECBFF">'system'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: </span><span style="color:#9ECBFF">`レビューテキストを分析し、以下のJSON形式で出力してください:</span></span>
+<span class="line"><span style="color:#9ECBFF">{</span></span>
+<span class="line"><span style="color:#9ECBFF">  "summary": "要約",</span></span>
+<span class="line"><span style="color:#9ECBFF">  "pros": ["良い点1", "良い点2"],</span></span>
+<span class="line"><span style="color:#9ECBFF">  "cons": ["悪い点1"],</span></span>
+<span class="line"><span style="color:#9ECBFF">  "rating": 4,</span></span>
+<span class="line"><span style="color:#9ECBFF">  "recommendation": "recommend"</span></span>
+<span class="line"><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">, content: reviewText },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">    response_format: { type: </span><span style="color:#9ECBFF">'json_object'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> content</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content;</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">content) </span><span style="color:#F97583">throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Empty response'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> ProductReviewSchema.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(content));</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="セキュリティとベストプラクティス">セキュリティとベストプラクティス</h2>
+<h3 id="apiキーの管理">APIキーの管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 環境変数で管理（ハードコード禁止）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> apiKey</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> process.env.</span><span style="color:#79B8FF">OPENROUTER_API_KEY</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">apiKey) {</span></span>
+<span class="line"><span style="color:#F97583">  throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'OPENROUTER_API_KEY is required'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// サーバーサイドのみで使用（クライアントに露出させない）</span></span>
+<span class="line"><span style="color:#6A737D">// Next.jsの場合、NEXT_PUBLIC_ プレフィックスをつけない</span></span></code></pre>
+<h3 id="レート制限の対応">レート制限の対応</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> chatWithRetry</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  message</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  maxRetries</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 3</span></span>
+<span class="line"><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> maxRetries; i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        model: </span><span style="color:#9ECBFF">'anthropic/claude-sonnet-4-20250514'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        messages: [{ role: </span><span style="color:#9ECBFF">'user'</span><span style="color:#E1E4E8">, content: message }],</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">error</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (error.status </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 429</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> maxRetries </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> retryAfter</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> parseInt</span><span style="color:#E1E4E8">(error.headers?.[</span><span style="color:#9ECBFF">'retry-after'</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> '5'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#F97583"> new</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">r</span><span style="color:#F97583"> =></span><span style="color:#B392F0"> setTimeout</span><span style="color:#E1E4E8">(r, retryAfter </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#F97583">        continue</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#F97583">      throw</span><span style="color:#E1E4E8"> error;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="トラブルシューティング">トラブルシューティング</h2>
+<h3 id="よくあるエラー">よくあるエラー</h3>
+<p><strong><code>401 Unauthorized</code></strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># APIキーの確認</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#E1E4E8"> $OPENROUTER_API_KEY </span><span style="color:#F97583">|</span><span style="color:#B392F0"> head</span><span style="color:#79B8FF"> -c</span><span style="color:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#6A737D"># sk-or-v1-で始まるか確認</span></span></code></pre>
+<p><strong><code>402 Insufficient credits</code></strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># OpenRouterダッシュボードでクレジットを確認・チャージ</span></span>
+<span class="line"><span style="color:#6A737D"># https://openrouter.ai/credits</span></span></code></pre>
+<p><strong><code>429 Rate Limited</code></strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// リトライロジックを実装するか、リクエスト間隔を空ける</span></span></code></pre>
+<p><strong><code>503 Model Unavailable</code></strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// フォールバックモデルリストを設定</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>OpenRouterは<strong>複数LLMの統一アクセスポイント</strong>として、AI開発の柔軟性を大きく向上させます。</p>
+<h3 id="openrouterの強み">OpenRouterの強み</h3>
+<ul>
+<li><strong>1つのAPIで200+モデル</strong>: プロバイダーごとの個別管理が不要</li>
+<li><strong>コスト最適化</strong>: タスクに応じて最適なモデルを選択</li>
+<li><strong>フォールバック</strong>: 障害耐性の高いAIアプリケーション</li>
+<li><strong>OpenAI互換</strong>: 既存コードの移行が容易</li>
+</ul>
+<h3 id="導入が向いているケース">導入が向いているケース</h3>
+<ul>
+<li>複数のLLMを比較検討中のプロジェクト</li>
+<li>モデルの可用性を高めたいプロダクション環境</li>
+<li>コストを最適化しながらAI機能を提供したい場合</li>
+<li>プロトタイピングで素早くモデルを切り替えたい場合</li>
+</ul>
+<h3 id="学習リソース">学習リソース</h3>
+<ul>
+<li><a href="https://openrouter.ai/docs">OpenRouter公式ドキュメント</a></li>
+<li><a href="https://openrouter.ai/models">モデル一覧・価格</a></li>
+<li><a href="https://github.com/OpenRouterTeam">OpenRouter GitHub</a></li>
+</ul>
+<p>複数のLLMを活用するAIアプリケーションを構築するなら、OpenRouterは間違いなく検討すべき選択肢です。まずは無料モデルで試してみてください。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

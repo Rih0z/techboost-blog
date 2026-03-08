@@ -1,0 +1,515 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/github-actions-monorepo-ci/"><!-- Primary Meta Tags --><title>GitHub ActionsでモノレポのCI/CDを構築する実践テクニック</title><meta name="title" content="GitHub ActionsでモノレポのCI/CDを構築する実践テクニック"><meta name="description" content="モノレポ環境でのGitHub Actions活用法を徹底解説。パス指定トリガー、マトリックスビルド、キャッシュ戦略、Changesetsによる自動リリースまで網羅します。GitHub Actions・CICD・Monorepoに関する実践情報。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/github-actions-monorepo-ci/"><meta property="og:title" content="GitHub ActionsでモノレポのCI/CDを構築する実践テクニック"><meta property="og:description" content="モノレポ環境でのGitHub Actions活用法を徹底解説。パス指定トリガー、マトリックスビルド、キャッシュ戦略、Changesetsによる自動リリースまで網羅します。GitHub Actions・CICD・Monorepoに関する実践情報。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/github-actions-monorepo-ci/"><meta name="twitter:title" content="GitHub ActionsでモノレポのCI/CDを構築する実践テクニック"><meta name="twitter:description" content="モノレポ環境でのGitHub Actions活用法を徹底解説。パス指定トリガー、マトリックスビルド、キャッシュ戦略、Changesetsによる自動リリースまで網羅します。GitHub Actions・CICD・Monorepoに関する実践情報。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/github-actions-monorepo-ci/"},"headline":"GitHub ActionsでモノレポのCI/CDを構築する実践テクニック","description":"モノレポ環境でのGitHub Actions活用法を徹底解説。パス指定トリガー、マトリックスビルド、キャッシュ戦略、Changesetsによる自動リリースまで網羅します。GitHub Actions・CICD・Monorepoに関する実践情報。","datePublished":"2026-02-05T00:00:00.000Z","dateModified":"2026-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"GitHub Actions, CICD, Monorepo, DevOps, インフラ"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"GitHub ActionsでモノレポのCI/CDを構築する実践テクニック"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-05T00:00:00.000Z"> Feb 4, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>GitHub ActionsでモノレポのCI/CDを構築する実践テクニック</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/GitHub%20Actions" class="article-tag" data-astro-cid-bvzihdzo>
+#GitHub Actions </a><a href="/blog/tag/CICD" class="article-tag" data-astro-cid-bvzihdzo>
+#CICD </a><a href="/blog/tag/Monorepo" class="article-tag" data-astro-cid-bvzihdzo>
+#Monorepo </a><a href="/blog/tag/DevOps" class="article-tag" data-astro-cid-bvzihdzo>
+#DevOps </a><a href="/blog/tag/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#インフラ </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="モノレポcicdの課題">モノレポCI/CDの課題</h2>
+<p>モノレポ（Turborepo、Nx、pnpm workspaces等）では、複数のパッケージやアプリが1つのリポジトリに共存します。効率的なCI/CDには以下の課題があります。</p>
+<ol>
+<li><strong>不要なビルドの削減</strong>: 変更されたパッケージのみテスト・ビルドしたい</li>
+<li><strong>依存関係の解決</strong>: パッケージ間の依存を正しく処理</li>
+<li><strong>キャッシュ戦略</strong>: node_modules、ビルド成果物の効率的なキャッシュ</li>
+<li><strong>並列実行</strong>: 複数のジョブを並列化してCI時間を短縮</li>
+</ol>
+<h2 id="パス指定トリガー">パス指定トリガー</h2>
+<h3 id="基本的なパスフィルター">基本的なパスフィルター</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># .github/workflows/frontend.yml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Frontend CI</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  push</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">main</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">develop</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#85E89D">    paths</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">'apps/frontend/**'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">'packages/ui/**'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">'packages/shared/**'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">'package.json'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">'pnpm-lock.yaml'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  pull_request</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    paths</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">'apps/frontend/**'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">'packages/ui/**'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">'packages/shared/**'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  test</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Setup Node</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Install dependencies</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Test frontend</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm --filter frontend test</span></span></code></pre>
+<h3 id="変更検出アクション">変更検出アクション</h3>
+<p>より柔軟な変更検出には <code>dorny/paths-filter</code> を使用します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># .github/workflows/monorepo-ci.yml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Monorepo CI</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  pull_request</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  push</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">main</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  changes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    outputs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      frontend</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ steps.filter.outputs.frontend }}</span></span>
+<span class="line"><span style="color:#85E89D">      backend</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ steps.filter.outputs.backend }}</span></span>
+<span class="line"><span style="color:#85E89D">      packages</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ steps.filter.outputs.packages }}</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">dorny/paths-filter@v3</span></span>
+<span class="line"><span style="color:#85E89D">        id</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">filter</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          filters</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">            frontend:</span></span>
+<span class="line"><span style="color:#9ECBFF">              - 'apps/frontend/**'</span></span>
+<span class="line"><span style="color:#9ECBFF">              - 'packages/ui/**'</span></span>
+<span class="line"><span style="color:#9ECBFF">            backend:</span></span>
+<span class="line"><span style="color:#9ECBFF">              - 'apps/backend/**'</span></span>
+<span class="line"><span style="color:#9ECBFF">              - 'packages/api/**'</span></span>
+<span class="line"><span style="color:#9ECBFF">            packages:</span></span>
+<span class="line"><span style="color:#9ECBFF">              - 'packages/**'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  test-frontend</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    needs</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">changes</span></span>
+<span class="line"><span style="color:#85E89D">    if</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">needs.changes.outputs.frontend == 'true'</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Setup Node</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm --filter frontend test</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  test-backend</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    needs</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">changes</span></span>
+<span class="line"><span style="color:#85E89D">    if</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">needs.changes.outputs.backend == 'true'</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Setup Node</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm --filter backend test</span></span></code></pre>
+<h2 id="マトリックスビルド">マトリックスビルド</h2>
+<h3 id="複数バージョンのnodejsでテスト">複数バージョンのNode.jsでテスト</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Test Matrix</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">push</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">pull_request</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  test</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ matrix.os }}</span></span>
+<span class="line"><span style="color:#85E89D">    strategy</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      matrix</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        os</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">ubuntu-latest</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">windows-latest</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">macos-latest</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#85E89D">        node-version</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">18</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">22</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#85E89D">        exclude</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">          # Windows + Node 18 は除外</span></span>
+<span class="line"><span style="color:#E1E4E8">          - </span><span style="color:#85E89D">os</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">windows-latest</span></span>
+<span class="line"><span style="color:#85E89D">            node-version</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">18</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Setup Node ${{ matrix.node-version }}</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ matrix.node-version }}</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm test</span></span></code></pre>
+<h3 id="パッケージ別マトリックス">パッケージ別マトリックス</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Package Tests</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">push</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  test</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    strategy</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      matrix</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        package</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">          - </span><span style="color:#9ECBFF">ui</span></span>
+<span class="line"><span style="color:#E1E4E8">          - </span><span style="color:#9ECBFF">api</span></span>
+<span class="line"><span style="color:#E1E4E8">          - </span><span style="color:#9ECBFF">shared</span></span>
+<span class="line"><span style="color:#E1E4E8">          - </span><span style="color:#9ECBFF">utils</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Test ${{ matrix.package }}</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm --filter ${{ matrix.package }} test</span></span></code></pre>
+<h2 id="効率的なキャッシュ戦略">効率的なキャッシュ戦略</h2>
+<h3 id="pnpmキャッシュ">pnpmキャッシュ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">CI with Cache</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">push</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  build</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Setup pnpm</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm/action-setup@v3</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          version</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">9</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Setup Node</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pnpm'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Install dependencies</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install --frozen-lockfile</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Build</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm build</span></span></code></pre>
+<h3 id="turborepoキャッシュ">Turborepoキャッシュ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Turborepo CI</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">push</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  build</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm/action-setup@v3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pnpm'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      # Turborepoのリモートキャッシュ</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Build with Turbo</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm turbo build</span></span>
+<span class="line"><span style="color:#85E89D">        env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          TURBO_TOKEN</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.TURBO_TOKEN }}</span></span>
+<span class="line"><span style="color:#85E89D">          TURBO_TEAM</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ vars.TURBO_TEAM }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Test with Turbo</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm turbo test</span></span>
+<span class="line"><span style="color:#85E89D">        env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          TURBO_TOKEN</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.TURBO_TOKEN }}</span></span>
+<span class="line"><span style="color:#85E89D">          TURBO_TEAM</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ vars.TURBO_TEAM }}</span></span></code></pre>
+<h3 id="ビルド成果物のキャッシュ">ビルド成果物のキャッシュ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Build Cache</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">push</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  build</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pnpm'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      # ビルド成果物をキャッシュ</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Cache build output</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/cache@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          path</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">            apps/*/dist</span></span>
+<span class="line"><span style="color:#9ECBFF">            packages/*/dist</span></span>
+<span class="line"><span style="color:#85E89D">          key</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">build-${{ runner.os }}-${{ hashFiles('**/*.ts', '**/*.tsx') }}</span></span>
+<span class="line"><span style="color:#85E89D">          restore-keys</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">            build-${{ runner.os }}-</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      # アーティファクトとしてアップロード（後続ジョブで使用）</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Upload build artifacts</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/upload-artifact@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">build-output</span></span>
+<span class="line"><span style="color:#85E89D">          path</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">            apps/*/dist</span></span>
+<span class="line"><span style="color:#9ECBFF">            packages/*/dist</span></span>
+<span class="line"><span style="color:#85E89D">          retention-days</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">7</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  deploy</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    needs</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">build</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Download build artifacts</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/download-artifact@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">build-output</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Deploy</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">echo "Deploying..."</span></span></code></pre>
+<h2 id="changesetsによる自動リリース">Changesetsによる自動リリース</h2>
+<h3 id="changesetsセットアップ">Changesetsセットアップ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># パッケージインストール</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> -D</span><span style="color:#9ECBFF"> @changesets/cli</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 初期化</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> changeset</span><span style="color:#9ECBFF"> init</span></span></code></pre>
+<p><code>.changeset/config.json</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "$schema"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://unpkg.com/@changesets/config@3.0.0/schema.json"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "changelog"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"@changesets/cli/changelog"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "commit"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "fixed"</span><span style="color:#E1E4E8">: [],</span></span>
+<span class="line"><span style="color:#79B8FF">  "linked"</span><span style="color:#E1E4E8">: [],</span></span>
+<span class="line"><span style="color:#79B8FF">  "access"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"public"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "baseBranch"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"main"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "updateInternalDependencies"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"patch"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "ignore"</span><span style="color:#E1E4E8">: []</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="リリースワークフロー">リリースワークフロー</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># .github/workflows/release.yml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Release</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  push</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">main</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">concurrency</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ github.workflow }}-${{ github.ref }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  release</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm/action-setup@v3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pnpm'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Create Release Pull Request or Publish</span></span>
+<span class="line"><span style="color:#85E89D">        id</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">changesets</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">changesets/action@v1</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          publish</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm release</span></span>
+<span class="line"><span style="color:#85E89D">          commit</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'chore: release packages'</span></span>
+<span class="line"><span style="color:#85E89D">          title</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'chore: release packages'</span></span>
+<span class="line"><span style="color:#85E89D">        env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          GITHUB_TOKEN</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.GITHUB_TOKEN }}</span></span>
+<span class="line"><span style="color:#85E89D">          NPM_TOKEN</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.NPM_TOKEN }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Send Slack notification</span></span>
+<span class="line"><span style="color:#85E89D">        if</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">steps.changesets.outputs.published == 'true'</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">          echo "Published packages: ${{ steps.changesets.outputs.publishedPackages }}"</span></span></code></pre>
+<h3 id="packagejsonのrelease-script">package.jsonのrelease script</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "scripts"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "changeset"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"changeset"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "version"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"changeset version"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "release"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"pnpm build &#x26;&#x26; changeset publish"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="使用フロー">使用フロー</h3>
+<ol>
+<li>変更をコミット</li>
+<li><code>pnpm changeset</code> でチェンジログ作成</li>
+<li>mainにマージ</li>
+<li>GitHub Actionsが自動でリリースPR作成</li>
+<li>PRをマージするとnpmに自動公開</li>
+</ol>
+<h2 id="コスト削減テクニック">コスト削減テクニック</h2>
+<h3 id="1-不要なジョブをスキップ">1. 不要なジョブをスキップ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Smart CI</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  pull_request</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    paths-ignore</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">'**.md'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">'docs/**'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">'.vscode/**'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  test</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm test</span></span></code></pre>
+<h3 id="2-タイムアウト設定">2. タイムアウト設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  test</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    timeout-minutes</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10</span><span style="color:#6A737D">  # 10分でタイムアウト</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm test</span></span></code></pre>
+<h3 id="3-並列実行の最適化">3. 並列実行の最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  test</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    strategy</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      matrix</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        shard</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">4</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm test --shard=${{ matrix.shard }}/4</span></span></code></pre>
+<h3 id="4-条件付き実行">4. 条件付き実行</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  deploy</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    if</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">github.ref == 'refs/heads/main' &#x26;&#x26; github.event_name == 'push'</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm deploy</span></span></code></pre>
+<h2 id="実践例-完全なモノレポcicd">実践例: 完全なモノレポCI/CD</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># .github/workflows/ci.yml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">CI/CD Pipeline</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  push</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">main</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">develop</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#85E89D">  pull_request</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">concurrency</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  group</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ github.workflow }}-${{ github.ref }}</span></span>
+<span class="line"><span style="color:#85E89D">  cancel-in-progress</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  changes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    outputs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      packages</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ steps.filter.outputs.packages }}</span></span>
+<span class="line"><span style="color:#85E89D">      frontend</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ steps.filter.outputs.frontend }}</span></span>
+<span class="line"><span style="color:#85E89D">      backend</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ steps.filter.outputs.backend }}</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">dorny/paths-filter@v3</span></span>
+<span class="line"><span style="color:#85E89D">        id</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">filter</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          filters</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">            packages:</span></span>
+<span class="line"><span style="color:#9ECBFF">              - 'packages/**'</span></span>
+<span class="line"><span style="color:#9ECBFF">            frontend:</span></span>
+<span class="line"><span style="color:#9ECBFF">              - 'apps/frontend/**'</span></span>
+<span class="line"><span style="color:#9ECBFF">              - 'packages/**'</span></span>
+<span class="line"><span style="color:#9ECBFF">            backend:</span></span>
+<span class="line"><span style="color:#9ECBFF">              - 'apps/backend/**'</span></span>
+<span class="line"><span style="color:#9ECBFF">              - 'packages/**'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  lint</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm/action-setup@v3</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pnpm'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm lint</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  test-packages</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    needs</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">changes</span></span>
+<span class="line"><span style="color:#85E89D">    if</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">needs.changes.outputs.packages == 'true'</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm/action-setup@v3</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pnpm'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm --filter './packages/**' test</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  test-frontend</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    needs</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">changes</span></span>
+<span class="line"><span style="color:#85E89D">    if</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">needs.changes.outputs.frontend == 'true'</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm/action-setup@v3</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pnpm'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm --filter frontend test</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  test-backend</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    needs</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">changes</span></span>
+<span class="line"><span style="color:#85E89D">    if</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">needs.changes.outputs.backend == 'true'</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm/action-setup@v3</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pnpm'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm --filter backend test</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  build</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    needs</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">lint</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">test-packages</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">test-frontend</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">test-backend</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#85E89D">    if</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">always() &#x26;&#x26; !cancelled() &#x26;&#x26; !contains(needs.*.result, 'failure')</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm/action-setup@v3</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pnpm'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm build</span></span>
+<span class="line"><span style="color:#85E89D">        env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          TURBO_TOKEN</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.TURBO_TOKEN }}</span></span>
+<span class="line"><span style="color:#85E89D">          TURBO_TEAM</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ vars.TURBO_TEAM }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  deploy</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    needs</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">build</span></span>
+<span class="line"><span style="color:#85E89D">    if</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">github.ref == 'refs/heads/main' &#x26;&#x26; github.event_name == 'push'</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Deploy to production</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">echo "Deploying..."</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>モノレポのCI/CDを最適化する鍵は以下の点です。</p>
+<ol>
+<li><strong>変更検出</strong>: 変更されたパッケージのみビルド・テスト</li>
+<li><strong>並列化</strong>: マトリックスビルドで複数ジョブを並列実行</li>
+<li><strong>キャッシュ</strong>: 依存関係とビルド成果物を効率的にキャッシュ</li>
+<li><strong>自動化</strong>: Changesetsでバージョン管理とリリースを自動化</li>
+</ol>
+<p>これらのテクニックを組み合わせることで、CI時間を大幅に短縮し、開発者の生産性を向上できます。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

@@ -1,0 +1,488 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/tinybird-analytics-guide/"><!-- Primary Meta Tags --><title>Tinybirdでリアルタイムアナリティクスパイプライン構築</title><meta name="title" content="Tinybirdでリアルタイムアナリティクスパイプライン構築"><meta name="description" content="Tinybirdを使ったリアルタイムデータ分析基盤の構築方法を解説。SQLでデータパイプラインを定義し、低レイテンシなAPIエンドポイントを自動生成する方法を実践的に学びます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/tinybird-analytics-guide/"><meta property="og:title" content="Tinybirdでリアルタイムアナリティクスパイプライン構築"><meta property="og:description" content="Tinybirdを使ったリアルタイムデータ分析基盤の構築方法を解説。SQLでデータパイプラインを定義し、低レイテンシなAPIエンドポイントを自動生成する方法を実践的に学びます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/tinybird-analytics-guide/"><meta name="twitter:title" content="Tinybirdでリアルタイムアナリティクスパイプライン構築"><meta name="twitter:description" content="Tinybirdを使ったリアルタイムデータ分析基盤の構築方法を解説。SQLでデータパイプラインを定義し、低レイテンシなAPIエンドポイントを自動生成する方法を実践的に学びます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/tinybird-analytics-guide/"},"headline":"Tinybirdでリアルタイムアナリティクスパイプライン構築","description":"Tinybirdを使ったリアルタイムデータ分析基盤の構築方法を解説。SQLでデータパイプラインを定義し、低レイテンシなAPIエンドポイントを自動生成する方法を実践的に学びます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。","datePublished":"2025-02-05T00:00:00.000Z","dateModified":"2025-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"プログラミング, 開発ツール"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Tinybirdでリアルタイムアナリティクスパイプライン構築"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-05T00:00:00.000Z"> Feb 4, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>Tinybirdでリアルタイムアナリティクスパイプライン構築</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="article-tag" data-astro-cid-bvzihdzo>
+#プログラミング </a><a href="/blog/tag/%E9%96%8B%E7%99%BA%E3%83%84%E3%83%BC%E3%83%AB" class="article-tag" data-astro-cid-bvzihdzo>
+#開発ツール </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="tinybirdとは">Tinybirdとは</h2>
+<p>Tinybirdは、リアルタイムデータアナリティクスを簡単に構築できるデータプラットフォームです。SQLでデータパイプラインを定義するだけで、高速なAPIエンドポイントを自動生成し、数ミリ秒のレスポンスタイムでデータを提供できます。</p>
+<h3 id="tinybirdの主な特徴">Tinybirdの主な特徴</h3>
+<ul>
+<li><strong>SQLベースのデータパイプライン</strong>: 学習コストが低く、すぐに始められる</li>
+<li><strong>リアルタイム取り込み</strong>: イベントストリーミングとバッチ両方に対応</li>
+<li><strong>高速クエリ</strong>: ClickHouseベースで大量データも高速処理</li>
+<li><strong>自動API生成</strong>: SQLクエリが即座にRESTful APIエンドポイントに</li>
+<li><strong>バージョン管理</strong>: Git統合でCI/CD可能</li>
+<li><strong>スケーラブル</strong>: 自動スケーリングで大規模データに対応</li>
+</ul>
+<h2 id="なぜtinybirdを使うのか">なぜTinybirdを使うのか</h2>
+<p>従来のアナリティクス構築では、データウェアハウス、ETLツール、APIサーバー、キャッシュレイヤーなど、複数のコンポーネントが必要でした。Tinybirdはこれらを統合し、SQLだけでエンドツーエンドのアナリティクスパイプラインを構築できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>従来の構成:</span></span>
+<span class="line"><span>データソース → Kafka → Spark → データウェアハウス → APIサーバー → キャッシュ → クライアント</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Tinybirdの構成:</span></span>
+<span class="line"><span>データソース → Tinybird (SQLパイプライン) → クライアント</span></span></code></pre>
+<h2 id="セットアップ">セットアップ</h2>
+<h3 id="アカウント作成">アカウント作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Tinybirdにサインアップ</span></span>
+<span class="line"><span style="color:#6A737D"># https://www.tinybird.co/signup</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># CLIツールをインストール</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#9ECBFF"> https://cli.tinybird.co/install.sh</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> sh</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># または npm経由で</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -g</span><span style="color:#9ECBFF"> @tinybirdco/cli</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># または pipenv経由で</span></span>
+<span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> tinybird-cli</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 認証</span></span>
+<span class="line"><span style="color:#B392F0">tb</span><span style="color:#9ECBFF"> auth</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ワークスペース作成</span></span>
+<span class="line"><span style="color:#B392F0">tb</span><span style="color:#9ECBFF"> workspace</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> my-analytics</span></span></code></pre>
+<h3 id="プロジェクト初期化">プロジェクト初期化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># プロジェクトディレクトリを作成</span></span>
+<span class="line"><span style="color:#B392F0">mkdir</span><span style="color:#9ECBFF"> my-analytics-project</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> my-analytics-project</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Tinybirdプロジェクトを初期化</span></span>
+<span class="line"><span style="color:#B392F0">tb</span><span style="color:#9ECBFF"> init</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 生成されるファイル構造:</span></span>
+<span class="line"><span style="color:#6A737D"># .</span></span>
+<span class="line"><span style="color:#6A737D"># ├── .tinyb</span></span>
+<span class="line"><span style="color:#6A737D"># ├── datasources/</span></span>
+<span class="line"><span style="color:#6A737D"># ├── pipes/</span></span>
+<span class="line"><span style="color:#6A737D"># └── endpoints/</span></span></code></pre>
+<h2 id="データソースの定義">データソースの定義</h2>
+<p>Tinybirdでは、まずデータソース（Data Source）を定義します。</p>
+<h3 id="イベントトラッキング用データソース">イベントトラッキング用データソース</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- datasources/events.datasource</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">SCHEMA</span><span style="color:#F97583"> ></span></span>
+<span class="line"><span style="color:#9ECBFF">    `timestamp`</span><span style="color:#F97583"> DateTime</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `event_name`</span><span style="color:#E1E4E8"> String,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `user_id`</span><span style="color:#E1E4E8"> String,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `session_id`</span><span style="color:#E1E4E8"> String,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `properties`</span><span style="color:#E1E4E8"> String,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `page_url`</span><span style="color:#E1E4E8"> String,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `user_agent`</span><span style="color:#E1E4E8"> String,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `ip_address`</span><span style="color:#E1E4E8"> String</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE </span><span style="color:#9ECBFF">"MergeTree"</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE_PARTITION_KEY </span><span style="color:#9ECBFF">"toYYYYMM(timestamp)"</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE_SORTING_KEY </span><span style="color:#9ECBFF">"timestamp, user_id, event_name"</span></span></code></pre>
+<h3 id="アプリケーションログ用データソース">アプリケーションログ用データソース</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- datasources/app_logs.datasource</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">SCHEMA</span><span style="color:#F97583"> ></span></span>
+<span class="line"><span style="color:#9ECBFF">    `timestamp`</span><span style="color:#F97583"> DateTime</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `level`</span><span style="color:#E1E4E8"> LowCardinality(String),</span></span>
+<span class="line"><span style="color:#9ECBFF">    `service`</span><span style="color:#E1E4E8"> LowCardinality(String),</span></span>
+<span class="line"><span style="color:#9ECBFF">    `message`</span><span style="color:#E1E4E8"> String,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `error_code`</span><span style="color:#E1E4E8"> Nullable(String),</span></span>
+<span class="line"><span style="color:#9ECBFF">    `user_id`</span><span style="color:#E1E4E8"> Nullable(String),</span></span>
+<span class="line"><span style="color:#9ECBFF">    `request_id`</span><span style="color:#E1E4E8"> String,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `duration_ms`</span><span style="color:#E1E4E8"> UInt32,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `metadata`</span><span style="color:#E1E4E8"> String</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE </span><span style="color:#9ECBFF">"MergeTree"</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE_PARTITION_KEY </span><span style="color:#9ECBFF">"toYYYYMM(timestamp)"</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE_SORTING_KEY </span><span style="color:#9ECBFF">"timestamp, service, level"</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE_TTL </span><span style="color:#9ECBFF">"timestamp + INTERVAL 30 DAY"</span></span></code></pre>
+<h3 id="csvファイルからデータソース作成">CSVファイルからデータソース作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># CSVファイルをアップロード</span></span>
+<span class="line"><span style="color:#B392F0">tb</span><span style="color:#9ECBFF"> datasource</span><span style="color:#9ECBFF"> append</span><span style="color:#9ECBFF"> users_data</span><span style="color:#9ECBFF"> ./data/users.csv</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># または、データソース定義とともに</span></span>
+<span class="line"><span style="color:#B392F0">tb</span><span style="color:#9ECBFF"> push</span><span style="color:#9ECBFF"> datasources/users.datasource</span><span style="color:#79B8FF"> --csv</span><span style="color:#9ECBFF"> ./data/users.csv</span></span></code></pre>
+<h2 id="パイプラインの構築">パイプラインの構築</h2>
+<p>パイプ（Pipe）は、データソースを変換・集計するSQLクエリです。</p>
+<h3 id="基本的なパイプ">基本的なパイプ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- pipes/events_last_hour.pipe</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    event_name,</span></span>
+<span class="line"><span style="color:#79B8FF">    count</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> count,</span></span>
+<span class="line"><span style="color:#E1E4E8">    uniq(user_id) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> unique_users</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> events</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#F97583"> timestamp</span><span style="color:#F97583"> >=</span><span style="color:#F97583"> now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> INTERVAL </span><span style="color:#79B8FF">1</span><span style="color:#F97583"> HOUR</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#E1E4E8"> event_name</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> count </span><span style="color:#F97583">DESC</span></span></code></pre>
+<h3 id="複雑な集計パイプ">複雑な集計パイプ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- pipes/user_analytics.pipe</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    toStartOfHour(</span><span style="color:#F97583">timestamp</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#F97583"> hour</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    event_name,</span></span>
+<span class="line"><span style="color:#79B8FF">    count</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> event_count,</span></span>
+<span class="line"><span style="color:#E1E4E8">    uniq(user_id) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> unique_users,</span></span>
+<span class="line"><span style="color:#E1E4E8">    uniq(session_id) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> unique_sessions,</span></span>
+<span class="line"><span style="color:#79B8FF">    avg</span><span style="color:#E1E4E8">(JSONExtractFloat(properties, </span><span style="color:#9ECBFF">'duration'</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> avg_duration</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> events</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span></span>
+<span class="line"><span style="color:#F97583">    timestamp</span><span style="color:#F97583"> >=</span><span style="color:#E1E4E8"> {{</span><span style="color:#F97583">DateTime</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">start_date</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'2024-01-01 00:00:00'</span><span style="color:#E1E4E8">)}}</span></span>
+<span class="line"><span style="color:#F97583">    AND</span><span style="color:#F97583"> timestamp</span><span style="color:#F97583"> &#x3C;</span><span style="color:#E1E4E8"> {{</span><span style="color:#F97583">DateTime</span><span style="color:#E1E4E8">(end_date, </span><span style="color:#9ECBFF">'2024-01-31 23:59:59'</span><span style="color:#E1E4E8">)}}</span></span>
+<span class="line"><span style="color:#E1E4E8">    {% </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> defined(event_filter) %}</span></span>
+<span class="line"><span style="color:#F97583">        AND</span><span style="color:#E1E4E8"> event_name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {{String(event_filter)}}</span></span>
+<span class="line"><span style="color:#E1E4E8">    {% </span><span style="color:#F97583">end</span><span style="color:#E1E4E8"> %}</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#F97583"> hour</span><span style="color:#E1E4E8">, event_name</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> hour</span><span style="color:#F97583"> DESC</span><span style="color:#E1E4E8">, event_count </span><span style="color:#F97583">DESC</span></span></code></pre>
+<h3 id="マテリアライズドビュー">マテリアライズドビュー</h3>
+<p>頻繁に使うクエリはマテリアライズドビューとして事前計算できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- pipes/hourly_metrics.pipe</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">MATERIALIZED VIEW hourly_metrics</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> SummingMergeTree()</span></span>
+<span class="line"><span style="color:#F97583">PARTITION</span><span style="color:#F97583"> BY</span><span style="color:#E1E4E8"> toYYYYMM(</span><span style="color:#F97583">hour</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">hour</span><span style="color:#E1E4E8">, event_name)</span></span>
+<span class="line"><span style="color:#F97583">AS</span><span style="color:#F97583"> SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    toStartOfHour(</span><span style="color:#F97583">timestamp</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#F97583"> hour</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    event_name,</span></span>
+<span class="line"><span style="color:#79B8FF">    count</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> count,</span></span>
+<span class="line"><span style="color:#E1E4E8">    uniq(user_id) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> unique_users</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> events</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#F97583"> hour</span><span style="color:#E1E4E8">, event_name</span></span></code></pre>
+<h2 id="apiエンドポイントの作成">APIエンドポイントの作成</h2>
+<p>パイプをAPIエンドポイントとして公開します。</p>
+<h3 id="基本的なエンドポイント">基本的なエンドポイント</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- endpoints/events_stats.endpoint</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> events_last_hour</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">DESCRIPTION</span><span style="color:#F97583"> ></span></span>
+<span class="line"><span style="color:#E1E4E8">    過去1時間のイベント統計を取得</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># デプロイ</span></span>
+<span class="line"><span style="color:#B392F0">tb</span><span style="color:#9ECBFF"> push</span><span style="color:#9ECBFF"> endpoints/events_stats.endpoint</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 生成されるURL:</span></span>
+<span class="line"><span style="color:#6A737D"># https://api.tinybird.co/v0/pipes/events_stats.json?token=YOUR_TOKEN</span></span></code></pre>
+<h3 id="パラメータ付きエンドポイント">パラメータ付きエンドポイント</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- endpoints/user_analytics_api.endpoint</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> user_analytics</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">DESCRIPTION</span><span style="color:#F97583"> ></span></span>
+<span class="line"><span style="color:#E1E4E8">    ユーザーアナリティクスデータを期間指定で取得</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">PARAMS </span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    start_date</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">DateTime</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> '2024-01-01 00:00:00'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    end_date: </span><span style="color:#F97583">DateTime</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> '2024-01-31 23:59:59'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    event_filter: String </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> ''</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># APIリクエスト例</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#9ECBFF"> "https://api.tinybird.co/v0/pipes/user_analytics_api.json?token=YOUR_TOKEN&#x26;start_date=2024-02-01&#x26;end_date=2024-02-05&#x26;event_filter=page_view"</span></span></code></pre>
+<h2 id="実践例-webアナリティクスダッシュボード">実践例: Webアナリティクスダッシュボード</h2>
+<p>実際のWebアナリティクスシステムを構築してみましょう。</p>
+<h3 id="1-イベント収集スクリプト">1. イベント収集スクリプト</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// frontend/analytics.js</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> TinybirdAnalytics</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">dataSourceUrl</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">token</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.url </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> dataSourceUrl;</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.token </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> token;</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.sessionId </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">generateSessionId</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  generateSessionId</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#9ECBFF"> `${</span><span style="color:#E1E4E8">Date</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">now</span><span style="color:#9ECBFF">()</span><span style="color:#9ECBFF">}-${</span><span style="color:#E1E4E8">Math</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">random</span><span style="color:#9ECBFF">().</span><span style="color:#B392F0">toString</span><span style="color:#9ECBFF">(</span><span style="color:#79B8FF">36</span><span style="color:#9ECBFF">).</span><span style="color:#B392F0">substr</span><span style="color:#9ECBFF">(</span><span style="color:#79B8FF">2</span><span style="color:#9ECBFF">, </span><span style="color:#79B8FF">9</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> track</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">eventName</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">properties</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {}) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> event</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      timestamp: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      event_name: eventName,</span></span>
+<span class="line"><span style="color:#E1E4E8">      user_id: </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">getUserId</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      session_id: </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.sessionId,</span></span>
+<span class="line"><span style="color:#E1E4E8">      properties: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(properties),</span></span>
+<span class="line"><span style="color:#E1E4E8">      page_url: window.location.href,</span></span>
+<span class="line"><span style="color:#E1E4E8">      user_agent: navigator.userAgent,</span></span>
+<span class="line"><span style="color:#E1E4E8">      ip_address: </span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// サーバー側で付与</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.url, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        method: </span><span style="color:#9ECBFF">'POST'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">          'Authorization'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">`Bearer ${</span><span style="color:#79B8FF">this</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">token</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">          'Content-Type'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'application/json'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(event),</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Analytics tracking error:'</span><span style="color:#E1E4E8">, error);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  getUserId</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> userId </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> localStorage.</span><span style="color:#B392F0">getItem</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'analytics_user_id'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">userId) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      userId </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> `user-${</span><span style="color:#E1E4E8">Date</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">now</span><span style="color:#9ECBFF">()</span><span style="color:#9ECBFF">}-${</span><span style="color:#E1E4E8">Math</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">random</span><span style="color:#9ECBFF">().</span><span style="color:#B392F0">toString</span><span style="color:#9ECBFF">(</span><span style="color:#79B8FF">36</span><span style="color:#9ECBFF">).</span><span style="color:#B392F0">substr</span><span style="color:#9ECBFF">(</span><span style="color:#79B8FF">2</span><span style="color:#9ECBFF">, </span><span style="color:#79B8FF">9</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">      localStorage.</span><span style="color:#B392F0">setItem</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'analytics_user_id'</span><span style="color:#E1E4E8">, userId);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> userId;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ページビュートラッキング</span></span>
+<span class="line"><span style="color:#B392F0">  trackPageView</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">track</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'page_view'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">      title: document.title,</span></span>
+<span class="line"><span style="color:#E1E4E8">      referrer: document.referrer,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // クリックイベント</span></span>
+<span class="line"><span style="color:#B392F0">  trackClick</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">element</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">label</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">track</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'click'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">      element: element,</span></span>
+<span class="line"><span style="color:#E1E4E8">      label: label,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // カスタムイベント</span></span>
+<span class="line"><span style="color:#B392F0">  trackCustom</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">eventName</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">track</span><span style="color:#E1E4E8">(eventName, data);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 初期化</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> analytics</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> TinybirdAnalytics</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">  'https://api.tinybird.co/v0/events?name=events'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'YOUR_INGESTION_TOKEN'</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 自動ページビュートラッキング</span></span>
+<span class="line"><span style="color:#E1E4E8">analytics.</span><span style="color:#B392F0">trackPageView</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h3 id="2-パイプライン定義">2. パイプライン定義</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- pipes/page_views_by_page.pipe</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    page_url,</span></span>
+<span class="line"><span style="color:#79B8FF">    count</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> views,</span></span>
+<span class="line"><span style="color:#E1E4E8">    uniq(user_id) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> unique_visitors,</span></span>
+<span class="line"><span style="color:#E1E4E8">    uniq(session_id) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> unique_sessions,</span></span>
+<span class="line"><span style="color:#79B8FF">    avg</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">if</span><span style="color:#E1E4E8">(properties </span><span style="color:#F97583">!=</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">, JSONExtractFloat(properties, </span><span style="color:#9ECBFF">'load_time'</span><span style="color:#E1E4E8">), </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> avg_load_time</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> events</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span></span>
+<span class="line"><span style="color:#E1E4E8">    event_name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'page_view'</span></span>
+<span class="line"><span style="color:#F97583">    AND</span><span style="color:#F97583"> timestamp</span><span style="color:#F97583"> >=</span><span style="color:#F97583"> now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> INTERVAL {{Int32(</span><span style="color:#F97583">days</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">7</span><span style="color:#E1E4E8">)}} </span><span style="color:#F97583">DAY</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#E1E4E8"> page_url</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> views </span><span style="color:#F97583">DESC</span></span>
+<span class="line"><span style="color:#F97583">LIMIT</span><span style="color:#E1E4E8"> {{Int32(</span><span style="color:#F97583">limit</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">)}}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- pipes/user_journey.pipe</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    session_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    arraySort(groupArray(tuple(</span><span style="color:#F97583">timestamp</span><span style="color:#E1E4E8">, event_name, page_url))) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> journey</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> events</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {{String(user_id)}}</span></span>
+<span class="line"><span style="color:#F97583">    AND</span><span style="color:#F97583"> timestamp</span><span style="color:#F97583"> >=</span><span style="color:#F97583"> now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> INTERVAL </span><span style="color:#79B8FF">30</span><span style="color:#F97583"> DAY</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#E1E4E8"> user_id, session_id</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> session_id </span><span style="color:#F97583">DESC</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- pipes/realtime_dashboard.pipe</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    toStartOfMinute(</span><span style="color:#F97583">timestamp</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#F97583"> minute</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    count</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> events,</span></span>
+<span class="line"><span style="color:#E1E4E8">    uniq(user_id) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> active_users,</span></span>
+<span class="line"><span style="color:#E1E4E8">    countIf(event_name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'page_view'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> page_views,</span></span>
+<span class="line"><span style="color:#E1E4E8">    countIf(event_name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'click'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> clicks,</span></span>
+<span class="line"><span style="color:#E1E4E8">    countIf(event_name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'conversion'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> conversions</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> events</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#F97583"> timestamp</span><span style="color:#F97583"> >=</span><span style="color:#F97583"> now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> INTERVAL </span><span style="color:#79B8FF">1</span><span style="color:#F97583"> HOUR</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#F97583"> minute</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> minute</span><span style="color:#F97583"> DESC</span></span></code></pre>
+<h3 id="3-nextjsダッシュボード">3. Next.jsダッシュボード</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/dashboard/page.tsx</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Card, CardContent, CardHeader, CardTitle } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/components/ui/card'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> AnalyticsData</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  page_url</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  views</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  unique_visitors</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  unique_sessions</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  avg_load_time</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getAnalytics</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">days</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 7</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">AnalyticsData</span><span style="color:#E1E4E8">[]> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    `https://api.tinybird.co/v0/pipes/page_views_by_page.json?token=${</span><span style="color:#E1E4E8">process</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">env</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">TINYBIRD_TOKEN</span><span style="color:#9ECBFF">}&#x26;days=${</span><span style="color:#E1E4E8">days</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    { next: { revalidate: </span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8"> } } </span><span style="color:#6A737D">// 1分キャッシュ</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> data.data;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> DashboardPage</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> analytics</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getAnalytics</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">7</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> totalViews</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> analytics.</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">sum</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">item</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> sum </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> item.views, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> totalVisitors</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> analytics.</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">sum</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">item</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> sum </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> item.unique_visitors, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"space-y-6"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"grid gap-4 md:grid-cols-3"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#B392F0">Card</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#B392F0">CardHeader</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#B392F0">CardTitle</span><span style="color:#E1E4E8">>総ページビュー</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">CardTitle</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;/</span><span style="color:#E1E4E8">CardHeader</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#B392F0">CardContent</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">            &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-3xl font-bold"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">{totalViews.toLocaleString()}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;/</span><span style="color:#E1E4E8">CardContent</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">Card</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#B392F0">Card</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#B392F0">CardHeader</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#B392F0">CardTitle</span><span style="color:#E1E4E8">>ユニークビジター</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">CardTitle</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;/</span><span style="color:#E1E4E8">CardHeader</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#B392F0">CardContent</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">            &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-3xl font-bold"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">{totalVisitors.toLocaleString()}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;/</span><span style="color:#E1E4E8">CardContent</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">Card</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#B392F0">Card</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#B392F0">CardHeader</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#B392F0">CardTitle</span><span style="color:#E1E4E8">>平均読み込み時間</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">CardTitle</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;/</span><span style="color:#E1E4E8">CardHeader</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#B392F0">CardContent</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">            &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-3xl font-bold"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">              {(</span><span style="color:#FFAB70">analytics</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">sum</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">item</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> sum </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> item.avg_load_time, 0) / </span><span style="color:#FFAB70">analytics</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">length</span><span style="color:#E1E4E8">).</span><span style="color:#FFAB70">toFixed</span><span style="color:#E1E4E8">(2)}</span><span style="color:#FFAB70">ms</span></span>
+<span class="line"><span style="color:#F97583">            &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;/</span><span style="color:#E1E4E8">CardContent</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">Card</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">Card</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#B392F0">CardHeader</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#B392F0">CardTitle</span><span style="color:#E1E4E8">>人気ページ</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">CardTitle</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">CardHeader</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#B392F0">CardContent</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;</span><span style="color:#E1E4E8">table className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"w-full"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#B392F0">thead</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">              &#x3C;</span><span style="color:#B392F0">tr</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">                &#x3C;</span><span style="color:#E1E4E8">th className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-left"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">ページ</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">th</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">                &#x3C;</span><span style="color:#E1E4E8">th className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-right"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">ビュー</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">th</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">                &#x3C;</span><span style="color:#E1E4E8">th className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-right"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">ユニーク訪問者</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">th</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">              &#x3C;/</span><span style="color:#E1E4E8">tr</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">            &#x3C;/</span><span style="color:#E1E4E8">thead</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#B392F0">tbody</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">              {</span><span style="color:#FFAB70">analytics</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">slice</span><span style="color:#E1E4E8">(0, 10).</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">item</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">                &#x3C;</span><span style="color:#E1E4E8">tr key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{item.page_url}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">                  &#x3C;</span><span style="color:#B392F0">td</span><span style="color:#E1E4E8">>{item.page_url}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">td</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">                  &#x3C;</span><span style="color:#E1E4E8">td className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-right"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">{item.views}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">td</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">                  &#x3C;</span><span style="color:#E1E4E8">td className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-right"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">{item.unique_visitors}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">td</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">                &#x3C;/</span><span style="color:#E1E4E8">tr</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">              ))}</span></span>
+<span class="line"><span style="color:#F97583">            &#x3C;/</span><span style="color:#E1E4E8">tbody</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;/</span><span style="color:#E1E4E8">table</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">CardContent</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">Card</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="リアルタイムデータ取り込み">リアルタイムデータ取り込み</h2>
+<h3 id="events-api経由">Events API経由</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 単一イベント</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -X</span><span style="color:#9ECBFF"> POST</span><span style="color:#9ECBFF"> "https://api.tinybird.co/v0/events?name=events"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -H</span><span style="color:#9ECBFF"> "Authorization: Bearer YOUR_TOKEN"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -d</span><span style="color:#9ECBFF"> '{</span></span>
+<span class="line"><span style="color:#9ECBFF">    "timestamp": "2024-02-05 10:30:00",</span></span>
+<span class="line"><span style="color:#9ECBFF">    "event_name": "purchase",</span></span>
+<span class="line"><span style="color:#9ECBFF">    "user_id": "user123",</span></span>
+<span class="line"><span style="color:#9ECBFF">    "session_id": "session456",</span></span>
+<span class="line"><span style="color:#9ECBFF">    "properties": "{\"amount\": 99.99, \"product_id\": \"prod789\"}",</span></span>
+<span class="line"><span style="color:#9ECBFF">    "page_url": "https://example.com/checkout",</span></span>
+<span class="line"><span style="color:#9ECBFF">    "user_agent": "Mozilla/5.0...",</span></span>
+<span class="line"><span style="color:#9ECBFF">    "ip_address": "192.168.1.1"</span></span>
+<span class="line"><span style="color:#9ECBFF">  }'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># バッチイベント（NDJSON形式）</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -X</span><span style="color:#9ECBFF"> POST</span><span style="color:#9ECBFF"> "https://api.tinybird.co/v0/events?name=events"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -H</span><span style="color:#9ECBFF"> "Authorization: Bearer YOUR_TOKEN"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -d</span><span style="color:#9ECBFF"> '{"timestamp": "2024-02-05 10:30:00", "event_name": "page_view", "user_id": "user1"}</span></span>
+<span class="line"><span style="color:#9ECBFF">{"timestamp": "2024-02-05 10:31:00", "event_name": "click", "user_id": "user2"}</span></span>
+<span class="line"><span style="color:#9ECBFF">{"timestamp": "2024-02-05 10:32:00", "event_name": "conversion", "user_id": "user3"}'</span></span></code></pre>
+<h3 id="kafkaからのストリーミング取り込み">Kafkaからのストリーミング取り込み</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- datasources/kafka_events.datasource</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">CONNECTOR </span><span style="color:#9ECBFF">"kafka"</span></span>
+<span class="line"><span style="color:#E1E4E8">CONNECTOR_TOPIC </span><span style="color:#9ECBFF">"analytics-events"</span></span>
+<span class="line"><span style="color:#E1E4E8">CONNECTOR_BOOTSTRAP_SERVERS </span><span style="color:#9ECBFF">"kafka.example.com:9092"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">SCHEMA</span><span style="color:#F97583"> ></span></span>
+<span class="line"><span style="color:#9ECBFF">    `timestamp`</span><span style="color:#F97583"> DateTime</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `event_name`</span><span style="color:#E1E4E8"> String,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `user_id`</span><span style="color:#E1E4E8"> String,</span></span>
+<span class="line"><span style="color:#9ECBFF">    `properties`</span><span style="color:#E1E4E8"> String</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE </span><span style="color:#9ECBFF">"MergeTree"</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE_SORTING_KEY </span><span style="color:#9ECBFF">"timestamp, user_id"</span></span></code></pre>
+<h2 id="パフォーマンス最適化">パフォーマンス最適化</h2>
+<h3 id="1-適切なソーティングキー">1. 適切なソーティングキー</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 悪い例: よく使うフィルタがソーティングキーに含まれていない</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE_SORTING_KEY </span><span style="color:#9ECBFF">"timestamp"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 良い例: フィルタ条件を含める</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE_SORTING_KEY </span><span style="color:#9ECBFF">"timestamp, user_id, event_name"</span></span></code></pre>
+<h3 id="2-パーティショニング">2. パーティショニング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 月次パーティション（長期保存用）</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE_PARTITION_KEY </span><span style="color:#9ECBFF">"toYYYYMM(timestamp)"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 日次パーティション（リアルタイム分析用）</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE_PARTITION_KEY </span><span style="color:#9ECBFF">"toYYYYMMDD(timestamp)"</span></span></code></pre>
+<h3 id="3-ttl設定">3. TTL設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 30日後に自動削除</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE_TTL </span><span style="color:#9ECBFF">"timestamp + INTERVAL 30 DAY"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 段階的削除（7日後に詳細データ削除、30日後に完全削除）</span></span>
+<span class="line"><span style="color:#E1E4E8">ENGINE_TTL </span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    properties + INTERVAL 7 DAY,</span></span>
+<span class="line"><span style="color:#9ECBFF">    timestamp + INTERVAL 30 DAY</span></span>
+<span class="line"><span style="color:#9ECBFF">"</span></span></code></pre>
+<h2 id="cicdパイプライン">CI/CDパイプライン</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># .github/workflows/tinybird.yml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Deploy Tinybird</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  push</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">main</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  deploy</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Install Tinybird CLI</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">curl https://cli.tinybird.co/install.sh | sh</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Deploy to Tinybird</span></span>
+<span class="line"><span style="color:#85E89D">        env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          TB_TOKEN</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.TINYBIRD_ADMIN_TOKEN }}</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">          tb auth --token $TB_TOKEN</span></span>
+<span class="line"><span style="color:#9ECBFF">          tb push --force</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Run tests</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">tb test</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Tinybirdは、SQLだけでリアルタイムアナリティクスパイプラインを構築できる強力なプラットフォームです。以下のようなユースケースに最適です:</p>
+<ul>
+<li><strong>Webアナリティクス</strong>: ページビュー、ユーザー行動分析</li>
+<li><strong>プロダクトアナリティクス</strong>: 機能利用状況、ユーザーエンゲージメント</li>
+<li><strong>アプリケーションモニタリング</strong>: ログ集計、エラートラッキング</li>
+<li><strong>IoTデータ処理</strong>: センサーデータのリアルタイム分析</li>
+<li><strong>広告レポーティング</strong>: インプレッション、クリック、コンバージョン追跡</li>
+</ul>
+<p>従来のデータウェアハウスと比較して、セットアップが簡単で、リアルタイム性が高く、コストも抑えられます。SQLの知識があれば今すぐ始められるので、ぜひTinybirdを試してみてください!</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

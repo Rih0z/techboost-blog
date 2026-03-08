@@ -1,0 +1,674 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/next-middleware-patterns/"><!-- Primary Meta Tags --><title>Next.js Middleware設計パターン: 認証・リダイレクト・ABテストの実装</title><meta name="title" content="Next.js Middleware設計パターン: 認証・リダイレクト・ABテストの実装"><meta name="description" content="Next.js Middlewareの高度な設計パターン、マルチテナント対応、動的ルーティング、エッジ最適化、セキュリティ強化の実践的な実装方法を解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/next-middleware-patterns/"><meta property="og:title" content="Next.js Middleware設計パターン: 認証・リダイレクト・ABテストの実装"><meta property="og:description" content="Next.js Middlewareの高度な設計パターン、マルチテナント対応、動的ルーティング、エッジ最適化、セキュリティ強化の実践的な実装方法を解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/next-middleware-patterns/"><meta name="twitter:title" content="Next.js Middleware設計パターン: 認証・リダイレクト・ABテストの実装"><meta name="twitter:description" content="Next.js Middlewareの高度な設計パターン、マルチテナント対応、動的ルーティング、エッジ最適化、セキュリティ強化の実践的な実装方法を解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/next-middleware-patterns/"},"headline":"Next.js Middleware設計パターン: 認証・リダイレクト・ABテストの実装","description":"Next.js Middlewareの高度な設計パターン、マルチテナント対応、動的ルーティング、エッジ最適化、セキュリティ強化の実践的な実装方法を解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。","datePublished":"2025-09-03T00:00:00.000Z","dateModified":"2025-09-03T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Next.js, Middleware, Edge, セキュリティ, パフォーマンス, プログラミング"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Next.js Middleware設計パターン: 認証・リダイレクト・ABテストの実装"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-09-03T00:00:00.000Z"> Sep 2, 2025 </time> <div class="last-updated-on" data-astro-cid-bvzihdzo>
+Last updated on <time datetime="2025-09-03T00:00:00.000Z"> Sep 2, 2025 </time> </div> </div> <h1 data-astro-cid-bvzihdzo>Next.js Middleware設計パターン: 認証・リダイレクト・ABテストの実装</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Next.js" class="article-tag" data-astro-cid-bvzihdzo>
+#Next.js </a><a href="/blog/tag/Middleware" class="article-tag" data-astro-cid-bvzihdzo>
+#Middleware </a><a href="/blog/tag/Edge" class="article-tag" data-astro-cid-bvzihdzo>
+#Edge </a><a href="/blog/tag/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3" class="article-tag" data-astro-cid-bvzihdzo>
+#セキュリティ </a><a href="/blog/tag/%E3%83%91%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%B3%E3%82%B9" class="article-tag" data-astro-cid-bvzihdzo>
+#パフォーマンス </a><a href="/blog/tag/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="article-tag" data-astro-cid-bvzihdzo>
+#プログラミング </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Next.js Middlewareは、リクエストが完了する前にコードを実行できる強力な機能ですが、適切な設計パターンを理解することで、さらに効果的に活用できます。</p>
+<p>本記事では、実践的な設計パターン、マルチテナント対応、エッジ最適化、セキュリティ強化など、一歩進んだMiddlewareの使い方を解説します。</p>
+<h2 id="middlewareアーキテクチャ">Middlewareアーキテクチャ</h2>
+<h3 id="単一middlewareパターン">単一Middlewareパターン</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middleware.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// すべてのロジックを1つのファイルに集約</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> middleware</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">pathname</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request.nextUrl</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 1. 認証チェック</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/dashboard'</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> token</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.cookies.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'auth-token'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">token) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/login'</span><span style="color:#E1E4E8">, request.url))</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 2. リダイレクトルール</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (pathname </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> '/old-page'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/new-page'</span><span style="color:#E1E4E8">, request.url))</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 3. ヘッダー追加</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-custom-header'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'value'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 問題点:</span></span>
+<span class="line"><span style="color:#6A737D">// - コードが長くなると保守性が低下</span></span>
+<span class="line"><span style="color:#6A737D">// - テストが困難</span></span>
+<span class="line"><span style="color:#6A737D">// - 再利用性が低い</span></span></code></pre>
+<h3 id="モジュール化パターン推奨">モジュール化パターン（推奨）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middleware.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { authMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './middlewares/auth'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redirectMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './middlewares/redirect'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { securityMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './middlewares/security'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { analyticsMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './middlewares/analytics'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Middleware関数を合成するヘルパー</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> chain</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  middlewares</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#E1E4E8">[],</span></span>
+<span class="line"><span style="color:#FFAB70">  index</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> current</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> middlewares[index]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (current) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> next</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> chain</span><span style="color:#E1E4E8">(middlewares, index </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">request</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> current</span><span style="color:#E1E4E8">(request)</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (result </span><span style="color:#F97583">instanceof</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#B392F0"> next</span><span style="color:#E1E4E8">(request)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Middlewareを組み合わせ</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#B392F0"> chain</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">  securityMiddleware,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authMiddleware,</span></span>
+<span class="line"><span style="color:#E1E4E8">  redirectMiddleware,</span></span>
+<span class="line"><span style="color:#E1E4E8">  analyticsMiddleware,</span></span>
+<span class="line"><span style="color:#E1E4E8">])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  matcher: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    '/((?!api|_next/static|_next/image|favicon.ico).*)'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="個別middlewareの実装">個別Middlewareの実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middlewares/auth.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { verifyToken } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/auth'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> protectedRoutes</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#9ECBFF">  '/dashboard'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  '/profile'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  '/settings'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#B392F0"> authMiddleware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">pathname</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request.nextUrl</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 保護されたルートかチェック</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> isProtected</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> protectedRoutes.</span><span style="color:#B392F0">some</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">route</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">    pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(route)</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">isProtected) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> token</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.cookies.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'auth-token'</span><span style="color:#E1E4E8">)?.value</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">token) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> loginUrl</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/login'</span><span style="color:#E1E4E8">, request.url)</span></span>
+<span class="line"><span style="color:#E1E4E8">    loginUrl.searchParams.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'callbackUrl'</span><span style="color:#E1E4E8">, pathname)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(loginUrl)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> payload</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> verifyToken</span><span style="color:#E1E4E8">(token)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ユーザー情報をヘッダーに追加</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-user-id'</span><span style="color:#E1E4E8">, payload.userId)</span></span>
+<span class="line"><span style="color:#E1E4E8">    response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-user-role'</span><span style="color:#E1E4E8">, payload.role)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> loginUrl</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/login'</span><span style="color:#E1E4E8">, request.url)</span></span>
+<span class="line"><span style="color:#E1E4E8">    loginUrl.searchParams.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'error'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'invalid_token'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(loginUrl)</span></span>
+<span class="line"><span style="color:#E1E4E8">    response.cookies.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'auth-token'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middlewares/security.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#B392F0"> securityMiddleware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // セキュリティヘッダーを追加</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'X-Frame-Options'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'DENY'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'X-Content-Type-Options'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'nosniff'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'X-XSS-Protection'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'1; mode=block'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Referrer-Policy'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'strict-origin-when-cross-origin'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'Permissions-Policy'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    'camera=(), microphone=(), geolocation=()'</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'Content-Security-Policy'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middlewares/redirect.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> RedirectRule</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  source</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> RegExp</span></span>
+<span class="line"><span style="color:#FFAB70">  destination</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  permanent</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> boolean</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> redirectRules</span><span style="color:#F97583">:</span><span style="color:#B392F0"> RedirectRule</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">  { source: </span><span style="color:#9ECBFF">'/old-blog'</span><span style="color:#E1E4E8">, destination: </span><span style="color:#9ECBFF">'/blog'</span><span style="color:#E1E4E8">, permanent: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { source: </span><span style="color:#9ECBFF">'/old-about'</span><span style="color:#E1E4E8">, destination: </span><span style="color:#9ECBFF">'/about'</span><span style="color:#E1E4E8">, permanent: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { source:</span><span style="color:#9ECBFF"> /</span><span style="color:#F97583">^</span><span style="color:#85E89D;font-weight:bold">\/</span><span style="color:#DBEDFF">products</span><span style="color:#85E89D;font-weight:bold">\/</span><span style="color:#DBEDFF">(</span><span style="color:#79B8FF">.</span><span style="color:#F97583">*</span><span style="color:#DBEDFF">)</span><span style="color:#F97583">$</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">, destination: </span><span style="color:#9ECBFF">'/shop/$1'</span><span style="color:#E1E4E8">, permanent: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#B392F0"> redirectMiddleware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">pathname</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request.nextUrl</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> rule</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> redirectRules) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> rule.source </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'string'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (pathname </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> rule.source) {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">          new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(rule.destination, request.url),</span></span>
+<span class="line"><span style="color:#E1E4E8">          rule.permanent </span><span style="color:#F97583">?</span><span style="color:#79B8FF"> 308</span><span style="color:#F97583"> :</span><span style="color:#79B8FF"> 307</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> match</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> pathname.</span><span style="color:#B392F0">match</span><span style="color:#E1E4E8">(rule.source)</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (match) {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> destination</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> rule.destination.</span><span style="color:#B392F0">replace</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#85E89D;font-weight:bold">\$</span><span style="color:#DBEDFF">(</span><span style="color:#79B8FF">\d</span><span style="color:#F97583">+</span><span style="color:#DBEDFF">)</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">g</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">_</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">index</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">          return</span><span style="color:#E1E4E8"> match[index] </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> ''</span></span>
+<span class="line"><span style="color:#E1E4E8">        })</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">          new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(destination, request.url),</span></span>
+<span class="line"><span style="color:#E1E4E8">          rule.permanent </span><span style="color:#F97583">?</span><span style="color:#79B8FF"> 308</span><span style="color:#F97583"> :</span><span style="color:#79B8FF"> 307</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="マルチテナント対応">マルチテナント対応</h2>
+<h3 id="サブドメインベース">サブドメインベース</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middlewares/tenant.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> Tenant</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  subdomain</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  customDomain</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// テナント情報を取得（KVストアやDBから）</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getTenant</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">hostname</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Tenant</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#6A737D">  // 例: Vercel KV</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> kv</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#F97583"> import</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'@vercel/kv'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`tenant:${</span><span style="color:#E1E4E8">hostname</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#B392F0"> tenantMiddleware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> hostname</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.headers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'host'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> ''</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> subdomain</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> hostname.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'.'</span><span style="color:#E1E4E8">)[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ローカル開発環境</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (hostname.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'localhost'</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-tenant-id'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'dev'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // カスタムドメインをチェック</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> tenant </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getTenant</span><span style="color:#E1E4E8">(hostname)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // サブドメインをチェック</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">tenant </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> subdomain) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    tenant </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getTenant</span><span style="color:#E1E4E8">(subdomain)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">tenant) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://www.example.com/404'</span><span style="color:#E1E4E8">, request.url))</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // テナント情報をヘッダーに追加</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">rewrite</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">    new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/${</span><span style="color:#E1E4E8">tenant</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}${</span><span style="color:#E1E4E8">request</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">nextUrl</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">pathname</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, request.url)</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-tenant-id'</span><span style="color:#E1E4E8">, tenant.id)</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-tenant-subdomain'</span><span style="color:#E1E4E8">, tenant.subdomain)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="パスベース">パスベース</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middlewares/tenant-path.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#B392F0"> tenantPathMiddleware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#FFAB70">  request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">pathname</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request.nextUrl</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // パターン: /org/[tenant-slug]/...</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> match</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> pathname.</span><span style="color:#B392F0">match</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">^</span><span style="color:#85E89D;font-weight:bold">\/</span><span style="color:#DBEDFF">org</span><span style="color:#85E89D;font-weight:bold">\/</span><span style="color:#DBEDFF">(</span><span style="color:#79B8FF">[</span><span style="color:#F97583">^</span><span style="color:#85E89D;font-weight:bold">\/</span><span style="color:#79B8FF">]</span><span style="color:#F97583">+</span><span style="color:#DBEDFF">)(</span><span style="color:#79B8FF">.</span><span style="color:#F97583">*</span><span style="color:#DBEDFF">)</span><span style="color:#F97583">$</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">match) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [, </span><span style="color:#79B8FF">tenantSlug</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">rest</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> match</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // テナント存在確認</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> tenant</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getTenantBySlug</span><span style="color:#E1E4E8">(tenantSlug)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">tenant) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/404'</span><span style="color:#E1E4E8">, request.url))</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // テナント情報をヘッダーに追加</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-tenant-id'</span><span style="color:#E1E4E8">, tenant.id)</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-tenant-slug'</span><span style="color:#E1E4E8">, tenantSlug)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getTenantBySlug</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">slug</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">  // DB検索など</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { id: </span><span style="color:#9ECBFF">'123'</span><span style="color:#E1E4E8">, slug }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="動的ルーティング">動的ルーティング</h2>
+<h3 id="国際化i18n">国際化（i18n）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middlewares/i18n.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Negotiator </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'negotiator'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { match </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> matchLocale } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@formatjs/intl-localematcher'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> locales</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'en'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'ja'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'fr'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'de'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'zh'</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> defaultLocale</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'en'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> getLocale</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">  // 1. パスからロケール抽出</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> pathname</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.nextUrl.pathname</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> pathnameLocale</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> locales.</span><span style="color:#B392F0">find</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">locale</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/${</span><span style="color:#E1E4E8">locale</span><span style="color:#9ECBFF">}/`</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> pathname </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> `/${</span><span style="color:#E1E4E8">locale</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (pathnameLocale) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> pathnameLocale</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 2. Cookieからロケール取得</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cookieLocale</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.cookies.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'locale'</span><span style="color:#E1E4E8">)?.value</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (cookieLocale </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> locales.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(cookieLocale)) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> cookieLocale</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 3. Accept-Languageヘッダーから判定</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> negotiatorHeaders</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {}</span></span>
+<span class="line"><span style="color:#E1E4E8">  request.headers.</span><span style="color:#B392F0">forEach</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">value</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">key</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    negotiatorHeaders[key] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> value</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> languages</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Negotiator</span><span style="color:#E1E4E8">({ headers: negotiatorHeaders }).</span><span style="color:#B392F0">languages</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> locale</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> matchLocale</span><span style="color:#E1E4E8">(languages, locales, defaultLocale)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> locale</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#B392F0"> i18nMiddleware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">pathname</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request.nextUrl</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 静的ファイルをスキップ</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/_next'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span></span>
+<span class="line"><span style="color:#E1E4E8">    pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span></span>
+<span class="line"><span style="color:#9ECBFF">    /</span><span style="color:#85E89D;font-weight:bold">\.</span><span style="color:#DBEDFF">(ico</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">png</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">jpg</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">jpeg</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">svg</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">css</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">js)</span><span style="color:#F97583">$</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">test</span><span style="color:#E1E4E8">(pathname)</span></span>
+<span class="line"><span style="color:#E1E4E8">  ) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // パスにロケールが含まれているかチェック</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> pathnameHasLocale</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> locales.</span><span style="color:#B392F0">some</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">locale</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/${</span><span style="color:#E1E4E8">locale</span><span style="color:#9ECBFF">}/`</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> pathname </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> `/${</span><span style="color:#E1E4E8">locale</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (pathnameHasLocale) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ロケールを判定してリダイレクト</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> locale</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> getLocale</span><span style="color:#E1E4E8">(request)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> newUrl</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/${</span><span style="color:#E1E4E8">locale</span><span style="color:#9ECBFF">}${</span><span style="color:#E1E4E8">pathname</span><span style="color:#9ECBFF">}${</span><span style="color:#E1E4E8">request</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">nextUrl</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">search</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, request.url)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(newUrl)</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.cookies.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'locale'</span><span style="color:#E1E4E8">, locale, { maxAge: </span><span style="color:#79B8FF">60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 24</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 365</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="デバイス別ルーティング">デバイス別ルーティング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middlewares/device.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> getDeviceType</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">userAgent</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 'mobile'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'tablet'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'desktop'</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ua</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> userAgent.</span><span style="color:#B392F0">toLowerCase</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">/</span><span style="color:#DBEDFF">(tablet</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">ipad</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">playbook</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">silk)</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">(android(?!</span><span style="color:#79B8FF">.</span><span style="color:#F97583">*</span><span style="color:#DBEDFF">mobi))</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">i</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">test</span><span style="color:#E1E4E8">(ua)) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#9ECBFF"> 'tablet'</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#9ECBFF">    /</span><span style="color:#DBEDFF">mobile</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">android</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">iphone</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">ipod</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">blackberry</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">windows phone</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">i</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">test</span><span style="color:#E1E4E8">(ua)</span></span>
+<span class="line"><span style="color:#E1E4E8">  ) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#9ECBFF"> 'mobile'</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#9ECBFF"> 'desktop'</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#B392F0"> deviceMiddleware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> userAgent</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.headers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'user-agent'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> ''</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> deviceType</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> getDeviceType</span><span style="color:#E1E4E8">(userAgent)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">pathname</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request.nextUrl</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // モバイル専用パスへリダイレクト</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (deviceType </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'mobile'</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/m/'</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 特定のページのみモバイル版にリダイレクト</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> mobilePages</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'/shop'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'/products'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'/cart'</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> shouldRedirect</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> mobilePages.</span><span style="color:#B392F0">some</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">page</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">      pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(page)</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (shouldRedirect) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/m${</span><span style="color:#E1E4E8">pathname</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, request.url))</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // デバイス情報をヘッダーに追加</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-device-type'</span><span style="color:#E1E4E8">, deviceType)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="エッジ最適化">エッジ最適化</h2>
+<h3 id="エッジキャッシュ制御">エッジキャッシュ制御</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middlewares/cache.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> CacheConfig</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  path</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> RegExp</span></span>
+<span class="line"><span style="color:#FFAB70">  maxAge</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#FFAB70">  sMaxAge</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#FFAB70">  staleWhileRevalidate</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> cacheConfigs</span><span style="color:#F97583">:</span><span style="color:#B392F0"> CacheConfig</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    path:</span><span style="color:#9ECBFF"> /</span><span style="color:#F97583">^</span><span style="color:#85E89D;font-weight:bold">\/</span><span style="color:#DBEDFF">api</span><span style="color:#85E89D;font-weight:bold">\/</span><span style="color:#DBEDFF">public</span><span style="color:#85E89D;font-weight:bold">\/</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    maxAge: </span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    sMaxAge: </span><span style="color:#79B8FF">3600</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    staleWhileRevalidate: </span><span style="color:#79B8FF">86400</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    path: </span><span style="color:#9ECBFF">'/blog'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    maxAge: </span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    sMaxAge: </span><span style="color:#79B8FF">3600</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    path:</span><span style="color:#9ECBFF"> /</span><span style="color:#F97583">^</span><span style="color:#85E89D;font-weight:bold">\/</span><span style="color:#DBEDFF">static</span><span style="color:#85E89D;font-weight:bold">\/</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    maxAge: </span><span style="color:#79B8FF">31536000</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 1年</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#B392F0"> cacheMiddleware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">pathname</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request.nextUrl</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> cacheConfigs) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> matches</span><span style="color:#F97583"> =</span></span>
+<span class="line"><span style="color:#F97583">      typeof</span><span style="color:#E1E4E8"> config.path </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'string'</span></span>
+<span class="line"><span style="color:#F97583">        ?</span><span style="color:#E1E4E8"> pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(config.path)</span></span>
+<span class="line"><span style="color:#F97583">        :</span><span style="color:#E1E4E8"> config.path.</span><span style="color:#B392F0">test</span><span style="color:#E1E4E8">(pathname)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (matches) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> cacheControl</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#9ECBFF">        `public`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        `max-age=${</span><span style="color:#E1E4E8">config</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">maxAge</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        config.sMaxAge </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#9ECBFF"> `s-maxage=${</span><span style="color:#E1E4E8">config</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">sMaxAge</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        config.staleWhileRevalidate </span><span style="color:#F97583">&#x26;&#x26;</span></span>
+<span class="line"><span style="color:#9ECBFF">          `stale-while-revalidate=${</span><span style="color:#E1E4E8">config</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">staleWhileRevalidate</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      ]</span></span>
+<span class="line"><span style="color:#E1E4E8">        .</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(Boolean)</span></span>
+<span class="line"><span style="color:#E1E4E8">        .</span><span style="color:#B392F0">join</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">', '</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Cache-Control'</span><span style="color:#E1E4E8">, cacheControl)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="エッジ関数の最適化">エッジ関数の最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middlewares/edge-optimize.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// エッジで実行される軽量な処理のみ</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#B392F0"> edgeOptimizeMiddleware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#FFAB70">  request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> start</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 1. 早期リターン（不要な処理をスキップ）</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (request.nextUrl.pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/_next/'</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 2. 並列処理</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">geoData</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">timeData</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#B392F0">    getGeoData</span><span style="color:#E1E4E8">(request),</span></span>
+<span class="line"><span style="color:#B392F0">    getServerTime</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  ])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 3. 最小限のヘッダー追加</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-geo-country'</span><span style="color:#E1E4E8">, geoData.country)</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-server-time'</span><span style="color:#E1E4E8">, timeData.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> duration</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> start</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-middleware-duration'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">duration</span><span style="color:#9ECBFF">}ms`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getGeoData</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    country: request.geo?.country </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'US'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    city: request.geo?.city </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'Unknown'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getServerTime</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// エッジランタイム設定</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  runtime: </span><span style="color:#9ECBFF">'edge'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="高度なセキュリティパターン">高度なセキュリティパターン</h2>
+<h3 id="csrfトークン検証">CSRFトークン検証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middlewares/csrf.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createHash } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'crypto'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> CSRF_SECRET</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> process.env.</span><span style="color:#79B8FF">CSRF_SECRET</span><span style="color:#F97583"> ||</span><span style="color:#9ECBFF"> 'default-secret'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> generateToken</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">sessionId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> createHash</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'sha256'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">sessionId</span><span style="color:#9ECBFF">}${</span><span style="color:#79B8FF">CSRF_SECRET</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">digest</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'hex'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> verifyToken</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">sessionId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">token</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> expectedToken</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> generateToken</span><span style="color:#E1E4E8">(sessionId)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> token </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> expectedToken</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#B392F0"> csrfMiddleware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">pathname</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">searchParams</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request.nextUrl</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> method</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.method</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // GETリクエストはスキップ</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (method </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'GET'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // APIルートのみ検証</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/'</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sessionId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.cookies.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'session-id'</span><span style="color:#E1E4E8">)?.value</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> csrfToken</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.headers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-csrf-token'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">sessionId </span><span style="color:#F97583">||</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">csrfToken) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      { error: </span><span style="color:#9ECBFF">'Missing CSRF token'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { status: </span><span style="color:#79B8FF">403</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#B392F0">verifyToken</span><span style="color:#E1E4E8">(sessionId, csrfToken)) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      { error: </span><span style="color:#9ECBFF">'Invalid CSRF token'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { status: </span><span style="color:#79B8FF">403</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="bot検出">Bot検出</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middlewares/bot-detection.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> knownBots</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#9ECBFF">  'googlebot'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'bingbot'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'slurp'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'duckduckbot'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'baiduspider'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'yandexbot'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'sogou'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'exabot'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'facebot'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'ia_archiver'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> suspiciousBots</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#9ECBFF">  'scrapy'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'python-requests'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'curl'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'wget'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'go-http-client'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> isSuspiciousBot</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">userAgent</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ua</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> userAgent.</span><span style="color:#B392F0">toLowerCase</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> suspiciousBots.</span><span style="color:#B392F0">some</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">bot</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ua.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(bot))</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> isKnownBot</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">userAgent</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ua</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> userAgent.</span><span style="color:#B392F0">toLowerCase</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> knownBots.</span><span style="color:#B392F0">some</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">bot</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ua.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(bot))</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#B392F0"> botDetectionMiddleware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> userAgent</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.headers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'user-agent'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> ''</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 検索エンジンは許可</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">isKnownBot</span><span style="color:#E1E4E8">(userAgent)) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-bot-type'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'search-engine'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 疑わしいBotはブロック</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">isSuspiciousBot</span><span style="color:#E1E4E8">(userAgent)) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      { error: </span><span style="color:#9ECBFF">'Access denied'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { status: </span><span style="color:#79B8FF">403</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="パフォーマンス監視">パフォーマンス監視</h2>
+<h3 id="レスポンスタイム計測">レスポンスタイム計測</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// middlewares/performance.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest, NextMiddleware } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#B392F0"> performanceMiddleware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextMiddleware</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#FFAB70">  request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> start</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> performance.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> duration</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> performance.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> start</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-response-time'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">duration</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">toFixed</span><span style="color:#9ECBFF">(</span><span style="color:#79B8FF">2</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">}ms`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  response.headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-request-id'</span><span style="color:#E1E4E8">, crypto.</span><span style="color:#B392F0">randomUUID</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 遅いリクエストをログ</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (duration </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">warn</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Slow request: ${</span><span style="color:#E1E4E8">request</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">nextUrl</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">pathname</span><span style="color:#9ECBFF">} took ${</span><span style="color:#E1E4E8">duration</span><span style="color:#9ECBFF">}ms`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Next.js Middlewareの高度な設計パターンを理解することで、以下が実現できます。</p>
+<h3 id="主な利点">主な利点</h3>
+<ol>
+<li><strong>保守性の向上</strong> - モジュール化により管理が容易</li>
+<li><strong>再利用性</strong> - 共通ロジックを複数プロジェクトで利用</li>
+<li><strong>テスト容易性</strong> - 個別Middlewareを独立してテスト</li>
+<li><strong>パフォーマンス</strong> - エッジ最適化で高速化</li>
+<li><strong>セキュリティ</strong> - 一元的なセキュリティ制御</li>
+</ol>
+<h3 id="ベストプラクティス">ベストプラクティス</h3>
+<ul>
+<li>Middlewareは軽量に保つ</li>
+<li>エッジランタイムの制限を理解する</li>
+<li>早期リターンで不要な処理をスキップ</li>
+<li>並列処理を活用</li>
+<li>適切なエラーハンドリング</li>
+</ul>
+<p>これらのパターンを活用して、スケーラブルで保守性の高いNext.jsアプリケーションを構築しましょう。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

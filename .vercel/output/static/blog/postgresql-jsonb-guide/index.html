@@ -1,0 +1,450 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/postgresql-jsonb-guide/"><!-- Primary Meta Tags --><title>PostgreSQL JSONB完全活用ガイド: リレーショナルとドキュメント指向の融合</title><meta name="title" content="PostgreSQL JSONB完全活用ガイド: リレーショナルとドキュメント指向の融合"><meta name="description" content="PostgreSQLのJSONB型を使った実践的なデータ管理。JSONB演算子、クエリパターン、インデックス戦略、パフォーマンス最適化、マイグレーション、実践的なスキーマ設計を徹底解説。PostgreSQL・JSONB・SQLに関する実践情報。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/postgresql-jsonb-guide/"><meta property="og:title" content="PostgreSQL JSONB完全活用ガイド: リレーショナルとドキュメント指向の融合"><meta property="og:description" content="PostgreSQLのJSONB型を使った実践的なデータ管理。JSONB演算子、クエリパターン、インデックス戦略、パフォーマンス最適化、マイグレーション、実践的なスキーマ設計を徹底解説。PostgreSQL・JSONB・SQLに関する実践情報。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/postgresql-jsonb-guide/"><meta name="twitter:title" content="PostgreSQL JSONB完全活用ガイド: リレーショナルとドキュメント指向の融合"><meta name="twitter:description" content="PostgreSQLのJSONB型を使った実践的なデータ管理。JSONB演算子、クエリパターン、インデックス戦略、パフォーマンス最適化、マイグレーション、実践的なスキーマ設計を徹底解説。PostgreSQL・JSONB・SQLに関する実践情報。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/postgresql-jsonb-guide/"},"headline":"PostgreSQL JSONB完全活用ガイド: リレーショナルとドキュメント指向の融合","description":"PostgreSQLのJSONB型を使った実践的なデータ管理。JSONB演算子、クエリパターン、インデックス戦略、パフォーマンス最適化、マイグレーション、実践的なスキーマ設計を徹底解説。PostgreSQL・JSONB・SQLに関する実践情報。","datePublished":"2025-02-05T00:00:00.000Z","dateModified":"2025-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"PostgreSQL, JSONB, SQL, データベース, NoSQL"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"PostgreSQL JSONB完全活用ガイド: リレーショナルとドキュメント指向の融合"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-05T00:00:00.000Z"> Feb 4, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>PostgreSQL JSONB完全活用ガイド: リレーショナルとドキュメント指向の融合</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/PostgreSQL" class="article-tag" data-astro-cid-bvzihdzo>
+#PostgreSQL </a><a href="/blog/tag/JSONB" class="article-tag" data-astro-cid-bvzihdzo>
+#JSONB </a><a href="/blog/tag/SQL" class="article-tag" data-astro-cid-bvzihdzo>
+#SQL </a><a href="/blog/tag/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%99%E3%83%BC%E3%82%B9" class="article-tag" data-astro-cid-bvzihdzo>
+#データベース </a><a href="/blog/tag/NoSQL" class="article-tag" data-astro-cid-bvzihdzo>
+#NoSQL </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>PostgreSQLの<strong>JSONB型</strong>は、リレーショナルデータベースでありながらドキュメント指向のデータを扱える強力な機能です。柔軟性とパフォーマンスを両立できます。</p>
+<p>この記事では、JSONBの基本から高度なクエリパターン、インデックス戦略、実践的な設計パターンまでを解説します。</p>
+<h2 id="jsonbとは">JSONBとは</h2>
+<p>JSONBは、JSONデータをバイナリ形式で保存するPostgreSQLのデータ型です。JSON型とは異なり、パースされた状態で保存されるため高速です。</p>
+<h3 id="json-vs-jsonb">JSON vs JSONB</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- JSON型: テキストとして保存</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> logs_json</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  data</span><span style="color:#F97583"> JSON</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- JSONB型: バイナリとして保存（推奨）</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> logs_jsonb</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  data</span><span style="color:#E1E4E8"> JSONB</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<p><strong>JSONBを使うべき理由:</strong></p>
+<ul>
+<li>クエリが高速</li>
+<li>インデックスが作成できる</li>
+<li>演算子が豊富</li>
+<li>自動的にキーがソートされる</li>
+<li>重複キーが自動的に削除される</li>
+</ul>
+<h2 id="基本操作">基本操作</h2>
+<h3 id="データの挿入">データの挿入</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> products</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  name</span><span style="color:#F97583"> TEXT</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  metadata JSONB</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 基本的な挿入</span></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> products (</span><span style="color:#F97583">name</span><span style="color:#E1E4E8">, metadata) </span><span style="color:#F97583">VALUES</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#9ECBFF">'Laptop'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'{"brand": "Dell", "specs": {"ram": "16GB", "storage": "512GB"}}'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#9ECBFF">'Mouse'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'{"brand": "Logitech", "wireless": true, "dpi": 1600}'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- JSONBリテラル</span></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> products (</span><span style="color:#F97583">name</span><span style="color:#E1E4E8">, metadata) </span><span style="color:#F97583">VALUES</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#9ECBFF">'Keyboard'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'{"brand": "Keychron", "layout": "JIS", "switches": ["red", "blue", "brown"]}'</span><span style="color:#E1E4E8">::JSONB);</span></span></code></pre>
+<h3 id="データの取得">データの取得</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 全体を取得</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> products </span><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 特定のキーを取得 (->)</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'brand'</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products;</span></span>
+<span class="line"><span style="color:#6A737D">-- 結果: "Dell" (JSONB型)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 特定のキーをテキストとして取得 (->>)</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products;</span></span>
+<span class="line"><span style="color:#6A737D">-- 結果: Dell (TEXT型)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ネストしたキーへのアクセス</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'specs'</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'ram'</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products;</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'specs'</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'ram'</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products;</span></span>
+<span class="line"><span style="color:#6A737D">-- 結果: 16GB (TEXT型)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- パス指定 (#>)</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> metadata #</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> '{specs,ram}'</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products;</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> metadata #</span><span style="color:#F97583">>></span><span style="color:#9ECBFF"> '{specs,ram}'</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products;</span></span></code></pre>
+<h2 id="jsonb演算子">JSONB演算子</h2>
+<h3 id="基本演算子">基本演算子</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- -> : JSONBオブジェクトを返す</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">-></span><span style="color:#9ECBFF"> 'brand'</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ->> : テキストを返す</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">->></span><span style="color:#9ECBFF"> 'brand'</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- #> : パス指定でJSONBを返す</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> metadata #</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> '{specs,ram}'</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- #>> : パス指定でテキストを返す</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> metadata #</span><span style="color:#F97583">>></span><span style="color:#9ECBFF"> '{specs,storage}'</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- @> : 包含チェック（左が右を含む）</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata @</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> '{"brand": "Dell"}'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- &#x3C;@ : 被包含チェック（左が右に含まれる）</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#9ECBFF"> '{"brand": "Dell"}'</span><span style="color:#F97583"> &#x3C;</span><span style="color:#E1E4E8">@ metadata;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ? : キーの存在チェック</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata ? </span><span style="color:#9ECBFF">'wireless'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ?| : いずれかのキーが存在</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata ?| </span><span style="color:#F97583">array</span><span style="color:#E1E4E8">['wireless', 'bluetooth'];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ?&#x26; : すべてのキーが存在</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata ?&#x26; </span><span style="color:#F97583">array</span><span style="color:#E1E4E8">['brand', 'layout'];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- || : 連結・マージ</span></span>
+<span class="line"><span style="color:#F97583">UPDATE</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">SET</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> '{"color": "black"}'</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- - : キー削除</span></span>
+<span class="line"><span style="color:#F97583">UPDATE</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">SET</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">-</span><span style="color:#9ECBFF"> 'wireless'</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- #- : パス指定で削除</span></span>
+<span class="line"><span style="color:#F97583">UPDATE</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">SET</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> metadata #</span><span style="color:#F97583">-</span><span style="color:#9ECBFF"> '{specs,ram}'</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="配列操作">配列操作</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> posts</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  title </span><span style="color:#F97583">TEXT</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  data</span><span style="color:#E1E4E8"> JSONB</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> posts (title, </span><span style="color:#F97583">data</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">VALUES</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#9ECBFF">'Post 1'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'{"tags": ["tech", "programming", "web"], "views": 100}'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#9ECBFF">'Post 2'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'{"tags": ["design", "ui"], "views": 50}'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 配列要素の取得</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> data-></span><span style="color:#9ECBFF">'tags'</span><span style="color:#F97583">-></span><span style="color:#79B8FF">0</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> posts;</span></span>
+<span class="line"><span style="color:#6A737D">-- 結果: "tech"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 配列の長さ</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> jsonb_array_length(</span><span style="color:#F97583">data-></span><span style="color:#9ECBFF">'tags'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> posts;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 配列要素の検索</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> posts</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#F97583"> data-></span><span style="color:#9ECBFF">'tags'</span><span style="color:#E1E4E8"> @</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> '["tech"]'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 配列要素のいずれかに一致</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> posts</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#F97583"> data-></span><span style="color:#9ECBFF">'tags'</span><span style="color:#E1E4E8"> ?| </span><span style="color:#F97583">array</span><span style="color:#E1E4E8">['tech', 'design'];</span></span></code></pre>
+<h2 id="高度なクエリパターン">高度なクエリパターン</h2>
+<h3 id="jsonb_to_recordset">jsonb_to_recordset</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- JSONBの配列をレコードセットに変換</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> orders</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  customer_id </span><span style="color:#F97583">INT</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  items JSONB</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> orders (customer_id, items) </span><span style="color:#F97583">VALUES</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'[</span></span>
+<span class="line"><span style="color:#9ECBFF">    {"name": "Laptop", "price": 1200, "qty": 1},</span></span>
+<span class="line"><span style="color:#9ECBFF">    {"name": "Mouse", "price": 30, "qty": 2}</span></span>
+<span class="line"><span style="color:#9ECBFF">  ]'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 配列をテーブルとして扱う</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#79B8FF">  o</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">id</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  i.</span><span style="color:#F97583">*</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> orders o</span></span>
+<span class="line"><span style="color:#F97583">CROSS JOIN</span><span style="color:#E1E4E8"> LATERAL jsonb_to_recordset(</span><span style="color:#79B8FF">o</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">items</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> i(</span></span>
+<span class="line"><span style="color:#F97583">  name</span><span style="color:#F97583"> TEXT</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  price </span><span style="color:#F97583">NUMERIC</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  qty </span><span style="color:#F97583">INT</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="集計関数">集計関数</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- JSONBのキーを集計</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#F97583"> AS</span><span style="color:#E1E4E8"> brand,</span></span>
+<span class="line"><span style="color:#79B8FF">  COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> count</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- JSONB内の値を集計</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#79B8FF">  SUM</span><span style="color:#E1E4E8">((metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'views'</span><span style="color:#E1E4E8">)::</span><span style="color:#F97583">INT</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> total_views</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> posts;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- jsonb_agg: 行をJSONB配列に集約</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> jsonb_agg(metadata</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> brands</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> products;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- jsonb_object_agg: キー・値ペアをJSONBオブジェクトに</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> jsonb_object_agg(</span></span>
+<span class="line"><span style="color:#E1E4E8">  metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> brand_counts</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="動的なキーの処理">動的なキーの処理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- すべてのキーを取得</span></span>
+<span class="line"><span style="color:#F97583">SELECT DISTINCT</span><span style="color:#E1E4E8"> jsonb_object_keys(metadata)</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> products;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- キーと値のペアを展開</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> id, </span><span style="color:#F97583">key</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">value</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> products,</span></span>
+<span class="line"><span style="color:#E1E4E8">LATERAL jsonb_each(metadata);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- テキスト値として展開</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> id, </span><span style="color:#F97583">key</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">value</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> products,</span></span>
+<span class="line"><span style="color:#E1E4E8">LATERAL jsonb_each_text(metadata);</span></span></code></pre>
+<h3 id="複雑な検索">複雑な検索</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 範囲検索</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> (metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'price'</span><span style="color:#E1E4E8">)::</span><span style="color:#F97583">NUMERIC</span><span style="color:#F97583"> BETWEEN</span><span style="color:#79B8FF"> 100</span><span style="color:#F97583"> AND</span><span style="color:#79B8FF"> 500</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 正規表現</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8"> ~ </span><span style="color:#9ECBFF">'Dell|HP'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 複合条件</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata @</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> '{"brand": "Dell"}'</span></span>
+<span class="line"><span style="color:#F97583">  AND</span><span style="color:#E1E4E8"> (metadata</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'specs'</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'ram'</span><span style="color:#E1E4E8">)::</span><span style="color:#F97583">TEXT</span><span style="color:#F97583"> LIKE</span><span style="color:#9ECBFF"> '%16GB%'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- サブクエリ</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">IN</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">  WHERE</span><span style="color:#E1E4E8"> metadata @</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> '{"wireless": true}'</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h2 id="インデックス戦略">インデックス戦略</h2>
+<h3 id="ginインデックス汎用転置インデックス">GINインデックス（汎用転置インデックス）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- デフォルトのGINインデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_products_metadata</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> products </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN (metadata);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 特定のパスにインデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_products_brand</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> products </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN ((metadata </span><span style="color:#F97583">-></span><span style="color:#9ECBFF"> 'brand'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 複数パスにインデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_products_specs</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> products </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN ((metadata </span><span style="color:#F97583">-></span><span style="color:#9ECBFF"> 'specs'</span><span style="color:#E1E4E8">));</span></span></code></pre>
+<h3 id="jsonb_path_opsオプション">jsonb_path_opsオプション</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 包含演算子 (@>) に特化した高速インデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_products_metadata_ops</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> products </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN (metadata jsonb_path_ops);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- メリット: インデックスサイズが小さい、包含検索が速い</span></span>
+<span class="line"><span style="color:#6A737D">-- デメリット: ? 演算子（キー存在チェック）が使えない</span></span></code></pre>
+<h3 id="式インデックス">式インデックス</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 特定のキーの値にインデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_products_brand_text</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> products ((metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 計算式にインデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_products_price</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> products (((metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'price'</span><span style="color:#E1E4E8">)::</span><span style="color:#F97583">NUMERIC</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- パスにインデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_products_ram</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> products ((metadata #</span><span style="color:#F97583">>></span><span style="color:#9ECBFF"> '{specs,ram}'</span><span style="color:#E1E4E8">));</span></span></code></pre>
+<h3 id="部分インデックス">部分インデックス</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 条件付きインデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_products_expensive</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> products </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN (metadata)</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> (metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'price'</span><span style="color:#E1E4E8">)::</span><span style="color:#F97583">NUMERIC</span><span style="color:#F97583"> ></span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- NULLでない値のみ</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_products_wireless</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> products (metadata)</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata ? </span><span style="color:#9ECBFF">'wireless'</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h2 id="パフォーマンス最適化">パフォーマンス最適化</h2>
+<h3 id="explain-analyzeで分析">EXPLAIN ANALYZEで分析</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#E1E4E8">EXPLAIN ANALYZE</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata @</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> '{"brand": "Dell"}'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Index Scan が使われているか確認</span></span>
+<span class="line"><span style="color:#6A737D">-- Seq Scan の場合はインデックスが必要</span></span></code></pre>
+<h3 id="統計情報の更新">統計情報の更新</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 統計情報を更新</span></span>
+<span class="line"><span style="color:#E1E4E8">ANALYZE products;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 自動VACUUM設定</span></span>
+<span class="line"><span style="color:#F97583">ALTER</span><span style="color:#F97583"> TABLE</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">SET</span><span style="color:#E1E4E8"> (autovacuum_vacuum_scale_factor </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="クエリの最適化">クエリの最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- ❌ 遅い: 関数を使うとインデックスが使えない</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#79B8FF"> lower</span><span style="color:#E1E4E8">(metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'dell'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ✅ 速い: 式インデックスを作成</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_products_brand_lower</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> products (</span><span style="color:#79B8FF">lower</span><span style="color:#E1E4E8">(metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ❌ 遅い: ORでつなぐ</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'Dell'</span></span>
+<span class="line"><span style="color:#F97583">   OR</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'HP'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ✅ 速い: INを使う</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#F97583"> IN</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'Dell'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'HP'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ✅ さらに速い: 包含演算子</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8"> ?| </span><span style="color:#F97583">array</span><span style="color:#E1E4E8">['Dell', 'HP'];</span></span></code></pre>
+<h2 id="実践的なスキーマ設計">実践的なスキーマ設計</h2>
+<h3 id="ハイブリッド設計">ハイブリッド設計</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 重要なカラムはリレーショナル、柔軟な部分はJSONB</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> users</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  email </span><span style="color:#F97583">TEXT</span><span style="color:#F97583"> UNIQUE</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  created_at </span><span style="color:#F97583">TIMESTAMPTZ</span><span style="color:#F97583"> DEFAULT</span><span style="color:#F97583"> NOW</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#6A737D">  -- 検索頻度の高いフィールド</span></span>
+<span class="line"><span style="color:#F97583">  name</span><span style="color:#F97583"> TEXT</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  status</span><span style="color:#F97583"> TEXT</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#6A737D">  -- 柔軟なメタデータ</span></span>
+<span class="line"><span style="color:#F97583">  profile</span><span style="color:#E1E4E8"> JSONB,</span></span>
+<span class="line"><span style="color:#E1E4E8">  settings JSONB,</span></span>
+<span class="line"><span style="color:#E1E4E8">  preferences JSONB</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_users_profile</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> users </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN (</span><span style="color:#F97583">profile</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_users_name</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> users (</span><span style="color:#F97583">name</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_users_status</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> users (</span><span style="color:#F97583">status</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> users (email, </span><span style="color:#F97583">name</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">status</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">profile</span><span style="color:#E1E4E8">, settings) </span><span style="color:#F97583">VALUES</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#9ECBFF">'alice@example.com'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'Alice'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'active'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">   '{"bio": "Software Engineer", "avatar": "https://...", "location": "Tokyo"}'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">   '{"theme": "dark", "notifications": true}'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="イベントログ">イベントログ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> events</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  event_type </span><span style="color:#F97583">TEXT</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  user_id </span><span style="color:#F97583">INT</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  created_at </span><span style="color:#F97583">TIMESTAMPTZ</span><span style="color:#F97583"> DEFAULT</span><span style="color:#F97583"> NOW</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#F97583">  data</span><span style="color:#E1E4E8"> JSONB </span><span style="color:#F97583">NOT NULL</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_events_type</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> events (event_type);</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_events_user</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> events (user_id);</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_events_data</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> events </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN (</span><span style="color:#F97583">data</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_events_created</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> events (created_at </span><span style="color:#F97583">DESC</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- パーティショニング（月ごと）</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> events_2025_02</span><span style="color:#F97583"> PARTITION</span><span style="color:#E1E4E8"> OF events</span></span>
+<span class="line"><span style="color:#F97583">FOR</span><span style="color:#F97583"> VALUES</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'2025-02-01'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">TO</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'2025-03-01'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> events (event_type, user_id, </span><span style="color:#F97583">data</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">VALUES</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#9ECBFF">'page_view'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'{"page": "/products", "referrer": "google.com"}'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#9ECBFF">'click'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'{"element": "buy_button", "product_id": 123}'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="マルチテナント">マルチテナント</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> tenants</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  name</span><span style="color:#F97583"> TEXT</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  config JSONB </span><span style="color:#F97583">NOT NULL</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> tenant_data</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  tenant_id </span><span style="color:#F97583">INT</span><span style="color:#F97583"> REFERENCES</span><span style="color:#E1E4E8"> tenants(id),</span></span>
+<span class="line"><span style="color:#E1E4E8">  entity_type </span><span style="color:#F97583">TEXT</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  entity_id </span><span style="color:#F97583">TEXT</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  data</span><span style="color:#E1E4E8"> JSONB </span><span style="color:#F97583">NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  UNIQUE</span><span style="color:#E1E4E8"> (tenant_id, entity_type, entity_id)</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_tenant_data_lookup</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> tenant_data (tenant_id, entity_type, entity_id);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_tenant_data_jsonb</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> tenant_data </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN (</span><span style="color:#F97583">data</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> tenant_data (tenant_id, entity_type, entity_id, </span><span style="color:#F97583">data</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">VALUES</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'customer'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'c1'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'{"name": "John", "plan": "pro", "mrr": 99}'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'invoice'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'inv1'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'{"amount": 99, "status": "paid", "date": "2025-02-01"}'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h2 id="バリデーションとスキーマ">バリデーションとスキーマ</h2>
+<h3 id="jsonスキーマpostgresql-14">JSONスキーマ（PostgreSQL 14+）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- スキーマをチェック関数として定義</span></span>
+<span class="line"><span style="color:#F97583">CREATE OR REPLACE</span><span style="color:#F97583"> FUNCTION</span><span style="color:#B392F0"> validate_product_metadata</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">data</span><span style="color:#E1E4E8"> JSONB)</span></span>
+<span class="line"><span style="color:#F97583">RETURNS</span><span style="color:#F97583"> BOOLEAN</span><span style="color:#F97583"> AS</span><span style="color:#E1E4E8"> $$</span></span>
+<span class="line"><span style="color:#F97583">BEGIN</span></span>
+<span class="line"><span style="color:#F97583">  RETURN</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    data</span><span style="color:#E1E4E8"> ? </span><span style="color:#9ECBFF">'brand'</span><span style="color:#F97583"> AND</span></span>
+<span class="line"><span style="color:#F97583">    data</span><span style="color:#E1E4E8"> ? </span><span style="color:#9ECBFF">'price'</span><span style="color:#F97583"> AND</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#F97583">data->></span><span style="color:#9ECBFF">'price'</span><span style="color:#E1E4E8">)::</span><span style="color:#F97583">NUMERIC</span><span style="color:#F97583"> ></span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#F97583">END</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">$$ </span><span style="color:#F97583">LANGUAGE</span><span style="color:#E1E4E8"> plpgsql IMMUTABLE;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- チェック制約</span></span>
+<span class="line"><span style="color:#F97583">ALTER</span><span style="color:#F97583"> TABLE</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">ADD</span><span style="color:#F97583"> CONSTRAINT</span><span style="color:#E1E4E8"> check_metadata</span></span>
+<span class="line"><span style="color:#F97583">CHECK</span><span style="color:#E1E4E8"> (validate_product_metadata(metadata));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 挿入時にバリデーション</span></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> products (</span><span style="color:#F97583">name</span><span style="color:#E1E4E8">, metadata) </span><span style="color:#F97583">VALUES</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#9ECBFF">'Invalid'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'{"brand": "Test"}'</span><span style="color:#E1E4E8">); </span><span style="color:#6A737D">-- エラー: price がない</span></span></code></pre>
+<h3 id="トリガーでバリデーション">トリガーでバリデーション</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#F97583">CREATE OR REPLACE</span><span style="color:#F97583"> FUNCTION</span><span style="color:#B392F0"> validate_user_profile</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">RETURNS</span><span style="color:#E1E4E8"> TRIGGER </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> $$</span></span>
+<span class="line"><span style="color:#F97583">BEGIN</span></span>
+<span class="line"><span style="color:#F97583">  IF</span><span style="color:#79B8FF"> NEW</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">profile</span><span style="color:#F97583"> IS NOT NULL</span><span style="color:#F97583"> THEN</span></span>
+<span class="line"><span style="color:#6A737D">    -- 必須フィールドのチェック</span></span>
+<span class="line"><span style="color:#F97583">    IF</span><span style="color:#F97583"> NOT</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">NEW</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">profile</span><span style="color:#E1E4E8"> ? </span><span style="color:#9ECBFF">'bio'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">THEN</span></span>
+<span class="line"><span style="color:#E1E4E8">      RAISE EXCEPTION </span><span style="color:#9ECBFF">'bio is required in profile'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    END</span><span style="color:#F97583"> IF</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    -- 型チェック</span></span>
+<span class="line"><span style="color:#F97583">    IF</span><span style="color:#E1E4E8"> jsonb_typeof(</span><span style="color:#79B8FF">NEW</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">profile</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'bio'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">!=</span><span style="color:#9ECBFF"> 'string'</span><span style="color:#F97583"> THEN</span></span>
+<span class="line"><span style="color:#E1E4E8">      RAISE EXCEPTION </span><span style="color:#9ECBFF">'bio must be a string'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    END</span><span style="color:#F97583"> IF</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  END</span><span style="color:#F97583"> IF</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  RETURN</span><span style="color:#E1E4E8"> NEW;</span></span>
+<span class="line"><span style="color:#F97583">END</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">$$ </span><span style="color:#F97583">LANGUAGE</span><span style="color:#E1E4E8"> plpgsql;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TRIGGER</span><span style="color:#B392F0"> trigger_validate_user_profile</span></span>
+<span class="line"><span style="color:#F97583">  BEFORE</span><span style="color:#F97583"> INSERT</span><span style="color:#F97583"> OR</span><span style="color:#F97583"> UPDATE</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> users</span></span>
+<span class="line"><span style="color:#F97583">  FOR</span><span style="color:#E1E4E8"> EACH </span><span style="color:#F97583">ROW</span></span>
+<span class="line"><span style="color:#F97583">  EXECUTE</span><span style="color:#F97583"> FUNCTION</span><span style="color:#E1E4E8"> validate_user_profile();</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>PostgreSQLのJSONBは、リレーショナルデータベースの堅牢性とドキュメント指向の柔軟性を両立できる強力な機能です。</p>
+<h3 id="重要なポイント">重要なポイント</h3>
+<ol>
+<li><strong>JSON vs JSONB</strong>: 必ずJSONBを使う（パフォーマンス）</li>
+<li><strong>演算子</strong>: <code>@></code>（包含）、<code>?</code>（キー存在）、<code>->></code>（テキスト取得）</li>
+<li><strong>インデックス</strong>: GINインデックス、式インデックス、部分インデックス</li>
+<li><strong>ハイブリッド設計</strong>: 検索頻度の高いフィールドはカラムに、柔軟な部分はJSONBに</li>
+<li><strong>パフォーマンス</strong>: EXPLAIN ANALYZEで確認、適切なインデックス作成</li>
+</ol>
+<h3 id="ユースケース">ユースケース</h3>
+<ul>
+<li><strong>イベントログ</strong>: 柔軟なスキーマが必要</li>
+<li><strong>ユーザープロファイル</strong>: カスタムフィールド</li>
+<li><strong>マルチテナント</strong>: テナントごとの異なるスキーマ</li>
+<li><strong>API統合</strong>: 外部APIのレスポンスを保存</li>
+<li><strong>設定・メタデータ</strong>: 頻繁に変わる構造</li>
+</ul>
+<p>PostgreSQLのJSONBは、MongoDBなどのNoSQLに移行せずとも柔軟なスキーマを実現できます。</p>
+<h3 id="参考リンク">参考リンク</h3>
+<ul>
+<li><a href="https://www.postgresql.org/docs/current/functions-json.html">PostgreSQL JSON Functions</a></li>
+<li><a href="https://www.postgresql.org/docs/current/datatype-json.html#JSON-INDEXING">PostgreSQL JSONB Indexing</a></li>
+<li><a href="https://www.postgresql.org/docs/current/functions-json.html">JSONB Performance Tips</a></li>
+</ul>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

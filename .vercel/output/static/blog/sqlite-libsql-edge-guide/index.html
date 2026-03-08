@@ -1,0 +1,648 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/sqlite-libsql-edge-guide/"><!-- Primary Meta Tags --><title>libSQL + Edge Runtime完全ガイド - SQLiteをエッジで活用する実践的な方法</title><meta name="title" content="libSQL + Edge Runtime完全ガイド - SQLiteをエッジで活用する実践的な方法"><meta name="description" content="TursoのlibSQLとCloudflare Workers、Vercel Edge、Deno Deployなど各種Edge Runtimeで分散SQLiteを実現する完全ガイド。レプリケーション、マルチリージョン配置、パフォーマンス最適化まで徹底解説。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/sqlite-libsql-edge-guide/"><meta property="og:title" content="libSQL + Edge Runtime完全ガイド - SQLiteをエッジで活用する実践的な方法"><meta property="og:description" content="TursoのlibSQLとCloudflare Workers、Vercel Edge、Deno Deployなど各種Edge Runtimeで分散SQLiteを実現する完全ガイド。レプリケーション、マルチリージョン配置、パフォーマンス最適化まで徹底解説。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/sqlite-libsql-edge-guide/"><meta name="twitter:title" content="libSQL + Edge Runtime完全ガイド - SQLiteをエッジで活用する実践的な方法"><meta name="twitter:description" content="TursoのlibSQLとCloudflare Workers、Vercel Edge、Deno Deployなど各種Edge Runtimeで分散SQLiteを実現する完全ガイド。レプリケーション、マルチリージョン配置、パフォーマンス最適化まで徹底解説。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/sqlite-libsql-edge-guide/"},"headline":"libSQL + Edge Runtime完全ガイド - SQLiteをエッジで活用する実践的な方法","description":"TursoのlibSQLとCloudflare Workers、Vercel Edge、Deno Deployなど各種Edge Runtimeで分散SQLiteを実現する完全ガイド。レプリケーション、マルチリージョン配置、パフォーマンス最適化まで徹底解説。","datePublished":"2025-07-15T00:00:00.000Z","dateModified":"2025-07-15T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"libSQL, Edge Runtime, SQLite, Turso, Cloudflare, プログラミング"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"libSQL + Edge Runtime完全ガイド - SQLiteをエッジで活用する実践的な方法"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-07-15T00:00:00.000Z"> Jul 14, 2025 </time> <div class="last-updated-on" data-astro-cid-bvzihdzo>
+Last updated on <time datetime="2025-07-15T00:00:00.000Z"> Jul 14, 2025 </time> </div> </div> <h1 data-astro-cid-bvzihdzo>libSQL + Edge Runtime完全ガイド - SQLiteをエッジで活用する実践的な方法</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/libSQL" class="article-tag" data-astro-cid-bvzihdzo>
+#libSQL </a><a href="/blog/tag/Edge%20Runtime" class="article-tag" data-astro-cid-bvzihdzo>
+#Edge Runtime </a><a href="/blog/tag/SQLite" class="article-tag" data-astro-cid-bvzihdzo>
+#SQLite </a><a href="/blog/tag/Turso" class="article-tag" data-astro-cid-bvzihdzo>
+#Turso </a><a href="/blog/tag/Cloudflare" class="article-tag" data-astro-cid-bvzihdzo>
+#Cloudflare </a><a href="/blog/tag/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="article-tag" data-astro-cid-bvzihdzo>
+#プログラミング </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="はじめに">はじめに</h2>
+<p>libSQLは、SQLiteをベースにした次世代データベースフォークで、エッジコンピューティングに最適化されています。2026年現在、TursoによるホスティングサービスとCloudflare D1、Vercel PostgresなどEdge Runtime統合が進み、グローバル分散アプリケーションの構築が容易になっています。</p>
+<h3 id="libsqlとは">libSQLとは</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>libSQLの特徴:</span></span>
+<span class="line"><span>✅ SQLite互換のフォーク</span></span>
+<span class="line"><span>✅ Edge-first設計</span></span>
+<span class="line"><span>✅ レプリケーション対応</span></span>
+<span class="line"><span>✅ マルチリージョン分散</span></span>
+<span class="line"><span>✅ WebSocket接続</span></span>
+<span class="line"><span>✅ HTTP/REST API</span></span>
+<span class="line"><span>✅ 低レイテンシー（&#x3C;50ms）</span></span>
+<span class="line"><span>✅ 無料枠が充実（Turso）</span></span></code></pre>
+<h3 id="エッジでsqliteを使うメリット">エッジでSQLiteを使うメリット</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>従来のアーキテクチャ:</span></span>
+<span class="line"><span>ユーザー → CDN → Origin Server → Database（単一リージョン）</span></span>
+<span class="line"><span>└─ レイテンシー: 200-500ms</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>libSQL + Edge:</span></span>
+<span class="line"><span>ユーザー → Edge Runtime → Local libSQL Replica</span></span>
+<span class="line"><span>└─ レイテンシー: 10-50ms</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>メリット:</span></span>
+<span class="line"><span>✅ 低レイテンシー（10倍以上高速）</span></span>
+<span class="line"><span>✅ 読み取りスケール無限</span></span>
+<span class="line"><span>✅ オフライン耐性</span></span>
+<span class="line"><span>✅ コスト削減</span></span>
+<span class="line"><span>✅ グローバル展開が容易</span></span></code></pre>
+<h2 id="turso--libsqlのセットアップ">Turso + libSQLのセットアップ</h2>
+<h3 id="インストールと初期設定">インストールと初期設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Turso CLIインストール</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -sSfL</span><span style="color:#9ECBFF"> https://get.tur.so/install.sh</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> bash</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ログイン</span></span>
+<span class="line"><span style="color:#B392F0">turso</span><span style="color:#9ECBFF"> auth</span><span style="color:#9ECBFF"> login</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># データベース作成（東京リージョン）</span></span>
+<span class="line"><span style="color:#B392F0">turso</span><span style="color:#9ECBFF"> db</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> my-app</span><span style="color:#79B8FF"> --location</span><span style="color:#9ECBFF"> nrt</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 接続URL取得</span></span>
+<span class="line"><span style="color:#B392F0">turso</span><span style="color:#9ECBFF"> db</span><span style="color:#9ECBFF"> show</span><span style="color:#9ECBFF"> my-app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 認証トークン生成</span></span>
+<span class="line"><span style="color:#B392F0">turso</span><span style="color:#9ECBFF"> db</span><span style="color:#9ECBFF"> tokens</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> my-app</span></span></code></pre>
+<h3 id="クライアントライブラリセットアップ">クライアントライブラリセットアップ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> @libsql/client</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/db.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@libsql/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="環境変数設定">環境変数設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># .env.local</span></span>
+<span class="line"><span style="color:#E1E4E8">TURSO_DATABASE_URL</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"libsql://my-app-kokiriho.turso.io"</span></span>
+<span class="line"><span style="color:#E1E4E8">TURSO_AUTH_TOKEN</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."</span></span></code></pre>
+<h2 id="edge-runtime統合パターン">Edge Runtime統合パターン</h2>
+<h3 id="パターン1-cloudflare-workers--d1">パターン1: Cloudflare Workers + D1</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// worker.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { D1Database } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@cloudflare/workers-types'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  DB</span><span style="color:#F97583">:</span><span style="color:#B392F0"> D1Database</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">env</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Response</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#6A737D">    // SQLite互換クエリ</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">results</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">      'SELECT * FROM users WHERE email = ?'</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'user@example.com'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ users: results });</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="toml"><code><span class="line"><span style="color:#6A737D"># wrangler.toml</span></span>
+<span class="line"><span style="color:#E1E4E8">name = </span><span style="color:#9ECBFF">"my-worker"</span></span>
+<span class="line"><span style="color:#E1E4E8">main = </span><span style="color:#9ECBFF">"src/worker.ts"</span></span>
+<span class="line"><span style="color:#E1E4E8">compatibility_date = </span><span style="color:#9ECBFF">"2024-01-01"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">[[</span><span style="color:#B392F0">d1_databases</span><span style="color:#E1E4E8">]]</span></span>
+<span class="line"><span style="color:#E1E4E8">binding = </span><span style="color:#9ECBFF">"DB"</span></span>
+<span class="line"><span style="color:#E1E4E8">database_name = </span><span style="color:#9ECBFF">"my-database"</span></span>
+<span class="line"><span style="color:#E1E4E8">database_id = </span><span style="color:#9ECBFF">"xxxx-xxxx-xxxx"</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Drizzle ORM統合</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { drizzle } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'drizzle-orm/d1'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { sqliteTable, text, integer } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'drizzle-orm/sqlite-core'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> users</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> sqliteTable</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id: </span><span style="color:#B392F0">integer</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'id'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">primaryKey</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  email: </span><span style="color:#B392F0">text</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'email'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">notNull</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: </span><span style="color:#B392F0">text</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'name'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">notNull</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">env</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Response</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> drizzle</span><span style="color:#E1E4E8">(env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> allUsers</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">select</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(users);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(allUsers);</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h3 id="パターン2-vercel-edge-functions--turso">パターン2: Vercel Edge Functions + Turso</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/users/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@libsql/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextRequest, NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> runtime</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'edge'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> GET</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">rows</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'SELECT * FROM users LIMIT 10'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ users: rows });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> POST</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">name</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">email</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> request.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    sql: </span><span style="color:#9ECBFF">'INSERT INTO users (name, email) VALUES (?, ?)'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    args: [name, email],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ id: result.lastInsertRowid }, { status: </span><span style="color:#79B8FF">201</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="パターン3-deno-deploy--turso">パターン3: Deno Deploy + Turso</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// main.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Client } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'https://esm.sh/@libsql/client@0.4.0'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Client</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: Deno.env.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'TURSO_DATABASE_URL'</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: Deno.env.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'TURSO_AUTH_TOKEN'</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">Deno.</span><span style="color:#B392F0">serve</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(req.url);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (url.pathname </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> '/api/users'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">rows</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'SELECT * FROM users'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ users: rows });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Not Found'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h2 id="レプリケーション戦略">レプリケーション戦略</h2>
+<h3 id="組み込みレプリケーションembedded-replicas">組み込みレプリケーション（Embedded Replicas）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/db-replica.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@libsql/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// プライマリデータベース</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> primaryDB</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ローカルレプリカ（読み取り専用）</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> replicaDB</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: </span><span style="color:#9ECBFF">'file:./local-replica.db'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  syncUrl: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  syncInterval: </span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 60秒ごとに同期</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使い方</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getUser</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">  // 読み取りはレプリカから（高速）</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> replicaDB.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    sql: </span><span style="color:#9ECBFF">'SELECT * FROM users WHERE id = ?'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    args: [id],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> result.rows[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createUser</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">  // 書き込みはプライマリへ（一貫性保証）</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> primaryDB.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    sql: </span><span style="color:#9ECBFF">'INSERT INTO users (name, email) VALUES (?, ?)'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    args: [name, email],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // レプリカを手動同期</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> replicaDB.</span><span style="color:#B392F0">sync</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> result.lastInsertRowid;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="マルチリージョン配置">マルチリージョン配置</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 複数リージョンに配置</span></span>
+<span class="line"><span style="color:#B392F0">turso</span><span style="color:#9ECBFF"> db</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> my-app</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --location</span><span style="color:#9ECBFF"> nrt</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --location</span><span style="color:#9ECBFF"> lax</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --location</span><span style="color:#9ECBFF"> fra</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># レプリカ追加</span></span>
+<span class="line"><span style="color:#B392F0">turso</span><span style="color:#9ECBFF"> db</span><span style="color:#9ECBFF"> replicate</span><span style="color:#9ECBFF"> my-app</span><span style="color:#79B8FF"> --location</span><span style="color:#9ECBFF"> syd</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 現在の配置確認</span></span>
+<span class="line"><span style="color:#B392F0">turso</span><span style="color:#9ECBFF"> db</span><span style="color:#9ECBFF"> locations</span><span style="color:#9ECBFF"> list</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/multi-region.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@libsql/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 自動的に最寄りのリージョンに接続</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 特定リージョン指定</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> nrtDB</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: </span><span style="color:#9ECBFF">'libsql://my-app-nrt.turso.io'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> laxDB</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: </span><span style="color:#9ECBFF">'libsql://my-app-lax.turso.io'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="同期モード選択">同期モード選択</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 即時同期（強整合性）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: </span><span style="color:#9ECBFF">'file:./local.db'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  syncUrl: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  syncMode: </span><span style="color:#9ECBFF">'immediate'</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 書き込み後即座に同期</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 定期同期（結果整合性）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: </span><span style="color:#9ECBFF">'file:./local.db'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  syncUrl: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  syncMode: </span><span style="color:#9ECBFF">'interval'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  syncInterval: </span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 5分ごと</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 手動同期（最大制御）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: </span><span style="color:#9ECBFF">'file:./local.db'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  syncUrl: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  syncMode: </span><span style="color:#9ECBFF">'manual'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 明示的に同期実行</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">sync</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h2 id="実践的なアーキテクチャパターン">実践的なアーキテクチャパターン</h2>
+<h3 id="パターン1-グローバルeコマースサイト">パターン1: グローバルEコマースサイト</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/products/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@libsql/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> runtime</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'edge'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 商品一覧取得（読み取り - レプリカから高速）</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> GET</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">searchParams</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(request.url);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> category</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'category'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sql</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> category</span></span>
+<span class="line"><span style="color:#F97583">    ?</span><span style="color:#9ECBFF"> 'SELECT * FROM products WHERE category = ? ORDER BY created_at DESC'</span></span>
+<span class="line"><span style="color:#F97583">    :</span><span style="color:#9ECBFF"> 'SELECT * FROM products ORDER BY created_at DESC LIMIT 50'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">rows</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    sql,</span></span>
+<span class="line"><span style="color:#E1E4E8">    args: category </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> [category] </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> [],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ products: rows });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 在庫更新（書き込み - プライマリへ）</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> PATCH</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">productId</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">quantity</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> request.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // トランザクション実行</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">batch</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      sql: </span><span style="color:#9ECBFF">'UPDATE products SET stock = stock - ? WHERE id = ?'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      args: [quantity, productId],</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      sql: </span><span style="color:#9ECBFF">'INSERT INTO stock_history (product_id, quantity, type) VALUES (?, ?, ?)'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      args: [productId, </span><span style="color:#F97583">-</span><span style="color:#E1E4E8">quantity, </span><span style="color:#9ECBFF">'sale'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  ]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="パターン2-リアルタイム分析ダッシュボード">パターン2: リアルタイム分析ダッシュボード</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/analytics/route.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> runtime</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'edge'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@libsql/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> GET</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">  // 並列クエリで複数の集計を実行</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">dailyStats</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">topProducts</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">userGrowth</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">    db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">      SELECT</span></span>
+<span class="line"><span style="color:#9ECBFF">        DATE(created_at) as date,</span></span>
+<span class="line"><span style="color:#9ECBFF">        COUNT(*) as orders,</span></span>
+<span class="line"><span style="color:#9ECBFF">        SUM(total) as revenue</span></span>
+<span class="line"><span style="color:#9ECBFF">      FROM orders</span></span>
+<span class="line"><span style="color:#9ECBFF">      WHERE created_at >= DATE('now', '-30 days')</span></span>
+<span class="line"><span style="color:#9ECBFF">      GROUP BY DATE(created_at)</span></span>
+<span class="line"><span style="color:#9ECBFF">      ORDER BY date DESC</span></span>
+<span class="line"><span style="color:#9ECBFF">    `</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">      SELECT</span></span>
+<span class="line"><span style="color:#9ECBFF">        p.name,</span></span>
+<span class="line"><span style="color:#9ECBFF">        COUNT(oi.id) as sold_count,</span></span>
+<span class="line"><span style="color:#9ECBFF">        SUM(oi.quantity * oi.price) as total_revenue</span></span>
+<span class="line"><span style="color:#9ECBFF">      FROM products p</span></span>
+<span class="line"><span style="color:#9ECBFF">      JOIN order_items oi ON p.id = oi.product_id</span></span>
+<span class="line"><span style="color:#9ECBFF">      WHERE oi.created_at >= DATE('now', '-7 days')</span></span>
+<span class="line"><span style="color:#9ECBFF">      GROUP BY p.id</span></span>
+<span class="line"><span style="color:#9ECBFF">      ORDER BY total_revenue DESC</span></span>
+<span class="line"><span style="color:#9ECBFF">      LIMIT 10</span></span>
+<span class="line"><span style="color:#9ECBFF">    `</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">      SELECT</span></span>
+<span class="line"><span style="color:#9ECBFF">        DATE(created_at) as date,</span></span>
+<span class="line"><span style="color:#9ECBFF">        COUNT(*) as new_users</span></span>
+<span class="line"><span style="color:#9ECBFF">      FROM users</span></span>
+<span class="line"><span style="color:#9ECBFF">      WHERE created_at >= DATE('now', '-90 days')</span></span>
+<span class="line"><span style="color:#9ECBFF">      GROUP BY DATE(created_at)</span></span>
+<span class="line"><span style="color:#9ECBFF">    `</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  ]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    daily: dailyStats.rows,</span></span>
+<span class="line"><span style="color:#E1E4E8">    topProducts: topProducts.rows,</span></span>
+<span class="line"><span style="color:#E1E4E8">    userGrowth: userGrowth.rows,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="パターン3-セッション管理">パターン3: セッション管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/session.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@libsql/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// テーブル初期化</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">  CREATE TABLE IF NOT EXISTS sessions (</span></span>
+<span class="line"><span style="color:#9ECBFF">    id TEXT PRIMARY KEY,</span></span>
+<span class="line"><span style="color:#9ECBFF">    user_id INTEGER NOT NULL,</span></span>
+<span class="line"><span style="color:#9ECBFF">    data TEXT NOT NULL,</span></span>
+<span class="line"><span style="color:#9ECBFF">    expires_at INTEGER NOT NULL</span></span>
+<span class="line"><span style="color:#9ECBFF">  )</span></span>
+<span class="line"><span style="color:#9ECBFF">`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">  CREATE INDEX IF NOT EXISTS idx_sessions_expires</span></span>
+<span class="line"><span style="color:#9ECBFF">  ON sessions(expires_at)</span></span>
+<span class="line"><span style="color:#9ECBFF">`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createSession</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">data</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">any</span><span style="color:#E1E4E8">>) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sessionId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> crypto.</span><span style="color:#B392F0">randomUUID</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> expiresAt</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 7</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 24</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">; </span><span style="color:#6A737D">// 7日後</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    sql: </span><span style="color:#9ECBFF">'INSERT INTO sessions (id, user_id, data, expires_at) VALUES (?, ?, ?, ?)'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    args: [sessionId, userId, </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(data), expiresAt],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> sessionId;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getSession</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">sessionId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    sql: </span><span style="color:#9ECBFF">'SELECT * FROM sessions WHERE id = ? AND expires_at > ?'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    args: [sessionId, Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (result.rows.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ===</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> result.rows[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: session.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    userId: session.user_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    data: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(session.data </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    expiresAt: session.expires_at,</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> deleteSession</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">sessionId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    sql: </span><span style="color:#9ECBFF">'DELETE FROM sessions WHERE id = ?'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    args: [sessionId],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 期限切れセッション削除（定期実行）</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> cleanupExpiredSessions</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    sql: </span><span style="color:#9ECBFF">'DELETE FROM sessions WHERE expires_at &#x3C; ?'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    args: [Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> result.rowsAffected;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="パフォーマンス最適化">パフォーマンス最適化</h2>
+<h3 id="コネクションプーリング">コネクションプーリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/db-pool.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createClient, Client } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@libsql/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> DBPool</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> clients</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Client</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#F97583"> readonly</span><span style="color:#FFAB70"> maxSize</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  getClient</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Client</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.clients.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> &#x3C;</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.maxSize) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> client</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        url: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.clients.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(client);</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> client;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ラウンドロビンで返す</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> client</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.clients.</span><span style="color:#B392F0">shift</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.clients.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(client);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> client;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> dbPool</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> DBPool</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h3 id="バッチ処理">バッチ処理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ❌ 遅い（複数のHTTPリクエスト）</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> users) {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    sql: </span><span style="color:#9ECBFF">'INSERT INTO users (name, email) VALUES (?, ?)'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    args: [user.name, user.email],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 速い（単一バッチリクエスト）</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">batch</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  users.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">    sql: </span><span style="color:#9ECBFF">'INSERT INTO users (name, email) VALUES (?, ?)'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    args: [user.name, user.email],</span></span>
+<span class="line"><span style="color:#E1E4E8">  }))</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="プリペアドステートメント">プリペアドステートメント</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// プリペアドステートメント使用</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> stmt</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'SELECT * FROM users WHERE id = ?'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> id</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> userIds) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> stmt.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">([id]);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(result.rows);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// クエリキャッシュが効く</span></span></code></pre>
+<h3 id="インデックス最適化">インデックス最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 複合インデックス作成</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">  CREATE INDEX IF NOT EXISTS idx_orders_user_date</span></span>
+<span class="line"><span style="color:#9ECBFF">  ON orders(user_id, created_at DESC)</span></span>
+<span class="line"><span style="color:#9ECBFF">`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// カバリングインデックス</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">  CREATE INDEX IF NOT EXISTS idx_products_category_price</span></span>
+<span class="line"><span style="color:#9ECBFF">  ON products(category, price)</span></span>
+<span class="line"><span style="color:#9ECBFF">`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// EXPLAINで確認</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> plan</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'EXPLAIN QUERY PLAN SELECT * FROM users WHERE email = ?'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(plan.rows);</span></span></code></pre>
+<h2 id="セキュリティベストプラクティス">セキュリティベストプラクティス</h2>
+<h3 id="認証トークン管理">認証トークン管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ❌ クライアントサイドで直接使わない</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: process.env.</span><span style="color:#79B8FF">NEXT_PUBLIC_TURSO_URL</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 危険</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">NEXT_PUBLIC_TURSO_TOKEN</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 危険</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ Edge Functionsで使う</span></span>
+<span class="line"><span style="color:#6A737D">// app/api/secure/route.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> runtime</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'edge'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@libsql/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// サーバーサイドのみ</span></span>
+<span class="line"><span style="color:#E1E4E8">  authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// サーバーサイドのみ</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="sql-injection対策">SQL injection対策</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ❌ 危険</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> email</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.url.searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'email'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`SELECT * FROM users WHERE email = '${</span><span style="color:#E1E4E8">email</span><span style="color:#9ECBFF">}'`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 安全（プレースホルダー使用）</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  sql: </span><span style="color:#9ECBFF">'SELECT * FROM users WHERE email = ?'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  args: [email],</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="row-level-securityrls">Row Level Security（RLS）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- Tursoではアプリケーションレベルで実装</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> posts</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">INTEGER</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  user_id </span><span style="color:#F97583">INTEGER</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  title </span><span style="color:#F97583">TEXT</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  content </span><span style="color:#F97583">TEXT</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_posts_user</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> posts(user_id);</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// アプリケーション側でフィルタ</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getUserPosts</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    sql: </span><span style="color:#9ECBFF">'SELECT * FROM posts WHERE user_id = ?'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    args: [userId],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> result.rows;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="モニタリングとデバッグ">モニタリングとデバッグ</h2>
+<h3 id="クエリログ">クエリログ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/db-logger.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@libsql/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createLoggedClient</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> baseClient</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    url: process.env.</span><span style="color:#79B8FF">TURSO_DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    authToken: process.env.</span><span style="color:#79B8FF">TURSO_AUTH_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Proxy</span><span style="color:#E1E4E8">(baseClient, {</span></span>
+<span class="line"><span style="color:#B392F0">    get</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">target</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">prop</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (prop </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'execute'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">...</span><span style="color:#FFAB70">args</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">[]) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">          const</span><span style="color:#79B8FF"> start</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">          const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> target.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">args);</span></span>
+<span class="line"><span style="color:#F97583">          const</span><span style="color:#79B8FF"> duration</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> start;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">          console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'[DB Query]'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">            sql: args[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]?.sql </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> args[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">            duration: </span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">duration</span><span style="color:#9ECBFF">}ms`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            rows: result.rows.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">          return</span><span style="color:#E1E4E8"> result;</span></span>
+<span class="line"><span style="color:#E1E4E8">        };</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> target[prop </span><span style="color:#F97583">as</span><span style="color:#F97583"> keyof</span><span style="color:#F97583"> typeof</span><span style="color:#E1E4E8"> target];</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="エラーハンドリング">エラーハンドリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { LibsqlError } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@libsql/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    sql: </span><span style="color:#9ECBFF">'INSERT INTO users (email) VALUES (?)'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    args: [email],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">} </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (error </span><span style="color:#F97583">instanceof</span><span style="color:#B392F0"> LibsqlError</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (error.code </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'SQLITE_CONSTRAINT'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        { error: </span><span style="color:#9ECBFF">'Email already exists'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        { status: </span><span style="color:#79B8FF">409</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">      );</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Database error:'</span><span style="color:#E1E4E8">, error);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    { error: </span><span style="color:#9ECBFF">'Internal server error'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { status: </span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<h3 id="libsql--edgeの強み">libSQL + Edgeの強み</h3>
+<ol>
+<li><strong>超低レイテンシー</strong>: 10-50msでグローバルアクセス</li>
+<li><strong>スケーラビリティ</strong>: 読み取りは無限スケール</li>
+<li><strong>コスト効率</strong>: 無料枠が充実（Turso: 500MB/3DB無料）</li>
+<li><strong>開発体験</strong>: SQLite互換で学習コスト低</li>
+</ol>
+<h3 id="ベストプラクティス">ベストプラクティス</h3>
+<ul>
+<li>読み取りはレプリカ、書き込みはプライマリ</li>
+<li>バッチ処理でネットワークコスト削減</li>
+<li>インデックスで検索最適化</li>
+<li>Edge Functionsでトークン保護</li>
+</ul>
+<h3 id="いつ使うべきか">いつ使うべきか</h3>
+<p><strong>最適な用途</strong>:</p>
+<ul>
+<li>グローバルユーザー向けアプリ</li>
+<li>低レイテンシーが必須のサービス</li>
+<li>Jamstack / Edge-first アーキテクチャ</li>
+<li>オフライン対応PWA</li>
+</ul>
+<p><strong>不向きな用途</strong>:</p>
+<ul>
+<li>大規模分析（100GB超）</li>
+<li>強整合性が必須のトランザクション</li>
+<li>リアルタイムコラボレーション</li>
+</ul>
+<h3 id="次のステップ">次のステップ</h3>
+<ul>
+<li>Turso: <a href="https://turso.tech/">https://turso.tech/</a></li>
+<li>libSQL: <a href="https://github.com/tursodatabase/libsql">https://github.com/tursodatabase/libsql</a></li>
+<li>Cloudflare D1: <a href="https://developers.cloudflare.com/d1/">https://developers.cloudflare.com/d1/</a></li>
+<li>Drizzle ORM: <a href="https://orm.drizzle.team/">https://orm.drizzle.team/</a></li>
+</ul>
+<p>libSQLとEdge Runtimeで、次世代のグローバル分散アプリケーションを構築しましょう。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/nats-messaging-guide/"><!-- Primary Meta Tags --><title>NATS メッセージングシステム入門 - 軽量高速な分散通信基盤</title><meta name="title" content="NATS メッセージングシステム入門 - 軽量高速な分散通信基盤"><meta name="description" content="NATSは軽量高速なメッセージングシステム。Pub/Sub、Request/Reply、Queue Groups、JetStream永続化、Node.js/Go統合まで実践的に解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/nats-messaging-guide/"><meta property="og:title" content="NATS メッセージングシステム入門 - 軽量高速な分散通信基盤"><meta property="og:description" content="NATSは軽量高速なメッセージングシステム。Pub/Sub、Request/Reply、Queue Groups、JetStream永続化、Node.js/Go統合まで実践的に解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/nats-messaging-guide/"><meta name="twitter:title" content="NATS メッセージングシステム入門 - 軽量高速な分散通信基盤"><meta name="twitter:description" content="NATSは軽量高速なメッセージングシステム。Pub/Sub、Request/Reply、Queue Groups、JetStream永続化、Node.js/Go統合まで実践的に解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/nats-messaging-guide/"},"headline":"NATS メッセージングシステム入門 - 軽量高速な分散通信基盤","description":"NATSは軽量高速なメッセージングシステム。Pub/Sub、Request/Reply、Queue Groups、JetStream永続化、Node.js/Go統合まで実践的に解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。","datePublished":"2025-02-06T00:00:00.000Z","dateModified":"2025-02-06T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"TypeScript, フロントエンド, 開発ツール"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"NATS メッセージングシステム入門 - 軽量高速な分散通信基盤"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-06T00:00:00.000Z"> Feb 5, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>NATS メッセージングシステム入門 - 軽量高速な分散通信基盤</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/TypeScript" class="article-tag" data-astro-cid-bvzihdzo>
+#TypeScript </a><a href="/blog/tag/%E3%83%95%E3%83%AD%E3%83%B3%E3%83%88%E3%82%A8%E3%83%B3%E3%83%89" class="article-tag" data-astro-cid-bvzihdzo>
+#フロントエンド </a><a href="/blog/tag/%E9%96%8B%E7%99%BA%E3%83%84%E3%83%BC%E3%83%AB" class="article-tag" data-astro-cid-bvzihdzo>
+#開発ツール </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p><strong>NATS</strong>は、クラウドネイティブアプリケーション向けの<strong>軽量・高速・シンプルなメッセージングシステム</strong>です。マイクロサービス間の通信、イベント駆動アーキテクチャ、リアルタイムデータ配信に最適です。</p>
+<p>本記事では、NATSの基本概念からPub/Sub、Request/Reply、JetStreamによる永続化、実際のNode.js/Go実装まで詳しく解説します。</p>
+<h2 id="natsとは">NATSとは？</h2>
+<p>NATSは、**Cloud Native Computing Foundation (CNCF)**のインキュベーティングプロジェクトである、オープンソースのメッセージングシステムです。</p>
+<h3 id="主な特徴">主な特徴</h3>
+<ul>
+<li><strong>超軽量</strong>: 単一バイナリ、メモリ使用量わずか数MB</li>
+<li><strong>高速</strong>: 100万メッセージ/秒以上の処理能力</li>
+<li><strong>シンプル</strong>: 学習曲線が緩やか、設定がほぼ不要</li>
+<li><strong>クラウドネイティブ</strong>: Kubernetes、Docker環境に最適化</li>
+<li><strong>多言語対応</strong>: 40以上のクライアントライブラリ</li>
+<li><strong>At-Most-Once / At-Least-Once</strong>: 配信保証の選択が可能</li>
+</ul>
+<h3 id="他のメッセージングシステムとの比較">他のメッセージングシステムとの比較</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>機能</th><th>NATS</th><th>RabbitMQ</th><th>Kafka</th></tr></thead><tbody><tr><td>速度</td><td>✅ 最高速</td><td>⚠️ 高速</td><td>⚠️ 高速</td></tr><tr><td>シンプルさ</td><td>✅ 非常に簡単</td><td>⚠️ 中程度</td><td>❌ 複雑</td></tr><tr><td>メモリ</td><td>✅ 数MB</td><td>⚠️ 数百MB</td><td>❌ 数GB</td></tr><tr><td>永続化</td><td>✅ JetStream</td><td>✅ デフォルト</td><td>✅ デフォルト</td></tr><tr><td>スケーラビリティ</td><td>✅ 優秀</td><td>⚠️ 良好</td><td>✅ 最高</td></tr></tbody></table>
+<p>NATSは<strong>シンプルさと速度</strong>を重視し、Kafkaは<strong>大規模データストリーム</strong>に最適化されています。</p>
+<h2 id="natsのセットアップ">NATSのセットアップ</h2>
+<h3 id="docker-での起動">Docker での起動</h3>
+<p>最も簡単な方法:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># NATS サーバーを起動</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> 4222:4222</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> 8222:8222</span><span style="color:#9ECBFF"> nats:latest</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># JetStream有効化</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> 4222:4222</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> 8222:8222</span><span style="color:#9ECBFF"> nats:latest</span><span style="color:#79B8FF"> -js</span></span></code></pre>
+<h3 id="docker-compose">Docker Compose</h3>
+<p><code>docker-compose.yml</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.8'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  nats</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">nats:2.10-alpine</span></span>
+<span class="line"><span style="color:#85E89D">    container_name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">nats</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"4222:4222"</span><span style="color:#6A737D">  # クライアント接続</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"8222:8222"</span><span style="color:#6A737D">  # HTTPモニタリング</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"6222:6222"</span><span style="color:#6A737D">  # クラスタリング</span></span>
+<span class="line"><span style="color:#85E89D">    command</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"-js"</span><span style="color:#6A737D">              # JetStream有効化</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"-m"</span><span style="color:#6A737D">               # モニタリング有効化</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"8222"</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"--store_dir=/data"</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">nats_data:/data</span></span>
+<span class="line"><span style="color:#85E89D">    restart</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">unless-stopped</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  nats_data</span><span style="color:#E1E4E8">:</span></span></code></pre>
+<p>起動:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> compose</span><span style="color:#9ECBFF"> up</span><span style="color:#79B8FF"> -d</span></span></code></pre>
+<h3 id="バイナリインストール">バイナリインストール</h3>
+<p>macOS:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> nats-server</span></span>
+<span class="line"><span style="color:#B392F0">nats-server</span><span style="color:#79B8FF"> -js</span></span></code></pre>
+<p>Linux:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># ダウンロード</span></span>
+<span class="line"><span style="color:#B392F0">wget</span><span style="color:#9ECBFF"> https://github.com/nats-io/nats-server/releases/download/v2.10.7/nats-server-v2.10.7-linux-amd64.tar.gz</span></span>
+<span class="line"><span style="color:#B392F0">tar</span><span style="color:#79B8FF"> -xzf</span><span style="color:#9ECBFF"> nats-server-v2.10.7-linux-amd64.tar.gz</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> mv</span><span style="color:#9ECBFF"> nats-server-v2.10.7-linux-amd64/nats-server</span><span style="color:#9ECBFF"> /usr/local/bin/</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 起動</span></span>
+<span class="line"><span style="color:#B392F0">nats-server</span><span style="color:#79B8FF"> -js</span></span></code></pre>
+<h3 id="接続確認">接続確認</h3>
+<p>ブラウザで <code>http://localhost:8222</code> にアクセスすると、NATSのモニタリング画面が表示されます。</p>
+<h2 id="基本パターン">基本パターン</h2>
+<h3 id="1-publishsubscribe-pubsub">1. Publish/Subscribe (Pub/Sub)</h3>
+<p><strong>1対多の配信</strong>。1つのメッセージを複数の購読者が受信します。</p>
+<h4 id="nodejs実装">Node.js実装</h4>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// publisher.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { connect } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'nats'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nc</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> connect</span><span style="color:#E1E4E8">({ servers: </span><span style="color:#9ECBFF">'localhost:4222'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// メッセージを配信</span></span>
+<span class="line"><span style="color:#E1E4E8">nc.</span><span style="color:#B392F0">publish</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'news.updates'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  title: </span><span style="color:#9ECBFF">'Breaking News'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  content: </span><span style="color:#9ECBFF">'Something happened!'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  timestamp: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">}));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'メッセージを配信しました'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">close</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// subscriber.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { connect, StringCodec } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'nats'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nc</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> connect</span><span style="color:#E1E4E8">({ servers: </span><span style="color:#9ECBFF">'localhost:4222'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> sc</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> StringCodec</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// サブスクライバー1</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> sub1</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'news.updates'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> msg</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> sub1) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(sc.</span><span style="color:#B392F0">decode</span><span style="color:#E1E4E8">(msg.data));</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'[購読者1] 受信:'</span><span style="color:#E1E4E8">, data);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">})();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// サブスクライバー2</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> sub2</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'news.updates'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> msg</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> sub2) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(sc.</span><span style="color:#B392F0">decode</span><span style="color:#E1E4E8">(msg.data));</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'[購読者2] 受信:'</span><span style="color:#E1E4E8">, data);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">})();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'ニュースを購読中...'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h4 id="go実装">Go実装</h4>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// publisher.go</span></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> main</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">encoding/json</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">log</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">github.com/nats-io/nats.go</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> NewsUpdate</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    Title     </span><span style="color:#F97583">string</span><span style="color:#9ECBFF"> `json:"title"`</span></span>
+<span class="line"><span style="color:#E1E4E8">    Content   </span><span style="color:#F97583">string</span><span style="color:#9ECBFF"> `json:"content"`</span></span>
+<span class="line"><span style="color:#E1E4E8">    Timestamp </span><span style="color:#F97583">int64</span><span style="color:#9ECBFF">  `json:"timestamp"`</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    nc, _ </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> nats.</span><span style="color:#B392F0">Connect</span><span style="color:#E1E4E8">(nats.DefaultURL)</span></span>
+<span class="line"><span style="color:#F97583">    defer</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">Close</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    news </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> NewsUpdate</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">        Title:   </span><span style="color:#9ECBFF">"Breaking News"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        Content: </span><span style="color:#9ECBFF">"Something happened!"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        Timestamp: time.</span><span style="color:#B392F0">Now</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">Unix</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    data, _ </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> json.</span><span style="color:#B392F0">Marshal</span><span style="color:#E1E4E8">(news)</span></span>
+<span class="line"><span style="color:#E1E4E8">    nc.</span><span style="color:#B392F0">Publish</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"news.updates"</span><span style="color:#E1E4E8">, data)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    log.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"メッセージを配信しました"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// subscriber.go</span></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> main</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">encoding/json</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">log</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">github.com/nats-io/nats.go</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    nc, _ </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> nats.</span><span style="color:#B392F0">Connect</span><span style="color:#E1E4E8">(nats.DefaultURL)</span></span>
+<span class="line"><span style="color:#F97583">    defer</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">Close</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    nc.</span><span style="color:#B392F0">Subscribe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"news.updates"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">msg</span><span style="color:#F97583"> *</span><span style="color:#B392F0">nats</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Msg</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">        var</span><span style="color:#E1E4E8"> news </span><span style="color:#B392F0">NewsUpdate</span></span>
+<span class="line"><span style="color:#E1E4E8">        json.</span><span style="color:#B392F0">Unmarshal</span><span style="color:#E1E4E8">(msg.Data, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">news)</span></span>
+<span class="line"><span style="color:#E1E4E8">        log.</span><span style="color:#B392F0">Printf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"[購読] </span><span style="color:#79B8FF">%s</span><span style="color:#9ECBFF">: </span><span style="color:#79B8FF">%s\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">, news.Title, news.Content)</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    log.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"ニュースを購読中..."</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    select</span><span style="color:#E1E4E8"> {} </span><span style="color:#6A737D">// 無限待機</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-requestreply">2. Request/Reply</h3>
+<p><strong>同期的なリクエスト・レスポンス</strong>パターン。RPCのような通信を実現します。</p>
+<h4 id="nodejs実装-1">Node.js実装</h4>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// server.js (レスポンダー)</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { connect, StringCodec } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'nats'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nc</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> connect</span><span style="color:#E1E4E8">({ servers: </span><span style="color:#9ECBFF">'localhost:4222'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> sc</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> StringCodec</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// リクエストに応答</span></span>
+<span class="line"><span style="color:#E1E4E8">nc.</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'user.get'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#B392F0">  callback</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">msg</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> userId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> sc.</span><span style="color:#B392F0">decode</span><span style="color:#E1E4E8">(msg.data);</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`[サーバー] ユーザーID ${</span><span style="color:#E1E4E8">userId</span><span style="color:#9ECBFF">} のリクエストを受信`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      id: userId,</span></span>
+<span class="line"><span style="color:#E1E4E8">      name: </span><span style="color:#9ECBFF">'John Doe'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      email: </span><span style="color:#9ECBFF">'john@example.com'</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    msg.</span><span style="color:#B392F0">respond</span><span style="color:#E1E4E8">(sc.</span><span style="color:#B392F0">encode</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(user)));</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'ユーザーサービスが起動しました'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// client.js (リクエスター)</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { connect, StringCodec } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'nats'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nc</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> connect</span><span style="color:#E1E4E8">({ servers: </span><span style="color:#9ECBFF">'localhost:4222'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> sc</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> StringCodec</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// リクエストを送信（タイムアウト: 5秒）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">request</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'user.get'</span><span style="color:#E1E4E8">, sc.</span><span style="color:#B392F0">encode</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'123'</span><span style="color:#E1E4E8">), {</span></span>
+<span class="line"><span style="color:#E1E4E8">  timeout: </span><span style="color:#79B8FF">5000</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(sc.</span><span style="color:#B392F0">decode</span><span style="color:#E1E4E8">(response.data));</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'[クライアント] ユーザー情報:'</span><span style="color:#E1E4E8">, user);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">close</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h4 id="go実装-1">Go実装</h4>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// server.go</span></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> main</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">encoding/json</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">log</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">github.com/nats-io/nats.go</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> User</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ID    </span><span style="color:#F97583">string</span><span style="color:#9ECBFF"> `json:"id"`</span></span>
+<span class="line"><span style="color:#E1E4E8">    Name  </span><span style="color:#F97583">string</span><span style="color:#9ECBFF"> `json:"name"`</span></span>
+<span class="line"><span style="color:#E1E4E8">    Email </span><span style="color:#F97583">string</span><span style="color:#9ECBFF"> `json:"email"`</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    nc, _ </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> nats.</span><span style="color:#B392F0">Connect</span><span style="color:#E1E4E8">(nats.DefaultURL)</span></span>
+<span class="line"><span style="color:#F97583">    defer</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">Close</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    nc.</span><span style="color:#B392F0">Subscribe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"user.get"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">msg</span><span style="color:#F97583"> *</span><span style="color:#B392F0">nats</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Msg</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        userId </span><span style="color:#F97583">:=</span><span style="color:#F97583"> string</span><span style="color:#E1E4E8">(msg.Data)</span></span>
+<span class="line"><span style="color:#E1E4E8">        log.</span><span style="color:#B392F0">Printf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"[サーバー] ユーザーID </span><span style="color:#79B8FF">%s</span><span style="color:#9ECBFF"> のリクエスト</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">, userId)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        user </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> User</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">            ID:    userId,</span></span>
+<span class="line"><span style="color:#E1E4E8">            Name:  </span><span style="color:#9ECBFF">"John Doe"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            Email: </span><span style="color:#9ECBFF">"john@example.com"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        data, _ </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> json.</span><span style="color:#B392F0">Marshal</span><span style="color:#E1E4E8">(user)</span></span>
+<span class="line"><span style="color:#E1E4E8">        msg.</span><span style="color:#B392F0">Respond</span><span style="color:#E1E4E8">(data)</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    log.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"ユーザーサービスが起動しました"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    select</span><span style="color:#E1E4E8"> {}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="3-queue-groups">3. Queue Groups</h3>
+<p><strong>負荷分散</strong>。複数のワーカーが1つのキューを共有し、メッセージが均等に分散されます。</p>
+<h4 id="nodejs実装-2">Node.js実装</h4>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// worker.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { connect, StringCodec } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'nats'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nc</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> connect</span><span style="color:#E1E4E8">({ servers: </span><span style="color:#9ECBFF">'localhost:4222'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> sc</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> StringCodec</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> workerName</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> process.env.</span><span style="color:#79B8FF">WORKER_NAME</span><span style="color:#F97583"> ||</span><span style="color:#9ECBFF"> 'worker'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// キューグループ "workers" に参加</span></span>
+<span class="line"><span style="color:#E1E4E8">nc.</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'tasks.process'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  queue: </span><span style="color:#9ECBFF">'workers'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">  callback</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">msg</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> task</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(sc.</span><span style="color:#B392F0">decode</span><span style="color:#E1E4E8">(msg.data));</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`[${</span><span style="color:#E1E4E8">workerName</span><span style="color:#9ECBFF">}] タスク処理中:`</span><span style="color:#E1E4E8">, task);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 処理をシミュレート</span></span>
+<span class="line"><span style="color:#B392F0">    setTimeout</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`[${</span><span style="color:#E1E4E8">workerName</span><span style="color:#9ECBFF">}] タスク完了:`</span><span style="color:#E1E4E8">, task.id);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, Math.</span><span style="color:#B392F0">random</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 3000</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">workerName</span><span style="color:#9ECBFF">} が起動しました`</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// producer.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { connect, StringCodec } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'nats'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nc</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> connect</span><span style="color:#E1E4E8">({ servers: </span><span style="color:#9ECBFF">'localhost:4222'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> sc</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> StringCodec</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// タスクを複数送信</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&#x3C;=</span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8">; i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> task</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: i,</span></span>
+<span class="line"><span style="color:#E1E4E8">    type: </span><span style="color:#9ECBFF">'data-processing'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    payload: </span><span style="color:#9ECBFF">`Task ${</span><span style="color:#E1E4E8">i</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  nc.</span><span style="color:#B392F0">publish</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'tasks.process'</span><span style="color:#E1E4E8">, sc.</span><span style="color:#B392F0">encode</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(task)));</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`タスク ${</span><span style="color:#E1E4E8">i</span><span style="color:#9ECBFF">} を送信`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">close</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<p>複数のワーカーを起動:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#E1E4E8">WORKER_NAME</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">worker1</span><span style="color:#B392F0"> node</span><span style="color:#9ECBFF"> worker.js</span><span style="color:#E1E4E8"> &#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">WORKER_NAME</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">worker2</span><span style="color:#B392F0"> node</span><span style="color:#9ECBFF"> worker.js</span><span style="color:#E1E4E8"> &#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">WORKER_NAME</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">worker3</span><span style="color:#B392F0"> node</span><span style="color:#9ECBFF"> worker.js</span><span style="color:#E1E4E8"> &#x26;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> producer.js</span></span></code></pre>
+<p>各ワーカーがタスクを<strong>均等に分散</strong>して処理します。</p>
+<h2 id="jetstream-永続化とストリーミング">JetStream: 永続化とストリーミング</h2>
+<p><strong>JetStream</strong>は、NATSの永続化・ストリーミング機能です。</p>
+<h3 id="streamの作成">Streamの作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { connect, AckPolicy } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'nats'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nc</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> connect</span><span style="color:#E1E4E8">({ servers: </span><span style="color:#9ECBFF">'localhost:4222'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> jsm</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">jetstreamManager</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Streamを作成</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> jsm.streams.</span><span style="color:#B392F0">add</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: </span><span style="color:#9ECBFF">'ORDERS'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  subjects: [</span><span style="color:#9ECBFF">'orders.*'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  retention: </span><span style="color:#9ECBFF">'limits'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  max_age: </span><span style="color:#79B8FF">86400000000000</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 1日 (ナノ秒)</span></span>
+<span class="line"><span style="color:#E1E4E8">  max_msgs: </span><span style="color:#79B8FF">10000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  storage: </span><span style="color:#9ECBFF">'file'</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Stream "ORDERS" を作成しました'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="メッセージの永続化">メッセージの永続化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// producer.js</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> js</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">jetstream</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 永続化メッセージを送信</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> pa</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> js.</span><span style="color:#B392F0">publish</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'orders.created'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  orderId: </span><span style="color:#9ECBFF">'12345'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  amount: </span><span style="color:#79B8FF">9999</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  timestamp: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">}));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'メッセージが永続化されました:'</span><span style="color:#E1E4E8">, pa.seq);</span></span></code></pre>
+<h3 id="consumer-購読者">Consumer (購読者)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// consumer.js</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> js</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">jetstream</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Consumerを作成</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> consumer</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> js.consumers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'ORDERS'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'order-processor'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// メッセージを消費</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> messages</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> consumer.</span><span style="color:#B392F0">consume</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> msg</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> messages) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> order</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(msg.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'注文を処理:'</span><span style="color:#E1E4E8">, order);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 処理完了を確認</span></span>
+<span class="line"><span style="color:#E1E4E8">  msg.</span><span style="color:#B392F0">ack</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="at-least-once-配信保証">At-Least-Once 配信保証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> jsm.consumers.</span><span style="color:#B392F0">add</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'ORDERS'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  durable_name: </span><span style="color:#9ECBFF">'processor'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  ack_policy: AckPolicy.Explicit,</span></span>
+<span class="line"><span style="color:#E1E4E8">  max_deliver: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,           </span><span style="color:#6A737D">// 最大3回再配信</span></span>
+<span class="line"><span style="color:#E1E4E8">  ack_wait: </span><span style="color:#79B8FF">30000000000</span><span style="color:#6A737D">     // 30秒待機 (ナノ秒)</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h2 id="実践例-マイクロサービス通信">実践例: マイクロサービス通信</h2>
+<h3 id="サービス構成">サービス構成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>User Service (Port 3001)</span></span>
+<span class="line"><span>   ↓ (nats)</span></span>
+<span class="line"><span>Order Service (Port 3002)</span></span>
+<span class="line"><span>   ↓ (nats)</span></span>
+<span class="line"><span>Notification Service (Port 3003)</span></span></code></pre>
+<h3 id="user-service">User Service</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// user-service.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { connect, StringCodec } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'nats'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> express </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'express'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> app</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> express</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(express.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nc</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> connect</span><span style="color:#E1E4E8">({ servers: </span><span style="color:#9ECBFF">'localhost:4222'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> sc</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> StringCodec</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> js</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">jetstream</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザー作成</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/users'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">res</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#F97583">    ...</span><span style="color:#E1E4E8">req.body</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // JetStreamでイベント配信</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> js.</span><span style="color:#B392F0">publish</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'users.created'</span><span style="color:#E1E4E8">, sc.</span><span style="color:#B392F0">encode</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(user)));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  res.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(user);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">listen</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">3001</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'User Service on port 3001'</span><span style="color:#E1E4E8">));</span></span></code></pre>
+<h3 id="order-service">Order Service</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// order-service.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { connect, StringCodec } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'nats'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> express </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'express'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> app</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> express</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(express.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nc</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> connect</span><span style="color:#E1E4E8">({ servers: </span><span style="color:#9ECBFF">'localhost:4222'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> sc</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> StringCodec</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> js</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">jetstream</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザー作成イベントを購読</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> consumer</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> js.consumers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'USERS'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'order-service'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> messages</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> consumer.</span><span style="color:#B392F0">consume</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> msg</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> messages) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(sc.</span><span style="color:#B392F0">decode</span><span style="color:#E1E4E8">(msg.data));</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'[Order Service] 新規ユーザー:'</span><span style="color:#E1E4E8">, user);</span></span>
+<span class="line"><span style="color:#E1E4E8">    msg.</span><span style="color:#B392F0">ack</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">})();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 注文作成</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/orders'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">res</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> order</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#F97583">    ...</span><span style="color:#E1E4E8">req.body</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // イベント配信</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> js.</span><span style="color:#B392F0">publish</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'orders.created'</span><span style="color:#E1E4E8">, sc.</span><span style="color:#B392F0">encode</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(order)));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  res.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(order);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">listen</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">3002</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Order Service on port 3002'</span><span style="color:#E1E4E8">));</span></span></code></pre>
+<h3 id="notification-service">Notification Service</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// notification-service.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { connect, StringCodec } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'nats'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nc</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> connect</span><span style="color:#E1E4E8">({ servers: </span><span style="color:#9ECBFF">'localhost:4222'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> sc</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> StringCodec</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> js</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> nc.</span><span style="color:#B392F0">jetstream</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 複数のイベントを購読</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> orderConsumer</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> js.consumers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'ORDERS'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'notifier'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> messages</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> orderConsumer.</span><span style="color:#B392F0">consume</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> msg</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> messages) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> order</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(sc.</span><span style="color:#B392F0">decode</span><span style="color:#E1E4E8">(msg.data));</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'[通知] 新規注文:'</span><span style="color:#E1E4E8">, order.id);</span></span>
+<span class="line"><span style="color:#6A737D">    // メール送信などの処理</span></span>
+<span class="line"><span style="color:#E1E4E8">    msg.</span><span style="color:#B392F0">ack</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">})();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Notification Service が起動しました'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h2 id="モニタリングとデバッグ">モニタリングとデバッグ</h2>
+<h3 id="nats-cli">NATS CLI</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># NATS CLIのインストール</span></span>
+<span class="line"><span style="color:#B392F0">brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> nats-io/nats-tools/nats</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># サーバー情報</span></span>
+<span class="line"><span style="color:#B392F0">nats</span><span style="color:#9ECBFF"> server</span><span style="color:#9ECBFF"> info</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Streamの確認</span></span>
+<span class="line"><span style="color:#B392F0">nats</span><span style="color:#9ECBFF"> stream</span><span style="color:#9ECBFF"> ls</span></span>
+<span class="line"><span style="color:#B392F0">nats</span><span style="color:#9ECBFF"> stream</span><span style="color:#9ECBFF"> info</span><span style="color:#9ECBFF"> ORDERS</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Consumerの確認</span></span>
+<span class="line"><span style="color:#B392F0">nats</span><span style="color:#9ECBFF"> consumer</span><span style="color:#9ECBFF"> ls</span><span style="color:#9ECBFF"> ORDERS</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># メッセージの送信</span></span>
+<span class="line"><span style="color:#B392F0">nats</span><span style="color:#9ECBFF"> pub</span><span style="color:#9ECBFF"> orders.created</span><span style="color:#9ECBFF"> '{"orderId": "123"}'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># メッセージの購読</span></span>
+<span class="line"><span style="color:#B392F0">nats</span><span style="color:#9ECBFF"> sub</span><span style="color:#9ECBFF"> orders.created</span></span></code></pre>
+<h3 id="httpモニタリング">HTTPモニタリング</h3>
+<p>ブラウザで <code>http://localhost:8222</code> にアクセス:</p>
+<ul>
+<li><code>/varz</code>: サーバー変数</li>
+<li><code>/connz</code>: 接続情報</li>
+<li><code>/routez</code>: ルート情報</li>
+<li><code>/subsz</code>: サブスクリプション情報</li>
+</ul>
+<h2 id="まとめ">まとめ</h2>
+<p>NATSは<strong>軽量・高速・シンプル</strong>なメッセージングシステムとして、マイクロサービスやイベント駆動アーキテクチャに最適です。</p>
+<h3 id="natsの強み">NATSの強み</h3>
+<ul>
+<li><strong>超高速</strong>: 100万メッセージ/秒以上</li>
+<li><strong>軽量</strong>: メモリ使用量わずか数MB</li>
+<li><strong>シンプル</strong>: 学習コストが低い</li>
+<li><strong>多様なパターン</strong>: Pub/Sub、Request/Reply、Queue Groups</li>
+<li><strong>永続化</strong>: JetStreamで信頼性の高い配信</li>
+</ul>
+<h3 id="適用場面">適用場面</h3>
+<ul>
+<li>マイクロサービス間の通信</li>
+<li>イベント駆動アーキテクチャ</li>
+<li>リアルタイムデータ配信</li>
+<li>IoTデバイスの通信</li>
+<li>チャットアプリケーション</li>
+</ul>
+<h3 id="学習リソース">学習リソース</h3>
+<ul>
+<li><a href="https://docs.nats.io/">公式ドキュメント</a></li>
+<li><a href="https://natsbyexample.com/">NATS by Example</a></li>
+<li><a href="https://github.com/nats-io/nats-server">GitHub</a></li>
+</ul>
+<p>NATSは、複雑なメッセージングを驚くほどシンプルに実現します。次のプロジェクトでぜひ活用してみてください。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

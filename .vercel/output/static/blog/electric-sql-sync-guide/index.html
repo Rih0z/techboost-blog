@@ -1,0 +1,700 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/electric-sql-sync-guide/"><!-- Primary Meta Tags --><title>ElectricSQL: ローカルファーストアプリケーション同期フレームワーク入門</title><meta name="title" content="ElectricSQL: ローカルファーストアプリケーション同期フレームワーク入門"><meta name="description" content="ElectricSQLでローカルファーストアプリを構築。PostgreSQL同期、オフライン対応、CRDT競合解決、リアクティブクエリの実装方法を実例とともに徹底解説。ElectricSQL・PostgreSQL・オフラインに関する実践情報。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/electric-sql-sync-guide/"><meta property="og:title" content="ElectricSQL: ローカルファーストアプリケーション同期フレームワーク入門"><meta property="og:description" content="ElectricSQLでローカルファーストアプリを構築。PostgreSQL同期、オフライン対応、CRDT競合解決、リアクティブクエリの実装方法を実例とともに徹底解説。ElectricSQL・PostgreSQL・オフラインに関する実践情報。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/electric-sql-sync-guide/"><meta name="twitter:title" content="ElectricSQL: ローカルファーストアプリケーション同期フレームワーク入門"><meta name="twitter:description" content="ElectricSQLでローカルファーストアプリを構築。PostgreSQL同期、オフライン対応、CRDT競合解決、リアクティブクエリの実装方法を実例とともに徹底解説。ElectricSQL・PostgreSQL・オフラインに関する実践情報。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/electric-sql-sync-guide/"},"headline":"ElectricSQL: ローカルファーストアプリケーション同期フレームワーク入門","description":"ElectricSQLでローカルファーストアプリを構築。PostgreSQL同期、オフライン対応、CRDT競合解決、リアクティブクエリの実装方法を実例とともに徹底解説。ElectricSQL・PostgreSQL・オフラインに関する実践情報。","datePublished":"2025-02-06T00:00:00.000Z","dateModified":"2025-02-06T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"ElectricSQL, PostgreSQL, オフライン, CRDT, ローカルファースト, プログラミング"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"ElectricSQL: ローカルファーストアプリケーション同期フレームワーク入門"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-06T00:00:00.000Z"> Feb 5, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>ElectricSQL: ローカルファーストアプリケーション同期フレームワーク入門</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/ElectricSQL" class="article-tag" data-astro-cid-bvzihdzo>
+#ElectricSQL </a><a href="/blog/tag/PostgreSQL" class="article-tag" data-astro-cid-bvzihdzo>
+#PostgreSQL </a><a href="/blog/tag/%E3%82%AA%E3%83%95%E3%83%A9%E3%82%A4%E3%83%B3" class="article-tag" data-astro-cid-bvzihdzo>
+#オフライン </a><a href="/blog/tag/CRDT" class="article-tag" data-astro-cid-bvzihdzo>
+#CRDT </a><a href="/blog/tag/%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%83%95%E3%82%A1%E3%83%BC%E3%82%B9%E3%83%88" class="article-tag" data-astro-cid-bvzihdzo>
+#ローカルファースト </a><a href="/blog/tag/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="article-tag" data-astro-cid-bvzihdzo>
+#プログラミング </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>ElectricSQLは、ローカルファーストアプリケーション開発のための同期フレームワークです。SQLiteをローカルデータベースとして使用し、PostgreSQLサーバーと双方向で自動同期します。</p>
+<p>本ガイドでは、ElectricSQLの核心機能である同期メカニズム、オフライン対応、競合解決に焦点を当てて解説します。</p>
+<h2 id="electricsqlの同期アーキテクチャ">ElectricSQLの同期アーキテクチャ</h2>
+<h3 id="基本概念">基本概念</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌─────────────────────────────────┐</span></span>
+<span class="line"><span>│   クライアント（ブラウザ）      │</span></span>
+<span class="line"><span>│                                 │</span></span>
+<span class="line"><span>│  ┌──────────────────────────┐  │</span></span>
+<span class="line"><span>│  │  SQLite (wa-sqlite)      │  │</span></span>
+<span class="line"><span>│  │  ローカルデータストア     │  │</span></span>
+<span class="line"><span>│  └─────────┬────────────────┘  │</span></span>
+<span class="line"><span>│            │                    │</span></span>
+<span class="line"><span>│  ┌─────────▼────────────────┐  │</span></span>
+<span class="line"><span>│  │  Electric Client SDK     │  │</span></span>
+<span class="line"><span>│  │  - リアクティブクエリ     │  │</span></span>
+<span class="line"><span>│  │  - シェイプ管理           │  │</span></span>
+<span class="line"><span>│  │  - 競合解決               │  │</span></span>
+<span class="line"><span>│  └─────────┬────────────────┘  │</span></span>
+<span class="line"><span>└────────────┼────────────────────┘</span></span>
+<span class="line"><span>             │ WebSocket (変更ストリーム)</span></span>
+<span class="line"><span>             ▼</span></span>
+<span class="line"><span>┌────────────────────────────────┐</span></span>
+<span class="line"><span>│  Electric Sync Service         │</span></span>
+<span class="line"><span>│  - Logical Replication購読     │</span></span>
+<span class="line"><span>│  - 変更イベント配信            │</span></span>
+<span class="line"><span>│  - クライアント状態管理        │</span></span>
+<span class="line"><span>└────────────┬───────────────────┘</span></span>
+<span class="line"><span>             │ PostgreSQL Logical Replication</span></span>
+<span class="line"><span>             ▼</span></span>
+<span class="line"><span>┌────────────────────────────────┐</span></span>
+<span class="line"><span>│  PostgreSQL Database           │</span></span>
+<span class="line"><span>│  - 真実の単一ソース            │</span></span>
+<span class="line"><span>│  - トランザクション整合性      │</span></span>
+<span class="line"><span>└────────────────────────────────┘</span></span></code></pre>
+<h2 id="プロジェクトセットアップ">プロジェクトセットアップ</h2>
+<h3 id="docker-composeでの環境構築">Docker Composeでの環境構築</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># docker-compose.yml</span></span>
+<span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.8'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  postgres</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">postgres:16-alpine</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      POSTGRES_DB</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">electric</span></span>
+<span class="line"><span style="color:#85E89D">      POSTGRES_USER</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">postgres</span></span>
+<span class="line"><span style="color:#85E89D">      POSTGRES_PASSWORD</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">password</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"5432:5432"</span></span>
+<span class="line"><span style="color:#85E89D">    command</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"postgres"</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"-c"</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"wal_level=logical"</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"-c"</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"max_replication_slots=10"</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">postgres_data:/var/lib/postgresql/data</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  electric</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">electricsql/electric:latest</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      DATABASE_URL</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"postgresql://postgres:password@postgres:5432/electric"</span></span>
+<span class="line"><span style="color:#85E89D">      ELECTRIC_WRITE_TO_PG_MODE</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"direct_writes"</span></span>
+<span class="line"><span style="color:#85E89D">      PG_PROXY_PORT</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"65432"</span></span>
+<span class="line"><span style="color:#85E89D">      HTTP_PORT</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"5133"</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"5133:5133"</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"65432:65432"</span></span>
+<span class="line"><span style="color:#85E89D">    depends_on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">postgres</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  postgres_data</span><span style="color:#E1E4E8">:</span></span></code></pre>
+<h3 id="クライアントアプリケーション初期化">クライアントアプリケーション初期化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> vite@latest</span><span style="color:#9ECBFF"> my-electric-app</span><span style="color:#79B8FF"> --</span><span style="color:#79B8FF"> --template</span><span style="color:#9ECBFF"> react-ts</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> my-electric-app</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> electric-sql</span><span style="color:#9ECBFF"> @electric-sql/pglite</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -D</span><span style="color:#9ECBFF"> prisma</span><span style="color:#9ECBFF"> @electric-sql/prisma-generator</span></span></code></pre>
+<h3 id="prismaスキーマ設定">Prismaスキーマ設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="prisma"><code><span class="line"><span style="color:#6A737D">// prisma/schema.prisma</span></span>
+<span class="line"><span style="color:#F97583">generator</span><span style="color:#B392F0"> client</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  provider </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "prisma-client-js"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">generator</span><span style="color:#B392F0"> electric</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  provider </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "@electric-sql/prisma-generator"</span></span>
+<span class="line"><span style="color:#E1E4E8">  output   </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "../src/generated/client"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">datasource</span><span style="color:#B392F0"> db</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  provider </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "postgresql"</span></span>
+<span class="line"><span style="color:#E1E4E8">  url      </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> env</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"DATABASE_URL"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">model</span><span style="color:#B392F0"> Project</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id          </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">   @id</span><span style="color:#B392F0"> @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">uuid</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">  name        </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  description </span><span style="color:#79B8FF">String</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">  created_at  </span><span style="color:#79B8FF">DateTime</span><span style="color:#B392F0"> @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">now</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">  updated_at  </span><span style="color:#79B8FF">DateTime</span><span style="color:#B392F0"> @updatedAt</span></span>
+<span class="line"><span style="color:#E1E4E8">  tasks       </span><span style="color:#79B8FF">Task</span><span style="color:#F97583">[]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  @@map</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"projects"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">model</span><span style="color:#B392F0"> Task</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id          </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">   @id</span><span style="color:#B392F0"> @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">uuid</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">  title       </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  completed   </span><span style="color:#79B8FF">Boolean</span><span style="color:#B392F0">  @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  priority    </span><span style="color:#79B8FF">Int</span><span style="color:#B392F0">      @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  project_id  </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  project     </span><span style="color:#79B8FF">Project</span><span style="color:#B392F0">  @relation</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">fields</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">project_id</span><span style="color:#E1E4E8">], </span><span style="color:#FFAB70">references</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">id</span><span style="color:#E1E4E8">], </span><span style="color:#FFAB70">onDelete</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">Cascade</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  created_at  </span><span style="color:#79B8FF">DateTime</span><span style="color:#B392F0"> @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">now</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">  updated_at  </span><span style="color:#79B8FF">DateTime</span><span style="color:#B392F0"> @updatedAt</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  @@index</span><span style="color:#E1E4E8">([</span><span style="color:#79B8FF">project_id</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#B392F0">  @@index</span><span style="color:#E1E4E8">([</span><span style="color:#79B8FF">completed</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#B392F0">  @@map</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"tasks"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># マイグレーション実行</span></span>
+<span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> prisma</span><span style="color:#9ECBFF"> migrate</span><span style="color:#9ECBFF"> dev</span><span style="color:#79B8FF"> --name</span><span style="color:#9ECBFF"> init</span></span>
+<span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> prisma</span><span style="color:#9ECBFF"> generate</span></span></code></pre>
+<h2 id="リアクティブクエリの実装">リアクティブクエリの実装</h2>
+<h3 id="electric-クライアント初期化">Electric クライアント初期化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/electric/client.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Electric, schema } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../generated/client'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { makeElectricContext } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'electric-sql/react'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { PGlite } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@electric-sql/pglite'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">ElectricProvider</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">useElectric</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> makeElectricContext</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Electric</span><span style="color:#E1E4E8">>()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> initElectric</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">  // ブラウザ内SQLite初期化</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PGlite</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'idb://my-app'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // Electric設定</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    url: </span><span style="color:#F97583">import</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">meta</span><span style="color:#E1E4E8">.env.</span><span style="color:#79B8FF">VITE_ELECTRIC_URL</span><span style="color:#F97583"> ||</span><span style="color:#9ECBFF"> 'http://localhost:5133'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    timeout: </span><span style="color:#79B8FF">10000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // Electric接続</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> electric</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> schema.</span><span style="color:#B392F0">electrify</span><span style="color:#E1E4E8">(db, config)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Electric initialized:'</span><span style="color:#E1E4E8">, electric)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> electric</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="アプリケーションエントリーポイント">アプリケーションエントリーポイント</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/main.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> React, { useEffect, useState } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> ReactDOM </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react-dom/client'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> App </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './App'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { ElectricProvider, initElectric } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './electric/client'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { Electric } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './generated/client'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Root</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">electric</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setElectric</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Electric</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">>(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">error</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setError</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Error</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">>(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> cancelled </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    initElectric</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">db</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">cancelled) {</span></span>
+<span class="line"><span style="color:#B392F0">          setElectric</span><span style="color:#E1E4E8">(db)</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">catch</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">cancelled) {</span></span>
+<span class="line"><span style="color:#B392F0">          setError</span><span style="color:#E1E4E8">(err)</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      cancelled </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>Error initializing Electric: {error.message}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">electric) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>Loading Electric</span><span style="color:#F97583">...&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">ElectricProvider db</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{electric}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">App </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">ElectricProvider</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">ReactDOM.</span><span style="color:#B392F0">createRoot</span><span style="color:#E1E4E8">(document.</span><span style="color:#B392F0">getElementById</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'root'</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">render</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">  &#x3C;</span><span style="color:#E1E4E8">React.StrictMode</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">Root </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">  &#x3C;/</span><span style="color:#E1E4E8">React.StrictMode</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<h2 id="シェイプベース同期">シェイプベース同期</h2>
+<h3 id="シェイプの定義と管理">シェイプの定義と管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/hooks/useProjectSync.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useEffect, useState } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useElectric } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../electric/client'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useProjectSync</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">projectId</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">db</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useElectric</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">syncing</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setSyncing</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">error</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setError</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Error</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">>(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> shape</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> setupSync</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">      try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        setSyncing</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#B392F0">        setError</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // プロジェクトとタスクを同期（シェイプ定義）</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (projectId) {</span></span>
+<span class="line"><span style="color:#6A737D">          // 特定プロジェクトのみ同期</span></span>
+<span class="line"><span style="color:#E1E4E8">          shape </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.projects.</span><span style="color:#B392F0">sync</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">            where: {</span></span>
+<span class="line"><span style="color:#E1E4E8">              id: projectId,</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#E1E4E8">            include: {</span></span>
+<span class="line"><span style="color:#E1E4E8">              tasks: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#E1E4E8">          })</span></span>
+<span class="line"><span style="color:#E1E4E8">        } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">          // 全プロジェクト同期</span></span>
+<span class="line"><span style="color:#E1E4E8">          shape </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.projects.</span><span style="color:#B392F0">sync</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">            include: {</span></span>
+<span class="line"><span style="color:#E1E4E8">              tasks: {</span></span>
+<span class="line"><span style="color:#E1E4E8">                orderBy: {</span></span>
+<span class="line"><span style="color:#E1E4E8">                  priority: </span><span style="color:#9ECBFF">'desc'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#E1E4E8">              },</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#E1E4E8">          })</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Shape synced:'</span><span style="color:#E1E4E8">, shape)</span></span>
+<span class="line"><span style="color:#B392F0">        setSyncing</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (err) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Sync error:'</span><span style="color:#E1E4E8">, err)</span></span>
+<span class="line"><span style="color:#B392F0">        setError</span><span style="color:#E1E4E8">(err </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#B392F0">        setSyncing</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    setupSync</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // シェイプの同期を停止</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (shape?.unsubscribe) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        shape.</span><span style="color:#B392F0">unsubscribe</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [db, projectId])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { syncing, error }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="リアクティブクエリでのデータ表示">リアクティブクエリでのデータ表示</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/components/ProjectList.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useLiveQuery } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'electric-sql/react'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useElectric } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../electric/client'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useProjectSync } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../hooks/useProjectSync'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> ProjectList</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">db</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useElectric</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">syncing</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">error</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useProjectSync</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // リアルタイム自動更新クエリ</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">results</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">projects</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useLiveQuery</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    db.projects.</span><span style="color:#B392F0">liveMany</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      include: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        tasks: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          where: {</span></span>
+<span class="line"><span style="color:#E1E4E8">            completed: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          },</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      orderBy: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        created_at: </span><span style="color:#9ECBFF">'desc'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (syncing) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>Syncing data</span><span style="color:#F97583">...&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>Sync error: {error.message}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"project-list"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">h2</span><span style="color:#E1E4E8">></span><span style="color:#B392F0">Projects</span><span style="color:#E1E4E8"> ({projects?.length ?? </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">})</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">h2</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">projects</span><span style="color:#E1E4E8">?.</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">project</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">div key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{project.id} className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"project-card"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#B392F0">h3</span><span style="color:#E1E4E8">>{project.name}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">h3</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">          {</span><span style="color:#FFAB70">project</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">description</span><span style="color:#E1E4E8"> &#x26;&#x26; &#x3C;</span><span style="color:#FFAB70">p</span><span style="color:#E1E4E8">>{</span><span style="color:#FFAB70">project</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">description</span><span style="color:#E1E4E8">}&#x3C;/</span><span style="color:#FFAB70">p</span><span style="color:#E1E4E8">>}</span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"task-count"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">            Active </span><span style="color:#FFAB70">tasks</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span><span style="color:#B392F0">project</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">tasks</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">length</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      ))}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="オフライン対応">オフライン対応</h2>
+<h3 id="接続状態の監視">接続状態の監視</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/hooks/useConnectivity.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useEffect, useState } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useElectric } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../electric/client'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> ConnectivityStatus</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  isOnline</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span></span>
+<span class="line"><span style="color:#FFAB70">  status</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 'connected'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'disconnected'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'connecting'</span></span>
+<span class="line"><span style="color:#FFAB70">  lastSyncAt</span><span style="color:#F97583">?:</span><span style="color:#B392F0"> Date</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useConnectivity</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">db</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useElectric</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">connectivity</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setConnectivity</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">ConnectivityStatus</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">    isOnline: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    status: </span><span style="color:#9ECBFF">'connecting'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 接続状態の監視</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> unsubscribe</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> db.notifier.</span><span style="color:#B392F0">subscribeToConnectivityStateChanges</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      (</span><span style="color:#FFAB70">state</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        setConnectivity</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          isOnline: state.status </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'connected'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          status: state.status,</span></span>
+<span class="line"><span style="color:#E1E4E8">          lastSyncAt: state.lastSyncAt </span><span style="color:#F97583">?</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(state.lastSyncAt) </span><span style="color:#F97583">:</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        })</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">      unsubscribe</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [db])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> connectivity</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="オフライン-ui-インジケーター">オフライン UI インジケーター</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/components/SyncStatusBar.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useConnectivity } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../hooks/useConnectivity'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> SyncStatusBar</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">isOnline</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">status</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">lastSyncAt</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useConnectivity</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">`sync-status ${</span><span style="color:#E1E4E8">status</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"status-indicator"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#FFAB70">isOnline</span><span style="color:#E1E4E8"> ? (</span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#FFAB70">span</span><span style="color:#FFAB70"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"status-dot online"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">●</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">span</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        ) : (</span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#FFAB70">span</span><span style="color:#FFAB70"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"status-dot offline"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">●</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">span</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        )}</span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">span className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"status-text"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">          {</span><span style="color:#FFAB70">isOnline</span><span style="color:#E1E4E8"> ? </span><span style="color:#9ECBFF">'Synced'</span><span style="color:#E1E4E8"> : </span><span style="color:#9ECBFF">'Offline'</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">span</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">lastSyncAt</span><span style="color:#E1E4E8"> &#x26;&#x26; (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#FFAB70">div</span><span style="color:#FFAB70"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"last-sync"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#FFAB70">          Last</span><span style="color:#FFAB70"> sync</span><span style="color:#E1E4E8">: {</span><span style="color:#FFAB70">formatDistanceToNow</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">lastSyncAt</span><span style="color:#E1E4E8">)} </span><span style="color:#FFAB70">ago</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#FFAB70">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      )}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      {!</span><span style="color:#FFAB70">isOnline</span><span style="color:#E1E4E8"> &#x26;&#x26; (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#FFAB70">div</span><span style="color:#FFAB70"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"offline-notice"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#FFAB70">          Changes</span><span style="color:#FFAB70"> will</span><span style="color:#FFAB70"> sync</span><span style="color:#FFAB70"> when</span><span style="color:#FFAB70"> connection</span><span style="color:#FFAB70"> is</span><span style="color:#FFAB70"> restored</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#FFAB70">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      )}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> formatDistanceToNow</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">date</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> seconds</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">floor</span><span style="color:#E1E4E8">((Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> date.</span><span style="color:#B392F0">getTime</span><span style="color:#E1E4E8">()) </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (seconds </span><span style="color:#F97583">&#x3C;</span><span style="color:#79B8FF"> 60</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#9ECBFF"> `${</span><span style="color:#E1E4E8">seconds</span><span style="color:#9ECBFF">}s`</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (seconds </span><span style="color:#F97583">&#x3C;</span><span style="color:#79B8FF"> 3600</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#9ECBFF"> `${</span><span style="color:#E1E4E8">Math</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">floor</span><span style="color:#9ECBFF">(</span><span style="color:#E1E4E8">seconds</span><span style="color:#F97583"> /</span><span style="color:#79B8FF"> 60</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">}m`</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#9ECBFF"> `${</span><span style="color:#E1E4E8">Math</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">floor</span><span style="color:#9ECBFF">(</span><span style="color:#E1E4E8">seconds</span><span style="color:#F97583"> /</span><span style="color:#79B8FF"> 3600</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">}h`</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="crdt競合解決">CRDT競合解決</h2>
+<h3 id="last-write-winslww戦略">Last-Write-Wins（LWW）戦略</h3>
+<p>ElectricSQLはデフォルトでLWW戦略を使用します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/components/TaskEditor.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useState } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useElectric } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../electric/client'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { Task } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../generated/client'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> TaskEditor</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">task</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">task</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Task</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">db</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useElectric</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">title</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setTitle</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(task.title)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">saving</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setSaving</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> handleSave</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    setSaving</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // 更新はLWW戦略で自動競合解決</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> db.tasks.</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        where: { id: task.id },</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          title,</span></span>
+<span class="line"><span style="color:#E1E4E8">          updated_at: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(), </span><span style="color:#6A737D">// タイムスタンプで競合解決</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Task updated:'</span><span style="color:#E1E4E8">, task.id)</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Update failed:'</span><span style="color:#E1E4E8">, error)</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">finally</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">      setSaving</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"task-editor"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#FFAB70">input</span></span>
+<span class="line"><span style="color:#E1E4E8">        type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text"</span></span>
+<span class="line"><span style="color:#E1E4E8">        value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{title}</span></span>
+<span class="line"><span style="color:#E1E4E8">        onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{(e) => </span><span style="color:#B392F0">setTitle</span><span style="color:#E1E4E8">(e.target.value)}</span></span>
+<span class="line"><span style="color:#E1E4E8">        disabled</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{saving}</span></span>
+<span class="line"><span style="color:#F97583">      /></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">button onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleSave} disabled</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{saving}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#FFAB70">saving</span><span style="color:#E1E4E8"> ? </span><span style="color:#9ECBFF">'Saving...'</span><span style="color:#E1E4E8"> : </span><span style="color:#9ECBFF">'Save'</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="カスタム競合解決ロジック">カスタム競合解決ロジック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/utils/conflictResolution.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { Task } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../generated/client'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> ConflictResolution</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#B392F0">  resolve</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">local</span><span style="color:#F97583">:</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">remote</span><span style="color:#F97583">:</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> T</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> taskConflictResolver</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ConflictResolution</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Task</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">  resolve</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">local</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">remote</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 優先度の高い方を採用</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (local.priority </span><span style="color:#F97583">!==</span><span style="color:#E1E4E8"> remote.priority) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> local.priority </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> remote.priority </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> local </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> remote</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // タイムスタンプで判断（LWW）</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> localTime</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(local.updated_at).</span><span style="color:#B392F0">getTime</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> remoteTime</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(remote.updated_at).</span><span style="color:#B392F0">getTime</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> localTime </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> remoteTime </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> local </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> remote</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// マージ戦略（フィールド単位）</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> mergeTaskConflict</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">local</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Task</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">remote</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Task</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Task</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: local.id,</span></span>
+<span class="line"><span style="color:#6A737D">    // 最新のタイトル</span></span>
+<span class="line"><span style="color:#E1E4E8">    title:</span></span>
+<span class="line"><span style="color:#F97583">      new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(local.updated_at) </span><span style="color:#F97583">></span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(remote.updated_at)</span></span>
+<span class="line"><span style="color:#F97583">        ?</span><span style="color:#E1E4E8"> local.title</span></span>
+<span class="line"><span style="color:#F97583">        :</span><span style="color:#E1E4E8"> remote.title,</span></span>
+<span class="line"><span style="color:#6A737D">    // OR演算（どちらかで完了なら完了）</span></span>
+<span class="line"><span style="color:#E1E4E8">    completed: local.completed </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> remote.completed,</span></span>
+<span class="line"><span style="color:#6A737D">    // 高い方の優先度</span></span>
+<span class="line"><span style="color:#E1E4E8">    priority: Math.</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(local.priority, remote.priority),</span></span>
+<span class="line"><span style="color:#E1E4E8">    project_id: local.project_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    created_at: local.created_at,</span></span>
+<span class="line"><span style="color:#E1E4E8">    updated_at: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      Math.</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">        new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(local.updated_at).</span><span style="color:#B392F0">getTime</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#F97583">        new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(remote.updated_at).</span><span style="color:#B392F0">getTime</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">      )</span></span>
+<span class="line"><span style="color:#E1E4E8">    ),</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="楽観的ui更新">楽観的UI更新</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/hooks/useOptimisticTasks.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useElectric } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../electric/client'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useLiveQuery } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'electric-sql/react'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useOptimisticTasks</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">projectId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">db</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useElectric</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">!</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">results</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">tasks</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useLiveQuery</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    db.tasks.</span><span style="color:#B392F0">liveMany</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      where: { project_id: projectId },</span></span>
+<span class="line"><span style="color:#E1E4E8">      orderBy: { priority: </span><span style="color:#9ECBFF">'desc'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> toggleTask</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">taskId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> task</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> tasks?.</span><span style="color:#B392F0">find</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">t</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> t.id </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> taskId)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">task) </span><span style="color:#F97583">return</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 楽観的UI更新（即座にUIを更新）</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> db.tasks.</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      where: { id: taskId },</span></span>
+<span class="line"><span style="color:#E1E4E8">      data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        completed: </span><span style="color:#F97583">!</span><span style="color:#E1E4E8">task.completed,</span></span>
+<span class="line"><span style="color:#E1E4E8">        updated_at: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // バックグラウンドで同期が実行される</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> addTask</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">title</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> newTask</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      id: crypto.</span><span style="color:#B392F0">randomUUID</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      title,</span></span>
+<span class="line"><span style="color:#E1E4E8">      completed: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      priority: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      project_id: projectId,</span></span>
+<span class="line"><span style="color:#E1E4E8">      created_at: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      updated_at: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 楽観的挿入</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> db.tasks.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      data: newTask,</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> deleteTask</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">taskId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 楽観的削除</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> db.tasks.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      where: { id: taskId },</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    tasks: tasks </span><span style="color:#F97583">??</span><span style="color:#E1E4E8"> [],</span></span>
+<span class="line"><span style="color:#E1E4E8">    toggleTask,</span></span>
+<span class="line"><span style="color:#E1E4E8">    addTask,</span></span>
+<span class="line"><span style="color:#E1E4E8">    deleteTask,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="認証とセキュリティ">認証とセキュリティ</h2>
+<h3 id="jwt認証の実装">JWT認証の実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/electric/auth.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Electric } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../generated/client'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> AuthConfig</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  url</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  authToken</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> initElectricWithAuth</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  token</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Electric</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583">:</span><span style="color:#B392F0"> AuthConfig</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    url: </span><span style="color:#F97583">import</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">meta</span><span style="color:#E1E4E8">.env.</span><span style="color:#79B8FF">VITE_ELECTRIC_URL</span><span style="color:#F97583"> ||</span><span style="color:#9ECBFF"> 'http://localhost:5133'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    authToken: token,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PGlite</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'idb://my-app'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> electric</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> schema.</span><span style="color:#B392F0">electrify</span><span style="color:#E1E4E8">(db, config)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> electric</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 認証トークン管理</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> AuthManager</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#F97583"> static</span><span style="color:#FFAB70"> TOKEN_KEY</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'electric_auth_token'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  static</span><span style="color:#B392F0"> getToken</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> localStorage.</span><span style="color:#B392F0">getItem</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">TOKEN_KEY</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  static</span><span style="color:#B392F0"> setToken</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">token</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    localStorage.</span><span style="color:#B392F0">setItem</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">TOKEN_KEY</span><span style="color:#E1E4E8">, token)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  static</span><span style="color:#B392F0"> clearToken</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    localStorage.</span><span style="color:#B392F0">removeItem</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">TOKEN_KEY</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="postgresql-row-level-security">PostgreSQL Row Level Security</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- PostgreSQL側でRLS設定</span></span>
+<span class="line"><span style="color:#F97583">ALTER</span><span style="color:#F97583"> TABLE</span><span style="color:#E1E4E8"> projects </span><span style="color:#F97583">ENABLE</span><span style="color:#F97583"> ROW</span><span style="color:#F97583"> LEVEL</span><span style="color:#F97583"> SECURITY</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">ALTER</span><span style="color:#F97583"> TABLE</span><span style="color:#E1E4E8"> tasks </span><span style="color:#F97583">ENABLE</span><span style="color:#F97583"> ROW</span><span style="color:#F97583"> LEVEL</span><span style="color:#F97583"> SECURITY</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ユーザーは自分のプロジェクトのみアクセス可能</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> POLICY</span><span style="color:#E1E4E8"> projects_user_policy </span><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> projects</span></span>
+<span class="line"><span style="color:#F97583">  FOR</span><span style="color:#E1E4E8"> ALL</span></span>
+<span class="line"><span style="color:#F97583">  USING</span><span style="color:#E1E4E8"> (user_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> current_user_id());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- タスクは所属プロジェクトのユーザーのみアクセス可能</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> POLICY</span><span style="color:#E1E4E8"> tasks_user_policy </span><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> tasks</span></span>
+<span class="line"><span style="color:#F97583">  FOR</span><span style="color:#E1E4E8"> ALL</span></span>
+<span class="line"><span style="color:#F97583">  USING</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    EXISTS</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">      SELECT</span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> projects</span></span>
+<span class="line"><span style="color:#F97583">      WHERE</span><span style="color:#79B8FF"> projects</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">id</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> tasks</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">project_id</span></span>
+<span class="line"><span style="color:#F97583">      AND</span><span style="color:#79B8FF"> projects</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">user_id</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> current_user_id()</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ヘルパー関数</span></span>
+<span class="line"><span style="color:#F97583">CREATE OR REPLACE</span><span style="color:#F97583"> FUNCTION</span><span style="color:#B392F0"> current_user_id</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">RETURNS</span><span style="color:#E1E4E8"> uuid </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> $$</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span><span style="color:#79B8FF"> nullif</span><span style="color:#E1E4E8">(current_setting(</span><span style="color:#9ECBFF">'app.user_id'</span><span style="color:#E1E4E8">, true), </span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">)::uuid;</span></span>
+<span class="line"><span style="color:#E1E4E8">$$ </span><span style="color:#F97583">LANGUAGE</span><span style="color:#F97583"> sql</span><span style="color:#E1E4E8"> STABLE;</span></span></code></pre>
+<h2 id="パフォーマンス最適化">パフォーマンス最適化</h2>
+<h3 id="インデックス最適化">インデックス最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 頻繁に検索されるフィールドにインデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_tasks_project_id</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> tasks(project_id);</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_tasks_completed</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> tasks(completed);</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_tasks_priority</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> tasks(</span><span style="color:#F97583">priority DESC</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 複合インデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_tasks_project_completed</span></span>
+<span class="line"><span style="color:#F97583">  ON</span><span style="color:#E1E4E8"> tasks(project_id, completed);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 部分インデックス（未完了タスクのみ）</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_tasks_incomplete</span></span>
+<span class="line"><span style="color:#F97583">  ON</span><span style="color:#E1E4E8"> tasks(project_id, </span><span style="color:#F97583">priority DESC</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  WHERE</span><span style="color:#E1E4E8"> completed </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> false;</span></span></code></pre>
+<h3 id="シェイプの細分化">シェイプの細分化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/hooks/useSelectiveSync.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useEffect, useState } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useElectric } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../electric/client'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useSelectiveSync</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">options</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  includeCompleted</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> boolean</span></span>
+<span class="line"><span style="color:#FFAB70">  priorityThreshold</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span></span>
+<span class="line"><span style="color:#E1E4E8">}) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">db</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useElectric</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">syncing</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setSyncing</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> shape</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> setupSync</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#B392F0">      setSyncing</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // 条件付きシェイプ（必要なデータのみ同期）</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> where</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">options.includeCompleted) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        where.completed </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (options.priorityThreshold </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        where.priority </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">          gte: options.priorityThreshold,</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      shape </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.tasks.</span><span style="color:#B392F0">sync</span><span style="color:#E1E4E8">({ where })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">      setSyncing</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    setupSync</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      shape?.</span><span style="color:#B392F0">unsubscribe</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [db, options.includeCompleted, options.priorityThreshold])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { syncing }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>ElectricSQLは以下を実現します:</p>
+<ol>
+<li><strong>リアルタイム同期</strong> - PostgreSQLとSQLiteの双方向同期</li>
+<li><strong>オフライン対応</strong> - ネットワーク断絶時も動作</li>
+<li><strong>CRDT競合解決</strong> - 自動的な競合解決メカニズム</li>
+<li><strong>リアクティブクエリ</strong> - データ変更時の自動UI更新</li>
+<li><strong>シェイプベース同期</strong> - 必要なデータのみ同期</li>
+</ol>
+<p>ローカルファーストアプリケーションの開発において、ElectricSQLは強力な選択肢です。オフライン対応が必須のモバイルアプリやコラボレーションツールに最適です。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

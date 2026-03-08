@@ -1,0 +1,660 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/golang-generics-practical-guide/"><!-- Primary Meta Tags --><title>Go言語ジェネリクス実践ガイド</title><meta name="title" content="Go言語ジェネリクス実践ガイド"><meta name="description" content="Go 1.18以降のジェネリクスを基本から実践パターンまで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/golang-generics-practical-guide/"><meta property="og:title" content="Go言語ジェネリクス実践ガイド"><meta property="og:description" content="Go 1.18以降のジェネリクスを基本から実践パターンまで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/golang-generics-practical-guide/"><meta name="twitter:title" content="Go言語ジェネリクス実践ガイド"><meta name="twitter:description" content="Go 1.18以降のジェネリクスを基本から実践パターンまで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/golang-generics-practical-guide/"},"headline":"Go言語ジェネリクス実践ガイド","description":"Go 1.18以降のジェネリクスを基本から実践パターンまで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。","datePublished":"2025-02-05T00:00:00.000Z","dateModified":"2025-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Go, バックエンド, 開発ツール"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Go言語ジェネリクス実践ガイド"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-05T00:00:00.000Z"> Feb 4, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>Go言語ジェネリクス実践ガイド</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Go" class="article-tag" data-astro-cid-bvzihdzo>
+#Go </a><a href="/blog/tag/%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89" class="article-tag" data-astro-cid-bvzihdzo>
+#バックエンド </a><a href="/blog/tag/%E9%96%8B%E7%99%BA%E3%83%84%E3%83%BC%E3%83%AB" class="article-tag" data-astro-cid-bvzihdzo>
+#開発ツール </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Go 1.18で導入されたジェネリクスは、型安全性を保ちながらコードの再利用性を大幅に向上させる機能です。本記事では、基本的な型パラメータから実践的なパターン、パフォーマンスへの影響まで、Goのジェネリクスを完全に解説します。</p>
+<h2 id="goジェネリクスの基本">Goジェネリクスの基本</h2>
+<p>ジェネリクスを使用することで、複数の型に対して同じロジックを適用できます。</p>
+<h3 id="型パラメータの基本構文">型パラメータの基本構文</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// 基本的な型パラメータ</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Print</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">value</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(value)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#B392F0">    Print</span><span style="color:#E1E4E8">[</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">](</span><span style="color:#79B8FF">42</span><span style="color:#E1E4E8">)          </span><span style="color:#6A737D">// 明示的な型指定</span></span>
+<span class="line"><span style="color:#B392F0">    Print</span><span style="color:#E1E4E8">[</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">](</span><span style="color:#9ECBFF">"Hello"</span><span style="color:#E1E4E8">)  </span><span style="color:#6A737D">// 明示的な型指定</span></span>
+<span class="line"><span style="color:#B392F0">    Print</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">3.14</span><span style="color:#E1E4E8">)             </span><span style="color:#6A737D">// 型推論</span></span>
+<span class="line"><span style="color:#B392F0">    Print</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">)             </span><span style="color:#6A737D">// 型推論</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ジェネリック型の定義">ジェネリック型の定義</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// ジェネリックなスライス型</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Stack</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    items []</span><span style="color:#B392F0">T</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">s </span><span style="color:#F97583">*</span><span style="color:#B392F0">Stack</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">Push</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">item</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    s.items </span><span style="color:#F97583">=</span><span style="color:#B392F0"> append</span><span style="color:#E1E4E8">(s.items, item)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">s </span><span style="color:#F97583">*</span><span style="color:#B392F0">Stack</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">Pop</span><span style="color:#E1E4E8">() (</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#B392F0"> len</span><span style="color:#E1E4E8">(s.items) </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        var</span><span style="color:#E1E4E8"> zero </span><span style="color:#B392F0">T</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> zero, </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    index </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> len</span><span style="color:#E1E4E8">(s.items) </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#E1E4E8">    item </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> s.items[index]</span></span>
+<span class="line"><span style="color:#E1E4E8">    s.items </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> s.items[:index]</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> item, </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">s </span><span style="color:#F97583">*</span><span style="color:#B392F0">Stack</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">Peek</span><span style="color:#E1E4E8">() (</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#B392F0"> len</span><span style="color:#E1E4E8">(s.items) </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        var</span><span style="color:#E1E4E8"> zero </span><span style="color:#B392F0">T</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> zero, </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> s.items[</span><span style="color:#B392F0">len</span><span style="color:#E1E4E8">(s.items)</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">], </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">s </span><span style="color:#F97583">*</span><span style="color:#B392F0">Stack</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">IsEmpty</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> len</span><span style="color:#E1E4E8">(s.items) </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">s </span><span style="color:#F97583">*</span><span style="color:#B392F0">Stack</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">Size</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">int</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> len</span><span style="color:#E1E4E8">(s.items)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    intStack </span><span style="color:#F97583">:=</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">Stack</span><span style="color:#E1E4E8">[</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">]{}</span></span>
+<span class="line"><span style="color:#E1E4E8">    intStack.</span><span style="color:#B392F0">Push</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    intStack.</span><span style="color:#B392F0">Push</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    intStack.</span><span style="color:#B392F0">Push</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    value, ok </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> intStack.</span><span style="color:#B392F0">Pop</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(value, ok) </span><span style="color:#6A737D">// 3 true</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    stringStack </span><span style="color:#F97583">:=</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">Stack</span><span style="color:#E1E4E8">[</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">]{}</span></span>
+<span class="line"><span style="color:#E1E4E8">    stringStack.</span><span style="color:#B392F0">Push</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"hello"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    stringStack.</span><span style="color:#B392F0">Push</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"world"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    value2, ok2 </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> stringStack.</span><span style="color:#B392F0">Pop</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(value2, ok2) </span><span style="color:#6A737D">// world true</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="型制約type-constraints">型制約（Type Constraints）</h2>
+<p>型制約を使用して、型パラメータに条件を付けることができます。</p>
+<h3 id="基本的な制約">基本的な制約</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// comparable制約: ==と!=が使える型</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Contains</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> comparable</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">slice</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">target</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> _, item </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> slice {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> item </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> target {</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    numbers </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> []</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">4</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Contains</span><span style="color:#E1E4E8">(numbers, </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">)) </span><span style="color:#6A737D">// true</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    words </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> []</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">"apple"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"banana"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"cherry"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Contains</span><span style="color:#E1E4E8">(words, </span><span style="color:#9ECBFF">"banana"</span><span style="color:#E1E4E8">)) </span><span style="color:#6A737D">// true</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="カスタム制約の定義">カスタム制約の定義</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// 数値型の制約</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Number</span><span style="color:#F97583"> interface</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    ~int</span><span style="color:#F97583"> |</span><span style="color:#F97583"> ~int8</span><span style="color:#F97583"> |</span><span style="color:#F97583"> ~int16</span><span style="color:#F97583"> |</span><span style="color:#F97583"> ~int32</span><span style="color:#F97583"> |</span><span style="color:#F97583"> ~int64</span><span style="color:#F97583"> |</span></span>
+<span class="line"><span style="color:#F97583">    ~uint</span><span style="color:#F97583"> |</span><span style="color:#F97583"> ~uint8</span><span style="color:#F97583"> |</span><span style="color:#F97583"> ~uint16</span><span style="color:#F97583"> |</span><span style="color:#F97583"> ~uint32</span><span style="color:#F97583"> |</span><span style="color:#F97583"> ~uint64</span><span style="color:#F97583"> |</span></span>
+<span class="line"><span style="color:#F97583">    ~float32</span><span style="color:#F97583"> |</span><span style="color:#F97583"> ~float64</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 加算可能な型の制約</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Addable</span><span style="color:#F97583"> interface</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    Number</span><span style="color:#F97583"> |</span><span style="color:#F97583"> ~</span><span style="color:#F97583">string</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 数値の合計を計算</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Sum</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> Number</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">numbers</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">T</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    var</span><span style="color:#E1E4E8"> total </span><span style="color:#B392F0">T</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> _, n </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> numbers {</span></span>
+<span class="line"><span style="color:#E1E4E8">        total </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> n</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> total</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 最大値を見つける</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Max</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> Number</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">a</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">T</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> a </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> b {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> a</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> b</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 最小値を見つける</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Min</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> Number</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">a</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">T</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> a </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> b {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> a</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> b</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ints </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> []</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">4</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Sum</span><span style="color:#E1E4E8">(ints)) </span><span style="color:#6A737D">// 15</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    floats </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> []</span><span style="color:#F97583">float64</span><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">1.5</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2.5</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">3.5</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Sum</span><span style="color:#E1E4E8">(floats)) </span><span style="color:#6A737D">// 7.5</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8">))      </span><span style="color:#6A737D">// 20</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">3.14</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2.71</span><span style="color:#E1E4E8">))  </span><span style="color:#6A737D">// 2.71</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="メソッド制約">メソッド制約</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// Stringerインターフェースを持つ型の制約</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Stringer</span><span style="color:#F97583"> interface</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    String</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">string</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Stringerを実装する型を処理</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> PrintAll</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> Stringer</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">items</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> _, item </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> items {</span></span>
+<span class="line"><span style="color:#E1E4E8">        fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(item.</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// カスタム型</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> User</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    Name </span><span style="color:#F97583">string</span></span>
+<span class="line"><span style="color:#E1E4E8">    Age  </span><span style="color:#F97583">int</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">u </span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">string</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> fmt.</span><span style="color:#B392F0">Sprintf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">%s</span><span style="color:#9ECBFF"> (</span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">歳)"</span><span style="color:#E1E4E8">, u.Name, u.Age)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Product</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    Name  </span><span style="color:#F97583">string</span></span>
+<span class="line"><span style="color:#E1E4E8">    Price </span><span style="color:#F97583">int</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">p </span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">string</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> fmt.</span><span style="color:#B392F0">Sprintf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">%s</span><span style="color:#9ECBFF"> - </span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">円"</span><span style="color:#E1E4E8">, p.Name, p.Price)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    users </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">        {Name: </span><span style="color:#9ECBFF">"太郎"</span><span style="color:#E1E4E8">, Age: </span><span style="color:#79B8FF">25</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">        {Name: </span><span style="color:#9ECBFF">"花子"</span><span style="color:#E1E4E8">, Age: </span><span style="color:#79B8FF">30</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#B392F0">    PrintAll</span><span style="color:#E1E4E8">(users)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    products </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">        {Name: </span><span style="color:#9ECBFF">"りんご"</span><span style="color:#E1E4E8">, Price: </span><span style="color:#79B8FF">150</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">        {Name: </span><span style="color:#9ECBFF">"みかん"</span><span style="color:#E1E4E8">, Price: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#B392F0">    PrintAll</span><span style="color:#E1E4E8">(products)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="実践的なパターン">実践的なパターン</h2>
+<h3 id="スライス操作ユーティリティ">スライス操作ユーティリティ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> slices</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Map: スライスの各要素を変換</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">U</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">slice</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fn</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">U</span><span style="color:#E1E4E8">) []</span><span style="color:#B392F0">U</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> make</span><span style="color:#E1E4E8">([]</span><span style="color:#B392F0">U</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">len</span><span style="color:#E1E4E8">(slice))</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> i, item </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> slice {</span></span>
+<span class="line"><span style="color:#E1E4E8">        result[i] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> fn</span><span style="color:#E1E4E8">(item)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Filter: 条件に合う要素のみを抽出</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Filter</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">slice</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fn</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8">) []</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> make</span><span style="color:#E1E4E8">([]</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> _, item </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> slice {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#B392F0"> fn</span><span style="color:#E1E4E8">(item) {</span></span>
+<span class="line"><span style="color:#E1E4E8">            result </span><span style="color:#F97583">=</span><span style="color:#B392F0"> append</span><span style="color:#E1E4E8">(result, item)</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Reduce: スライスを単一の値に集約</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Reduce</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">U</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">slice</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">initial</span><span style="color:#B392F0"> U</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fn</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">U</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">U</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">U</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> initial</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> _, item </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> slice {</span></span>
+<span class="line"><span style="color:#E1E4E8">        result </span><span style="color:#F97583">=</span><span style="color:#B392F0"> fn</span><span style="color:#E1E4E8">(result, item)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Find: 条件に合う最初の要素を見つける</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Find</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">slice</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fn</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8">) (</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> _, item </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> slice {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#B392F0"> fn</span><span style="color:#E1E4E8">(item) {</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> item, </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    var</span><span style="color:#E1E4E8"> zero </span><span style="color:#B392F0">T</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> zero, </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Every: すべての要素が条件を満たすか</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Every</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">slice</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fn</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> _, item </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> slice {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#F97583"> !</span><span style="color:#B392F0">fn</span><span style="color:#E1E4E8">(item) {</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Some: いずれかの要素が条件を満たすか</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Some</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">slice</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fn</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> _, item </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> slice {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#B392F0"> fn</span><span style="color:#E1E4E8">(item) {</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    numbers </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> []</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">4</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Map: 各要素を2倍に</span></span>
+<span class="line"><span style="color:#E1E4E8">    doubled </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">(numbers, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">n</span><span style="color:#F97583"> int</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">int</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> n </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 2</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(doubled) </span><span style="color:#6A737D">// [2 4 6 8 10]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Filter: 偶数のみ抽出</span></span>
+<span class="line"><span style="color:#E1E4E8">    evens </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> Filter</span><span style="color:#E1E4E8">(numbers, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">n</span><span style="color:#F97583"> int</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> n</span><span style="color:#F97583">%</span><span style="color:#79B8FF">2</span><span style="color:#F97583"> ==</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(evens) </span><span style="color:#6A737D">// [2 4]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Reduce: 合計を計算</span></span>
+<span class="line"><span style="color:#E1E4E8">    sum </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> Reduce</span><span style="color:#E1E4E8">(numbers, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">acc</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">n</span><span style="color:#F97583"> int</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">int</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> acc </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> n</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(sum) </span><span style="color:#6A737D">// 15</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Find: 3より大きい最初の数</span></span>
+<span class="line"><span style="color:#E1E4E8">    found, ok </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> Find</span><span style="color:#E1E4E8">(numbers, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">n</span><span style="color:#F97583"> int</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> n </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 3</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(found, ok) </span><span style="color:#6A737D">// 4 true</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="マップ操作ユーティリティ">マップ操作ユーティリティ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> maps</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Keys: マップのキーをスライスで取得</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Keys</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">K</span><span style="color:#B392F0"> comparable</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">V</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">m</span><span style="color:#F97583"> map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8">) []</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    keys </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> make</span><span style="color:#E1E4E8">([]</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">len</span><span style="color:#E1E4E8">(m))</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> k </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> m {</span></span>
+<span class="line"><span style="color:#E1E4E8">        keys </span><span style="color:#F97583">=</span><span style="color:#B392F0"> append</span><span style="color:#E1E4E8">(keys, k)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> keys</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Values: マップの値をスライスで取得</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Values</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">K</span><span style="color:#B392F0"> comparable</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">V</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">m</span><span style="color:#F97583"> map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8">) []</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    values </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> make</span><span style="color:#E1E4E8">([]</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">len</span><span style="color:#E1E4E8">(m))</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> _, v </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> m {</span></span>
+<span class="line"><span style="color:#E1E4E8">        values </span><span style="color:#F97583">=</span><span style="color:#B392F0"> append</span><span style="color:#E1E4E8">(values, v)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> values</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// MapKeys: キーを変換して新しいマップを作成</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> MapKeys</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">K1</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">K2</span><span style="color:#B392F0"> comparable</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">V</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">m</span><span style="color:#F97583"> map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K1</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fn</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">K1</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">K2</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K2</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> make</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K2</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">len</span><span style="color:#E1E4E8">(m))</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> k, v </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> m {</span></span>
+<span class="line"><span style="color:#E1E4E8">        result[</span><span style="color:#B392F0">fn</span><span style="color:#E1E4E8">(k)] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> v</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// MapValues: 値を変換して新しいマップを作成</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> MapValues</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">K</span><span style="color:#B392F0"> comparable</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">V1</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">V2</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">m</span><span style="color:#F97583"> map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V1</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fn</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">V1</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">V2</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V2</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> make</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V2</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">len</span><span style="color:#E1E4E8">(m))</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> k, v </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> m {</span></span>
+<span class="line"><span style="color:#E1E4E8">        result[k] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> fn</span><span style="color:#E1E4E8">(v)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Filter: 条件に合うエントリのみを抽出</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Filter</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">K</span><span style="color:#B392F0"> comparable</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">V</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">m</span><span style="color:#F97583"> map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fn</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">V</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> make</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> k, v </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> m {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#B392F0"> fn</span><span style="color:#E1E4E8">(k, v) {</span></span>
+<span class="line"><span style="color:#E1E4E8">            result[k] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> v</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Merge: 複数のマップをマージ</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Merge</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">K</span><span style="color:#B392F0"> comparable</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">V</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">maps</span><span style="color:#F97583"> ...map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> make</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">map</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">K</span><span style="color:#E1E4E8">]</span><span style="color:#B392F0">V</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> _, m </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> maps {</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> k, v </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> m {</span></span>
+<span class="line"><span style="color:#E1E4E8">            result[k] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> v</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    scores </span><span style="color:#F97583">:=</span><span style="color:#F97583"> map</span><span style="color:#E1E4E8">[</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">]</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        "Alice"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">95</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "Bob"</span><span style="color:#E1E4E8">:   </span><span style="color:#79B8FF">80</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "Carol"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">88</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Keys: すべてのキーを取得</span></span>
+<span class="line"><span style="color:#E1E4E8">    names </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> Keys</span><span style="color:#E1E4E8">(scores)</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(names) </span><span style="color:#6A737D">// [Alice Bob Carol] (順不同)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Values: すべての値を取得</span></span>
+<span class="line"><span style="color:#E1E4E8">    points </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> Values</span><span style="color:#E1E4E8">(scores)</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(points) </span><span style="color:#6A737D">// [95 80 88] (順不同)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // MapValues: すべてのスコアを10点加算</span></span>
+<span class="line"><span style="color:#E1E4E8">    boosted </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> MapValues</span><span style="color:#E1E4E8">(scores, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">score</span><span style="color:#F97583"> int</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">int</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> score </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(boosted) </span><span style="color:#6A737D">// map[Alice:105 Bob:90 Carol:98]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Filter: 90点以上のみ抽出</span></span>
+<span class="line"><span style="color:#E1E4E8">    topScores </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> Filter</span><span style="color:#E1E4E8">(scores, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">name</span><span style="color:#F97583"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">score</span><span style="color:#F97583"> int</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> score </span><span style="color:#F97583">>=</span><span style="color:#79B8FF"> 90</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(topScores) </span><span style="color:#6A737D">// map[Alice:95]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ジェネリックなデータ構造">ジェネリックなデータ構造</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// 双方向リンクリスト</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> LinkedList</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    head </span><span style="color:#F97583">*</span><span style="color:#B392F0">Node</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    tail </span><span style="color:#F97583">*</span><span style="color:#B392F0">Node</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    size </span><span style="color:#F97583">int</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Node</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    value </span><span style="color:#B392F0">T</span></span>
+<span class="line"><span style="color:#E1E4E8">    next  </span><span style="color:#F97583">*</span><span style="color:#B392F0">Node</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    prev  </span><span style="color:#F97583">*</span><span style="color:#B392F0">Node</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> NewLinkedList</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">]() </span><span style="color:#F97583">*</span><span style="color:#B392F0">LinkedList</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">] {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">LinkedList</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">l </span><span style="color:#F97583">*</span><span style="color:#B392F0">LinkedList</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">PushFront</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">value</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    node </span><span style="color:#F97583">:=</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">Node</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]{value: value}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> l.head </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        l.head </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"><span style="color:#E1E4E8">        l.tail </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        node.next </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> l.head</span></span>
+<span class="line"><span style="color:#E1E4E8">        l.head.prev </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"><span style="color:#E1E4E8">        l.head </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">    l.size</span><span style="color:#F97583">++</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">l </span><span style="color:#F97583">*</span><span style="color:#B392F0">LinkedList</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">PushBack</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">value</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    node </span><span style="color:#F97583">:=</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">Node</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]{value: value}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> l.tail </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        l.head </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"><span style="color:#E1E4E8">        l.tail </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        node.prev </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> l.tail</span></span>
+<span class="line"><span style="color:#E1E4E8">        l.tail.next </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"><span style="color:#E1E4E8">        l.tail </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">    l.size</span><span style="color:#F97583">++</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">l </span><span style="color:#F97583">*</span><span style="color:#B392F0">LinkedList</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">PopFront</span><span style="color:#E1E4E8">() (</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> l.head </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        var</span><span style="color:#E1E4E8"> zero </span><span style="color:#B392F0">T</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> zero, </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    value </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> l.head.value</span></span>
+<span class="line"><span style="color:#E1E4E8">    l.head </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> l.head.next</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> l.head </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        l.tail </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> nil</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        l.head.prev </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> nil</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    l.size</span><span style="color:#F97583">--</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> value, </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">l </span><span style="color:#F97583">*</span><span style="color:#B392F0">LinkedList</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">PopBack</span><span style="color:#E1E4E8">() (</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> l.tail </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        var</span><span style="color:#E1E4E8"> zero </span><span style="color:#B392F0">T</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> zero, </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    value </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> l.tail.value</span></span>
+<span class="line"><span style="color:#E1E4E8">    l.tail </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> l.tail.prev</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> l.tail </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        l.head </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> nil</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        l.tail.next </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> nil</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    l.size</span><span style="color:#F97583">--</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> value, </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">l </span><span style="color:#F97583">*</span><span style="color:#B392F0">LinkedList</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">Size</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">int</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> l.size</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">l </span><span style="color:#F97583">*</span><span style="color:#B392F0">LinkedList</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">IsEmpty</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> l.size </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// イテレータ</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">l </span><span style="color:#F97583">*</span><span style="color:#B392F0">LinkedList</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">ForEach</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">fn</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    current </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> l.head</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> current </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        fn</span><span style="color:#E1E4E8">(current.value)</span></span>
+<span class="line"><span style="color:#E1E4E8">        current </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> current.next</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    list </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> NewLinkedList</span><span style="color:#E1E4E8">[</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">]()</span></span>
+<span class="line"><span style="color:#E1E4E8">    list.</span><span style="color:#B392F0">PushBack</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"A"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    list.</span><span style="color:#B392F0">PushBack</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"B"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    list.</span><span style="color:#B392F0">PushFront</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"C"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    list.</span><span style="color:#B392F0">ForEach</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">value</span><span style="color:#F97583"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(value)</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#6A737D">    // 出力: C, A, B</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="result型パターン">Result型パターン</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// Result型: エラー処理をより明示的に</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    value </span><span style="color:#B392F0">T</span></span>
+<span class="line"><span style="color:#E1E4E8">    err   </span><span style="color:#F97583">error</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Ok</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">value</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">] {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]{value: value}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Err</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">err</span><span style="color:#F97583"> error</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">] {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]{err: err}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">IsOk</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> r.err </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> nil</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">IsErr</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">bool</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> r.err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">Unwrap</span><span style="color:#E1E4E8">() </span><span style="color:#B392F0">T</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> r.err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        panic</span><span style="color:#E1E4E8">(r.err)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> r.value</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">UnwrapOr</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">defaultValue</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">T</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> r.err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> defaultValue</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> r.value</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">UnwrapOrElse</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">fn</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">() </span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">T</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> r.err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> fn</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> r.value</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">]) </span><span style="color:#B392F0">Map</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">U</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">fn</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">U</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">U</span><span style="color:#E1E4E8">] {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> r.err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> Err</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">U</span><span style="color:#E1E4E8">](r.err)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> Ok</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">fn</span><span style="color:#E1E4E8">(r.value))</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Divide</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">a</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#F97583"> int</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">[</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">] {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> b </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> Err</span><span style="color:#E1E4E8">[</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">](errors.</span><span style="color:#B392F0">New</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"division by zero"</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> Ok</span><span style="color:#E1E4E8">(a </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> b)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    result1 </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> Divide</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> result1.</span><span style="color:#B392F0">IsOk</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">        fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(result1.</span><span style="color:#B392F0">Unwrap</span><span style="color:#E1E4E8">()) </span><span style="color:#6A737D">// 5</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    result2 </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> Divide</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    value </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> result2.</span><span style="color:#B392F0">UnwrapOr</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(value) </span><span style="color:#6A737D">// 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Map: 結果を変換</span></span>
+<span class="line"><span style="color:#E1E4E8">    result3 </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> Divide</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">Map</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">n</span><span style="color:#F97583"> int</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">string</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> fmt.</span><span style="color:#B392F0">Sprintf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"結果: </span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">, n)</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">    fmt.</span><span style="color:#B392F0">Println</span><span style="color:#E1E4E8">(result3.</span><span style="color:#B392F0">UnwrapOr</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"エラー"</span><span style="color:#E1E4E8">)) </span><span style="color:#6A737D">// 結果: 5</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="パフォーマンスへの影響">パフォーマンスへの影響</h2>
+<h3 id="コンパイル時の型消去">コンパイル時の型消去</h3>
+<p>Goのジェネリクスは、コンパイル時に単相化（monomorphization）されます。つまり、使用される型ごとに専用のコードが生成されます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// この関数は...</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Add</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> Number</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">a</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">T</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> a </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> b</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用時に以下のような専用関数が生成される</span></span>
+<span class="line"><span style="color:#6A737D">// func AddInt(a, b int) int { return a + b }</span></span>
+<span class="line"><span style="color:#6A737D">// func AddFloat64(a, b float64) float64 { return a + b }</span></span></code></pre>
+<h3 id="パフォーマンス比較">パフォーマンス比較</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> main</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">testing</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ジェネリック版</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> SumGeneric</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> Number</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">numbers</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">T</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    var</span><span style="color:#E1E4E8"> total </span><span style="color:#B392F0">T</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> _, n </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> numbers {</span></span>
+<span class="line"><span style="color:#E1E4E8">        total </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> n</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> total</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 非ジェネリック版</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> SumInt</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">numbers</span><span style="color:#E1E4E8"> []</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">int</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    var</span><span style="color:#E1E4E8"> total </span><span style="color:#F97583">int</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> _, n </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> numbers {</span></span>
+<span class="line"><span style="color:#E1E4E8">        total </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> n</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> total</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> BenchmarkSumGeneric</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">b</span><span style="color:#F97583"> *</span><span style="color:#B392F0">testing</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">B</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    numbers </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> make</span><span style="color:#E1E4E8">([]</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> numbers {</span></span>
+<span class="line"><span style="color:#E1E4E8">        numbers[i] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> i</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    b.</span><span style="color:#B392F0">ResetTimer</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">:=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> b.N; i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        SumGeneric</span><span style="color:#E1E4E8">(numbers)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> BenchmarkSumInt</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">b</span><span style="color:#F97583"> *</span><span style="color:#B392F0">testing</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">B</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    numbers </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> make</span><span style="color:#E1E4E8">([]</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> numbers {</span></span>
+<span class="line"><span style="color:#E1E4E8">        numbers[i] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> i</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    b.</span><span style="color:#B392F0">ResetTimer</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">:=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> b.N; i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        SumInt</span><span style="color:#E1E4E8">(numbers)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 結果: ほぼ同等のパフォーマンス</span></span>
+<span class="line"><span style="color:#6A737D">// BenchmarkSumGeneric-8   1000000    1020 ns/op</span></span>
+<span class="line"><span style="color:#6A737D">// BenchmarkSumInt-8       1000000    1018 ns/op</span></span></code></pre>
+<h3 id="ベストプラクティス">ベストプラクティス</h3>
+<ol>
+<li><strong>適切な制約を使用</strong>: 必要以上に制約を緩くしない</li>
+<li><strong>インライン化を考慮</strong>: 小さな関数はインライン化される</li>
+<li><strong>型推論を活用</strong>: 明示的な型指定は最小限に</li>
+<li><strong>過度な抽象化を避ける</strong>: シンプルさを保つ</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// Good: 適切な制約</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Max</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#B392F0"> Number</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">a</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">T</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> a </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> b {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> a</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> b</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Bad: 過度に抽象化</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> Process</span><span style="color:#E1E4E8">[</span><span style="color:#FFAB70">T</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">U</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">V</span><span style="color:#B392F0"> any</span><span style="color:#E1E4E8">](</span><span style="color:#FFAB70">input</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fn1</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">U</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fn2</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">U</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">V</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">V</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> fn2</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">fn1</span><span style="color:#E1E4E8">(input))</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Go言語のジェネリクスは、型安全性を保ちながらコードの再利用性を大幅に向上させます。主なポイントは以下の通りです。</p>
+<ul>
+<li><strong>型パラメータ</strong>: <code>[T any]</code>構文で柔軟な型を扱える</li>
+<li><strong>型制約</strong>: インターフェースで型の条件を指定</li>
+<li><strong>実践パターン</strong>: スライス、マップ、データ構造の汎用化</li>
+<li><strong>パフォーマンス</strong>: コンパイル時の最適化により、ほぼオーバーヘッドなし</li>
+</ul>
+<p>ジェネリクスを適切に活用することで、より保守しやすく、再利用可能なGoコードを書くことができます。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

@@ -1,0 +1,704 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/web-push-notifications-guide/"><!-- Primary Meta Tags --><title>Web Push通知実装ガイド: Service WorkerとPush APIの活用</title><meta name="title" content="Web Push通知実装ガイド: Service WorkerとPush APIの活用"><meta name="description" content="Web Push通知の実装方法を徹底解説。Service Workerの登録、Push API、Notification API、VAPID認証、プッシュ配信サーバー構築、通知戦略、パフォーマンス最適化まで実践的にカバー。基礎から応用まで幅広くカバーしています。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/web-push-notifications-guide/"><meta property="og:title" content="Web Push通知実装ガイド: Service WorkerとPush APIの活用"><meta property="og:description" content="Web Push通知の実装方法を徹底解説。Service Workerの登録、Push API、Notification API、VAPID認証、プッシュ配信サーバー構築、通知戦略、パフォーマンス最適化まで実践的にカバー。基礎から応用まで幅広くカバーしています。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/web-push-notifications-guide/"><meta name="twitter:title" content="Web Push通知実装ガイド: Service WorkerとPush APIの活用"><meta name="twitter:description" content="Web Push通知の実装方法を徹底解説。Service Workerの登録、Push API、Notification API、VAPID認証、プッシュ配信サーバー構築、通知戦略、パフォーマンス最適化まで実践的にカバー。基礎から応用まで幅広くカバーしています。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/web-push-notifications-guide/"},"headline":"Web Push通知実装ガイド: Service WorkerとPush APIの活用","description":"Web Push通知の実装方法を徹底解説。Service Workerの登録、Push API、Notification API、VAPID認証、プッシュ配信サーバー構築、通知戦略、パフォーマンス最適化まで実践的にカバー。基礎から応用まで幅広くカバーしています。","datePublished":"2025-03-30T00:00:00.000Z","dateModified":"2025-03-30T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Web API, Service Worker, PWA, Push通知, TypeScript"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Web Push通知実装ガイド: Service WorkerとPush APIの活用"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-03-30T00:00:00.000Z"> Mar 29, 2025 </time> <div class="last-updated-on" data-astro-cid-bvzihdzo>
+Last updated on <time datetime="2025-03-30T00:00:00.000Z"> Mar 29, 2025 </time> </div> </div> <h1 data-astro-cid-bvzihdzo>Web Push通知実装ガイド: Service WorkerとPush APIの活用</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Web%20API" class="article-tag" data-astro-cid-bvzihdzo>
+#Web API </a><a href="/blog/tag/Service%20Worker" class="article-tag" data-astro-cid-bvzihdzo>
+#Service Worker </a><a href="/blog/tag/PWA" class="article-tag" data-astro-cid-bvzihdzo>
+#PWA </a><a href="/blog/tag/Push%E9%80%9A%E7%9F%A5" class="article-tag" data-astro-cid-bvzihdzo>
+#Push通知 </a><a href="/blog/tag/TypeScript" class="article-tag" data-astro-cid-bvzihdzo>
+#TypeScript </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="web-push通知とは">Web Push通知とは？</h2>
+<p>Web Push通知は、ブラウザを閉じていてもユーザーにメッセージを届けられる強力な機能です。PWA（Progressive Web Apps）の中核技術の一つで、ネイティブアプリのようなユーザー体験を実現します。</p>
+<h3 id="web-pushの仕組み">Web Pushの仕組み</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[Webアプリ] → [Service Worker] → [Push Service] → [ユーザーのデバイス]</span></span>
+<span class="line"><span>     ↓              ↓                   ↑</span></span>
+<span class="line"><span>  [あなたのサーバー] ←------ 通知送信 ---┘</span></span></code></pre>
+<p><strong>主要コンポーネント:</strong></p>
+<ol>
+<li><strong>Service Worker</strong> - バックグラウンドで動作し、Push イベントを受信</li>
+<li><strong>Push API</strong> - サーバーからの通知を受け取る</li>
+<li><strong>Notification API</strong> - 通知を表示する</li>
+<li><strong>Push Service</strong> - ブラウザベンダーが提供する配信サービス（FCM、APNSなど）</li>
+</ol>
+<h3 id="対応ブラウザ">対応ブラウザ</h3>
+<p>2026年現在の対応状況:</p>
+<ul>
+<li>✅ Chrome/Edge 42+</li>
+<li>✅ Firefox 44+</li>
+<li>✅ Opera 42+</li>
+<li>✅ Safari 16+ (macOS 13+、iOS 16.4+)</li>
+<li>❌ IE（サポート終了）</li>
+</ul>
+<h2 id="実装の全体フロー">実装の全体フロー</h2>
+<h3 id="フロントエンドユーザーのブラウザ">フロントエンド（ユーザーのブラウザ）</h3>
+<ol>
+<li>Service Workerを登録</li>
+<li>通知の許可をリクエスト</li>
+<li>Push購読を作成</li>
+<li>サーバーに購読情報を送信</li>
+</ol>
+<h3 id="バックエンドあなたのサーバー">バックエンド（あなたのサーバー）</h3>
+<ol>
+<li>購読情報をデータベースに保存</li>
+<li>通知を送信したいタイミングで、Push Serviceに配信リクエスト</li>
+<li>Push ServiceがService Workerにイベントを配信</li>
+<li>Service Workerが通知を表示</li>
+</ol>
+<h2 id="service-workerのセットアップ">Service Workerのセットアップ</h2>
+<h3 id="service-workerの登録">Service Workerの登録</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// main.ts</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> registerServiceWorker</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">ServiceWorkerRegistration</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'serviceWorker'</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> navigator)) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">warn</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Service Worker is not supported'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> registration</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> navigator.serviceWorker.</span><span style="color:#B392F0">register</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/sw.js'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">      scope: </span><span style="color:#9ECBFF">'/'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Service Worker registered:'</span><span style="color:#E1E4E8">, registration.scope);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 更新チェック</span></span>
+<span class="line"><span style="color:#E1E4E8">    registration.</span><span style="color:#B392F0">addEventListener</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'updatefound'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> newWorker</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> registration.installing;</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'New Service Worker found:'</span><span style="color:#E1E4E8">, newWorker);</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> registration;</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Service Worker registration failed:'</span><span style="color:#E1E4E8">, error);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// アプリ起動時に実行</span></span>
+<span class="line"><span style="color:#B392F0">registerServiceWorker</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h3 id="service-workerファイル">Service Workerファイル</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// sw.js</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> CACHE_NAME</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'my-app-v1'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Service Workerのインストール</span></span>
+<span class="line"><span style="color:#E1E4E8">self.</span><span style="color:#B392F0">addEventListener</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'install'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Service Worker installing...'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  self.</span><span style="color:#B392F0">skipWaiting</span><span style="color:#E1E4E8">(); </span><span style="color:#6A737D">// すぐにアクティブ化</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Service Workerのアクティブ化</span></span>
+<span class="line"><span style="color:#E1E4E8">self.</span><span style="color:#B392F0">addEventListener</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'activate'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Service Worker activated'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  event.</span><span style="color:#B392F0">waitUntil</span><span style="color:#E1E4E8">(clients.</span><span style="color:#B392F0">claim</span><span style="color:#E1E4E8">()); </span><span style="color:#6A737D">// すべてのクライアントを制御</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Pushイベントの受信</span></span>
+<span class="line"><span style="color:#E1E4E8">self.</span><span style="color:#B392F0">addEventListener</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'push'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Push event received:'</span><span style="color:#E1E4E8">, event);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> event.data </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> event.data.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {};</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> title</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> data.title </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'New Notification'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> options</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    body: data.body </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'You have a new message'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    icon: data.icon </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> '/icon-192.png'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    badge: data.badge </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> '/badge-72.png'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    data: data.url </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> '/'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    tag: data.tag </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'default'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    requireInteraction: data.requireInteraction </span><span style="color:#F97583">||</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  event.</span><span style="color:#B392F0">waitUntil</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    self.registration.</span><span style="color:#B392F0">showNotification</span><span style="color:#E1E4E8">(title, options)</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 通知クリック時の処理</span></span>
+<span class="line"><span style="color:#E1E4E8">self.</span><span style="color:#B392F0">addEventListener</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'notificationclick'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Notification clicked:'</span><span style="color:#E1E4E8">, event);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  event.notification.</span><span style="color:#B392F0">close</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  event.</span><span style="color:#B392F0">waitUntil</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    clients.</span><span style="color:#B392F0">openWindow</span><span style="color:#E1E4E8">(event.notification.data </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> '/'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h2 id="push購読の作成">Push購読の作成</h2>
+<h3 id="vapid鍵の生成">VAPID鍵の生成</h3>
+<p>VAPID（Voluntary Application Server Identification）は、あなたのサーバーを識別するための鍵ペアです。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># web-push ライブラリをインストール</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> web-push</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 鍵ペアを生成</span></span>
+<span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> web-push</span><span style="color:#9ECBFF"> generate-vapid-keys</span></span></code></pre>
+<p><strong>出力例:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Public Key:</span></span>
+<span class="line"><span>BEl62iUY...（省略）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Private Key:</span></span>
+<span class="line"><span>wpIxJ3mE...（省略）</span></span></code></pre>
+<p>この鍵を安全に保存してください。</p>
+<h3 id="フロントエンドで購読作成">フロントエンドで購読作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// push-manager.ts</span></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> PushSubscriptionData</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  endpoint</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  keys</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    p256dh</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    auth</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> PushManager</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> vapidPublicKey</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">vapidPublicKey</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.vapidPublicKey </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> vapidPublicKey;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 通知許可のリクエスト</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> requestPermission</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">NotificationPermission</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Notification'</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> window)) {</span></span>
+<span class="line"><span style="color:#F97583">      throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Notification API not supported'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> permission</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> Notification.</span><span style="color:#B392F0">requestPermission</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Notification permission:'</span><span style="color:#E1E4E8">, permission);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> permission;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // Push購読の作成</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> subscribe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    registration</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ServiceWorkerRegistration</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">PushSubscriptionData</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 既存の購読をチェック</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> subscription </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> registration.pushManager.</span><span style="color:#B392F0">getSubscription</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (subscription) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Already subscribed:'</span><span style="color:#E1E4E8">, subscription);</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // 新規購読</span></span>
+<span class="line"><span style="color:#E1E4E8">      subscription </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> registration.pushManager.</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        userVisibleOnly: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 必須: 通知は常にユーザーに表示</span></span>
+<span class="line"><span style="color:#E1E4E8">        applicationServerKey: </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">urlBase64ToUint8Array</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.vapidPublicKey),</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'New subscription created:'</span><span style="color:#E1E4E8">, subscription);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">subscriptionToJSON</span><span style="color:#E1E4E8">(subscription);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 購読の解除</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> unsubscribe</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">registration</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ServiceWorkerRegistration</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">boolean</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> subscription</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> registration.pushManager.</span><span style="color:#B392F0">getSubscription</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (subscription) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> subscription.</span><span style="color:#B392F0">unsubscribe</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // Base64 URLをUint8Arrayに変換</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#B392F0"> urlBase64ToUint8Array</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">base64String</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Uint8Array</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> padding</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> '='</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">repeat</span><span style="color:#E1E4E8">((</span><span style="color:#79B8FF">4</span><span style="color:#F97583"> -</span><span style="color:#E1E4E8"> (base64String.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> %</span><span style="color:#79B8FF"> 4</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">%</span><span style="color:#79B8FF"> 4</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> base64</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (base64String </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> padding)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">replace</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#85E89D;font-weight:bold">\-</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">g</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'+'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">replace</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#DBEDFF">_</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">g</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'/'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> rawData</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> window.</span><span style="color:#B392F0">atob</span><span style="color:#E1E4E8">(base64);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> outputArray</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Uint8Array</span><span style="color:#E1E4E8">(rawData.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> rawData.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">; </span><span style="color:#F97583">++</span><span style="color:#E1E4E8">i) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      outputArray[i] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> rawData.</span><span style="color:#B392F0">charCodeAt</span><span style="color:#E1E4E8">(i);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> outputArray;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // PushSubscriptionをJSON形式に変換</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#B392F0"> subscriptionToJSON</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">subscription</span><span style="color:#F97583">:</span><span style="color:#B392F0"> PushSubscription</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> PushSubscriptionData</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> json</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> subscription.</span><span style="color:#B392F0">toJSON</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      endpoint: json.endpoint</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      keys: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        p256dh: json.keys</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">.p256dh,</span></span>
+<span class="line"><span style="color:#E1E4E8">        auth: json.keys</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">.auth,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="使用例">使用例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app.ts</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> VAPID_PUBLIC_KEY</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'BEl62iUY...'</span><span style="color:#E1E4E8">; </span><span style="color:#6A737D">// あなたの公開鍵</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> setupPushNotification</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">  // Service Workerを登録</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> registration</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> registerServiceWorker</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">registration) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 通知マネージャーを作成</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> pushManager</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PushManager</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">VAPID_PUBLIC_KEY</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 許可をリクエスト</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> permission</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> pushManager.</span><span style="color:#B392F0">requestPermission</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (permission </span><span style="color:#F97583">!==</span><span style="color:#9ECBFF"> 'granted'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">warn</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Notification permission denied'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 購読を作成</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> subscription</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> pushManager.</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">(registration);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // サーバーに送信</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/push/subscribe'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    method: </span><span style="color:#9ECBFF">'POST'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers: { </span><span style="color:#9ECBFF">'Content-Type'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'application/json'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      subscription,</span></span>
+<span class="line"><span style="color:#E1E4E8">      userId: </span><span style="color:#B392F0">getCurrentUserId</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Push notification setup complete!'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ボタンクリックで購読</span></span>
+<span class="line"><span style="color:#E1E4E8">document.</span><span style="color:#B392F0">getElementById</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'enable-push'</span><span style="color:#E1E4E8">)?.</span><span style="color:#B392F0">addEventListener</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'click'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">  setupPushNotification</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h2 id="バックエンド実装nodejs">バックエンド実装（Node.js）</h2>
+<h3 id="サーバーサイドのセットアップ">サーバーサイドのセットアップ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// server.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> express </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'express'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> webpush </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'web-push'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> app</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> express</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(express.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// VAPID鍵を設定</span></span>
+<span class="line"><span style="color:#E1E4E8">webpush.</span><span style="color:#B392F0">setVapidDetails</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">  'mailto:your-email@example.com'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.env.</span><span style="color:#79B8FF">VAPID_PUBLIC_KEY</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.env.</span><span style="color:#79B8FF">VAPID_PRIVATE_KEY</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 購読情報をメモリに保存（本番環境ではDBを使用）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> subscriptions</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">webpush</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">PushSubscription</span><span style="color:#E1E4E8">>();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 購読の保存</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/push/subscribe'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">res</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">subscription</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">userId</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> req.body;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  subscriptions.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(userId, subscription);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`User ${</span><span style="color:#E1E4E8">userId</span><span style="color:#9ECBFF">} subscribed`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  res.</span><span style="color:#B392F0">status</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">201</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ message: </span><span style="color:#9ECBFF">'Subscribed successfully'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 購読の削除</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/push/unsubscribe'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">res</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">userId</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> req.body;</span></span>
+<span class="line"><span style="color:#E1E4E8">  subscriptions.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(userId);</span></span>
+<span class="line"><span style="color:#E1E4E8">  res.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ message: </span><span style="color:#9ECBFF">'Unsubscribed successfully'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 通知の送信</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/push/send'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">res</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">userId</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">title</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">body</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">url</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> req.body;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> subscription</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> subscriptions.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(userId);</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">subscription) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> res.</span><span style="color:#B392F0">status</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Subscription not found'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> payload</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    title,</span></span>
+<span class="line"><span style="color:#E1E4E8">    body,</span></span>
+<span class="line"><span style="color:#E1E4E8">    url,</span></span>
+<span class="line"><span style="color:#E1E4E8">    icon: </span><span style="color:#9ECBFF">'/icon-192.png'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    badge: </span><span style="color:#9ECBFF">'/badge-72.png'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> webpush.</span><span style="color:#B392F0">sendNotification</span><span style="color:#E1E4E8">(subscription, payload);</span></span>
+<span class="line"><span style="color:#E1E4E8">    res.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ message: </span><span style="color:#9ECBFF">'Notification sent'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Error sending notification:'</span><span style="color:#E1E4E8">, error);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 410 Goneエラー = 購読が無効</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> ((error </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">).statusCode </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 410</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      subscriptions.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(userId);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    res.</span><span style="color:#B392F0">status</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Failed to send notification'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">listen</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">3000</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Server running on http://localhost:3000'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="データベースでの購読管理prisma">データベースでの購読管理（Prisma）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="prisma"><code><span class="line"><span style="color:#6A737D">// schema.prisma</span></span>
+<span class="line"><span style="color:#F97583">model</span><span style="color:#B392F0"> PushSubscription</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id        </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">   @id</span><span style="color:#B392F0"> @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">cuid</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">  userId    </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  endpoint  </span><span style="color:#79B8FF">String</span><span style="color:#B392F0">   @unique</span></span>
+<span class="line"><span style="color:#E1E4E8">  p256dh    </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  auth      </span><span style="color:#79B8FF">String</span></span>
+<span class="line"><span style="color:#E1E4E8">  createdAt </span><span style="color:#79B8FF">DateTime</span><span style="color:#B392F0"> @default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">now</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">  updatedAt </span><span style="color:#79B8FF">DateTime</span><span style="color:#B392F0"> @updatedAt</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  @@index</span><span style="color:#E1E4E8">([</span><span style="color:#79B8FF">userId</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// push-service.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { PrismaClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@prisma/client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> webpush </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'web-push'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> prisma</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PrismaClient</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> PushService</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">  // 購読の保存</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> saveSubscription</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    subscription</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">      endpoint</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">      keys</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">p256dh</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">auth</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> prisma.pushSubscription.</span><span style="color:#B392F0">upsert</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      where: { endpoint: subscription.endpoint },</span></span>
+<span class="line"><span style="color:#E1E4E8">      create: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        userId,</span></span>
+<span class="line"><span style="color:#E1E4E8">        endpoint: subscription.endpoint,</span></span>
+<span class="line"><span style="color:#E1E4E8">        p256dh: subscription.keys.p256dh,</span></span>
+<span class="line"><span style="color:#E1E4E8">        auth: subscription.keys.auth,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      update: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        userId,</span></span>
+<span class="line"><span style="color:#E1E4E8">        p256dh: subscription.keys.p256dh,</span></span>
+<span class="line"><span style="color:#E1E4E8">        auth: subscription.keys.auth,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 特定ユーザーに送信</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> sendToUser</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">payload</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> subscriptions</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> prisma.pushSubscription.</span><span style="color:#B392F0">findMany</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      where: { userId },</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> results</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">allSettled</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      subscriptions.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">sub</span><span style="color:#F97583"> =></span></span>
+<span class="line"><span style="color:#E1E4E8">        webpush.</span><span style="color:#B392F0">sendNotification</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">          {</span></span>
+<span class="line"><span style="color:#E1E4E8">            endpoint: sub.endpoint,</span></span>
+<span class="line"><span style="color:#E1E4E8">            keys: { p256dh: sub.p256dh, auth: sub.auth },</span></span>
+<span class="line"><span style="color:#E1E4E8">          },</span></span>
+<span class="line"><span style="color:#79B8FF">          JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(payload)</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">      )</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 失敗した購読を削除</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> failedSubscriptions</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> results</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">result</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">index</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (result.status </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'rejected'</span><span style="color:#F97583"> &#x26;&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">            (result.reason </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">).statusCode </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 410</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">          return</span><span style="color:#E1E4E8"> subscriptions[index].id;</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(Boolean);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (failedSubscriptions.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ></span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> prisma.pushSubscription.</span><span style="color:#B392F0">deleteMany</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        where: { id: { in: failedSubscriptions </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">[] } },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      sent: results.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">r</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> r.status </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'fulfilled'</span><span style="color:#E1E4E8">).</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      failed: results.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">r</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> r.status </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'rejected'</span><span style="color:#E1E4E8">).</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 全ユーザーに送信</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> sendToAll</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">payload</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> subscriptions</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> prisma.pushSubscription.</span><span style="color:#B392F0">findMany</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> results</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">allSettled</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      subscriptions.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">sub</span><span style="color:#F97583"> =></span></span>
+<span class="line"><span style="color:#E1E4E8">        webpush.</span><span style="color:#B392F0">sendNotification</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">          {</span></span>
+<span class="line"><span style="color:#E1E4E8">            endpoint: sub.endpoint,</span></span>
+<span class="line"><span style="color:#E1E4E8">            keys: { p256dh: sub.p256dh, auth: sub.auth },</span></span>
+<span class="line"><span style="color:#E1E4E8">          },</span></span>
+<span class="line"><span style="color:#79B8FF">          JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(payload)</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">      )</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      sent: results.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">r</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> r.status </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'fulfilled'</span><span style="color:#E1E4E8">).</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      failed: results.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">r</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> r.status </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'rejected'</span><span style="color:#E1E4E8">).</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="高度な通知機能">高度な通知機能</h2>
+<h3 id="通知のカスタマイズ">通知のカスタマイズ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// sw.js</span></span>
+<span class="line"><span style="color:#E1E4E8">self.</span><span style="color:#B392F0">addEventListener</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'push'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> event.data.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> options</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    body: data.body,</span></span>
+<span class="line"><span style="color:#E1E4E8">    icon: data.icon </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> '/icon-192.png'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    badge: data.badge </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> '/badge-72.png'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    image: data.image, </span><span style="color:#6A737D">// 大きな画像</span></span>
+<span class="line"><span style="color:#E1E4E8">    vibrate: [</span><span style="color:#79B8FF">200</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">200</span><span style="color:#E1E4E8">], </span><span style="color:#6A737D">// バイブレーションパターン</span></span>
+<span class="line"><span style="color:#E1E4E8">    data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      url: data.url,</span></span>
+<span class="line"><span style="color:#E1E4E8">      timestamp: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    tag: data.tag </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'default'</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 同じtagは上書き</span></span>
+<span class="line"><span style="color:#E1E4E8">    renotify: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 再通知</span></span>
+<span class="line"><span style="color:#E1E4E8">    requireInteraction: data.urgent, </span><span style="color:#6A737D">// ユーザーが閉じるまで表示</span></span>
+<span class="line"><span style="color:#E1E4E8">    actions: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        action: </span><span style="color:#9ECBFF">'view'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        title: </span><span style="color:#9ECBFF">'開く'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        icon: </span><span style="color:#9ECBFF">'/icons/open.png'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        action: </span><span style="color:#9ECBFF">'dismiss'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        title: </span><span style="color:#9ECBFF">'閉じる'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        icon: </span><span style="color:#9ECBFF">'/icons/close.png'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  event.</span><span style="color:#B392F0">waitUntil</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    self.registration.</span><span style="color:#B392F0">showNotification</span><span style="color:#E1E4E8">(data.title, options)</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="通知アクションの処理">通知アクションの処理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// sw.js</span></span>
+<span class="line"><span style="color:#E1E4E8">self.</span><span style="color:#B392F0">addEventListener</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'notificationclick'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  event.notification.</span><span style="color:#B392F0">close</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (event.action </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'view'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">    // "開く" ボタン</span></span>
+<span class="line"><span style="color:#E1E4E8">    event.</span><span style="color:#B392F0">waitUntil</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      clients.</span><span style="color:#B392F0">openWindow</span><span style="color:#E1E4E8">(event.notification.data.url)</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (event.action </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'dismiss'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">    // "閉じる" ボタン</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Notification dismissed'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 通知本体をクリック</span></span>
+<span class="line"><span style="color:#E1E4E8">    event.</span><span style="color:#B392F0">waitUntil</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      clients.</span><span style="color:#B392F0">openWindow</span><span style="color:#E1E4E8">(event.notification.data.url)</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="サイレント通知バックグラウンド同期">サイレント通知（バックグラウンド同期）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// sw.js</span></span>
+<span class="line"><span style="color:#E1E4E8">self.</span><span style="color:#B392F0">addEventListener</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'push'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> event.data.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (data.silent) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 通知を表示せず、データだけ処理</span></span>
+<span class="line"><span style="color:#E1E4E8">    event.</span><span style="color:#B392F0">waitUntil</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#B392F0">      syncData</span><span style="color:#E1E4E8">(data).</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // クライアントに通知</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> self.clients.</span><span style="color:#B392F0">matchAll</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">clients</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">          clients.</span><span style="color:#B392F0">forEach</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">client</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">            client.</span><span style="color:#B392F0">postMessage</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">              type: </span><span style="color:#9ECBFF">'SILENT_PUSH'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">              data: data,</span></span>
+<span class="line"><span style="color:#E1E4E8">            });</span></span>
+<span class="line"><span style="color:#E1E4E8">          });</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 通常の通知</span></span>
+<span class="line"><span style="color:#E1E4E8">    event.</span><span style="color:#B392F0">waitUntil</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      self.registration.</span><span style="color:#B392F0">showNotification</span><span style="color:#E1E4E8">(data.title, data.options)</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> syncData</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">  // データベースやキャッシュを更新</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cache</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> caches.</span><span style="color:#B392F0">open</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'data-cache'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> cache.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(data.url, </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(data.content)));</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="実践的なユースケース">実践的なユースケース</h2>
+<h3 id="チャットアプリの新着メッセージ通知">チャットアプリの新着メッセージ通知</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// server.ts</span></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> ChatMessage</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  from</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  content</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  roomId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> notifyNewMessage</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">message</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ChatMessage</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">recipientUserId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> pushService</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PushService</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> pushService.</span><span style="color:#B392F0">sendToUser</span><span style="color:#E1E4E8">(recipientUserId, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    title: </span><span style="color:#9ECBFF">`New message from ${</span><span style="color:#E1E4E8">message</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">from</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    body: message.content.</span><span style="color:#B392F0">substring</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    icon: </span><span style="color:#9ECBFF">`/avatars/${</span><span style="color:#E1E4E8">message</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">from</span><span style="color:#9ECBFF">}.png`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    url: </span><span style="color:#9ECBFF">`/chat/${</span><span style="color:#E1E4E8">message</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">roomId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    tag: </span><span style="color:#9ECBFF">`chat-${</span><span style="color:#E1E4E8">message</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">roomId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 同じルームの通知は上書き</span></span>
+<span class="line"><span style="color:#E1E4E8">    requireInteraction: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    actions: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      { action: </span><span style="color:#9ECBFF">'reply'</span><span style="color:#E1E4E8">, title: </span><span style="color:#9ECBFF">'Reply'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { action: </span><span style="color:#9ECBFF">'view'</span><span style="color:#E1E4E8">, title: </span><span style="color:#9ECBFF">'View'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ecサイトの在庫復活通知">ECサイトの在庫復活通知</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// product-service.ts</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> notifyProductAvailable</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">productId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">  // このプロダクトを待機リストに入れているユーザーを取得</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> waitingUsers</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> prisma.productWaitlist.</span><span style="color:#B392F0">findMany</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    where: { productId },</span></span>
+<span class="line"><span style="color:#E1E4E8">    include: { user: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> pushService</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PushService</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">user</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">of</span><span style="color:#E1E4E8"> waitingUsers) {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> pushService.</span><span style="color:#B392F0">sendToUser</span><span style="color:#E1E4E8">(user.id, {</span></span>
+<span class="line"><span style="color:#E1E4E8">      title: </span><span style="color:#9ECBFF">'Product back in stock!'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      body: </span><span style="color:#9ECBFF">'The product you wanted is now available'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      icon: </span><span style="color:#9ECBFF">'/product-icon.png'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      image: </span><span style="color:#9ECBFF">`/products/${</span><span style="color:#E1E4E8">productId</span><span style="color:#9ECBFF">}/image.jpg`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      url: </span><span style="color:#9ECBFF">`/products/${</span><span style="color:#E1E4E8">productId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      tag: </span><span style="color:#9ECBFF">`product-${</span><span style="color:#E1E4E8">productId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      requireInteraction: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      actions: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        { action: </span><span style="color:#9ECBFF">'buy'</span><span style="color:#E1E4E8">, title: </span><span style="color:#9ECBFF">'Buy Now'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        { action: </span><span style="color:#9ECBFF">'view'</span><span style="color:#E1E4E8">, title: </span><span style="color:#9ECBFF">'View'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="パフォーマンスとベストプラクティス">パフォーマンスとベストプラクティス</h2>
+<h3 id="1-通知の頻度制限">1. 通知の頻度制限</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// rate-limiter.ts</span></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> NotificationRateLimiter</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> limits</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">number</span><span style="color:#E1E4E8">[]>();</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> maxPerHour</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 5</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  canSend</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> userLimits</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.limits.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(userId) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 1時間以内の通知をフィルタ</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> recentNotifications</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> userLimits.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">      time</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> time </span><span style="color:#F97583">&#x3C;</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (recentNotifications.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> >=</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.maxPerHour) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    recentNotifications.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(now);</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.limits.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(userId, recentNotifications);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-バッチ送信">2. バッチ送信</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// batch-sender.ts</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> sendBatchNotifications</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  notifications</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Array</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">payload</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8"> }></span></span>
+<span class="line"><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">  // 100件ずつバッチ処理</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> batchSize</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> pushService</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PushService</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> notifications.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> batchSize) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> batch</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> notifications.</span><span style="color:#B392F0">slice</span><span style="color:#E1E4E8">(i, i </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> batchSize);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">allSettled</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      batch.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(({ </span><span style="color:#FFAB70">userId</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">payload</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">        pushService.</span><span style="color:#B392F0">sendToUser</span><span style="color:#E1E4E8">(userId, payload)</span></span>
+<span class="line"><span style="color:#E1E4E8">      )</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // レート制限を避けるため、少し待つ</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#F97583"> new</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">resolve</span><span style="color:#F97583"> =></span><span style="color:#B392F0"> setTimeout</span><span style="color:#E1E4E8">(resolve, </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="3-通知の優先度">3. 通知の優先度</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> NotificationPriority</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  urgent</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  ttl</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">; </span><span style="color:#6A737D">// Time To Live (秒)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> sendPriorityNotification</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  payload</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  priority</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NotificationPriority</span></span>
+<span class="line"><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> subscription</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getSubscription</span><span style="color:#E1E4E8">(userId);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> webpush.</span><span style="color:#B392F0">sendNotification</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    subscription,</span></span>
+<span class="line"><span style="color:#79B8FF">    JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(payload),</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      urgency: priority.urgent </span><span style="color:#F97583">?</span><span style="color:#9ECBFF"> 'high'</span><span style="color:#F97583"> :</span><span style="color:#9ECBFF"> 'normal'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      TTL: priority.ttl,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="セキュリティ対策">セキュリティ対策</h2>
+<h3 id="1-エンドポイントの検証">1. エンドポイントの検証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> isValidPushEndpoint</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">endpoint</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(endpoint);</span></span>
+<span class="line"><span style="color:#6A737D">    // 信頼できるPush Serviceのみ許可</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> trustedDomains</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#9ECBFF">      'fcm.googleapis.com'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      'updates.push.services.mozilla.com'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      'web.push.apple.com'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    ];</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> trustedDomains.</span><span style="color:#B392F0">some</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">domain</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> url.hostname.</span><span style="color:#B392F0">endsWith</span><span style="color:#E1E4E8">(domain));</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-ペイロードの暗号化">2. ペイロードの暗号化</h3>
+<p>web-pushライブラリが自動的に暗号化しますが、追加のセキュリティ層を実装できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> crypto </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'crypto'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> encryptSensitiveData</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">data</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> iv</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> crypto.</span><span style="color:#B392F0">randomBytes</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">16</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cipher</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> crypto.</span><span style="color:#B392F0">createCipheriv</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'aes-256-cbc'</span><span style="color:#E1E4E8">, Buffer.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(key), iv);</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> encrypted </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> cipher.</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(data), </span><span style="color:#9ECBFF">'utf8'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'hex'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  encrypted </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> cipher.</span><span style="color:#B392F0">final</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'hex'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> iv.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'hex'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">+</span><span style="color:#9ECBFF"> ':'</span><span style="color:#F97583"> +</span><span style="color:#E1E4E8"> encrypted;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Web Push通知は、ユーザーエンゲージメントを高める強力なツールです。</p>
+<p><strong>実装のポイント:</strong></p>
+<ol>
+<li><strong>Service Worker</strong> - バックグラウンド処理の要</li>
+<li><strong>VAPID認証</strong> - サーバー認証で安全な通信</li>
+<li><strong>購読管理</strong> - データベースで永続化</li>
+<li><strong>通知戦略</strong> - 頻度制限とパーソナライゼーション</li>
+<li><strong>UX最適化</strong> - 適切なタイミングで許可リクエスト</li>
+</ol>
+<p><strong>ベストプラクティス:</strong></p>
+<ul>
+<li>通知の送りすぎに注意（1日5件まで）</li>
+<li>ユーザーに価値を提供する通知のみ</li>
+<li>簡単に解除できる仕組み</li>
+<li>パフォーマンスとバッテリー消費に配慮</li>
+</ul>
+<p>Web Push通知を適切に実装することで、ネイティブアプリと遜色ないユーザー体験を提供できます。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

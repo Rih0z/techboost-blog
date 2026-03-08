@@ -1,0 +1,505 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/cloudflare-r2-storage-guide/"><!-- Primary Meta Tags --><title>Cloudflare R2ストレージ実践ガイド: S3互換オブジェクトストレージの活用</title><meta name="title" content="Cloudflare R2ストレージ実践ガイド: S3互換オブジェクトストレージの活用"><meta name="description" content="Cloudflare R2を使ったオブジェクトストレージ実装の完全ガイド。S3互換APIでの操作、パブリックアクセス設定、Workers統合、コスト最適化まで実践的に解説します。Cloudflare・R2・Object Storageに関する実践情報。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/cloudflare-r2-storage-guide/"><meta property="og:title" content="Cloudflare R2ストレージ実践ガイド: S3互換オブジェクトストレージの活用"><meta property="og:description" content="Cloudflare R2を使ったオブジェクトストレージ実装の完全ガイド。S3互換APIでの操作、パブリックアクセス設定、Workers統合、コスト最適化まで実践的に解説します。Cloudflare・R2・Object Storageに関する実践情報。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/cloudflare-r2-storage-guide/"><meta name="twitter:title" content="Cloudflare R2ストレージ実践ガイド: S3互換オブジェクトストレージの活用"><meta name="twitter:description" content="Cloudflare R2を使ったオブジェクトストレージ実装の完全ガイド。S3互換APIでの操作、パブリックアクセス設定、Workers統合、コスト最適化まで実践的に解説します。Cloudflare・R2・Object Storageに関する実践情報。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/cloudflare-r2-storage-guide/"},"headline":"Cloudflare R2ストレージ実践ガイド: S3互換オブジェクトストレージの活用","description":"Cloudflare R2を使ったオブジェクトストレージ実装の完全ガイド。S3互換APIでの操作、パブリックアクセス設定、Workers統合、コスト最適化まで実践的に解説します。Cloudflare・R2・Object Storageに関する実践情報。","datePublished":"2025-05-18T00:00:00.000Z","dateModified":"2025-05-18T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Cloudflare, R2, Object Storage, S3, Workers, インフラ"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Cloudflare R2ストレージ実践ガイド: S3互換オブジェクトストレージの活用"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-05-18T00:00:00.000Z"> May 17, 2025 </time> <div class="last-updated-on" data-astro-cid-bvzihdzo>
+Last updated on <time datetime="2025-05-18T00:00:00.000Z"> May 17, 2025 </time> </div> </div> <h1 data-astro-cid-bvzihdzo>Cloudflare R2ストレージ実践ガイド: S3互換オブジェクトストレージの活用</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Cloudflare" class="article-tag" data-astro-cid-bvzihdzo>
+#Cloudflare </a><a href="/blog/tag/R2" class="article-tag" data-astro-cid-bvzihdzo>
+#R2 </a><a href="/blog/tag/Object%20Storage" class="article-tag" data-astro-cid-bvzihdzo>
+#Object Storage </a><a href="/blog/tag/S3" class="article-tag" data-astro-cid-bvzihdzo>
+#S3 </a><a href="/blog/tag/Workers" class="article-tag" data-astro-cid-bvzihdzo>
+#Workers </a><a href="/blog/tag/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#インフラ </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Cloudflare R2は、S3互換のオブジェクトストレージサービスで、エグレス料金が無料という革新的な特徴を持っています。この記事では、R2の基本から実践的な活用方法まで完全解説します。</p>
+<h2 id="cloudflare-r2とは">Cloudflare R2とは</h2>
+<p>R2は、Cloudflareが提供するオブジェクトストレージサービスです。AWS S3と互換性があるため、既存のS3用コードをほぼそのまま使用できます。</p>
+<h3 id="r2の主な特徴">R2の主な特徴</h3>
+<ul>
+<li><strong>エグレス料金無料</strong>: データ転送料金がかからない</li>
+<li><strong>S3互換API</strong>: 既存のS3ツールやSDKが使える</li>
+<li><strong>グローバル配信</strong>: Cloudflareのエッジネットワークを活用</li>
+<li><strong>Workers統合</strong>: Cloudflare Workersから高速アクセス可能</li>
+<li><strong>低コスト</strong>: ストレージ料金が月$0.015/GB</li>
+</ul>
+<h2 id="r2バケットの作成と基本操作">R2バケットの作成と基本操作</h2>
+<h3 id="wranglerを使った管理">Wranglerを使った管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Wranglerのインストール</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -g</span><span style="color:#9ECBFF"> wrangler</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Cloudflareにログイン</span></span>
+<span class="line"><span style="color:#B392F0">wrangler</span><span style="color:#9ECBFF"> login</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># R2バケットの作成</span></span>
+<span class="line"><span style="color:#B392F0">wrangler</span><span style="color:#9ECBFF"> r2</span><span style="color:#9ECBFF"> bucket</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> my-bucket</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># バケット一覧の確認</span></span>
+<span class="line"><span style="color:#B392F0">wrangler</span><span style="color:#9ECBFF"> r2</span><span style="color:#9ECBFF"> bucket</span><span style="color:#9ECBFF"> list</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ファイルのアップロード</span></span>
+<span class="line"><span style="color:#B392F0">wrangler</span><span style="color:#9ECBFF"> r2</span><span style="color:#9ECBFF"> object</span><span style="color:#9ECBFF"> put</span><span style="color:#9ECBFF"> my-bucket/test.txt</span><span style="color:#79B8FF"> --file</span><span style="color:#9ECBFF"> ./test.txt</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ファイルの取得</span></span>
+<span class="line"><span style="color:#B392F0">wrangler</span><span style="color:#9ECBFF"> r2</span><span style="color:#9ECBFF"> object</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> my-bucket/test.txt</span><span style="color:#79B8FF"> --file</span><span style="color:#9ECBFF"> ./downloaded.txt</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ファイルの削除</span></span>
+<span class="line"><span style="color:#B392F0">wrangler</span><span style="color:#9ECBFF"> r2</span><span style="color:#9ECBFF"> object</span><span style="color:#9ECBFF"> delete</span><span style="color:#9ECBFF"> my-bucket/test.txt</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># バケットの削除</span></span>
+<span class="line"><span style="color:#B392F0">wrangler</span><span style="color:#9ECBFF"> r2</span><span style="color:#9ECBFF"> bucket</span><span style="color:#9ECBFF"> delete</span><span style="color:#9ECBFF"> my-bucket</span></span></code></pre>
+<h2 id="s3-sdkを使ったr2操作">S3 SDKを使ったR2操作</h2>
+<h3 id="aws-sdk-for-javascriptの設定">AWS SDK for JavaScriptの設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// r2-client.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, ListObjectsV2Command } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@aws-sdk/client-s3'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { getSignedUrl } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@aws-sdk/s3-request-presigner'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> R2Storage</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> client</span><span style="color:#F97583">:</span><span style="color:#B392F0"> S3Client</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> bucket</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">accountId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">accessKeyId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">secretAccessKey</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">bucket</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.client </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> S3Client</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      region: </span><span style="color:#9ECBFF">'auto'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      endpoint: </span><span style="color:#9ECBFF">`https://${</span><span style="color:#E1E4E8">accountId</span><span style="color:#9ECBFF">}.r2.cloudflarestorage.com`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      credentials: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        accessKeyId,</span></span>
+<span class="line"><span style="color:#E1E4E8">        secretAccessKey,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.bucket </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> bucket;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ファイルのアップロード</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> upload</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">body</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Buffer</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> Uint8Array</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">contentType</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> command</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PutObjectCommand</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      Bucket: </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.bucket,</span></span>
+<span class="line"><span style="color:#E1E4E8">      Key: key,</span></span>
+<span class="line"><span style="color:#E1E4E8">      Body: body,</span></span>
+<span class="line"><span style="color:#E1E4E8">      ContentType: contentType,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.client.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">(command);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ファイルの取得</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> get</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Uint8Array</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> command</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> GetObjectCommand</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      Bucket: </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.bucket,</span></span>
+<span class="line"><span style="color:#E1E4E8">      Key: key,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.client.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">(command);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> stream</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> response.Body </span><span style="color:#F97583">as</span><span style="color:#B392F0"> ReadableStream</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> reader</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> stream.</span><span style="color:#B392F0">getReader</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> chunks</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Uint8Array</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    while</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">done</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">value</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> reader.</span><span style="color:#B392F0">read</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (done) </span><span style="color:#F97583">break</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">      chunks.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(value);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> totalLength</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> chunks.</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">acc</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">chunk</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> acc </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> chunk.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Uint8Array</span><span style="color:#E1E4E8">(totalLength);</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> offset </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> chunk</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> chunks) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      result.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(chunk, offset);</span></span>
+<span class="line"><span style="color:#E1E4E8">      offset </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> chunk.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ファイルの削除</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> delete</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> command</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> DeleteObjectCommand</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      Bucket: </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.bucket,</span></span>
+<span class="line"><span style="color:#E1E4E8">      Key: key,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.client.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">(command);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ファイル一覧の取得</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> list</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">prefix</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">maxKeys</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">[]> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> command</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> ListObjectsV2Command</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      Bucket: </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.bucket,</span></span>
+<span class="line"><span style="color:#E1E4E8">      Prefix: prefix,</span></span>
+<span class="line"><span style="color:#E1E4E8">      MaxKeys: maxKeys,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.client.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">(command);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response.Contents?.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">obj</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> obj.Key</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 署名付きURLの生成（一時的なアクセス権限）</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> getSignedUrl</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">expiresIn</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 3600</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> command</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> GetObjectCommand</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      Bucket: </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.bucket,</span></span>
+<span class="line"><span style="color:#E1E4E8">      Key: key,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getSignedUrl</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.client, command, { expiresIn });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> r2</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> R2Storage</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.env.</span><span style="color:#79B8FF">CLOUDFLARE_ACCOUNT_ID</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.env.</span><span style="color:#79B8FF">R2_ACCESS_KEY_ID</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.env.</span><span style="color:#79B8FF">R2_SECRET_ACCESS_KEY</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  'my-bucket'</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// アップロード</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> r2.</span><span style="color:#B392F0">upload</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'images/cat.jpg'</span><span style="color:#E1E4E8">, imageBuffer, </span><span style="color:#9ECBFF">'image/jpeg'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ダウンロード</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> r2.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'images/cat.jpg'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 一覧取得</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> files</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> r2.</span><span style="color:#B392F0">list</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'images/'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(files); </span><span style="color:#6A737D">// ['images/cat.jpg', 'images/dog.jpg', ...]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 署名付きURL生成</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> r2.</span><span style="color:#B392F0">getSignedUrl</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'images/cat.jpg'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">3600</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(url); </span><span style="color:#6A737D">// https://...</span></span></code></pre>
+<h2 id="cloudflare-workersとの統合">Cloudflare Workersとの統合</h2>
+<p>Cloudflare WorkersからR2バケットに直接アクセスすることで、超高速なストレージ操作が可能です。</p>
+<h3 id="workers統合の設定">Workers統合の設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="toml"><code><span class="line"><span style="color:#6A737D"># wrangler.toml</span></span>
+<span class="line"><span style="color:#E1E4E8">name = </span><span style="color:#9ECBFF">"my-worker"</span></span>
+<span class="line"><span style="color:#E1E4E8">main = </span><span style="color:#9ECBFF">"src/index.ts"</span></span>
+<span class="line"><span style="color:#E1E4E8">compatibility_date = </span><span style="color:#9ECBFF">"2024-01-01"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">[[</span><span style="color:#B392F0">r2_buckets</span><span style="color:#E1E4E8">]]</span></span>
+<span class="line"><span style="color:#E1E4E8">binding = </span><span style="color:#9ECBFF">"MY_BUCKET"</span></span>
+<span class="line"><span style="color:#E1E4E8">bucket_name = </span><span style="color:#9ECBFF">"my-bucket"</span></span></code></pre>
+<h3 id="workersでのファイル操作">Workersでのファイル操作</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/index.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  MY_BUCKET</span><span style="color:#F97583">:</span><span style="color:#B392F0"> R2Bucket</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">env</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Response</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(request.url);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> url.pathname.</span><span style="color:#B392F0">slice</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">); </span><span style="color:#6A737D">// "/path/to/file" -> "path/to/file"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // GET: ファイルの取得</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (request.method </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'GET'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> object</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">MY_BUCKET</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">object) {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Not Found'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> headers</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Headers</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">      object.</span><span style="color:#B392F0">writeHttpMetadata</span><span style="color:#E1E4E8">(headers);</span></span>
+<span class="line"><span style="color:#E1E4E8">      headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'etag'</span><span style="color:#E1E4E8">, object.httpEtag);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(object.body, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        headers,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // PUT: ファイルのアップロード</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (request.method </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'PUT'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">MY_BUCKET</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(key, request.body, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        httpMetadata: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          contentType: request.headers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'content-type'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'application/octet-stream'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Uploaded'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">201</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // DELETE: ファイルの削除</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (request.method </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'DELETE'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">MY_BUCKET</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(key);</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Deleted'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">204</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // HEAD: メタデータの取得</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (request.method </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'HEAD'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> object</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">MY_BUCKET</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">head</span><span style="color:#E1E4E8">(key);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">object) {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Not Found'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> headers</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Headers</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">      object.</span><span style="color:#B392F0">writeHttpMetadata</span><span style="color:#E1E4E8">(headers);</span></span>
+<span class="line"><span style="color:#E1E4E8">      headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'etag'</span><span style="color:#E1E4E8">, object.httpEtag);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">, { headers });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Method Not Allowed'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">405</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h3 id="画像リサイズworker">画像リサイズWorker</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/image-resize.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  IMAGES</span><span style="color:#F97583">:</span><span style="color:#B392F0"> R2Bucket</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">env</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Response</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(request.url);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> url.pathname.</span><span style="color:#B392F0">slice</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> width</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> url.searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'w'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> height</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> url.searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'h'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 元画像を取得</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> object</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">IMAGES</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key);</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">object) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Not Found'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // リサイズパラメータがない場合は元画像を返す</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">width </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">height) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(object.body, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">          'content-type'</span><span style="color:#E1E4E8">: object.httpMetadata?.contentType </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'application/octet-stream'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">          'cache-control'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'public, max-age=31536000'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Cloudflare Imagesを使ってリサイズ</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> resizeOptions</span><span style="color:#F97583">:</span><span style="color:#B392F0"> RequestInit</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      cf: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        image: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          width: width </span><span style="color:#F97583">?</span><span style="color:#B392F0"> parseInt</span><span style="color:#E1E4E8">(width) </span><span style="color:#F97583">:</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          height: height </span><span style="color:#F97583">?</span><span style="color:#B392F0"> parseInt</span><span style="color:#E1E4E8">(height) </span><span style="color:#F97583">:</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          fit: </span><span style="color:#9ECBFF">'scale-down'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          quality: </span><span style="color:#79B8FF">85</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // R2から取得した画像をCloudflare Imagesでリサイズ</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> imageResponse</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(object.body);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(imageResponse.url, resizeOptions);</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h2 id="パブリックアクセスの設定">パブリックアクセスの設定</h2>
+<h3 id="カスタムドメインでの公開">カスタムドメインでの公開</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/public-bucket.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  PUBLIC_BUCKET</span><span style="color:#F97583">:</span><span style="color:#B392F0"> R2Bucket</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">env</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Response</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(request.url);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> url.pathname.</span><span style="color:#B392F0">slice</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // キャッシュヘッダーの確認</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> cacheKey</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">(url.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(), request);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> cache</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> caches.default;</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> response </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> cache.</span><span style="color:#B392F0">match</span><span style="color:#E1E4E8">(cacheKey);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (response) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> response;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // R2からオブジェクトを取得</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> object</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">PUBLIC_BUCKET</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">object) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Not Found'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // レスポンスヘッダーの設定</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> headers</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Headers</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    object.</span><span style="color:#B392F0">writeHttpMetadata</span><span style="color:#E1E4E8">(headers);</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'etag'</span><span style="color:#E1E4E8">, object.httpEtag);</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'cache-control'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'public, max-age=31536000'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'access-control-allow-origin'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'*'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(object.body, { headers });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // エッジキャッシュに保存</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> cache.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(cacheKey, response.</span><span style="color:#B392F0">clone</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response;</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h2 id="ファイルアップロードapi">ファイルアップロードAPI</h2>
+<h3 id="マルチパートアップロード対応">マルチパートアップロード対応</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/upload-api.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  UPLOADS</span><span style="color:#F97583">:</span><span style="color:#B392F0"> R2Bucket</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  AUTH_TOKEN</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 認証ミドルウェア</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> authenticate</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">env</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> token</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.headers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'authorization'</span><span style="color:#E1E4E8">)?.</span><span style="color:#B392F0">replace</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Bearer '</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> token </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">AUTH_TOKEN</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">env</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Response</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 認証チェック</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#B392F0">authenticate</span><span style="color:#E1E4E8">(request, env)) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Unauthorized'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">401</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(request.url);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // シングルファイルアップロード</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (request.method </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'POST'</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#E1E4E8"> url.pathname </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> '/upload'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> formData</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> request.</span><span style="color:#B392F0">formData</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> file</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> formData.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'file'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#B392F0"> File</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">file) {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'No file provided'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">400</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // ファイル名の生成（UUIDを使用）</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> fileExt</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> file.name.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'.'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">pop</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `${</span><span style="color:#E1E4E8">crypto</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">randomUUID</span><span style="color:#9ECBFF">()</span><span style="color:#9ECBFF">}.${</span><span style="color:#E1E4E8">fileExt</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // R2にアップロード</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">UPLOADS</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(key, file.</span><span style="color:#B392F0">stream</span><span style="color:#E1E4E8">(), {</span></span>
+<span class="line"><span style="color:#E1E4E8">        httpMetadata: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          contentType: file.type,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        customMetadata: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          originalName: file.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">          uploadedAt: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        key,</span></span>
+<span class="line"><span style="color:#E1E4E8">        url: </span><span style="color:#9ECBFF">`https://your-domain.com/${</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // マルチパートアップロード開始</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (request.method </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'POST'</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#E1E4E8"> url.pathname </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> '/multipart/start'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">fileName</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">fileType</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> request.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `${</span><span style="color:#E1E4E8">crypto</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">randomUUID</span><span style="color:#9ECBFF">()</span><span style="color:#9ECBFF">}.${</span><span style="color:#E1E4E8">fileName</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">split</span><span style="color:#9ECBFF">(</span><span style="color:#9ECBFF">'.'</span><span style="color:#9ECBFF">).</span><span style="color:#B392F0">pop</span><span style="color:#9ECBFF">()</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> multipartUpload</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">UPLOADS</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">createMultipartUpload</span><span style="color:#E1E4E8">(key, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        httpMetadata: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          contentType: fileType,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        uploadId: multipartUpload.uploadId,</span></span>
+<span class="line"><span style="color:#E1E4E8">        key,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // マルチパートアップロード - パートのアップロード</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (request.method </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'PUT'</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#E1E4E8"> url.pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/multipart/part'</span><span style="color:#E1E4E8">)) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">key</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">uploadId</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">partNumber</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> request.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> body</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> request.</span><span style="color:#B392F0">arrayBuffer</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> multipartUpload</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">UPLOADS</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">resumeMultipartUpload</span><span style="color:#E1E4E8">(key, uploadId);</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> part</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> multipartUpload.</span><span style="color:#B392F0">uploadPart</span><span style="color:#E1E4E8">(partNumber, body);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        etag: part.etag,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // マルチパートアップロード完了</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (request.method </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'POST'</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#E1E4E8"> url.pathname </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> '/multipart/complete'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">key</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">uploadId</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">parts</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> request.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> multipartUpload</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">UPLOADS</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">resumeMultipartUpload</span><span style="color:#E1E4E8">(key, uploadId);</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> multipartUpload.</span><span style="color:#B392F0">complete</span><span style="color:#E1E4E8">(parts);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        url: </span><span style="color:#9ECBFF">`https://your-domain.com/${</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Not Found'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h2 id="コスト最適化とベストプラクティス">コスト最適化とベストプラクティス</h2>
+<h3 id="1-ライフサイクルポリシーの実装">1. ライフサイクルポリシーの実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 古いファイルの自動削除</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  TEMP_BUCKET</span><span style="color:#F97583">:</span><span style="color:#B392F0"> R2Bucket</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> scheduled</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">event</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ScheduledEvent</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">env</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> nowMs</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> thirtyDaysMs</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 30</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 24</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // すべてのオブジェクトをリスト</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> cursor</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    do</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> listed</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">TEMP_BUCKET</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">list</span><span style="color:#E1E4E8">({ cursor });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> object</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> listed.objects) {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> uploadedMs</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> object.uploaded.</span><span style="color:#B392F0">getTime</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (nowMs </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> uploadedMs </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> thirtyDaysMs) {</span></span>
+<span class="line"><span style="color:#F97583">          await</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">TEMP_BUCKET</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(object.key);</span></span>
+<span class="line"><span style="color:#E1E4E8">          console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Deleted old file: ${</span><span style="color:#E1E4E8">object</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      cursor </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> listed.truncated </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> listed.cursor </span><span style="color:#F97583">:</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">while</span><span style="color:#E1E4E8"> (cursor);</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h3 id="2-キャッシュ戦略">2. キャッシュ戦略</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// エッジキャッシュを活用した配信</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">env</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Env</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Response</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(request.url);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> cacheKey</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">(url.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(), request);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> cache</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> caches.default;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // キャッシュから取得を試みる</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> response </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> cache.</span><span style="color:#B392F0">match</span><span style="color:#E1E4E8">(cacheKey);</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (response) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> response;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // R2から取得</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> object</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> env.</span><span style="color:#79B8FF">BUCKET</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(url.pathname.</span><span style="color:#B392F0">slice</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">object) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Not Found'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 適切なキャッシュヘッダーを設定</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> headers</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Headers</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    object.</span><span style="color:#B392F0">writeHttpMetadata</span><span style="color:#E1E4E8">(headers);</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'cache-control'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'public, max-age=86400'</span><span style="color:#E1E4E8">); </span><span style="color:#6A737D">// 24時間</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'cdn-cache-control'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'max-age=31536000'</span><span style="color:#E1E4E8">); </span><span style="color:#6A737D">// 1年</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(object.body, { headers });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // エッジにキャッシュ</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> cache.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(cacheKey, response.</span><span style="color:#B392F0">clone</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response;</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Cloudflare R2は、エグレス料金無料という革新的な特徴を持つオブジェクトストレージサービスです。主な利点は以下の通りです。</p>
+<ul>
+<li><strong>コスト削減</strong>: データ転送料金が無料で、大量配信に最適</li>
+<li><strong>S3互換</strong>: 既存のツールやコードをそのまま使用可能</li>
+<li><strong>高速アクセス</strong>: Workers統合で超低レイテンシーを実現</li>
+<li><strong>グローバル配信</strong>: Cloudflareのエッジネットワークを活用</li>
+</ul>
+<p>静的アセット、メディアファイル、バックアップなど、あらゆるデータストレージニーズに対応できます。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

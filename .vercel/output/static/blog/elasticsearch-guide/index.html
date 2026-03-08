@@ -1,0 +1,1460 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/elasticsearch-guide/"><!-- Primary Meta Tags --><title>Elasticsearch完全ガイド — 全文検索・Node.js統合・Kibana・パフォーマンスチューニング</title><meta name="title" content="Elasticsearch完全ガイド — 全文検索・Node.js統合・Kibana・パフォーマンスチューニング"><meta name="description" content="Elasticsearchで高速全文検索を実装する完全ガイド。インデックス設計・マッピング・クエリDSL・Aggregation・Node.js統合・Kibana・オートコンプリート・ベクトル検索まで実装例付きで解説。現場で使える知識を体系的にまとめました。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/elasticsearch-guide/"><meta property="og:title" content="Elasticsearch完全ガイド — 全文検索・Node.js統合・Kibana・パフォーマンスチューニング"><meta property="og:description" content="Elasticsearchで高速全文検索を実装する完全ガイド。インデックス設計・マッピング・クエリDSL・Aggregation・Node.js統合・Kibana・オートコンプリート・ベクトル検索まで実装例付きで解説。現場で使える知識を体系的にまとめました。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/elasticsearch-guide/"><meta name="twitter:title" content="Elasticsearch完全ガイド — 全文検索・Node.js統合・Kibana・パフォーマンスチューニング"><meta name="twitter:description" content="Elasticsearchで高速全文検索を実装する完全ガイド。インデックス設計・マッピング・クエリDSL・Aggregation・Node.js統合・Kibana・オートコンプリート・ベクトル検索まで実装例付きで解説。現場で使える知識を体系的にまとめました。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/elasticsearch-guide/"},"headline":"Elasticsearch完全ガイド — 全文検索・Node.js統合・Kibana・パフォーマンスチューニング","description":"Elasticsearchで高速全文検索を実装する完全ガイド。インデックス設計・マッピング・クエリDSL・Aggregation・Node.js統合・Kibana・オートコンプリート・ベクトル検索まで実装例付きで解説。現場で使える知識を体系的にまとめました。","datePublished":"2026-02-20T00:00:00.000Z","dateModified":"2026-02-20T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Elasticsearch, 全文検索, Node.js, TypeScript, Kibana"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Elasticsearch完全ガイド — 全文検索・Node.js統合・Kibana・パフォーマンスチューニング"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-20T00:00:00.000Z"> Feb 19, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Elasticsearch完全ガイド — 全文検索・Node.js統合・Kibana・パフォーマンスチューニング</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Elasticsearch" class="article-tag" data-astro-cid-bvzihdzo>
+#Elasticsearch </a><a href="/blog/tag/%E5%85%A8%E6%96%87%E6%A4%9C%E7%B4%A2" class="article-tag" data-astro-cid-bvzihdzo>
+#全文検索 </a><a href="/blog/tag/Node.js" class="article-tag" data-astro-cid-bvzihdzo>
+#Node.js </a><a href="/blog/tag/TypeScript" class="article-tag" data-astro-cid-bvzihdzo>
+#TypeScript </a><a href="/blog/tag/Kibana" class="article-tag" data-astro-cid-bvzihdzo>
+#Kibana </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Elasticsearchは、Apache Luceneをベースに構築された分散型全文検索・分析エンジンです。ログ解析、ECサイトの商品検索、ドキュメント管理システムなど、あらゆるスケールの検索要件に対応できます。本記事では、ローカル環境の構築からプロダクション運用まで、実装例を交えながら体系的に解説します。</p>
+<hr>
+<h2 id="1-elasticsearchとは--rdbredisとの比較">1. Elasticsearchとは — RDB・Redisとの比較</h2>
+<h3 id="elasticsearchの基本概念">Elasticsearchの基本概念</h3>
+<p>Elasticsearchは「インデックス（Index）」という単位でデータを管理します。RDBのテーブルに相当しますが、スキーマレスで非常に柔軟です。データはJSONドキュメントとして保存され、Luceneの転置インデックスにより高速な全文検索を実現します。</p>
+<p>主なコンセプトは以下の通りです。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Elasticsearch</th><th>RDB</th><th>説明</th></tr></thead><tbody><tr><td>Index</td><td>Table</td><td>データの集合</td></tr><tr><td>Document</td><td>Row</td><td>1件のデータ（JSON）</td></tr><tr><td>Field</td><td>Column</td><td>データの属性</td></tr><tr><td>Mapping</td><td>Schema</td><td>フィールド定義</td></tr><tr><td>Shard</td><td>Partition</td><td>データの分割単位</td></tr></tbody></table>
+<h3 id="rdbredisとの使い分け">RDB・Redisとの使い分け</h3>
+<p><strong>PostgreSQL / MySQLとの比較</strong></p>
+<p>RDBは構造化データのトランザクション処理に優れています。一方、Elasticsearchは以下のユースケースで圧倒的な優位性を持ちます。</p>
+<ul>
+<li>大量ドキュメントのフリーテキスト検索（<code>LIKE '%keyword%'</code>の代替）</li>
+<li>形態素解析を使った日本語全文検索</li>
+<li>ファセット検索・Aggregation（絞り込み条件の件数集計）</li>
+<li>ログ・メトリクスのリアルタイム分析</li>
+</ul>
+<p><strong>Redisとの比較</strong></p>
+<p>Redisはインメモリキャッシュとして高速なKey-Valueアクセスに特化しています。Elasticsearchはディスクベースで大容量データを扱い、複雑なクエリ・集計に適しています。オートコンプリートはRedisのSortedSetでも実現できますが、形態素解析が必要な日本語検索ではElasticsearchの方が適切です。</p>
+<p><strong>適用場面の判断基準</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>検索要件の複雑度</span></span>
+<span class="line"><span>├── シンプルなID引き当て → Redis / RDB</span></span>
+<span class="line"><span>├── 完全一致・前方一致 → Redis（ZADD）/ RDB（INDEX）</span></span>
+<span class="line"><span>├── 部分一致・全文検索 → Elasticsearch</span></span>
+<span class="line"><span>├── 日本語形態素解析 → Elasticsearch（kuromoji）</span></span>
+<span class="line"><span>├── ログ分析・時系列 → Elasticsearch（+ Kibana）</span></span>
+<span class="line"><span>└── ベクトル類似検索 → Elasticsearch（kNN）</span></span></code></pre>
+<hr>
+<h2 id="2-ローカル環境docker-compose--kibana">2. ローカル環境（Docker Compose + Kibana）</h2>
+<h3 id="docker-compose設定">Docker Compose設定</h3>
+<p>まずDocker Composeで開発環境を構築します。Elasticsearch 8.x系を使用します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># docker-compose.yml</span></span>
+<span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.8'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  elasticsearch</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">docker.elastic.co/elasticsearch/elasticsearch:8.12.0</span></span>
+<span class="line"><span style="color:#85E89D">    container_name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">elasticsearch</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">node.name=elasticsearch</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">cluster.name=es-docker-cluster</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">discovery.type=single-node</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">bootstrap.memory_lock=true</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">xpack.security.enabled=false</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">xpack.security.enrollment.enabled=false</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">ES_JAVA_OPTS=-Xms512m -Xmx512m</span></span>
+<span class="line"><span style="color:#85E89D">    ulimits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      memlock</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        soft</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">-1</span></span>
+<span class="line"><span style="color:#85E89D">        hard</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">-1</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">elasticsearch-data:/usr/share/elasticsearch/data</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"9200:9200"</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"9300:9300"</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">elastic</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  kibana</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">docker.elastic.co/kibana/kibana:8.12.0</span></span>
+<span class="line"><span style="color:#85E89D">    container_name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">kibana</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">ELASTICSEARCH_HOSTS=http://elasticsearch:9200</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">xpack.security.enabled=false</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"5601:5601"</span></span>
+<span class="line"><span style="color:#85E89D">    depends_on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">elasticsearch</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">elastic</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  elasticsearch-data</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    driver</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">local</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  elastic</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    driver</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">bridge</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 起動</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> compose</span><span style="color:#9ECBFF"> up</span><span style="color:#79B8FF"> -d</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 動作確認</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#9ECBFF"> http://localhost:9200</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Kibana: http://localhost:5601</span></span></code></pre>
+<p>起動後、<code>http://localhost:9200</code> にアクセスしてクラスター情報が返ってくれば準備完了です。</p>
+<h3 id="クラスターヘルスチェック">クラスターヘルスチェック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># クラスターの状態確認</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#9ECBFF"> http://localhost:9200/_cluster/health?pretty</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># インデックス一覧</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#9ECBFF"> http://localhost:9200/_cat/indices?v</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ノード情報</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#9ECBFF"> http://localhost:9200/_cat/nodes?v</span></span></code></pre>
+<hr>
+<h2 id="3-インデックス設計mappinganalyzertokenizer">3. インデックス設計（Mapping・Analyzer・Tokenizer）</h2>
+<h3 id="マッピングの基本">マッピングの基本</h3>
+<p>マッピングはRDBのスキーマ定義に相当します。フィールドのデータ型・アナライザーを明示的に定義することで、検索精度とパフォーマンスが向上します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">PUT /products</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "settings"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "number_of_shards"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "number_of_replicas"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "analysis"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "analyzer"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "japanese"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"custom"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "tokenizer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"kuromoji_tokenizer"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "filter"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">            "kuromoji_baseform"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "kuromoji_part_of_speech"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "cjk_width"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "ja_stop"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "kuromoji_stemmer"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "lowercase"</span></span>
+<span class="line"><span style="color:#E1E4E8">          ]</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#79B8FF">        "autocomplete_analyzer"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"custom"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "tokenizer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"edge_ngram_tokenizer"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "filter"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"lowercase"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#79B8FF">        "autocomplete_search"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"custom"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "tokenizer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"keyword"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "filter"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"lowercase"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "tokenizer"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "edge_ngram_tokenizer"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"edge_ngram"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "min_gram"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "max_gram"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "token_chars"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"letter"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"digit"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "mappings"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "id"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"keyword"</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "analyzer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"japanese"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "fields"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "keyword"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"keyword"</span></span>
+<span class="line"><span style="color:#E1E4E8">          },</span></span>
+<span class="line"><span style="color:#79B8FF">          "autocomplete"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">            "analyzer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"autocomplete_analyzer"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">            "search_analyzer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"autocomplete_search"</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "description"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "analyzer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"japanese"</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "price"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"integer"</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "category"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"keyword"</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "tags"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"keyword"</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "rating"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"float"</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "stock"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"integer"</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "created_at"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"date"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "format"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"yyyy-MM-dd'T'HH:mm:ss||yyyy-MM-dd||epoch_millis"</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "location"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"geo_point"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="主要なフィールドデータ型">主要なフィールドデータ型</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>型</th><th>用途</th></tr></thead><tbody><tr><td><code>text</code></td><td>全文検索対象のテキスト（アナライズされる）</td></tr><tr><td><code>keyword</code></td><td>完全一致・ソート・Aggregation用</td></tr><tr><td><code>integer</code> / <code>long</code> / <code>float</code> / <code>double</code></td><td>数値</td></tr><tr><td><code>date</code></td><td>日付・時刻</td></tr><tr><td><code>boolean</code></td><td>true / false</td></tr><tr><td><code>object</code></td><td>ネストしたJSONオブジェクト</td></tr><tr><td><code>nested</code></td><td>独立してクエリできるオブジェクト配列</td></tr><tr><td><code>geo_point</code></td><td>緯度・経度</td></tr><tr><td><code>dense_vector</code></td><td>ベクトル検索用</td></tr></tbody></table>
+<hr>
+<h2 id="4-アナライザー日本語対応kuromojiicu">4. アナライザー（日本語対応・kuromoji・ICU）</h2>
+<h3 id="kuromojiアナライザー">Kuromojiアナライザー</h3>
+<p>日本語の形態素解析には<code>analysis-kuromoji</code>プラグインを使用します。Dockerイメージにはデフォルトで含まれています。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">POST /products/_analyze</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "analyzer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"japanese"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "text"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"高性能ノートパソコンを安く購入したい"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>レスポンスでトークン分割結果を確認できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "tokens"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"token"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"高性能"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"start_offset"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"end_offset"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"token"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ノート"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"start_offset"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"end_offset"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"token"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"パソコン"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"start_offset"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"end_offset"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"token"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"安い"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"start_offset"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">12</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"end_offset"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">14</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"token"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"購入"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"start_offset"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">15</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"end_offset"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">17</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Kuromojiフィルターの主な種類を以下に示します。</p>
+<ul>
+<li><code>kuromoji_baseform</code>: 動詞・形容詞を基本形に統一（走っている→走る）</li>
+<li><code>kuromoji_part_of_speech</code>: 助詞・助動詞・句読点を除去</li>
+<li><code>kuromoji_stemmer</code>: 長音符の正規化（コンピューター→コンピュータ）</li>
+<li><code>kuromoji_readingform</code>: よみがなトークン生成</li>
+</ul>
+<h3 id="icuアナライザー">ICUアナライザー</h3>
+<p><code>analysis-icu</code>プラグインは、Unicode文字の正規化・大文字小文字統一・全角半角変換などを処理します。Kuromojiと組み合わせると、より堅牢な日本語検索が実現できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">PUT /articles</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "settings"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "analysis"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "char_filter"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "icu_normalizer"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"icu_normalizer"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"nfkc_cf"</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "analyzer"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "japanese_icu"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"custom"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "char_filter"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"icu_normalizer"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">          "tokenizer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"kuromoji_tokenizer"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "filter"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">            "kuromoji_baseform"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "kuromoji_part_of_speech"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "kuromoji_stemmer"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "icu_folding"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "lowercase"</span></span>
+<span class="line"><span style="color:#E1E4E8">          ]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="5-クエリdslmatchtermboolrangefuzzy">5. クエリDSL（match・term・bool・range・fuzzy）</h2>
+<h3 id="match-クエリ">match クエリ</h3>
+<p><code>match</code>はテキストフィールドへの全文検索に使います。アナライザーが適用されます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "match"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "query"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ノートパソコン 高性能"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "operator"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"and"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "fuzziness"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"AUTO"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="match_phrase-クエリ">match_phrase クエリ</h3>
+<p>語順を保持したフレーズ検索です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "match_phrase"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "description"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "query"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"高性能グラフィック"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "slop"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="multi_match-クエリ">multi_match クエリ</h3>
+<p>複数フィールドを横断して検索します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "multi_match"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "query"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"MacBook Pro"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "fields"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"name^3"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"description^1"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"tags^2"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"best_fields"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "tie_breaker"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0.3</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><code>^3</code>はフィールドのブースト値です。<code>name</code>フィールドにマッチした場合のスコアが3倍になります。</p>
+<h3 id="term-クエリ">term クエリ</h3>
+<p>アナライズされない完全一致検索です。<code>keyword</code>型フィールドや数値・日付に使います。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "term"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "category"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "value"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"electronics"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="terms-クエリ">terms クエリ</h3>
+<p>複数の値のいずれかに一致するドキュメントを検索します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "terms"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "category"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"electronics"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"computers"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"peripherals"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="range-クエリ">range クエリ</h3>
+<p>数値・日付の範囲検索です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "range"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "price"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "gte"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">50000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "lte"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">200000</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>日付範囲の例。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "range"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "created_at"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "gte"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"now-30d/d"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "lte"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"now/d"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "format"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"strict_date_optional_time"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="bool-クエリ">bool クエリ</h3>
+<p>複数のクエリを組み合わせる最も重要なクエリです。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "bool"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "must"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#79B8FF">          "match"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ノートパソコン"</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#79B8FF">      "filter"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#79B8FF">          "term"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            "category"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"electronics"</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#79B8FF">          "range"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            "price"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">              "lte"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">150000</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#79B8FF">      "should"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#79B8FF">          "term"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            "tags"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"sale"</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#79B8FF">      "must_not"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#79B8FF">          "term"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            "stock"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#79B8FF">      "minimum_should_match"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>各節の役割は以下の通りです。</p>
+<ul>
+<li><code>must</code>: 必ずマッチ（スコアに影響）</li>
+<li><code>filter</code>: 必ずマッチ（スコアに影響しない・キャッシュされる）</li>
+<li><code>should</code>: マッチするとスコアが上がる</li>
+<li><code>must_not</code>: マッチしないこと（スコアに影響しない）</li>
+</ul>
+<h3 id="fuzzy-クエリ">fuzzy クエリ</h3>
+<p>スペルミスに対応したあいまい検索です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "fuzzy"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "value"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Macbok"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "fuzziness"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"AUTO"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "prefix_length"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="6-フィルタリングfilter-context-vs-query-context">6. フィルタリング（filter context vs query context）</h2>
+<h3 id="クエリコンテキストとフィルターコンテキスト">クエリコンテキストとフィルターコンテキスト</h3>
+<p>Elasticsearchのクエリには2つのコンテキストがあります。</p>
+<p><strong>クエリコンテキスト（query context）</strong></p>
+<p>スコアを計算します。「どのくらい関連しているか」を評価します。<code>must</code>・<code>should</code>に書いたクエリが該当します。</p>
+<p><strong>フィルターコンテキスト（filter context）</strong></p>
+<p>スコアを計算せず、条件に合致するかどうかだけを判定します。<code>filter</code>・<code>must_not</code>に書いたクエリが該当します。フィルターコンテキストのクエリはキャッシュされるため、高速です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "bool"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "must"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#79B8FF">          "match"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"高解像度ディスプレイ"</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#79B8FF">      "filter"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        { </span><span style="color:#79B8FF">"term"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"category"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"laptops"</span><span style="color:#E1E4E8"> } },</span></span>
+<span class="line"><span style="color:#E1E4E8">        { </span><span style="color:#79B8FF">"range"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"price"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"gte"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80000</span><span style="color:#E1E4E8"> } } },</span></span>
+<span class="line"><span style="color:#E1E4E8">        { </span><span style="color:#79B8FF">"term"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"in_stock"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> } }</span></span>
+<span class="line"><span style="color:#E1E4E8">      ]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>フィルター条件（カテゴリ・価格・在庫）はスコアに影響せず、キャッシュされるため繰り返し実行時のパフォーマンスが向上します。</p>
+<h3 id="exists-クエリ">exists クエリ</h3>
+<p>フィールドが存在するドキュメントを検索します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "bool"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "filter"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        { </span><span style="color:#79B8FF">"exists"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"discount_price"</span><span style="color:#E1E4E8"> } }</span></span>
+<span class="line"><span style="color:#E1E4E8">      ]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="7-aggregationtermshistogramavgminmaxnested">7. Aggregation（terms・histogram・avg・min・max・nested）</h2>
+<p>AggregationはSQLの<code>GROUP BY</code>と集計関数に相当します。検索結果に対して統計情報を計算できます。</p>
+<h3 id="terms-aggregation">terms Aggregation</h3>
+<p>カテゴリごとの件数を集計します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "size"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "aggs"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "categories"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "terms"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"category"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "size"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "order"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"_count"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"desc"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><code>size: 0</code>で検索結果のヒットを返さず集計結果のみを取得します。</p>
+<h3 id="histogram-aggregation">histogram Aggregation</h3>
+<p>価格帯ごとの件数を集計します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "size"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "aggs"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "price_ranges"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "histogram"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"price"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "interval"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "min_doc_count"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="date_histogram-aggregation">date_histogram Aggregation</h3>
+<p>日付単位での集計です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /logs/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "size"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "aggs"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "requests_per_day"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "date_histogram"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"timestamp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "calendar_interval"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"day"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "format"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"yyyy-MM-dd"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="統計aggregation">統計Aggregation</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "size"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "aggs"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "avg_price"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "avg"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"price"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "min_price"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "min"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"price"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "max_price"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "max"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"price"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "price_stats"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "stats"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"price"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "price_percentiles"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "percentiles"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"price"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "percents"</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">25</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">50</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">75</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">95</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ネストしたaggregationサブ集計">ネストしたAggregation（サブ集計）</h3>
+<p>カテゴリごとの平均価格を計算します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "size"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "aggs"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "by_category"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "terms"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"category"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "size"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "aggs"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "avg_price"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "avg"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"price"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#79B8FF">        "price_range"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "stats"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"price"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="nested-aggregation">nested Aggregation</h3>
+<p><code>nested</code>型フィールドに対する集計です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">PUT /orders</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mappings"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "order_id"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"keyword"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">      "items"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"nested"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "product_id"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"keyword"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">          "quantity"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"integer"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">          "price"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"float"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">GET /orders/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "size"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "aggs"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "items_agg"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "nested"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"items"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">      "aggs"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "top_products"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "terms"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            "field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"items.product_id"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">            "size"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="8-nodejs統合elasticelasticsearch-typescript">8. Node.js統合（@elastic/elasticsearch TypeScript）</h2>
+<h3 id="インストールと接続">インストールと接続</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> @elastic/elasticsearch</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -D</span><span style="color:#9ECBFF"> @types/node</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/lib/elasticsearch.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Client } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@elastic/elasticsearch'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> client</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Client</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  node: process.env.</span><span style="color:#79B8FF">ELASTICSEARCH_URL</span><span style="color:#F97583"> ??</span><span style="color:#9ECBFF"> 'http://localhost:9200'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  auth: process.env.</span><span style="color:#79B8FF">ELASTICSEARCH_API_KEY</span></span>
+<span class="line"><span style="color:#F97583">    ?</span><span style="color:#E1E4E8"> { apiKey: process.env.</span><span style="color:#79B8FF">ELASTICSEARCH_API_KEY</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#F97583">    :</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  tls: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    rejectUnauthorized: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  maxRetries: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  requestTimeout: </span><span style="color:#79B8FF">30000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  compression: </span><span style="color:#9ECBFF">'gzip'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 接続確認</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> checkConnection</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">boolean</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> info</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">info</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Elasticsearch connected:'</span><span style="color:#E1E4E8">, info.version.number);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Elasticsearch connection failed:'</span><span style="color:#E1E4E8">, error);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="型定義">型定義</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/types/product.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> Product</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  description</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  price</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  category</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  tags</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">[];</span></span>
+<span class="line"><span style="color:#FFAB70">  rating</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  stock</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  created_at</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> SearchResult</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#FFAB70">  total</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  hits</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Array</span><span style="color:#E1E4E8">&#x3C;{</span></span>
+<span class="line"><span style="color:#FFAB70">    id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    score</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    source</span><span style="color:#F97583">:</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }>;</span></span>
+<span class="line"><span style="color:#FFAB70">  aggregations</span><span style="color:#F97583">?:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">unknown</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="9-crud操作indexgetupdatedeletebulk">9. CRUD操作（index・get・update・delete・bulk）</h2>
+<h3 id="ドキュメントの作成index">ドキュメントの作成（index）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/services/productService.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { client } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../lib/elasticsearch'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { Product } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../types/product'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> INDEX</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'products'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createProduct</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">product</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Product</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">index</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#79B8FF">INDEX</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: product.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    document: product,</span></span>
+<span class="line"><span style="color:#E1E4E8">    refresh: </span><span style="color:#9ECBFF">'wait_for'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response._id;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ドキュメントの取得get">ドキュメントの取得（get）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getProduct</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">      index: </span><span style="color:#79B8FF">INDEX</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response._source </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">error</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> ((error </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">statusCode</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> }).statusCode </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 404</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#E1E4E8"> error;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ドキュメントの更新update">ドキュメントの更新（update）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> updateProduct</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  updates</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Partial</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#79B8FF">INDEX</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    doc: updates,</span></span>
+<span class="line"><span style="color:#E1E4E8">    refresh: </span><span style="color:#9ECBFF">'wait_for'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// スクリプトによる部分更新（在庫数の増減など）</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> adjustStock</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">delta</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#79B8FF">INDEX</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    script: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      source: </span><span style="color:#9ECBFF">'ctx._source.stock += params.delta'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      lang: </span><span style="color:#9ECBFF">'painless'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      params: { delta },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    refresh: </span><span style="color:#9ECBFF">'wait_for'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ドキュメントの削除delete">ドキュメントの削除（delete）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> deleteProduct</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#79B8FF">INDEX</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    refresh: </span><span style="color:#9ECBFF">'wait_for'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// クエリによる一括削除</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> deleteByCategory</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">category</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">deleteByQuery</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#79B8FF">INDEX</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    query: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      term: { category },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    refresh: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="バルク操作bulk">バルク操作（bulk）</h3>
+<p>大量データを一括処理する場合はBulk APIを使います。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> bulkIndexProducts</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">products</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Product</span><span style="color:#E1E4E8">[])</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> operations</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> products.</span><span style="color:#B392F0">flatMap</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">product</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">    { index: { _index: </span><span style="color:#79B8FF">INDEX</span><span style="color:#E1E4E8">, _id: product.id } },</span></span>
+<span class="line"><span style="color:#E1E4E8">    product,</span></span>
+<span class="line"><span style="color:#E1E4E8">  ]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">bulk</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    operations,</span></span>
+<span class="line"><span style="color:#E1E4E8">    refresh: </span><span style="color:#9ECBFF">'wait_for'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (response.errors) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> errors</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> response.items</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">item</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> item.index?.error)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">item</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> item.index?.error);</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Bulk index errors:'</span><span style="color:#E1E4E8">, errors);</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Bulk operation had ${</span><span style="color:#E1E4E8">errors</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">length</span><span style="color:#9ECBFF">} errors`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Indexed ${</span><span style="color:#E1E4E8">response</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">items</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">length</span><span style="color:#9ECBFF">} products`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="全文検索の実装">全文検索の実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> searchProducts</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">params</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  query</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  category</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  minPrice</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  maxPrice</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  tags</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">[];</span></span>
+<span class="line"><span style="color:#FFAB70">  page</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  pageSize</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">SearchResult</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">>> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    query</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    category</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    minPrice</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    maxPrice</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    tags</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    page</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    pageSize</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 20</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> params;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> from</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (page </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> pageSize;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">search</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#79B8FF">INDEX</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    from,</span></span>
+<span class="line"><span style="color:#E1E4E8">    size: pageSize,</span></span>
+<span class="line"><span style="color:#E1E4E8">    query: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      bool: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        must: query</span></span>
+<span class="line"><span style="color:#F97583">          ?</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">              {</span></span>
+<span class="line"><span style="color:#E1E4E8">                multi_match: {</span></span>
+<span class="line"><span style="color:#E1E4E8">                  query,</span></span>
+<span class="line"><span style="color:#E1E4E8">                  fields: [</span><span style="color:#9ECBFF">'name^3'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'description^1'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'tags^2'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">                  type: </span><span style="color:#9ECBFF">'best_fields'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                  fuzziness: </span><span style="color:#9ECBFF">'AUTO'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#E1E4E8">              },</span></span>
+<span class="line"><span style="color:#E1E4E8">            ]</span></span>
+<span class="line"><span style="color:#F97583">          :</span><span style="color:#E1E4E8"> [{ match_all: {} }],</span></span>
+<span class="line"><span style="color:#E1E4E8">        filter: [</span></span>
+<span class="line"><span style="color:#F97583">          ...</span><span style="color:#E1E4E8">(category </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> [{ term: { category } }] </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> []),</span></span>
+<span class="line"><span style="color:#F97583">          ...</span><span style="color:#E1E4E8">(minPrice </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> undefined</span><span style="color:#F97583"> ||</span><span style="color:#E1E4E8"> maxPrice </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> undefined</span></span>
+<span class="line"><span style="color:#F97583">            ?</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">                {</span></span>
+<span class="line"><span style="color:#E1E4E8">                  range: {</span></span>
+<span class="line"><span style="color:#E1E4E8">                    price: {</span></span>
+<span class="line"><span style="color:#F97583">                      ...</span><span style="color:#E1E4E8">(minPrice </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> undefined</span><span style="color:#F97583"> ?</span><span style="color:#E1E4E8"> { gte: minPrice } </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {}),</span></span>
+<span class="line"><span style="color:#F97583">                      ...</span><span style="color:#E1E4E8">(maxPrice </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> undefined</span><span style="color:#F97583"> ?</span><span style="color:#E1E4E8"> { lte: maxPrice } </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {}),</span></span>
+<span class="line"><span style="color:#E1E4E8">                    },</span></span>
+<span class="line"><span style="color:#E1E4E8">                  },</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#E1E4E8">              ]</span></span>
+<span class="line"><span style="color:#F97583">            :</span><span style="color:#E1E4E8"> []),</span></span>
+<span class="line"><span style="color:#F97583">          ...</span><span style="color:#E1E4E8">(tags </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> tags.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ></span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> ?</span><span style="color:#E1E4E8"> [{ terms: { tags } }] </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> []),</span></span>
+<span class="line"><span style="color:#E1E4E8">          { range: { stock: { gt: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8"> } } },</span></span>
+<span class="line"><span style="color:#E1E4E8">        ],</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    sort: query</span></span>
+<span class="line"><span style="color:#F97583">      ?</span><span style="color:#E1E4E8"> [{ _score: </span><span style="color:#9ECBFF">'desc'</span><span style="color:#E1E4E8"> }, { rating: </span><span style="color:#9ECBFF">'desc'</span><span style="color:#E1E4E8"> }]</span></span>
+<span class="line"><span style="color:#F97583">      :</span><span style="color:#E1E4E8"> [{ created_at: </span><span style="color:#9ECBFF">'desc'</span><span style="color:#E1E4E8"> }],</span></span>
+<span class="line"><span style="color:#E1E4E8">    aggs: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      categories: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        terms: { field: </span><span style="color:#9ECBFF">'category'</span><span style="color:#E1E4E8">, size: </span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      price_stats: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        stats: { field: </span><span style="color:#9ECBFF">'price'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    highlight: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      fields: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: { number_of_fragments: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        description: { fragment_size: </span><span style="color:#79B8FF">150</span><span style="color:#E1E4E8">, number_of_fragments: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      pre_tags: [</span><span style="color:#9ECBFF">'&#x3C;mark>'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">      post_tags: [</span><span style="color:#9ECBFF">'&#x3C;/mark>'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> total</span><span style="color:#F97583"> =</span></span>
+<span class="line"><span style="color:#F97583">    typeof</span><span style="color:#E1E4E8"> response.hits.total </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'number'</span></span>
+<span class="line"><span style="color:#F97583">      ?</span><span style="color:#E1E4E8"> response.hits.total</span></span>
+<span class="line"><span style="color:#F97583">      :</span><span style="color:#E1E4E8"> (response.hits.total?.value </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    total,</span></span>
+<span class="line"><span style="color:#E1E4E8">    hits: response.hits.hits.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">hit</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">      id: hit._id,</span></span>
+<span class="line"><span style="color:#E1E4E8">      score: hit._score </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      source: hit._source </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Product</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    })),</span></span>
+<span class="line"><span style="color:#E1E4E8">    aggregations: response.aggregations,</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="10-オートコンプリートedge_ngramsearch_as_you_type">10. オートコンプリート（edge_ngram・search_as_you_type）</h2>
+<h3 id="edge_ngram-を使ったオートコンプリート">edge_ngram を使ったオートコンプリート</h3>
+<p>インデックス設計のセクションで定義した<code>autocomplete_analyzer</code>を活用します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> autocomplete</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  prefix</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  size</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">[]> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">search</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#79B8FF">INDEX</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    size,</span></span>
+<span class="line"><span style="color:#E1E4E8">    query: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      match: {</span></span>
+<span class="line"><span style="color:#9ECBFF">        'name.autocomplete'</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          query: prefix,</span></span>
+<span class="line"><span style="color:#E1E4E8">          operator: </span><span style="color:#9ECBFF">'and'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    _source: [</span><span style="color:#9ECBFF">'name'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response.hits.hits.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">hit</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> hit._source?.name </span><span style="color:#F97583">??</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="search_as_you_type-フィールドタイプ">search_as_you_type フィールドタイプ</h3>
+<p>Elasticsearch 7.2以降では<code>search_as_you_type</code>型が利用できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">PUT /products_v</span><span style="color:#79B8FF">2</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mappings"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"search_as_you_type"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "analyzer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"japanese"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> suggestProducts</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">query</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">[]> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">search</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#9ECBFF">'products_v2'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    size: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    query: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      multi_match: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        query,</span></span>
+<span class="line"><span style="color:#E1E4E8">        type: </span><span style="color:#9ECBFF">'bool_prefix'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        fields: [</span><span style="color:#9ECBFF">'name'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'name._2gram'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'name._3gram'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    _source: [</span><span style="color:#9ECBFF">'name'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response.hits.hits.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">hit</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> hit._source?.name </span><span style="color:#F97583">??</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="11-ハイライトスペリング修正highlightsuggest">11. ハイライト・スペリング修正（highlight・suggest）</h2>
+<h3 id="ハイライト">ハイライト</h3>
+<p>検索キーワードをハイライト表示します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> searchWithHighlight</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">query</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">search</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#79B8FF">INDEX</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    query: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      multi_match: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        query,</span></span>
+<span class="line"><span style="color:#E1E4E8">        fields: [</span><span style="color:#9ECBFF">'name'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'description'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    highlight: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      pre_tags: [</span><span style="color:#9ECBFF">'&#x3C;em class="highlight">'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">      post_tags: [</span><span style="color:#9ECBFF">'&#x3C;/em>'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">      fields: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          number_of_fragments: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        description: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          fragment_size: </span><span style="color:#79B8FF">200</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          number_of_fragments: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          fragmenter: </span><span style="color:#9ECBFF">'span'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      require_field_match: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response.hits.hits.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">hit</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">    source: hit._source,</span></span>
+<span class="line"><span style="color:#E1E4E8">    highlight: hit.highlight,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }));</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="suggesterスペリング修正">Suggester（スペリング修正）</h3>
+<p><code>term</code> suggesterと<code>phrase</code> suggesterでスペルミスを修正します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "suggest"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "text"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ノートパソコ"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "name_suggest"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "term"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"name"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "suggest_mode"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"missing"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "min_word_length"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><code>phrase</code> suggesterで文単位の修正提案。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_search</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "suggest"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "phrase_suggest"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "text"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"高性能ラップトプ"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "phrase"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"name"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "size"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "gram_size"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "direct_generator"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">          {</span></span>
+<span class="line"><span style="color:#79B8FF">            "field"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"name"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">            "suggest_mode"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"always"</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        ],</span></span>
+<span class="line"><span style="color:#79B8FF">        "highlight"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "pre_tag"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"&#x3C;em>"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "post_tag"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"&#x3C;/em>"</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="12-ベクトル検索knndense_vector">12. ベクトル検索（kNN・dense_vector）</h2>
+<p>Elasticsearch 8.0以降、ネイティブのkNN（k-nearest neighbor）ベクトル検索をサポートしています。OpenAIやローカルLLMで生成した埋め込みベクトルを使ったセマンティック検索が実現できます。</p>
+<h3 id="マッピングの設定">マッピングの設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">PUT /products_vector</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mappings"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">      "description"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">      "price"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"integer"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">      "embedding"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"dense_vector"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "dims"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1536</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "index"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "similarity"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"cosine"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="埋め込みベクトルの生成とインデックス">埋め込みベクトルの生成とインデックス</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> OpenAI </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'openai'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { client } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../lib/elasticsearch'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> openai</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> OpenAI</span><span style="color:#E1E4E8">({ apiKey: process.env.</span><span style="color:#79B8FF">OPENAI_API_KEY</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> generateEmbedding</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">text</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">number</span><span style="color:#E1E4E8">[]> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> openai.embeddings.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: </span><span style="color:#9ECBFF">'text-embedding-3-small'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    input: text,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response.data[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].embedding;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> indexProductWithEmbedding</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">product</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Product</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> text</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `${</span><span style="color:#E1E4E8">product</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">} ${</span><span style="color:#E1E4E8">product</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">description</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> embedding</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> generateEmbedding</span><span style="color:#E1E4E8">(text);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">index</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#9ECBFF">'products_vector'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: product.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    document: {</span></span>
+<span class="line"><span style="color:#F97583">      ...</span><span style="color:#E1E4E8">product,</span></span>
+<span class="line"><span style="color:#E1E4E8">      embedding,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="knn検索">kNN検索</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> semanticSearch</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  queryText</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  k</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">SearchResult</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">>> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> queryEmbedding</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> generateEmbedding</span><span style="color:#E1E4E8">(queryText);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">search</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#9ECBFF">'products_vector'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    knn: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      field: </span><span style="color:#9ECBFF">'embedding'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      query_vector: queryEmbedding,</span></span>
+<span class="line"><span style="color:#E1E4E8">      k,</span></span>
+<span class="line"><span style="color:#E1E4E8">      num_candidates: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    _source: { excludes: [</span><span style="color:#9ECBFF">'embedding'</span><span style="color:#E1E4E8">] },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> total</span><span style="color:#F97583"> =</span></span>
+<span class="line"><span style="color:#F97583">    typeof</span><span style="color:#E1E4E8"> response.hits.total </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'number'</span></span>
+<span class="line"><span style="color:#F97583">      ?</span><span style="color:#E1E4E8"> response.hits.total</span></span>
+<span class="line"><span style="color:#F97583">      :</span><span style="color:#E1E4E8"> (response.hits.total?.value </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    total,</span></span>
+<span class="line"><span style="color:#E1E4E8">    hits: response.hits.hits.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">hit</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">      id: hit._id,</span></span>
+<span class="line"><span style="color:#E1E4E8">      score: hit._score </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      source: hit._source </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Product</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    })),</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ハイブリッド検索全文検索--ベクトル検索">ハイブリッド検索（全文検索 + ベクトル検索）</h3>
+<p>全文検索とベクトル検索を組み合わせることで、より精度の高い検索が実現できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> hybridSearch</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  queryText</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  k</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">SearchResult</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">>> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> queryEmbedding</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> generateEmbedding</span><span style="color:#E1E4E8">(queryText);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">search</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#9ECBFF">'products_vector'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    query: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      multi_match: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        query: queryText,</span></span>
+<span class="line"><span style="color:#E1E4E8">        fields: [</span><span style="color:#9ECBFF">'name^2'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'description'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    knn: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      field: </span><span style="color:#9ECBFF">'embedding'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      query_vector: queryEmbedding,</span></span>
+<span class="line"><span style="color:#E1E4E8">      k,</span></span>
+<span class="line"><span style="color:#E1E4E8">      num_candidates: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      boost: </span><span style="color:#79B8FF">0.5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    _source: { excludes: [</span><span style="color:#9ECBFF">'embedding'</span><span style="color:#E1E4E8">] },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> total</span><span style="color:#F97583"> =</span></span>
+<span class="line"><span style="color:#F97583">    typeof</span><span style="color:#E1E4E8"> response.hits.total </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'number'</span></span>
+<span class="line"><span style="color:#F97583">      ?</span><span style="color:#E1E4E8"> response.hits.total</span></span>
+<span class="line"><span style="color:#F97583">      :</span><span style="color:#E1E4E8"> (response.hits.total?.value </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    total,</span></span>
+<span class="line"><span style="color:#E1E4E8">    hits: response.hits.hits.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">hit</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">      id: hit._id,</span></span>
+<span class="line"><span style="color:#E1E4E8">      score: hit._score </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      source: hit._source </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Product</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    })),</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="13-パフォーマンスチューニング">13. パフォーマンスチューニング</h2>
+<h3 id="シャード設計">シャード設計</h3>
+<p>シャードはElasticsearchの水平スケーリングの基本単位です。シャード数の設計は後から変更が難しいため、最初に適切に設計することが重要です。</p>
+<p><strong>シャード数の目安</strong></p>
+<ul>
+<li>1シャードのサイズ: 10GB〜50GB</li>
+<li>小規模インデックス（10GB未満）: 1シャード</li>
+<li>中規模（10GB〜100GB）: 2〜5シャード</li>
+<li>大規模（100GB以上）: データ量/30GB程度</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">PUT /products</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "settings"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "number_of_shards"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "number_of_replicas"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "index.refresh_interval"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"5s"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "index.max_result_window"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10000</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="インデックステンプレート">インデックステンプレート</h3>
+<p>新規インデックス作成時に自動でマッピング・設定を適用します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">PUT /_index_template/products_template</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "index_patterns"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"products-*"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">  "priority"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "template"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "settings"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "number_of_shards"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "number_of_replicas"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "index.refresh_interval"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"10s"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "index.codec"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"best_compression"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "mappings"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "dynamic"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"strict"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "created_at"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"date"</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="クエリキャッシュとフィールドデータキャッシュ">クエリキャッシュとフィールドデータキャッシュ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">PUT /products/_settings</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "index"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "requests.cache.enable"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "fielddata.cache.size"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"30%"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>フィルターコンテキストのクエリは自動的にキャッシュされます。頻繁に使うフィルター（カテゴリ・価格帯・在庫あり/なし）は必ずfilterコンテキストで記述してください。</p>
+<h3 id="インデックス時のパフォーマンス">インデックス時のパフォーマンス</h3>
+<p>大量データのインデックス時には以下の設定が効果的です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// バルクインデックス前の設定変更</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> prepareForBulkIndexing</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">index</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.indices.</span><span style="color:#B392F0">putSettings</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index,</span></span>
+<span class="line"><span style="color:#E1E4E8">    settings: {</span></span>
+<span class="line"><span style="color:#9ECBFF">      'index.refresh_interval'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'-1'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      'index.number_of_replicas'</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// インデックス後に元に戻す</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> restoreIndexSettings</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">index</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.indices.</span><span style="color:#B392F0">putSettings</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index,</span></span>
+<span class="line"><span style="color:#E1E4E8">    settings: {</span></span>
+<span class="line"><span style="color:#9ECBFF">      'index.refresh_interval'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'1s'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      'index.number_of_replicas'</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.indices.</span><span style="color:#B392F0">forcemerge</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index,</span></span>
+<span class="line"><span style="color:#E1E4E8">    max_num_segments: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="スクロールapiとsearch-after">スクロールAPIとSearch After</h3>
+<p>10,000件を超えるページネーションには<code>search_after</code>を使います。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> paginateWithSearchAfter</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  lastSort</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">[]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">hits</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Product</span><span style="color:#E1E4E8">[]; </span><span style="color:#FFAB70">searchAfter</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">|</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8"> }> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">search</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Product</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">    index: </span><span style="color:#79B8FF">INDEX</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    size: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    sort: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      { created_at: </span><span style="color:#9ECBFF">'desc'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { _id: </span><span style="color:#9ECBFF">'asc'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#F97583">    ...</span><span style="color:#E1E4E8">(lastSort </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> { search_after: lastSort } </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {}),</span></span>
+<span class="line"><span style="color:#E1E4E8">    query: { match_all: {} },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> hits</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> response.hits.hits;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    hits: hits.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">h</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> h._source </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Product</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    searchAfter:</span></span>
+<span class="line"><span style="color:#E1E4E8">      hits.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ></span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#F97583">        ?</span><span style="color:#E1E4E8"> (hits[hits.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> -</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">].sort </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        :</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="エイリアスとゼロダウンタイムインデックス再作成">エイリアスとゼロダウンタイムインデックス再作成</h3>
+<p>インデックスのマッピング変更（再インデックス）をゼロダウンタイムで行います。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> reindexWithAlias</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  sourceIndex</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  destIndex</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  aliasName</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#6A737D">  // 1. 新しいインデックスを作成</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.indices.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({ index: destIndex });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 2. reindex APIでデータをコピー</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">reindex</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    source: { index: sourceIndex },</span></span>
+<span class="line"><span style="color:#E1E4E8">    dest: { index: destIndex },</span></span>
+<span class="line"><span style="color:#E1E4E8">    refresh: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 3. エイリアスを原子的に切り替え</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.indices.</span><span style="color:#B392F0">updateAliases</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    actions: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      { remove: { index: sourceIndex, alias: aliasName } },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { add: { index: destIndex, alias: aliasName } },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 4. 旧インデックスを削除</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> client.indices.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">({ index: sourceIndex });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="モニタリングとkibana">モニタリングとKibana</h3>
+<p>Kibanaの以下のツールを活用してパフォーマンスを監視します。</p>
+<ul>
+<li><strong>Dev Tools</strong>: クエリのテスト・Explain APIでスコア分析</li>
+<li><strong>Stack Monitoring</strong>: クラスターヘルス・シャード状態・JVMメモリ</li>
+<li><strong>Discover</strong>: ログ・ドキュメントのリアルタイム確認</li>
+<li><strong>Dashboard</strong>: カスタムKPIダッシュボードの作成</li>
+</ul>
+<p>Explain APIはクエリスコアのデバッグに不可欠です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">GET /products/_explain/document-id</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "match"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ノートパソコン"</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="スロークエリログの設定">スロークエリログの設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">PUT /products/_settings</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "index.search.slowlog.threshold.query.warn"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"5s"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "index.search.slowlog.threshold.query.info"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1s"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "index.search.slowlog.threshold.fetch.warn"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1s"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "index.indexing.slowlog.threshold.index.warn"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"5s"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="実践-ecサイト検索の完全実装">実践: ECサイト検索の完全実装</h2>
+<h3 id="nextjs-apiルートでの実装例">Next.js APIルートでの実装例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/products/search/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextRequest, NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { searchProducts } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/services/productService'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> GET</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">searchParams</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(request.url);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> query</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'q'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">??</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> category</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'category'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> minPrice</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'min_price'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    ?</span><span style="color:#B392F0"> Number</span><span style="color:#E1E4E8">(searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'min_price'</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#F97583">    :</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> maxPrice</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'max_price'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    ?</span><span style="color:#B392F0"> Number</span><span style="color:#E1E4E8">(searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'max_price'</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#F97583">    :</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> page</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> Number</span><span style="color:#E1E4E8">(searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'page'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">??</span><span style="color:#9ECBFF"> '1'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> searchProducts</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      query,</span></span>
+<span class="line"><span style="color:#E1E4E8">      category,</span></span>
+<span class="line"><span style="color:#E1E4E8">      minPrice,</span></span>
+<span class="line"><span style="color:#E1E4E8">      maxPrice,</span></span>
+<span class="line"><span style="color:#E1E4E8">      page,</span></span>
+<span class="line"><span style="color:#E1E4E8">      pageSize: </span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(result);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Search error:'</span><span style="color:#E1E4E8">, error);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      { error: </span><span style="color:#9ECBFF">'Search failed'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { status: </span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="reactコンポーネントでの使用">Reactコンポーネントでの使用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// components/ProductSearch.tsx</span></span>
+<span class="line"><span style="color:#9ECBFF">'use client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useState, useEffect, useCallback } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useDebounce } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/hooks/useDebounce'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> SearchResult</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  total</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  hits</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Array</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">score</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">source</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Product</span><span style="color:#E1E4E8"> }>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> ProductSearch</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">query</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setQuery</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">results</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setResults</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">SearchResult</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">>(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">loading</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setLoading</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> debouncedQuery</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useDebounce</span><span style="color:#E1E4E8">(query, </span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> search</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useCallback</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">q</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">q.</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">()) {</span></span>
+<span class="line"><span style="color:#B392F0">      setResults</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    setLoading</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> params</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URLSearchParams</span><span style="color:#E1E4E8">({ q });</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/api/products/search?${</span><span style="color:#E1E4E8">params</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583">:</span><span style="color:#B392F0"> SearchResult</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#B392F0">      setResults</span><span style="color:#E1E4E8">(data);</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">finally</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">      setLoading</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, []);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    search</span><span style="color:#E1E4E8">(debouncedQuery);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [debouncedQuery, search]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#FFAB70">input</span></span>
+<span class="line"><span style="color:#E1E4E8">        type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text"</span></span>
+<span class="line"><span style="color:#E1E4E8">        value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{query}</span></span>
+<span class="line"><span style="color:#E1E4E8">        onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{(e) => </span><span style="color:#B392F0">setQuery</span><span style="color:#E1E4E8">(e.target.value)}</span></span>
+<span class="line"><span style="color:#E1E4E8">        placeholder</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"商品を検索..."</span></span>
+<span class="line"><span style="color:#E1E4E8">        className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"w-full border rounded px-4 py-2"</span></span>
+<span class="line"><span style="color:#F97583">      /></span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">loading</span><span style="color:#E1E4E8"> &#x26;&#x26; &#x3C;</span><span style="color:#FFAB70">p</span><span style="color:#E1E4E8">></span><span style="color:#FFAB70">検索中</span><span style="color:#E1E4E8">...&#x3C;/</span><span style="color:#FFAB70">p</span><span style="color:#E1E4E8">>}</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">results</span><span style="color:#E1E4E8"> &#x26;&#x26; (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#FFAB70">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#FFAB70">p</span><span style="color:#E1E4E8">>{</span><span style="color:#FFAB70">results</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">total</span><span style="color:#E1E4E8">}</span><span style="color:#FFAB70">件の商品が見つかりました</span><span style="color:#E1E4E8">&#x3C;/</span><span style="color:#FFAB70">p</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">          {</span><span style="color:#FFAB70">results</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">hits</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">(({ </span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">source</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">            &#x3C;</span><span style="color:#E1E4E8">div key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{id}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">              &#x3C;</span><span style="color:#B392F0">h3</span><span style="color:#E1E4E8">>{source.name}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">h3</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">              &#x3C;</span><span style="color:#B392F0">p</span><span style="color:#E1E4E8">>{source.price.toLocaleString()}円</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">p</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">            &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">          ))}</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#FFAB70">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      )}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="まとめ">まとめ</h2>
+<p>Elasticsearchは単なる検索エンジンにとどまらず、ログ分析・ビジネスインテリジェンス・ベクトル検索まで幅広く活用できるプラットフォームです。本記事で解説したポイントを整理します。</p>
+<p><strong>インデックス設計のポイント</strong></p>
+<ul>
+<li>マッピングは最初に正しく設計する（後から変更はreindex）</li>
+<li>日本語はkuromojiアナライザーを必ず設定する</li>
+<li>検索対象は<code>text</code>、集計・ソート・完全一致は<code>keyword</code></li>
+</ul>
+<p><strong>クエリ設計のポイント</strong></p>
+<ul>
+<li>関連度スコアが必要な条件は<code>must</code>、スコア不要な絞り込みは<code>filter</code></li>
+<li><code>filter</code>はキャッシュされるため繰り返し使うフィルターは必ずfilterコンテキストで</li>
+<li>大量データのページネーションは<code>search_after</code>を使う</li>
+</ul>
+<p><strong>パフォーマンスのポイント</strong></p>
+<ul>
+<li>シャード数は最初に設計し、1シャード10〜50GBを目安にする</li>
+<li>大量インデックス時は<code>refresh_interval: -1</code>で一時的に無効化する</li>
+<li>エイリアスを使えばゼロダウンタイムでインデックスを再作成できる</li>
+</ul>
+<hr>
+<h2 id="開発を加速するjson検証ツール">開発を加速するJSON検証ツール</h2>
+<p>ElasticsearchのクエリDSLはJSONで記述します。クエリを組み立てる際にJSONの構文エラーが発生すると、デバッグに時間を取られます。</p>
+<p><a href="https://usedevtools.com/">DevToolBox</a> には<strong>JSONフォーマッター・バリデーター</strong>が含まれており、Elasticsearchクエリの構文検証に役立ちます。クエリをコピーしてそのまま貼り付けると、ネストの誤りやカンマ抜けをすぐに発見できます。Kibana Dev Toolsと組み合わせて使うと、開発サイクルをさらに短縮できます。</p>
+<hr>
+<h2 id="参考リンク">参考リンク</h2>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">Elasticsearch 公式ドキュメント</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/plugins/current/analysis-kuromoji.html">analysis-kuromoji プラグイン</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/index.html">@elastic/elasticsearch Node.js クライアント</a></li>
+<li><a href="https://www.elastic.co/guide/en/kibana/current/index.html">Kibana ドキュメント</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html">Elasticsearch kNN search</a></li>
+</ul>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

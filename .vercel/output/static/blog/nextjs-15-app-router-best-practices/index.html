@@ -1,0 +1,505 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/nextjs-15-app-router-best-practices/"><!-- Primary Meta Tags --><title>Next.js 15 App Router設計パターン完全ガイド｜キャッシュ・並列ルート・インターセプト</title><meta name="title" content="Next.js 15 App Router設計パターン完全ガイド｜キャッシュ・並列ルート・インターセプト"><meta name="description" content="Next.js 15のApp Routerの実践的な設計パターンを解説。Parallel Routes、Intercepting Routes、キャッシュ戦略、Server Actions、Middleware活用法まで網羅。初心者から実務レベルまで段階的に学べる内容です。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/nextjs-15-app-router-best-practices/"><meta property="og:title" content="Next.js 15 App Router設計パターン完全ガイド｜キャッシュ・並列ルート・インターセプト"><meta property="og:description" content="Next.js 15のApp Routerの実践的な設計パターンを解説。Parallel Routes、Intercepting Routes、キャッシュ戦略、Server Actions、Middleware活用法まで網羅。初心者から実務レベルまで段階的に学べる内容です。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/nextjs-15-app-router-best-practices/"><meta name="twitter:title" content="Next.js 15 App Router設計パターン完全ガイド｜キャッシュ・並列ルート・インターセプト"><meta name="twitter:description" content="Next.js 15のApp Routerの実践的な設計パターンを解説。Parallel Routes、Intercepting Routes、キャッシュ戦略、Server Actions、Middleware活用法まで網羅。初心者から実務レベルまで段階的に学べる内容です。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/nextjs-15-app-router-best-practices/"},"headline":"Next.js 15 App Router設計パターン完全ガイド｜キャッシュ・並列ルート・インターセプト","description":"Next.js 15のApp Routerの実践的な設計パターンを解説。Parallel Routes、Intercepting Routes、キャッシュ戦略、Server Actions、Middleware活用法まで網羅。初心者から実務レベルまで段階的に学べる内容です。","datePublished":"2026-03-05T00:00:00.000Z","dateModified":"2026-03-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Next.js, React, フロントエンド, TypeScript, Web開発"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Next.js 15 App Router設計パターン完全ガイド｜キャッシュ・並列ルート・インターセプト"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-03-05T00:00:00.000Z"> Mar 4, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Next.js 15 App Router設計パターン完全ガイド｜キャッシュ・並列ルート・インターセプト</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Next.js" class="article-tag" data-astro-cid-bvzihdzo>
+#Next.js </a><a href="/blog/tag/React" class="article-tag" data-astro-cid-bvzihdzo>
+#React </a><a href="/blog/tag/%E3%83%95%E3%83%AD%E3%83%B3%E3%83%88%E3%82%A8%E3%83%B3%E3%83%89" class="article-tag" data-astro-cid-bvzihdzo>
+#フロントエンド </a><a href="/blog/tag/TypeScript" class="article-tag" data-astro-cid-bvzihdzo>
+#TypeScript </a><a href="/blog/tag/Web%E9%96%8B%E7%99%BA" class="article-tag" data-astro-cid-bvzihdzo>
+#Web開発 </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="nextjs-15-app-routerの設計思想">Next.js 15 App Routerの設計思想</h2>
+<p>Next.js 15のApp Routerは、React Server Components（RSC）をベースにした<strong>サーバーファーストのアーキテクチャ</strong>です。従来のPages Routerとは根本的に異なる設計が求められます。</p>
+<h3 id="pages-router-vs-app-routerの思想の違い">Pages Router vs App Routerの思想の違い</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>観点</th><th>Pages Router</th><th>App Router</th></tr></thead><tbody><tr><td>デフォルト</td><td>クライアント</td><td><strong>サーバー</strong></td></tr><tr><td>データ取得</td><td>getServerSideProps等</td><td><strong>コンポーネント内で直接await</strong></td></tr><tr><td>レイアウト</td><td>_app.tsx / _document.tsx</td><td><strong>layout.tsx（ネスト可能）</strong></td></tr><tr><td>ルーティング</td><td>ファイル名ベース</td><td><strong>フォルダ名ベース</strong></td></tr><tr><td>キャッシュ</td><td>手動管理</td><td><strong>自動キャッシュ + 再検証</strong></td></tr></tbody></table>
+<hr>
+<h2 id="レイアウトパターン">レイアウトパターン</h2>
+<h3 id="ネストレイアウト">ネストレイアウト</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>app/</span></span>
+<span class="line"><span>├── layout.tsx          # ルートレイアウト（グローバルナビ）</span></span>
+<span class="line"><span>├── page.tsx            # トップページ</span></span>
+<span class="line"><span>├── dashboard/</span></span>
+<span class="line"><span>│   ├── layout.tsx      # ダッシュボード専用レイアウト（サイドバー）</span></span>
+<span class="line"><span>│   ├── page.tsx        # /dashboard</span></span>
+<span class="line"><span>│   ├── analytics/</span></span>
+<span class="line"><span>│   │   └── page.tsx    # /dashboard/analytics</span></span>
+<span class="line"><span>│   └── settings/</span></span>
+<span class="line"><span>│       └── page.tsx    # /dashboard/settings</span></span>
+<span class="line"><span>└── blog/</span></span>
+<span class="line"><span>    ├── layout.tsx      # ブログ用レイアウト</span></span>
+<span class="line"><span>    ├── page.tsx        # /blog（記事一覧）</span></span>
+<span class="line"><span>    └── [slug]/</span></span>
+<span class="line"><span>        └── page.tsx    # /blog/:slug（記事詳細）</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// app/dashboard/layout.tsx</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> DashboardLayout</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#FFAB70">  children</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  children</span><span style="color:#F97583">:</span><span style="color:#B392F0"> React</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ReactNode</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#B392F0"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"flex"</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">aside</span><span style="color:#B392F0"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"w-64 border-r p-4"</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#85E89D">nav</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#79B8FF">Link</span><span style="color:#B392F0"> href</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"/dashboard"</span><span style="color:#E1E4E8">>概要&#x3C;/</span><span style="color:#79B8FF">Link</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#79B8FF">Link</span><span style="color:#B392F0"> href</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"/dashboard/analytics"</span><span style="color:#E1E4E8">>分析&#x3C;/</span><span style="color:#79B8FF">Link</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">          &#x3C;</span><span style="color:#79B8FF">Link</span><span style="color:#B392F0"> href</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"/dashboard/settings"</span><span style="color:#E1E4E8">>設定&#x3C;/</span><span style="color:#79B8FF">Link</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#85E89D">nav</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;/</span><span style="color:#85E89D">aside</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">main</span><span style="color:#B392F0"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"flex-1 p-6"</span><span style="color:#E1E4E8">>{children}&#x3C;/</span><span style="color:#85E89D">main</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>重要</strong>: レイアウトはページ遷移時に<strong>再レンダリングされない</strong>。状態が保持されるため、サイドバーのスクロール位置などが維持されます。</p>
+<hr>
+<h2 id="parallel-routes並列ルート">Parallel Routes（並列ルート）</h2>
+<p>同じレイアウト内で<strong>複数のページを同時にレンダリング</strong>するパターンです。</p>
+<h3 id="ダッシュボードの例">ダッシュボードの例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>app/dashboard/</span></span>
+<span class="line"><span>├── layout.tsx</span></span>
+<span class="line"><span>├── page.tsx</span></span>
+<span class="line"><span>├── @analytics/</span></span>
+<span class="line"><span>│   ├── page.tsx        # 分析パネル</span></span>
+<span class="line"><span>│   └── loading.tsx     # 分析パネルのローディング</span></span>
+<span class="line"><span>├── @notifications/</span></span>
+<span class="line"><span>│   ├── page.tsx        # 通知パネル</span></span>
+<span class="line"><span>│   └── loading.tsx     # 通知パネルのローディング</span></span>
+<span class="line"><span>└── @revenue/</span></span>
+<span class="line"><span>    └── page.tsx        # 収益パネル</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// app/dashboard/layout.tsx</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> DashboardLayout</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#FFAB70">  children</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  analytics</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  notifications</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  revenue</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  children</span><span style="color:#F97583">:</span><span style="color:#B392F0"> React</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ReactNode</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  analytics</span><span style="color:#F97583">:</span><span style="color:#B392F0"> React</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ReactNode</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  notifications</span><span style="color:#F97583">:</span><span style="color:#B392F0"> React</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ReactNode</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  revenue</span><span style="color:#F97583">:</span><span style="color:#B392F0"> React</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ReactNode</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>{children}&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#B392F0"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"grid grid-cols-2 gap-4"</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#79B8FF">Suspense</span><span style="color:#B392F0"> fallback</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{&#x3C;</span><span style="color:#79B8FF">Skeleton</span><span style="color:#E1E4E8"> />}>{analytics}&#x3C;/</span><span style="color:#79B8FF">Suspense</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#79B8FF">Suspense</span><span style="color:#B392F0"> fallback</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{&#x3C;</span><span style="color:#79B8FF">Skeleton</span><span style="color:#E1E4E8"> />}>{revenue}&#x3C;/</span><span style="color:#79B8FF">Suspense</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">>{notifications}&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="parallel-routesの活用場面">Parallel Routesの活用場面</h3>
+<ul>
+<li>ダッシュボード（複数のデータパネル）</li>
+<li>モーダル + 背景ページの同時表示</li>
+<li>条件付きルーティング（認証状態で表示分岐）</li>
+</ul>
+<hr>
+<h2 id="intercepting-routesインターセプトルート">Intercepting Routes（インターセプトルート）</h2>
+<p>現在のレイアウトを維持したまま、別のルートのコンテンツを<strong>モーダルとして表示</strong>するパターンです。</p>
+<h3 id="写真ギャラリーの例">写真ギャラリーの例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>app/</span></span>
+<span class="line"><span>├── photos/</span></span>
+<span class="line"><span>│   ├── page.tsx              # /photos（写真一覧）</span></span>
+<span class="line"><span>│   └── [id]/</span></span>
+<span class="line"><span>│       └── page.tsx          # /photos/123（写真詳細ページ）</span></span>
+<span class="line"><span>├── @modal/</span></span>
+<span class="line"><span>│   └── (.)photos/[id]/</span></span>
+<span class="line"><span>│       └── page.tsx          # 写真詳細をモーダルで表示</span></span>
+<span class="line"><span>└── layout.tsx</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// app/@modal/(.)photos/[id]/page.tsx</span></span>
+<span class="line"><span style="color:#6A737D">// 写真一覧からクリック → このモーダルが表示</span></span>
+<span class="line"><span style="color:#6A737D">// 直接URLアクセス → photos/[id]/page.tsx が表示</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> PhotoModal</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#FFAB70">  params</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  params</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">id</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> params;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> photo</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getPhoto</span><span style="color:#E1E4E8">(id);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#79B8FF">Modal</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">img</span><span style="color:#B392F0"> src</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{photo.url} </span><span style="color:#B392F0">alt</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{photo.title} /></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">h2</span><span style="color:#E1E4E8">>{photo.title}&#x3C;/</span><span style="color:#85E89D">h2</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;/</span><span style="color:#79B8FF">Modal</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="インターセプト記法">インターセプト記法</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>記法</th><th>意味</th></tr></thead><tbody><tr><td><code>(.)</code></td><td>同じ階層のルートをインターセプト</td></tr><tr><td><code>(..)</code></td><td>1つ上の階層</td></tr><tr><td><code>(..)(..)</code></td><td>2つ上の階層</td></tr><tr><td><code>(...)</code></td><td>ルートからインターセプト</td></tr></tbody></table>
+<hr>
+<h2 id="キャッシュ戦略">キャッシュ戦略</h2>
+<p>Next.js 15ではキャッシュの挙動が大きく変更されました。</p>
+<h3 id="nextjs-15のキャッシュデフォルト">Next.js 15のキャッシュデフォルト</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// Next.js 15: fetchはデフォルトで「キャッシュなし」</span></span>
+<span class="line"><span style="color:#6A737D">// (Next.js 14ではデフォルトでキャッシュされていた)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// キャッシュなし（デフォルト）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://api.example.com/posts'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 明示的にキャッシュ</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://api.example.com/posts'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  cache: </span><span style="color:#9ECBFF">'force-cache'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 時間ベースの再検証</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://api.example.com/posts'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  next: { revalidate: </span><span style="color:#79B8FF">3600</span><span style="color:#E1E4E8"> }, </span><span style="color:#6A737D">// 1時間ごとに再検証</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// タグベースの再検証</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://api.example.com/posts'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  next: { tags: [</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">] },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="revalidatepath-と-revalidatetag">revalidatePath と revalidateTag</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#9ECBFF">'use server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { revalidatePath, revalidateTag } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/cache'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createPost</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">formData</span><span style="color:#F97583">:</span><span style="color:#B392F0"> FormData</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">insert</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    title: formData.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'title'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    content: formData.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'content'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // パスベースの再検証</span></span>
+<span class="line"><span style="color:#B392F0">  revalidatePath</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/blog'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // タグベースの再検証（より細かい制御）</span></span>
+<span class="line"><span style="color:#B392F0">  revalidateTag</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="キャッシュ戦略の使い分け">キャッシュ戦略の使い分け</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>パターン</th><th>設定</th><th>ユースケース</th></tr></thead><tbody><tr><td><strong>静的</strong></td><td><code>force-cache</code></td><td>マスターデータ、設定値</td></tr><tr><td><strong>ISR</strong></td><td><code>revalidate: 3600</code></td><td>ブログ記事、商品情報</td></tr><tr><td><strong>動的</strong></td><td><code>no-store</code>（デフォルト）</td><td>ダッシュボード、リアルタイムデータ</td></tr><tr><td><strong>オンデマンド</strong></td><td><code>revalidateTag</code></td><td>CMS更新時、データ変更時</td></tr></tbody></table>
+<hr>
+<h2 id="server-actionsの設計パターン">Server Actionsの設計パターン</h2>
+<h3 id="基本パターンフォーム送信">基本パターン：フォーム送信</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// app/actions/post.ts</span></span>
+<span class="line"><span style="color:#9ECBFF">'use server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redirect } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/navigation'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { z } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'zod'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> PostSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  title: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'タイトルは必須です'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  content: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'10文字以上入力してください'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  category: z.</span><span style="color:#B392F0">enum</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'tech'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'business'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'life'</span><span style="color:#E1E4E8">]),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createPost</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  prevState</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">errors</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">[]> } </span><span style="color:#F97583">|</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  formData</span><span style="color:#F97583">:</span><span style="color:#B392F0"> FormData</span></span>
+<span class="line"><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> PostSchema.</span><span style="color:#B392F0">safeParse</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    title: formData.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'title'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    content: formData.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'content'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    category: formData.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'category'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">result.success) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> { errors: result.error.</span><span style="color:#B392F0">flatten</span><span style="color:#E1E4E8">().fieldErrors };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> post</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">insert</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">, result.data);</span></span>
+<span class="line"><span style="color:#B392F0">  revalidateTag</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#B392F0">  redirect</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/blog/${</span><span style="color:#E1E4E8">post</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">slug</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="楽観的更新パターン">楽観的更新パターン</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#9ECBFF">'use client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useOptimistic } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { toggleLike } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/app/actions/like'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> LikeButton</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#FFAB70">  postId</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  isLiked</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  likeCount</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  isLiked</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  likeCount</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">optimistic</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setOptimistic</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useOptimistic</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    { isLiked, likeCount },</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">current</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">action</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 'like'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'unlike'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">      isLiked: action </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'like'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      likeCount: current.likeCount </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> (action </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'like'</span><span style="color:#F97583"> ?</span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> :</span><span style="color:#F97583"> -</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#85E89D">form</span></span>
+<span class="line"><span style="color:#B392F0">      action</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> action</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> optimistic.isLiked </span><span style="color:#F97583">?</span><span style="color:#9ECBFF"> 'unlike'</span><span style="color:#F97583"> :</span><span style="color:#9ECBFF"> 'like'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">        setOptimistic</span><span style="color:#E1E4E8">(action);</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#B392F0"> toggleLike</span><span style="color:#E1E4E8">(postId, action);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }}</span></span>
+<span class="line"><span style="color:#E1E4E8">    ></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">button</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        {optimistic.isLiked </span><span style="color:#F97583">?</span><span style="color:#9ECBFF"> '❤️'</span><span style="color:#F97583"> :</span><span style="color:#9ECBFF"> '🤍'</span><span style="color:#E1E4E8">} {optimistic.likeCount}</span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;/</span><span style="color:#85E89D">button</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;/</span><span style="color:#85E89D">form</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="middlewareの活用">Middlewareの活用</h2>
+<h3 id="認証チェック">認証チェック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// middleware.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextRequest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> protectedRoutes</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'/dashboard'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'/settings'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'/admin'</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> authRoutes</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'/login'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'/signup'</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> middleware</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> token</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.cookies.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'session'</span><span style="color:#E1E4E8">)?.value;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">pathname</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request.nextUrl;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 認証が必要なルートへのアクセス</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (protectedRoutes.</span><span style="color:#B392F0">some</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">route</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(route))) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">token) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> loginUrl</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/login'</span><span style="color:#E1E4E8">, request.url);</span></span>
+<span class="line"><span style="color:#E1E4E8">      loginUrl.searchParams.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'redirect'</span><span style="color:#E1E4E8">, pathname);</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(loginUrl);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 認証済みユーザーがログインページにアクセス</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (authRoutes.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(pathname) </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> token) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/dashboard'</span><span style="color:#E1E4E8">, request.url));</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">next</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  matcher: [</span><span style="color:#9ECBFF">'/((?!api|_next/static|_next/image|favicon.ico).*)'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h3 id="国際化i18n">国際化（i18n）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// middleware.ts</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> locales</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'ja'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'en'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'zh'</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> defaultLocale</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'ja'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> middleware</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextRequest</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">pathname</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request.nextUrl;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ロケールがパスに含まれているか確認</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> pathnameHasLocale</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> locales.</span><span style="color:#B392F0">some</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    locale</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> pathname.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/${</span><span style="color:#E1E4E8">locale</span><span style="color:#9ECBFF">}/`</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> pathname </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> `/${</span><span style="color:#E1E4E8">locale</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (pathnameHasLocale) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // Accept-Languageヘッダーからロケールを判定</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> acceptLang</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.headers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'accept-language'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> locale</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> detectLocale</span><span style="color:#E1E4E8">(acceptLang) </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> defaultLocale;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">    new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/${</span><span style="color:#E1E4E8">locale</span><span style="color:#9ECBFF">}${</span><span style="color:#E1E4E8">pathname</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, request.url)</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="エラーハンドリング">エラーハンドリング</h2>
+<h3 id="errortsx">error.tsx</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// app/dashboard/error.tsx</span></span>
+<span class="line"><span style="color:#9ECBFF">'use client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#FFAB70">  error</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  reset</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  error</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Error</span><span style="color:#F97583"> &#x26;</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">digest</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#B392F0">  reset</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#B392F0"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"p-8 text-center"</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">h2</span><span style="color:#B392F0"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-xl font-bold text-red-600"</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        エラーが発生しました</span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;/</span><span style="color:#85E89D">h2</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">p</span><span style="color:#B392F0"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"mt-2 text-gray-600"</span><span style="color:#E1E4E8">>{error.message}&#x3C;/</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">button</span></span>
+<span class="line"><span style="color:#B392F0">        onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{reset}</span></span>
+<span class="line"><span style="color:#B392F0">        className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"mt-4 px-4 py-2 bg-blue-500 text-white rounded"</span></span>
+<span class="line"><span style="color:#E1E4E8">      ></span></span>
+<span class="line"><span style="color:#E1E4E8">        再試行</span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;/</span><span style="color:#85E89D">button</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="not-foundtsx">not-found.tsx</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// app/blog/[slug]/not-found.tsx</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> NotFound</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#B392F0"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"p-8 text-center"</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">h2</span><span style="color:#B392F0"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-2xl font-bold"</span><span style="color:#E1E4E8">>記事が見つかりません&#x3C;/</span><span style="color:#85E89D">h2</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">p</span><span style="color:#B392F0"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"mt-2"</span><span style="color:#E1E4E8">>お探しの記事は存在しないか、削除された可能性があります。&#x3C;/</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#79B8FF">Link</span><span style="color:#B392F0"> href</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"/blog"</span><span style="color:#B392F0"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"mt-4 inline-block text-blue-500"</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">        記事一覧に戻る</span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;/</span><span style="color:#79B8FF">Link</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="パフォーマンス最適化">パフォーマンス最適化</h2>
+<h3 id="streamingと-suspense">Streamingと Suspense</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// app/dashboard/page.tsx</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Suspense } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> Dashboard</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">h1</span><span style="color:#E1E4E8">>ダッシュボード&#x3C;/</span><span style="color:#85E89D">h1</span><span style="color:#E1E4E8">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#6A737D">/* 高速なデータは即座に表示 */</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#79B8FF">UserGreeting</span><span style="color:#E1E4E8"> /></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#6A737D">/* 遅いデータはストリーミング */</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#79B8FF">Suspense</span><span style="color:#B392F0"> fallback</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{&#x3C;</span><span style="color:#79B8FF">AnalyticsSkeleton</span><span style="color:#E1E4E8"> />}></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#79B8FF">Analytics</span><span style="color:#E1E4E8"> /></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;/</span><span style="color:#79B8FF">Suspense</span><span style="color:#E1E4E8">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#79B8FF">Suspense</span><span style="color:#B392F0"> fallback</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{&#x3C;</span><span style="color:#79B8FF">RevenueSkeleton</span><span style="color:#E1E4E8"> />}></span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#79B8FF">RevenueChart</span><span style="color:#E1E4E8"> /></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;/</span><span style="color:#79B8FF">Suspense</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 各コンポーネントは独立してデータ取得</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> Analytics</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getAnalytics</span><span style="color:#E1E4E8">(); </span><span style="color:#6A737D">// 3秒かかる</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#79B8FF">AnalyticsPanel</span><span style="color:#B392F0"> data</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{data} />;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> RevenueChart</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getRevenue</span><span style="color:#E1E4E8">(); </span><span style="color:#6A737D">// 5秒かかる</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#79B8FF">Chart</span><span style="color:#B392F0"> data</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{data} />;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="generatestaticparams">generateStaticParams</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// app/blog/[slug]/page.tsx</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> generateStaticParams</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> posts</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getAllPosts</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> posts.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">post</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> ({ slug: post.slug }));</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> BlogPost</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#FFAB70">  params</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  params</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">slug</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">slug</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> params;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> post</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getPostBySlug</span><span style="color:#E1E4E8">(slug);</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">post) </span><span style="color:#B392F0">notFound</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#85E89D">article</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">h1</span><span style="color:#E1E4E8">>{post.title}&#x3C;/</span><span style="color:#85E89D">h1</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">div</span><span style="color:#B392F0"> dangerouslySetInnerHTML</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{{ __html: post.content }} /></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;/</span><span style="color:#85E89D">article</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="まとめapp-routerの設計原則">まとめ：App Routerの設計原則</h2>
+<ol>
+<li><strong>サーバーファースト</strong>: デフォルトはServer Component。<code>'use client'</code>は必要な箇所のみ</li>
+<li><strong>コロケーション</strong>: 関連ファイルをルートフォルダ内にまとめる</li>
+<li><strong>ストリーミング</strong>: Suspenseで段階的にコンテンツを表示</li>
+<li><strong>キャッシュ意識</strong>: データの性質に応じたキャッシュ戦略を選択</li>
+<li><strong>Server Actions</strong>: API Routeの代わりにServer Actionsを活用</li>
+<li><strong>レイアウトの活用</strong>: 共通UIはlayout.tsxに、再レンダリングを最小化</li>
+</ol>
+<p>App Routerは従来のSPAの考え方から脱却し、<strong>サーバーとクライアントの最適な分離</strong>を実現するアーキテクチャです。この設計パターンをマスターすれば、パフォーマンスとDXの両方を高いレベルで実現できます。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

@@ -1,0 +1,600 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/kubernetes-helm-charts-guide/"><!-- Primary Meta Tags --><title>Kubernetes Helmチャート実践ガイド — テンプレート、Values、依存関係管理</title><meta name="title" content="Kubernetes Helmチャート実践ガイド — テンプレート、Values、依存関係管理"><meta name="description" content="Helm 3を使ったKubernetesパッケージ管理の完全ガイド。チャート作成、テンプレート構文、values.yaml設計、依存関係管理、リリース運用、ベストプラクティスまで実践的に解説。Kubernetes・Helm・DevOpsに関する実践情報。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/kubernetes-helm-charts-guide/"><meta property="og:title" content="Kubernetes Helmチャート実践ガイド — テンプレート、Values、依存関係管理"><meta property="og:description" content="Helm 3を使ったKubernetesパッケージ管理の完全ガイド。チャート作成、テンプレート構文、values.yaml設計、依存関係管理、リリース運用、ベストプラクティスまで実践的に解説。Kubernetes・Helm・DevOpsに関する実践情報。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/kubernetes-helm-charts-guide/"><meta name="twitter:title" content="Kubernetes Helmチャート実践ガイド — テンプレート、Values、依存関係管理"><meta name="twitter:description" content="Helm 3を使ったKubernetesパッケージ管理の完全ガイド。チャート作成、テンプレート構文、values.yaml設計、依存関係管理、リリース運用、ベストプラクティスまで実践的に解説。Kubernetes・Helm・DevOpsに関する実践情報。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/kubernetes-helm-charts-guide/"},"headline":"Kubernetes Helmチャート実践ガイド — テンプレート、Values、依存関係管理","description":"Helm 3を使ったKubernetesパッケージ管理の完全ガイド。チャート作成、テンプレート構文、values.yaml設計、依存関係管理、リリース運用、ベストプラクティスまで実践的に解説。Kubernetes・Helm・DevOpsに関する実践情報。","datePublished":"2026-02-06T00:00:00.000Z","dateModified":"2026-02-06T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Kubernetes, Helm, DevOps, インフラ, コンテナ, YAML"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Kubernetes Helmチャート実践ガイド — テンプレート、Values、依存関係管理"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-06T00:00:00.000Z"> Feb 5, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Kubernetes Helmチャート実践ガイド — テンプレート、Values、依存関係管理</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Kubernetes" class="article-tag" data-astro-cid-bvzihdzo>
+#Kubernetes </a><a href="/blog/tag/Helm" class="article-tag" data-astro-cid-bvzihdzo>
+#Helm </a><a href="/blog/tag/DevOps" class="article-tag" data-astro-cid-bvzihdzo>
+#DevOps </a><a href="/blog/tag/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#インフラ </a><a href="/blog/tag/%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A" class="article-tag" data-astro-cid-bvzihdzo>
+#コンテナ </a><a href="/blog/tag/YAML" class="article-tag" data-astro-cid-bvzihdzo>
+#YAML </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Helmは、Kubernetesアプリケーションをパッケージ化・管理するための事実上の標準ツールです。</p>
+<p>この記事では、Helm 3の基礎から、チャート作成、テンプレート設計、本番運用まで、実践的な内容を詳しく解説します。</p>
+<h2 id="helmとは">Helmとは</h2>
+<h3 id="helmの役割">Helmの役割</h3>
+<p><strong>Helmがない場合:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> apply</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> deployment.yaml</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> apply</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> service.yaml</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> apply</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> ingress.yaml</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> apply</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> configmap.yaml</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> apply</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> secret.yaml</span></span>
+<span class="line"><span style="color:#6A737D"># 環境ごとに手動で値を書き換える...</span></span></code></pre>
+<p><strong>Helmがある場合:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./mychart</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> values-prod.yaml</span></span>
+<span class="line"><span style="color:#6A737D"># 一発でデプロイ、バージョン管理、ロールバックも可能</span></span></code></pre>
+<h3 id="helm-3の主な変更点">Helm 3の主な変更点</h3>
+<ul>
+<li><strong>Tillerの廃止</strong>: Helm 2のサーバーコンポーネントが不要に</li>
+<li><strong>3-way merge</strong>: より安全なアップグレード</li>
+<li><strong>Secrets管理の改善</strong>: リリース情報がSecretに保存</li>
+<li><strong>ライブラリチャート</strong>: 共通テンプレートの再利用</li>
+</ul>
+<h2 id="helmのインストール">Helmのインストール</h2>
+<h3 id="インストール方法">インストール方法</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># macOS (Homebrew)</span></span>
+<span class="line"><span style="color:#B392F0">brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> helm</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Linux (スクリプト)</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#9ECBFF"> https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> bash</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Windows (Chocolatey)</span></span>
+<span class="line"><span style="color:#B392F0">choco</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> kubernetes-helm</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># バージョン確認</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> version</span></span></code></pre>
+<h3 id="リポジトリの追加">リポジトリの追加</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 公式リポジトリを追加</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> repo</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> stable</span><span style="color:#9ECBFF"> https://charts.helm.sh/stable</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> repo</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> bitnami</span><span style="color:#9ECBFF"> https://charts.bitnami.com/bitnami</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># リポジトリの更新</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> repo</span><span style="color:#9ECBFF"> update</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># リポジトリ一覧</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> repo</span><span style="color:#9ECBFF"> list</span></span></code></pre>
+<h2 id="チャートの基本構造">チャートの基本構造</h2>
+<h3 id="チャートの作成">チャートの作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> myapp</span></span></code></pre>
+<p>生成されるディレクトリ構造:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>myapp/</span></span>
+<span class="line"><span>├── Chart.yaml           # チャートのメタデータ</span></span>
+<span class="line"><span>├── values.yaml          # デフォルト設定値</span></span>
+<span class="line"><span>├── charts/              # 依存チャート</span></span>
+<span class="line"><span>├── templates/           # Kubernetesマニフェストテンプレート</span></span>
+<span class="line"><span>│   ├── NOTES.txt        # インストール後のメッセージ</span></span>
+<span class="line"><span>│   ├── _helpers.tpl     # テンプレートヘルパー</span></span>
+<span class="line"><span>│   ├── deployment.yaml</span></span>
+<span class="line"><span>│   ├── service.yaml</span></span>
+<span class="line"><span>│   ├── ingress.yaml</span></span>
+<span class="line"><span>│   ├── serviceaccount.yaml</span></span>
+<span class="line"><span>│   └── hpa.yaml</span></span>
+<span class="line"><span>└── .helmignore          # パッケージ化時の除外ファイル</span></span></code></pre>
+<h3 id="chartyaml-の構成">Chart.yaml の構成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># Chart.yaml</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">v2</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp</span></span>
+<span class="line"><span style="color:#85E89D">description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">A Helm chart for my application</span></span>
+<span class="line"><span style="color:#85E89D">type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">application</span><span style="color:#6A737D">  # application or library</span></span>
+<span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0.1.0</span><span style="color:#6A737D">     # チャートのバージョン</span></span>
+<span class="line"><span style="color:#85E89D">appVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1.0"</span><span style="color:#6A737D">  # アプリケーションのバージョン</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">maintainers</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Your Name</span></span>
+<span class="line"><span style="color:#85E89D">    email</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">you@example.com</span></span>
+<span class="line"><span style="color:#85E89D">    url</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">https://example.com</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">keywords</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#9ECBFF">web</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#9ECBFF">nodejs</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#9ECBFF">microservice</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">home</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">https://github.com/example/myapp</span></span>
+<span class="line"><span style="color:#85E89D">sources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#9ECBFF">https://github.com/example/myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">dependencies</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">postgresql</span></span>
+<span class="line"><span style="color:#85E89D">    version</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">12.1.0</span></span>
+<span class="line"><span style="color:#85E89D">    repository</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">https://charts.bitnami.com/bitnami</span></span>
+<span class="line"><span style="color:#85E89D">    condition</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">postgresql.enabled</span></span></code></pre>
+<h2 id="valuesyaml-の設計">values.yaml の設計</h2>
+<h3 id="基本的な構造">基本的な構造</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># values.yaml</span></span>
+<span class="line"><span style="color:#85E89D">replicaCount</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">image</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  repository</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp</span></span>
+<span class="line"><span style="color:#85E89D">  pullPolicy</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">IfNotPresent</span></span>
+<span class="line"><span style="color:#85E89D">  tag</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1.0.0"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">imagePullSecrets</span><span style="color:#E1E4E8">: []</span></span>
+<span class="line"><span style="color:#85E89D">nameOverride</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">""</span></span>
+<span class="line"><span style="color:#85E89D">fullnameOverride</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">serviceAccount</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  create</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">  annotations</span><span style="color:#E1E4E8">: {}</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">podAnnotations</span><span style="color:#E1E4E8">: {}</span></span>
+<span class="line"><span style="color:#85E89D">podSecurityContext</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  runAsNonRoot</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">  runAsUser</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">securityContext</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  capabilities</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    drop</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#9ECBFF">ALL</span></span>
+<span class="line"><span style="color:#85E89D">  readOnlyRootFilesystem</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">  allowPrivilegeEscalation</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">service</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ClusterIP</span></span>
+<span class="line"><span style="color:#85E89D">  port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span></span>
+<span class="line"><span style="color:#85E89D">  targetPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">ingress</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#85E89D">  className</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"nginx"</span></span>
+<span class="line"><span style="color:#85E89D">  annotations</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cert-manager.io/cluster-issuer</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"letsencrypt-prod"</span></span>
+<span class="line"><span style="color:#85E89D">  hosts</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">host</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp.example.com</span></span>
+<span class="line"><span style="color:#85E89D">      paths</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">path</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/</span></span>
+<span class="line"><span style="color:#85E89D">          pathType</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Prefix</span></span>
+<span class="line"><span style="color:#85E89D">  tls</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">secretName</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp-tls</span></span>
+<span class="line"><span style="color:#85E89D">      hosts</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">myapp.example.com</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  limits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">500m</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">512Mi</span></span>
+<span class="line"><span style="color:#85E89D">  requests</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">250m</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">256Mi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">autoscaling</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#85E89D">  minReplicas</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span></span>
+<span class="line"><span style="color:#85E89D">  maxReplicas</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10</span></span>
+<span class="line"><span style="color:#85E89D">  targetCPUUtilizationPercentage</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">nodeSelector</span><span style="color:#E1E4E8">: {}</span></span>
+<span class="line"><span style="color:#85E89D">tolerations</span><span style="color:#E1E4E8">: []</span></span>
+<span class="line"><span style="color:#85E89D">affinity</span><span style="color:#E1E4E8">: {}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">NODE_ENV</span></span>
+<span class="line"><span style="color:#85E89D">    value</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">production</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">DATABASE_URL</span></span>
+<span class="line"><span style="color:#85E89D">    valueFrom</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      secretKeyRef</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">db-credentials</span></span>
+<span class="line"><span style="color:#85E89D">        key</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">url</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">postgresql</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">  auth</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    username</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp</span></span>
+<span class="line"><span style="color:#85E89D">    password</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">changeme</span></span>
+<span class="line"><span style="color:#85E89D">    database</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp</span></span></code></pre>
+<h3 id="環境別のvalues">環境別のvalues</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># values-dev.yaml</span></span>
+<span class="line"><span style="color:#85E89D">replicaCount</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">image</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  tag</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"latest"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  limits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">200m</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">256Mi</span></span>
+<span class="line"><span style="color:#85E89D">  requests</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">100m</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">128Mi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">ingress</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">  hosts</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">host</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp-dev.example.com</span></span>
+<span class="line"><span style="color:#85E89D">      paths</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">path</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/</span></span>
+<span class="line"><span style="color:#85E89D">          pathType</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Prefix</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">postgresql</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">  auth</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    password</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">dev-password</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># values-prod.yaml</span></span>
+<span class="line"><span style="color:#85E89D">replicaCount</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">image</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  tag</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1.0.0"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  limits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">1000m</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">1Gi</span></span>
+<span class="line"><span style="color:#85E89D">  requests</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">500m</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">512Mi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">autoscaling</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">  minReplicas</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span></span>
+<span class="line"><span style="color:#85E89D">  maxReplicas</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">20</span></span>
+<span class="line"><span style="color:#85E89D">  targetCPUUtilizationPercentage</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">70</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">ingress</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">  hosts</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">host</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp.example.com</span></span>
+<span class="line"><span style="color:#85E89D">      paths</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">path</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/</span></span>
+<span class="line"><span style="color:#85E89D">          pathType</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Prefix</span></span>
+<span class="line"><span style="color:#85E89D">  tls</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">secretName</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp-tls</span></span>
+<span class="line"><span style="color:#85E89D">      hosts</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">myapp.example.com</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">postgresql</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span><span style="color:#6A737D">  # 外部のマネージドDBを使用</span></span></code></pre>
+<h2 id="テンプレート構文">テンプレート構文</h2>
+<h3 id="基本的な変数展開">基本的な変数展開</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># templates/deployment.yaml</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">apps/v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Deployment</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">include "myapp.fullname" .</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">  labels</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    {{- </span><span style="color:#9ECBFF">include "myapp.labels" . | nindent 4</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  replicas</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.Values.replicaCount</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">  selector</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    matchLabels</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      {{- </span><span style="color:#9ECBFF">include "myapp.selectorLabels" . | nindent 6</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">  template</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      {{- </span><span style="color:#9ECBFF">with .Values.podAnnotations</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">      annotations</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        {{- </span><span style="color:#9ECBFF">toYaml . | nindent 8</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">      {{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">      labels</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        {{- </span><span style="color:#9ECBFF">include "myapp.selectorLabels" . | nindent 8</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">    spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      {{- </span><span style="color:#9ECBFF">with .Values.imagePullSecrets</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">      imagePullSecrets</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        {{- </span><span style="color:#9ECBFF">toYaml . | nindent 8</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">      {{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">      serviceAccountName</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">include "myapp.serviceAccountName" .</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">      securityContext</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        {{- </span><span style="color:#9ECBFF">toYaml .Values.podSecurityContext | nindent 8</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">      containers</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.Chart.Name</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">        securityContext</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">          {{- </span><span style="color:#9ECBFF">toYaml .Values.securityContext | nindent 12</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">        image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"</span></span>
+<span class="line"><span style="color:#85E89D">        imagePullPolicy</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.Values.image.pullPolicy</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">        ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">http</span></span>
+<span class="line"><span style="color:#85E89D">          containerPort</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.Values.service.targetPort</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">          protocol</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">TCP</span></span>
+<span class="line"><span style="color:#85E89D">        env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        {{- </span><span style="color:#9ECBFF">toYaml .Values.env | nindent 8</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">        resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">          {{- </span><span style="color:#9ECBFF">toYaml .Values.resources | nindent 12</span><span style="color:#E1E4E8"> }}</span></span></code></pre>
+<h3 id="条件分岐">条件分岐</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># templates/ingress.yaml</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">if .Values.ingress.enabled -</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">networking.k8s.io/v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Ingress</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">include "myapp.fullname" .</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">  labels</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    {{- </span><span style="color:#9ECBFF">include "myapp.labels" . | nindent 4</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">  {{- </span><span style="color:#9ECBFF">with .Values.ingress.annotations</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">  annotations</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    {{- </span><span style="color:#9ECBFF">toYaml . | nindent 4</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">  {{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  {{- </span><span style="color:#9ECBFF">if .Values.ingress.className</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">  ingressClassName</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.Values.ingress.className</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">  {{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">  {{- </span><span style="color:#9ECBFF">if .Values.ingress.tls</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">  tls</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    {{- </span><span style="color:#9ECBFF">range .Values.ingress.tls</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">hosts</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        {{- </span><span style="color:#9ECBFF">range .hosts</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">        - {{ </span><span style="color:#9ECBFF">. | quote</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">        {{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">      secretName</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.secretName</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">    {{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">  {{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">  rules</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    {{- </span><span style="color:#9ECBFF">range .Values.ingress.hosts</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">host</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.host | quote</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">      http</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        paths</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">          {{- </span><span style="color:#9ECBFF">range .paths</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">          - </span><span style="color:#85E89D">path</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.path</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">            pathType</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.pathType</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">            backend</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">              service</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">                name</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">include "myapp.fullname" $</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">                port</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">                  number</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">$.Values.service.port</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">          {{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">    {{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span></code></pre>
+<h3 id="ヘルパーテンプレート">ヘルパーテンプレート</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># templates/_helpers.tpl</span></span>
+<span class="line"><span style="color:#E1E4E8">{{</span><span style="color:#9ECBFF">/*</span></span>
+<span class="line"><span style="color:#9ECBFF">Expand the name of the chart.</span></span>
+<span class="line"><span style="color:#E1E4E8">*</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">define "myapp.name" -</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-"</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">{{</span><span style="color:#9ECBFF">/*</span></span>
+<span class="line"><span style="color:#9ECBFF">Create a default fully qualified app name.</span></span>
+<span class="line"><span style="color:#E1E4E8">*</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">define "myapp.fullname" -</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">if .Values.fullnameOverride</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">.Values.fullnameOverride | trunc 63 | trimSuffix "-"</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">else</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">$name := default .Chart.Name .Values.nameOverride</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">if contains $name .Release.Name</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">.Release.Name | trunc 63 | trimSuffix "-"</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">else</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-"</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">{{</span><span style="color:#9ECBFF">/*</span></span>
+<span class="line"><span style="color:#9ECBFF">Common labels</span></span>
+<span class="line"><span style="color:#E1E4E8">*</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">define "myapp.labels" -</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#85E89D">helm.sh/chart</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">include "myapp.chart" .</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{ </span><span style="color:#9ECBFF">include "myapp.selectorLabels" .</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">if .Chart.AppVersion</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">app.kubernetes.io/version</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.Chart.AppVersion | quote</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">app.kubernetes.io/managed-by</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.Release.Service</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">{{</span><span style="color:#9ECBFF">/*</span></span>
+<span class="line"><span style="color:#9ECBFF">Selector labels</span></span>
+<span class="line"><span style="color:#E1E4E8">*</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">define "myapp.selectorLabels" -</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#85E89D">app.kubernetes.io/name</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">include "myapp.name" .</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#85E89D">app.kubernetes.io/instance</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.Release.Name</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">{{</span><span style="color:#9ECBFF">/*</span></span>
+<span class="line"><span style="color:#9ECBFF">Create the name of the service account to use</span></span>
+<span class="line"><span style="color:#E1E4E8">*</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">define "myapp.serviceAccountName" -</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">if .Values.serviceAccount.create</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">default (include "myapp.fullname" .) .Values.serviceAccount.name</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">else</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">default "default" .Values.serviceAccount.name</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span>
+<span class="line"><span style="color:#E1E4E8">{{- </span><span style="color:#9ECBFF">end</span><span style="color:#E1E4E8"> }}</span></span></code></pre>
+<h2 id="依存関係の管理">依存関係の管理</h2>
+<h3 id="chartyaml-での依存定義">Chart.yaml での依存定義</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># Chart.yaml</span></span>
+<span class="line"><span style="color:#85E89D">dependencies</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">postgresql</span></span>
+<span class="line"><span style="color:#85E89D">    version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"12.1.0"</span></span>
+<span class="line"><span style="color:#85E89D">    repository</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://charts.bitnami.com/bitnami"</span></span>
+<span class="line"><span style="color:#85E89D">    condition</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">postgresql.enabled</span></span>
+<span class="line"><span style="color:#85E89D">    tags</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">database</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">redis</span></span>
+<span class="line"><span style="color:#85E89D">    version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"17.3.0"</span></span>
+<span class="line"><span style="color:#85E89D">    repository</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://charts.bitnami.com/bitnami"</span></span>
+<span class="line"><span style="color:#85E89D">    condition</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">redis.enabled</span></span>
+<span class="line"><span style="color:#85E89D">    tags</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">cache</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">common</span></span>
+<span class="line"><span style="color:#85E89D">    version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2.x.x"</span></span>
+<span class="line"><span style="color:#85E89D">    repository</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://charts.bitnami.com/bitnami"</span></span></code></pre>
+<h3 id="依存チャートの更新">依存チャートの更新</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 依存関係をダウンロード</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> dependency</span><span style="color:#9ECBFF"> update</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 依存関係の確認</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> dependency</span><span style="color:#9ECBFF"> list</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># charts/ ディレクトリが生成される</span></span>
+<span class="line"><span style="color:#B392F0">myapp/</span></span>
+<span class="line"><span style="color:#B392F0">├──</span><span style="color:#9ECBFF"> charts/</span></span>
+<span class="line"><span style="color:#B392F0">│</span><span style="color:#9ECBFF">   ├──</span><span style="color:#9ECBFF"> postgresql-12.1.0.tgz</span></span>
+<span class="line"><span style="color:#B392F0">│</span><span style="color:#9ECBFF">   └──</span><span style="color:#9ECBFF"> redis-17.3.0.tgz</span></span>
+<span class="line"><span style="color:#B392F0">└──</span><span style="color:#9ECBFF"> Chart.lock</span></span></code></pre>
+<h3 id="依存チャートの設定">依存チャートの設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># values.yaml</span></span>
+<span class="line"><span style="color:#85E89D">postgresql</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">  auth</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    username</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp</span></span>
+<span class="line"><span style="color:#85E89D">    password</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">changeme</span></span>
+<span class="line"><span style="color:#85E89D">    database</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp</span></span>
+<span class="line"><span style="color:#85E89D">  primary</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    persistence</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">      size</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">10Gi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">redis</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">  auth</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#85E89D">  master</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    persistence</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      enabled</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span></code></pre>
+<h2 id="リリースの管理">リリースの管理</h2>
+<h3 id="インストール">インストール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 基本的なインストール</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># values ファイルを指定</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> values-prod.yaml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># コマンドラインで値を上書き</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --set</span><span style="color:#9ECBFF"> replicaCount=</span><span style="color:#79B8FF">3</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --set</span><span style="color:#9ECBFF"> image.tag=</span><span style="color:#79B8FF">2.0.0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 名前空間を指定</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#79B8FF"> -n</span><span style="color:#9ECBFF"> production</span><span style="color:#79B8FF"> --create-namespace</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ドライラン（実際にはインストールしない）</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#79B8FF"> --dry-run</span><span style="color:#79B8FF"> --debug</span></span></code></pre>
+<h3 id="アップグレード">アップグレード</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 基本的なアップグレード</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> upgrade</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># values を更新してアップグレード</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> upgrade</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> values-prod.yaml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># インストールされていなければインストール</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> upgrade</span><span style="color:#79B8FF"> --install</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 強制的に再作成</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> upgrade</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#79B8FF"> --force</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># アップグレード前に待機</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> upgrade</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#79B8FF"> --wait</span><span style="color:#79B8FF"> --timeout</span><span style="color:#9ECBFF"> 5m</span></span></code></pre>
+<h3 id="ロールバック">ロールバック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 直前のバージョンにロールバック</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> rollback</span><span style="color:#9ECBFF"> myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 特定のリビジョンにロールバック</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> rollback</span><span style="color:#9ECBFF"> myapp</span><span style="color:#79B8FF"> 3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ドライランで確認</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> rollback</span><span style="color:#9ECBFF"> myapp</span><span style="color:#79B8FF"> 3</span><span style="color:#79B8FF"> --dry-run</span></span></code></pre>
+<h3 id="履歴の確認">履歴の確認</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># リリース履歴を表示</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> history</span><span style="color:#9ECBFF"> myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 出力例:</span></span>
+<span class="line"><span style="color:#6A737D"># REVISION  UPDATED                   STATUS      CHART         APP VERSION  DESCRIPTION</span></span>
+<span class="line"><span style="color:#6A737D"># 1         Mon Jan 1 00:00:00 2026   superseded  myapp-0.1.0   1.0          Install complete</span></span>
+<span class="line"><span style="color:#6A737D"># 2         Mon Jan 2 00:00:00 2026   superseded  myapp-0.1.1   1.1          Upgrade complete</span></span>
+<span class="line"><span style="color:#6A737D"># 3         Mon Jan 3 00:00:00 2026   deployed    myapp-0.2.0   2.0          Upgrade complete</span></span></code></pre>
+<h3 id="アンインストール">アンインストール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># リリースを削除</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> uninstall</span><span style="color:#9ECBFF"> myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 履歴を保持して削除</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> uninstall</span><span style="color:#9ECBFF"> myapp</span><span style="color:#79B8FF"> --keep-history</span></span></code></pre>
+<h2 id="テストとデバッグ">テストとデバッグ</h2>
+<h3 id="テンプレートの検証">テンプレートの検証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># テンプレートをレンダリング</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> template</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 特定の values で確認</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> template</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> values-prod.yaml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 出力を保存</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> template</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#F97583"> ></span><span style="color:#9ECBFF"> rendered.yaml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 特定のテンプレートのみ表示</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> template</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#79B8FF"> -s</span><span style="color:#9ECBFF"> templates/deployment.yaml</span></span></code></pre>
+<h3 id="lintチェック">Lintチェック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># チャートの構文チェック</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> lint</span><span style="color:#9ECBFF"> ./myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 出力例:</span></span>
+<span class="line"><span style="color:#6A737D"># ==> Linting ./myapp</span></span>
+<span class="line"><span style="color:#6A737D"># [INFO] Chart.yaml: icon is recommended</span></span>
+<span class="line"><span style="color:#6A737D"># [WARNING] templates/: directory not found</span></span>
+<span class="line"><span style="color:#6A737D"># 1 chart(s) linted, 0 chart(s) failed</span></span></code></pre>
+<h3 id="デバッグモード">デバッグモード</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 詳細なデバッグ情報を表示</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#79B8FF"> --debug</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ドライランと組み合わせ</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#79B8FF"> --dry-run</span><span style="color:#79B8FF"> --debug</span></span></code></pre>
+<h2 id="ベストプラクティス">ベストプラクティス</h2>
+<h3 id="1-値の階層構造">1. 値の階層構造</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># ❌ 悪い例</span></span>
+<span class="line"><span style="color:#85E89D">deploymentReplicas</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span></span>
+<span class="line"><span style="color:#85E89D">deploymentImage</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp:1.0</span></span>
+<span class="line"><span style="color:#85E89D">deploymentPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ✅ 良い例</span></span>
+<span class="line"><span style="color:#85E89D">deployment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  replicas</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span></span>
+<span class="line"><span style="color:#85E89D">  image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp:1.0</span></span>
+<span class="line"><span style="color:#85E89D">  port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3000</span></span></code></pre>
+<h3 id="2-デフォルト値の提供">2. デフォルト値の提供</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># values.yaml</span></span>
+<span class="line"><span style="color:#85E89D">replicaCount</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span><span style="color:#6A737D">  # 必ず妥当なデフォルト値を設定</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># templates/deployment.yaml</span></span>
+<span class="line"><span style="color:#85E89D">replicas</span><span style="color:#E1E4E8">: {{ </span><span style="color:#9ECBFF">.Values.replicaCount | default 1</span><span style="color:#E1E4E8"> }}</span></span></code></pre>
+<h3 id="3-リソース制限の設定">3. リソース制限の設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># 必ずリソース制限を設定</span></span>
+<span class="line"><span style="color:#85E89D">resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  limits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">500m</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">512Mi</span></span>
+<span class="line"><span style="color:#85E89D">  requests</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">250m</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">256Mi</span></span></code></pre>
+<h3 id="4-セキュリティ設定">4. セキュリティ設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># セキュリティコンテキストを設定</span></span>
+<span class="line"><span style="color:#85E89D">podSecurityContext</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  runAsNonRoot</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">  runAsUser</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1000</span></span>
+<span class="line"><span style="color:#85E89D">  fsGroup</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">securityContext</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  capabilities</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    drop</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#9ECBFF">ALL</span></span>
+<span class="line"><span style="color:#85E89D">  readOnlyRootFilesystem</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">  allowPrivilegeEscalation</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span></code></pre>
+<h3 id="5-環境変数の管理">5. 環境変数の管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># ConfigMapとSecretを分離</span></span>
+<span class="line"><span style="color:#85E89D">env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">NODE_ENV</span></span>
+<span class="line"><span style="color:#85E89D">    value</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">production</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">DATABASE_URL</span></span>
+<span class="line"><span style="color:#85E89D">    valueFrom</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      secretKeyRef</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">db-credentials</span></span>
+<span class="line"><span style="color:#85E89D">        key</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">url</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Helmは、Kubernetesアプリケーションの管理を大幅に簡素化します。</p>
+<p><strong>主なメリット:</strong></p>
+<ul>
+<li>パッケージ化とバージョン管理</li>
+<li>環境別の設定管理</li>
+<li>依存関係の自動解決</li>
+<li>ロールバック機能</li>
+<li>再利用可能なテンプレート</li>
+</ul>
+<p><strong>ベストプラクティス:</strong></p>
+<ul>
+<li>明確なvalues.yaml構造</li>
+<li>環境別のvaluesファイル</li>
+<li>セキュリティ設定の徹底</li>
+<li>リソース制限の設定</li>
+<li>適切なラベリング</li>
+</ul>
+<p>Helmをマスターすれば、Kubernetesアプリケーションの運用が格段に楽になります。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

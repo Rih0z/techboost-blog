@@ -1,0 +1,351 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/upstash-redis-guide/"><!-- Primary Meta Tags --><title>Upstash Redisでサーバーレスキャッシュ構築 - Next.js/Vercel完全対応</title><meta name="title" content="Upstash Redisでサーバーレスキャッシュ構築 - Next.js/Vercel完全対応"><meta name="description" content="Upstash Redisを使ったサーバーレス環境でのキャッシュ実装ガイド。Next.js App Router、Vercel Edge Functions、Rate Limitingまで実践的に解説します。現場で使える知識を体系的にまとめました。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/upstash-redis-guide/"><meta property="og:title" content="Upstash Redisでサーバーレスキャッシュ構築 - Next.js/Vercel完全対応"><meta property="og:description" content="Upstash Redisを使ったサーバーレス環境でのキャッシュ実装ガイド。Next.js App Router、Vercel Edge Functions、Rate Limitingまで実践的に解説します。現場で使える知識を体系的にまとめました。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/upstash-redis-guide/"><meta name="twitter:title" content="Upstash Redisでサーバーレスキャッシュ構築 - Next.js/Vercel完全対応"><meta name="twitter:description" content="Upstash Redisを使ったサーバーレス環境でのキャッシュ実装ガイド。Next.js App Router、Vercel Edge Functions、Rate Limitingまで実践的に解説します。現場で使える知識を体系的にまとめました。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/upstash-redis-guide/"},"headline":"Upstash Redisでサーバーレスキャッシュ構築 - Next.js/Vercel完全対応","description":"Upstash Redisを使ったサーバーレス環境でのキャッシュ実装ガイド。Next.js App Router、Vercel Edge Functions、Rate Limitingまで実践的に解説します。現場で使える知識を体系的にまとめました。","datePublished":"2026-02-05T00:00:00.000Z","dateModified":"2026-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Upstash, Redis, Next.js, Vercel, サーバーレス"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Upstash Redisでサーバーレスキャッシュ構築 - Next.js/Vercel完全対応"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-05T00:00:00.000Z"> Feb 4, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Upstash Redisでサーバーレスキャッシュ構築 - Next.js/Vercel完全対応</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Upstash" class="article-tag" data-astro-cid-bvzihdzo>
+#Upstash </a><a href="/blog/tag/Redis" class="article-tag" data-astro-cid-bvzihdzo>
+#Redis </a><a href="/blog/tag/Next.js" class="article-tag" data-astro-cid-bvzihdzo>
+#Next.js </a><a href="/blog/tag/Vercel" class="article-tag" data-astro-cid-bvzihdzo>
+#Vercel </a><a href="/blog/tag/%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%83%AC%E3%82%B9" class="article-tag" data-astro-cid-bvzihdzo>
+#サーバーレス </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Upstash Redisは、サーバーレス環境に最適化されたRedisサービスです。従量課金制で、Vercel、Cloudflare Workers、AWS Lambdaなどと完璧に統合できます。この記事では、Next.jsアプリでUpstashを活用する方法を解説します。</p>
+<h2 id="upstash-redisとは">Upstash Redisとは？</h2>
+<p>Upstashは、サーバーレス・エッジコンピューティング向けに設計されたデータプラットフォームです。</p>
+<h3 id="従来のredisaws-elasticache等との違い">従来のRedis（AWS ElastiCache等）との違い</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>項目</th><th>Upstash Redis</th><th>従来のRedis</th></tr></thead><tbody><tr><td>料金体系</td><td>従量課金（リクエスト数）</td><td>時間課金（常時稼働）</td></tr><tr><td>最小料金</td><td>$0（無料枠あり）</td><td>月$15〜</td></tr><tr><td>コールドスタート</td><td>なし</td><td>なし</td></tr><tr><td>サーバーレス対応</td><td>完全対応</td><td>要設定</td></tr><tr><td>REST API</td><td>あり</td><td>なし（TCP必須）</td></tr><tr><td>グローバルレプリケーション</td><td>あり</td><td>要設定</td></tr></tbody></table>
+<h3 id="主な特徴">主な特徴</h3>
+<ul>
+<li><strong>完全サーバーレス</strong> - インスタンス管理不要</li>
+<li><strong>HTTP/REST API</strong> - TCP接続不要（Edge対応）</li>
+<li><strong>従量課金</strong> - 使った分だけ支払い</li>
+<li><strong>無料枠</strong> - 月10,000リクエストまで無料</li>
+<li><strong>グローバル対応</strong> - 世界中にレプリケーション可能</li>
+<li><strong>Vercel統合</strong> - 数クリックで統合完了</li>
+</ul>
+<h2 id="セットアップ">セットアップ</h2>
+<h3 id="アカウント作成とデータベース作成">アカウント作成とデータベース作成</h3>
+<ol>
+<li><a href="https://console.upstash.com">https://console.upstash.com</a> でアカウント作成</li>
+<li>「Create Database」をクリック</li>
+<li>データベース名を入力（例: <code>my-app-cache</code>）</li>
+<li>リージョンを選択（東京リージョン推奨）</li>
+<li>「Create」をクリック</li>
+</ol>
+<h3 id="環境変数の取得">環境変数の取得</h3>
+<p>作成したデータベースのダッシュボードから、以下の情報をコピーします。</p>
+<ul>
+<li><code>UPSTASH_REDIS_REST_URL</code></li>
+<li><code>UPSTASH_REDIS_REST_TOKEN</code></li>
+</ul>
+<h3 id="nextjsプロジェクトでのセットアップ">Next.jsプロジェクトでのセットアップ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> @upstash/redis</span></span></code></pre>
+<p><code>.env.local</code>に環境変数を追加します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>UPSTASH_REDIS_REST_URL=https://xxx.upstash.io</span></span>
+<span class="line"><span>UPSTASH_REDIS_REST_TOKEN=your-token-here</span></span></code></pre>
+<h2 id="基本的な使い方">基本的な使い方</h2>
+<h3 id="redisクライアントの初期化">Redisクライアントの初期化</h3>
+<p><code>lib/redis.ts</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@upstash/redis'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> redis</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Redis</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  url: process.env.</span><span style="color:#79B8FF">UPSTASH_REDIS_REST_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  token: process.env.</span><span style="color:#79B8FF">UPSTASH_REDIS_REST_TOKEN</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="基本操作">基本操作</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/redis'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 文字列の保存</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'key'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'value'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 取得</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> value</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'key'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(value); </span><span style="color:#6A737D">// "value"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 有効期限付きで保存（秒単位）</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'session:123'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'user-data'</span><span style="color:#E1E4E8">, { ex: </span><span style="color:#79B8FF">3600</span><span style="color:#E1E4E8"> }); </span><span style="color:#6A737D">// 1時間後に自動削除</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 削除</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">del</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'key'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 存在確認</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> exists</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">exists</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'key'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(exists); </span><span style="color:#6A737D">// 1 (存在) or 0 (存在しない)</span></span></code></pre>
+<h2 id="実践的な使用例">実践的な使用例</h2>
+<h3 id="1-apiレスポンスのキャッシュ">1. APIレスポンスのキャッシュ</h3>
+<p>外部APIの結果をキャッシュして、レスポンス速度を向上させます。</p>
+<p><code>app/api/weather/route.ts</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/redis'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> GET</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">searchParams</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(request.url);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> city</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'city'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">city) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'City required'</span><span style="color:#E1E4E8"> }, { status: </span><span style="color:#79B8FF">400</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cacheKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `weather:${</span><span style="color:#E1E4E8">city</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // キャッシュチェック</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cached</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(cacheKey);</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (cached) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Cache hit'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ data: cached, cached: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 外部APIを呼び出し</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    `https://api.openweathermap.org/data/2.5/weather?q=${</span><span style="color:#E1E4E8">city</span><span style="color:#9ECBFF">}&#x26;appid=${</span><span style="color:#E1E4E8">process</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">env</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">WEATHER_API_KEY</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 5分間キャッシュ</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(cacheKey, </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(data), { ex: </span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ data, cached: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-セッション管理">2. セッション管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/redis'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { nanoid } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'nanoid'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// セッション作成</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createSession</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sessionId</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> nanoid</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sessionData</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    userId,</span></span>
+<span class="line"><span style="color:#E1E4E8">    createdAt: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 7日間有効なセッション</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`session:${</span><span style="color:#E1E4E8">sessionId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(sessionData), {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ex: </span><span style="color:#79B8FF">60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 24</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 7</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> sessionId;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// セッション取得</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getSession</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">sessionId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`session:${</span><span style="color:#E1E4E8">sessionId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">data) </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(data </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// セッション削除</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> deleteSession</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">sessionId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">del</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`session:${</span><span style="color:#E1E4E8">sessionId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="3-閲覧数カウンター">3. 閲覧数カウンター</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/redis'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> incrementPageView</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">slug</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `pageviews:${</span><span style="color:#E1E4E8">slug</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> views</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">incr</span><span style="color:#E1E4E8">(key);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> views;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getPageViews</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">slug</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> views</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`pageviews:${</span><span style="color:#E1E4E8">slug</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> views </span><span style="color:#F97583">||</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="4-いいね機能セット操作">4. いいね機能（セット操作）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/redis'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// いいねを追加</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> likePost</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">sadd</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`likes:${</span><span style="color:#E1E4E8">postId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, userId);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">scard</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`likes:${</span><span style="color:#E1E4E8">postId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">); </span><span style="color:#6A737D">// いいね数を返す</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// いいねを解除</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> unlikePost</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">srem</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`likes:${</span><span style="color:#E1E4E8">postId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, userId);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">scard</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`likes:${</span><span style="color:#E1E4E8">postId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザーがいいねしているか確認</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> hasLiked</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> isMember</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">sismember</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`likes:${</span><span style="color:#E1E4E8">postId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, userId);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> isMember </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// いいね数を取得</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getLikeCount</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">scard</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`likes:${</span><span style="color:#E1E4E8">postId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="rate-limitingレート制限">Rate Limiting（レート制限）</h2>
+<p>Upstash Redisを使ってAPIのレート制限を実装できます。</p>
+<h3 id="upstashratelimitの使用">@upstash/ratelimitの使用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> @upstash/ratelimit</span></span></code></pre>
+<p><code>lib/ratelimit.ts</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Ratelimit } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@upstash/ratelimit'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './redis'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 10リクエスト/10秒の制限</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> ratelimit</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Ratelimit</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  redis: redis,</span></span>
+<span class="line"><span style="color:#E1E4E8">  limiter: Ratelimit.</span><span style="color:#B392F0">slidingWindow</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'10 s'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  analytics: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="api-routeでrate-limitingを実装">API RouteでRate Limitingを実装</h3>
+<p><code>app/api/protected/route.ts</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { ratelimit } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/ratelimit'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> GET</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ip</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> request.headers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-forwarded-for'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">??</span><span style="color:#9ECBFF"> 'anonymous'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">success</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">limit</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">reset</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">remaining</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> ratelimit.</span><span style="color:#B392F0">limit</span><span style="color:#E1E4E8">(ip);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">success) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      { error: </span><span style="color:#9ECBFF">'Too many requests'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        status: </span><span style="color:#79B8FF">429</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">          'X-RateLimit-Limit'</span><span style="color:#E1E4E8">: limit.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#9ECBFF">          'X-RateLimit-Remaining'</span><span style="color:#E1E4E8">: remaining.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#9ECBFF">          'X-RateLimit-Reset'</span><span style="color:#E1E4E8">: reset.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ data: </span><span style="color:#9ECBFF">'Success'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ユーザーごとのrate-limiting">ユーザーごとのRate Limiting</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { ratelimit } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/ratelimit'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { auth } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> POST</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> auth</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">session?.user?.id) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Unauthorized'</span><span style="color:#E1E4E8"> }, { status: </span><span style="color:#79B8FF">401</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> identifier</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `user:${</span><span style="color:#E1E4E8">session</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">user</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">success</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> ratelimit.</span><span style="color:#B392F0">limit</span><span style="color:#E1E4E8">(identifier);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">success) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      { error: </span><span style="color:#9ECBFF">'レート制限に達しました。しばらく待ってから再試行してください。'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { status: </span><span style="color:#79B8FF">429</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 処理を続行</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="vercel-edge-functionsでupstashを使う">Vercel Edge FunctionsでUpstashを使う</h2>
+<p>Upstash RedisはREST APIベースなので、Edge Runtimeで完全に動作します。</p>
+<p><code>app/api/edge-cache/route.ts</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/redis'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> runtime</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'edge'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> GET</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> value</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'edge-key'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">value) {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'edge-key'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'Edge value'</span><span style="color:#E1E4E8">, { ex: </span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ data: </span><span style="color:#9ECBFF">'Edge value'</span><span style="color:#E1E4E8">, cached: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ data: value, cached: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="パイプライン複数コマンドの一括実行">パイプライン（複数コマンドの一括実行）</h2>
+<p>複数のRedisコマンドを一度に実行して、レイテンシを削減できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { redis } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/redis'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> pipeline</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">pipeline</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">pipeline.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'key1'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'value1'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">pipeline.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'key2'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'value2'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">pipeline.</span><span style="color:#B392F0">incr</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'counter'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">pipeline.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'key1'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> results</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> pipeline.</span><span style="color:#B392F0">exec</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(results); </span><span style="color:#6A737D">// 各コマンドの結果が配列で返される</span></span></code></pre>
+<h2 id="パフォーマンス最適化のヒント">パフォーマンス最適化のヒント</h2>
+<h3 id="1-適切なttl有効期限の設定">1. 適切なTTL（有効期限）の設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 頻繁に変わるデータ: 短いTTL</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'stock-price'</span><span style="color:#E1E4E8">, price, { ex: </span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8"> }); </span><span style="color:#6A737D">// 1分</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// あまり変わらないデータ: 長いTTL</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> redis.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'user-profile'</span><span style="color:#E1E4E8">, profile, { ex: </span><span style="color:#79B8FF">86400</span><span style="color:#E1E4E8"> }); </span><span style="color:#6A737D">// 24時間</span></span></code></pre>
+<h3 id="2-パイプラインの活用">2. パイプラインの活用</h3>
+<p>複数の操作を一度に実行することで、ネットワークラウンドトリップを削減できます。</p>
+<h3 id="3-データ構造の選択">3. データ構造の選択</h3>
+<ul>
+<li><strong>文字列</strong>: シンプルな値</li>
+<li><strong>ハッシュ</strong>: オブジェクト（例: ユーザープロフィール）</li>
+<li><strong>セット</strong>: 重複のないリスト（例: いいねしたユーザーID）</li>
+<li><strong>ソート済みセット</strong>: スコア付きリスト（例: ランキング）</li>
+</ul>
+<h2 id="料金体系">料金体系</h2>
+<p>Upstashは従量課金制です（2026年2月時点）。</p>
+<ul>
+<li><strong>無料枠</strong>: 10,000リクエスト/月</li>
+<li><strong>有料</strong>: $0.2 / 100,000リクエスト</li>
+</ul>
+<p>月100万リクエストでも約$2です。従来のRedisサービス（月$15〜）と比べて圧倒的に安価です。</p>
+<h2 id="まとめ">まとめ</h2>
+<p>Upstash Redisは、Next.jsやVercelなどのモダンなスタックに最適なサーバーレスRedisです。</p>
+<p><strong>主要な利点:</strong></p>
+<ul>
+<li>サーバーレス環境に完全対応</li>
+<li>HTTP/REST APIでEdge対応</li>
+<li>従量課金で低コスト</li>
+<li>セットアップが簡単</li>
+<li>Rate Limitingが組み込み</li>
+</ul>
+<p>公式ドキュメント: <a href="https://docs.upstash.com/redis">https://docs.upstash.com/redis</a></p>
+<p>キャッシュ、セッション、Rate Limitingなど、あらゆる用途でUpstash Redisを活用しましょう。無料枠から始められるので、今すぐ試してみてください。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

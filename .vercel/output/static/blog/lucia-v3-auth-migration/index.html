@@ -1,0 +1,562 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/lucia-v3-auth-migration/"><!-- Primary Meta Tags --><title>Lucia v3認証マイグレーション: セッションベース認証の次世代アプローチ</title><meta name="title" content="Lucia v3認証マイグレーション: セッションベース認証の次世代アプローチ"><meta name="description" content="Lucia v2からv3への移行ガイド。破壊的変更への対応、新しいAPI設計、パフォーマンス改善、Better Authとの比較まで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/lucia-v3-auth-migration/"><meta property="og:title" content="Lucia v3認証マイグレーション: セッションベース認証の次世代アプローチ"><meta property="og:description" content="Lucia v2からv3への移行ガイド。破壊的変更への対応、新しいAPI設計、パフォーマンス改善、Better Authとの比較まで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/lucia-v3-auth-migration/"><meta name="twitter:title" content="Lucia v3認証マイグレーション: セッションベース認証の次世代アプローチ"><meta name="twitter:description" content="Lucia v2からv3への移行ガイド。破壊的変更への対応、新しいAPI設計、パフォーマンス改善、Better Authとの比較まで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/lucia-v3-auth-migration/"},"headline":"Lucia v3認証マイグレーション: セッションベース認証の次世代アプローチ","description":"Lucia v2からv3への移行ガイド。破壊的変更への対応、新しいAPI設計、パフォーマンス改善、Better Authとの比較まで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。","datePublished":"2025-11-05T00:00:00.000Z","dateModified":"2025-11-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Lucia, Authentication, Migration, TypeScript, セキュリティ"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Lucia v3認証マイグレーション: セッションベース認証の次世代アプローチ"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-11-05T00:00:00.000Z"> Nov 4, 2025 </time> <div class="last-updated-on" data-astro-cid-bvzihdzo>
+Last updated on <time datetime="2025-11-05T00:00:00.000Z"> Nov 4, 2025 </time> </div> </div> <h1 data-astro-cid-bvzihdzo>Lucia v3認証マイグレーション: セッションベース認証の次世代アプローチ</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Lucia" class="article-tag" data-astro-cid-bvzihdzo>
+#Lucia </a><a href="/blog/tag/Authentication" class="article-tag" data-astro-cid-bvzihdzo>
+#Authentication </a><a href="/blog/tag/Migration" class="article-tag" data-astro-cid-bvzihdzo>
+#Migration </a><a href="/blog/tag/TypeScript" class="article-tag" data-astro-cid-bvzihdzo>
+#TypeScript </a><a href="/blog/tag/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3" class="article-tag" data-astro-cid-bvzihdzo>
+#セキュリティ </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Lucia v3は2024年末にリリースされ、より洗練されたAPIと改善されたパフォーマンスを提供します。既存のLucia v2プロジェクトを持つ開発者にとって、v3への移行は避けて通れない道です。本記事では、実践的な移行戦略を解説します。</p>
+<h2 id="lucia-v3の主な変更点">Lucia v3の主な変更点</h2>
+<h3 id="1-シンプルになったコア-api">1. シンプルになったコア API</h3>
+<p>v2では複雑だったAPIが、v3で大幅に簡素化されました。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Lucia v2</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { lucia } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'lucia'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { prisma } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@lucia-auth/adapter-prisma'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> auth</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> lucia</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  adapter: </span><span style="color:#B392F0">prisma</span><span style="color:#E1E4E8">(prismaClient),</span></span>
+<span class="line"><span style="color:#E1E4E8">  env: </span><span style="color:#9ECBFF">'DEV'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  middleware: </span><span style="color:#B392F0">web</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  sessionCookie: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    expires: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#B392F0">  getUserAttributes</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">    email: data.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">    username: data.username,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Lucia v3（簡潔に！）</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Lucia } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'lucia'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { PrismaAdapter } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@lucia-auth/adapter-prisma'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> adapter</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PrismaAdapter</span><span style="color:#E1E4E8">(prisma.session, prisma.user);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> lucia</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Lucia</span><span style="color:#E1E4E8">(adapter, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  sessionCookie: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    attributes: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      secure: process.env.</span><span style="color:#79B8FF">NODE_ENV</span><span style="color:#F97583"> ===</span><span style="color:#9ECBFF"> 'production'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#B392F0">  getUserAttributes</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">attributes</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">    email: attributes.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">    username: attributes.username,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="2-ミドルウェアの廃止">2. ミドルウェアの廃止</h3>
+<p>v2で必要だった<code>middleware</code>オプションが削除され、フレームワーク非依存になりました。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// v2: フレームワーク固有のミドルウェアが必要</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { web } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'lucia/middleware'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> auth</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> lucia</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  middleware: </span><span style="color:#B392F0">web</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#6A737D">  // ...</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// v3: ミドルウェア不要、どのフレームワークでも同じコード</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> lucia</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Lucia</span><span style="color:#E1E4E8">(adapter, {</span></span>
+<span class="line"><span style="color:#6A737D">  // ...</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="3-型推論の改善">3. 型推論の改善</h3>
+<p>v3では、TypeScriptの型推論が大幅に改善されました。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Lucia v3</span></span>
+<span class="line"><span style="color:#F97583">declare</span><span style="color:#F97583"> module</span><span style="color:#9ECBFF"> 'lucia'</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  interface</span><span style="color:#B392F0"> Register</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    Lucia</span><span style="color:#F97583">:</span><span style="color:#F97583"> typeof</span><span style="color:#E1E4E8"> lucia;</span></span>
+<span class="line"><span style="color:#FFAB70">    DatabaseUserAttributes</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">      email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">      username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">      emailVerified</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 自動的に型推論される</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> lucia.</span><span style="color:#B392F0">createSession</span><span style="color:#E1E4E8">(userId, {});</span></span>
+<span class="line"><span style="color:#6A737D">// session.user.email ← 型安全！</span></span>
+<span class="line"><span style="color:#6A737D">// session.user.username ← 型安全！</span></span>
+<span class="line"><span style="color:#6A737D">// session.user.emailVerified ← 型安全！</span></span></code></pre>
+<h2 id="ステップバイステップ移行ガイド">ステップバイステップ移行ガイド</h2>
+<h3 id="step-1-パッケージの更新">Step 1: パッケージの更新</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 古いパッケージをアンインストール</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> uninstall</span><span style="color:#9ECBFF"> lucia</span><span style="color:#9ECBFF"> lucia-auth</span><span style="color:#9ECBFF"> @lucia-auth/adapter-prisma</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 新しいパッケージをインストール</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> lucia@latest</span><span style="color:#9ECBFF"> @lucia-auth/adapter-prisma@latest</span></span></code></pre>
+<h3 id="step-2-設定ファイルの更新">Step 2: 設定ファイルの更新</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/auth.ts（v2）</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { lucia } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'lucia'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { prisma } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@lucia-auth/adapter-prisma'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { web } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'lucia/middleware'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { prisma </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> prismaClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './prisma'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> auth</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> lucia</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  adapter: </span><span style="color:#B392F0">prisma</span><span style="color:#E1E4E8">(prismaClient),</span></span>
+<span class="line"><span style="color:#E1E4E8">  env: process.env.</span><span style="color:#79B8FF">NODE_ENV</span><span style="color:#F97583"> ===</span><span style="color:#9ECBFF"> 'production'</span><span style="color:#F97583"> ?</span><span style="color:#9ECBFF"> 'PROD'</span><span style="color:#F97583"> :</span><span style="color:#9ECBFF"> 'DEV'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  middleware: </span><span style="color:#B392F0">web</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  sessionCookie: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    expires: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#B392F0">  getUserAttributes</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">    email: data.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">    username: data.username,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> type</span><span style="color:#B392F0"> Auth</span><span style="color:#F97583"> =</span><span style="color:#F97583"> typeof</span><span style="color:#E1E4E8"> auth;</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/auth.ts（v3に移行）</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Lucia } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'lucia'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { PrismaAdapter } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@lucia-auth/adapter-prisma'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { prisma } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './prisma'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// アダプター初期化</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> adapter</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> PrismaAdapter</span><span style="color:#E1E4E8">(prisma.session, prisma.user);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Lucia初期化</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> lucia</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Lucia</span><span style="color:#E1E4E8">(adapter, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  sessionCookie: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    attributes: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      secure: process.env.</span><span style="color:#79B8FF">NODE_ENV</span><span style="color:#F97583"> ===</span><span style="color:#9ECBFF"> 'production'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#B392F0">  getUserAttributes</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">attributes</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">    email: attributes.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">    username: attributes.username,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 型定義</span></span>
+<span class="line"><span style="color:#F97583">declare</span><span style="color:#F97583"> module</span><span style="color:#9ECBFF"> 'lucia'</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  interface</span><span style="color:#B392F0"> Register</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    Lucia</span><span style="color:#F97583">:</span><span style="color:#F97583"> typeof</span><span style="color:#E1E4E8"> lucia;</span></span>
+<span class="line"><span style="color:#FFAB70">    DatabaseUserAttributes</span><span style="color:#F97583">:</span><span style="color:#B392F0"> DatabaseUserAttributes</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> DatabaseUserAttributes</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="step-3-メソッド名の変更">Step 3: メソッド名の変更</h3>
+<p>v3では多くのメソッド名が変更されています。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// v2 → v3 メソッド対応表</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// セッション作成</span></span>
+<span class="line"><span style="color:#E1E4E8">auth.</span><span style="color:#B392F0">createSession</span><span style="color:#E1E4E8">(userId, {})          </span><span style="color:#6A737D">// v2</span></span>
+<span class="line"><span style="color:#E1E4E8">lucia.</span><span style="color:#B392F0">createSession</span><span style="color:#E1E4E8">(userId, {})         </span><span style="color:#6A737D">// v3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// セッション検証</span></span>
+<span class="line"><span style="color:#E1E4E8">auth.</span><span style="color:#B392F0">validateSession</span><span style="color:#E1E4E8">(sessionId)         </span><span style="color:#6A737D">// v2</span></span>
+<span class="line"><span style="color:#E1E4E8">lucia.</span><span style="color:#B392F0">validateSession</span><span style="color:#E1E4E8">(sessionId)        </span><span style="color:#6A737D">// v3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// セッション無効化</span></span>
+<span class="line"><span style="color:#E1E4E8">auth.</span><span style="color:#B392F0">invalidateSession</span><span style="color:#E1E4E8">(sessionId)       </span><span style="color:#6A737D">// v2</span></span>
+<span class="line"><span style="color:#E1E4E8">lucia.</span><span style="color:#B392F0">invalidateSession</span><span style="color:#E1E4E8">(sessionId)      </span><span style="color:#6A737D">// v3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザーの全セッション無効化</span></span>
+<span class="line"><span style="color:#E1E4E8">auth.</span><span style="color:#B392F0">invalidateAllUserSessions</span><span style="color:#E1E4E8">(userId)  </span><span style="color:#6A737D">// v2</span></span>
+<span class="line"><span style="color:#E1E4E8">lucia.</span><span style="color:#B392F0">invalidateUserSessions</span><span style="color:#E1E4E8">(userId)    </span><span style="color:#6A737D">// v3（名前変更！）</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// セッションクッキー作成</span></span>
+<span class="line"><span style="color:#E1E4E8">auth.</span><span style="color:#B392F0">createSessionCookie</span><span style="color:#E1E4E8">(sessionId)     </span><span style="color:#6A737D">// v2</span></span>
+<span class="line"><span style="color:#E1E4E8">lucia.</span><span style="color:#B392F0">createSessionCookie</span><span style="color:#E1E4E8">(sessionId)    </span><span style="color:#6A737D">// v3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 空のセッションクッキー作成</span></span>
+<span class="line"><span style="color:#E1E4E8">auth.</span><span style="color:#B392F0">createBlankSessionCookie</span><span style="color:#E1E4E8">()         </span><span style="color:#6A737D">// v2</span></span>
+<span class="line"><span style="color:#E1E4E8">lucia.</span><span style="color:#B392F0">createBlankSessionCookie</span><span style="color:#E1E4E8">()        </span><span style="color:#6A737D">// v3</span></span></code></pre>
+<h3 id="step-4-認証フローの更新">Step 4: 認証フローの更新</h3>
+<h4 id="ログイン処理">ログイン処理</h4>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/login/route.ts（v2）</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { auth } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#79B8FF"> *</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> context </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/headers'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> POST</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">req</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">email</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">password</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> req.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ユーザー検証...</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> findUser</span><span style="color:#E1E4E8">(email, password);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // v2: セッション作成</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> auth.</span><span style="color:#B392F0">createSession</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    userId: user.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    attributes: {},</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sessionCookie</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> auth.</span><span style="color:#B392F0">createSessionCookie</span><span style="color:#E1E4E8">(session);</span></span>
+<span class="line"><span style="color:#E1E4E8">  context.</span><span style="color:#B392F0">cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    sessionCookie.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">    sessionCookie.value,</span></span>
+<span class="line"><span style="color:#E1E4E8">    sessionCookie.attributes</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/login/route.ts（v3）</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { lucia } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cookies } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/headers'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> POST</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">req</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">email</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">password</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> req.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ユーザー検証...</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> findUser</span><span style="color:#E1E4E8">(email, password);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // v3: シンプルなAPI</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> lucia.</span><span style="color:#B392F0">createSession</span><span style="color:#E1E4E8">(user.id, {});</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sessionCookie</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> lucia.</span><span style="color:#B392F0">createSessionCookie</span><span style="color:#E1E4E8">(session.id);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    sessionCookie.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">    sessionCookie.value,</span></span>
+<span class="line"><span style="color:#E1E4E8">    sessionCookie.attributes</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h4 id="セッション検証">セッション検証</h4>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/auth-utils.ts（v2）</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { auth } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#79B8FF"> *</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> context </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/headers'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cache } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> validateRequest</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> cache</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sessionId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(auth.sessionCookieName)?.value </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">sessionId) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      user: </span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      session: </span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> auth.</span><span style="color:#B392F0">validateSession</span><span style="color:#E1E4E8">(sessionId);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (result.session </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> result.session.fresh) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> sessionCookie</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> auth.</span><span style="color:#B392F0">createSessionCookie</span><span style="color:#E1E4E8">(result.session.sessionId);</span></span>
+<span class="line"><span style="color:#E1E4E8">      context.</span><span style="color:#B392F0">cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        sessionCookie.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">        sessionCookie.value,</span></span>
+<span class="line"><span style="color:#E1E4E8">        sessionCookie.attributes</span></span>
+<span class="line"><span style="color:#E1E4E8">      );</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">result.session) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> sessionCookie</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> auth.</span><span style="color:#B392F0">createBlankSessionCookie</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">      context.</span><span style="color:#B392F0">cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        sessionCookie.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">        sessionCookie.value,</span></span>
+<span class="line"><span style="color:#E1E4E8">        sessionCookie.attributes</span></span>
+<span class="line"><span style="color:#E1E4E8">      );</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> {}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> result;</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/auth-utils.ts（v3）</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { lucia } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cookies } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/headers'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cache } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> validateRequest</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> cache</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sessionId</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(lucia.sessionCookieName)?.value </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">sessionId) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      user: </span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      session: </span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> lucia.</span><span style="color:#B392F0">validateSession</span><span style="color:#E1E4E8">(sessionId);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // セッションリフレッシュロジックは同じ</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (result.session </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> result.session.fresh) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> sessionCookie</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> lucia.</span><span style="color:#B392F0">createSessionCookie</span><span style="color:#E1E4E8">(result.session.id);</span></span>
+<span class="line"><span style="color:#B392F0">      cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        sessionCookie.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">        sessionCookie.value,</span></span>
+<span class="line"><span style="color:#E1E4E8">        sessionCookie.attributes</span></span>
+<span class="line"><span style="color:#E1E4E8">      );</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">result.session) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> sessionCookie</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> lucia.</span><span style="color:#B392F0">createBlankSessionCookie</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#B392F0">      cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        sessionCookie.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">        sessionCookie.value,</span></span>
+<span class="line"><span style="color:#E1E4E8">        sessionCookie.attributes</span></span>
+<span class="line"><span style="color:#E1E4E8">      );</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> {}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> result;</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="step-5-oauth統合の更新">Step 5: OAuth統合の更新</h3>
+<p>OAuth部分も若干の変更があります。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// v2</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { github } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@lucia-auth/oauth/providers'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> githubAuth</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> github</span><span style="color:#E1E4E8">(auth, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  clientId: process.env.</span><span style="color:#79B8FF">GITHUB_CLIENT_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  clientSecret: process.env.</span><span style="color:#79B8FF">GITHUB_CLIENT_SECRET</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// v3（Arcticライブラリを使用）</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { GitHub } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'arctic'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> github</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> GitHub</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.env.</span><span style="color:#79B8FF">GITHUB_CLIENT_ID</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.env.</span><span style="color:#79B8FF">GITHUB_CLIENT_SECRET</span><span style="color:#F97583">!</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<p>完全なOAuth実装例：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/login/github/route.ts（v3）</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { github } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/oauth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { generateState } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'arctic'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cookies } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/headers'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> GET</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> state</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> generateState</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> github.</span><span style="color:#B392F0">createAuthorizationURL</span><span style="color:#E1E4E8">(state, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    scopes: [</span><span style="color:#9ECBFF">'user:email'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'github_oauth_state'</span><span style="color:#E1E4E8">, state, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    path: </span><span style="color:#9ECBFF">'/'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    secure: process.env.</span><span style="color:#79B8FF">NODE_ENV</span><span style="color:#F97583"> ===</span><span style="color:#9ECBFF"> 'production'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    httpOnly: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    maxAge: </span><span style="color:#79B8FF">60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    sameSite: </span><span style="color:#9ECBFF">'lax'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(url);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/login/github/callback/route.ts（v3）</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { github } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/oauth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { lucia } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cookies } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next/headers'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { prisma } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/prisma'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { generateId } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'lucia'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> GET</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">req</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(req.url);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> code</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> url.searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'code'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> state</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> url.searchParams.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'state'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> storedState</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'github_oauth_state'</span><span style="color:#E1E4E8">)?.value </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">code </span><span style="color:#F97583">||</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">state </span><span style="color:#F97583">||</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">storedState </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> state </span><span style="color:#F97583">!==</span><span style="color:#E1E4E8"> storedState) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Invalid request'</span><span style="color:#E1E4E8"> }, { status: </span><span style="color:#79B8FF">400</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> tokens</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> github.</span><span style="color:#B392F0">validateAuthorizationCode</span><span style="color:#E1E4E8">(code);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> githubUser</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchGitHubUser</span><span style="color:#E1E4E8">(tokens.accessToken);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 既存ユーザー確認</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> user </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> prisma.user.</span><span style="color:#B392F0">findUnique</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      where: { githubId: githubUser.id },</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 新規ユーザー作成</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">user) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> userId</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> generateId</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">15</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      user </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> prisma.user.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          id: userId,</span></span>
+<span class="line"><span style="color:#E1E4E8">          githubId: githubUser.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">          email: githubUser.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">          username: githubUser.login,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // セッション作成</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> lucia.</span><span style="color:#B392F0">createSession</span><span style="color:#E1E4E8">(user.id, {});</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> sessionCookie</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> lucia.</span><span style="color:#B392F0">createSessionCookie</span><span style="color:#E1E4E8">(session.id);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      sessionCookie.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">      sessionCookie.value,</span></span>
+<span class="line"><span style="color:#E1E4E8">      sessionCookie.attributes</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">redirect</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/dashboard'</span><span style="color:#E1E4E8">, req.url));</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(error);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Authentication failed'</span><span style="color:#E1E4E8"> }, { status: </span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> fetchGitHubUser</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">accessToken</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://api.github.com/user'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers: { Authorization: </span><span style="color:#9ECBFF">`Bearer ${</span><span style="color:#E1E4E8">accessToken</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="パフォーマンス改善">パフォーマンス改善</h2>
+<p>v3では、セッション検証のパフォーマンスが向上しています。</p>
+<h3 id="セッションキャッシング">セッションキャッシング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/session-cache.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cache } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { lucia } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// React Cacheを使ったセッション検証（リクエストごとに1回のみ）</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> getSession</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> cache</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">sessionId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> lucia.</span><span style="color:#B392F0">validateSession</span><span style="color:#E1E4E8">(sessionId);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="データベースクエリ最適化">データベースクエリ最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// prisma/schema.prisma</span></span>
+<span class="line"><span style="color:#E1E4E8">model Session {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id        String   @id</span></span>
+<span class="line"><span style="color:#E1E4E8">  userId    String</span></span>
+<span class="line"><span style="color:#E1E4E8">  expiresAt DateTime</span></span>
+<span class="line"><span style="color:#E1E4E8">  user      User     @</span><span style="color:#B392F0">relation</span><span style="color:#E1E4E8">(references: [id], fields: [userId], onDelete: Cascade)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  @@</span><span style="color:#B392F0">index</span><span style="color:#E1E4E8">([userId])    </span><span style="color:#6A737D">// ユーザーID検索用インデックス</span></span>
+<span class="line"><span style="color:#E1E4E8">  @@</span><span style="color:#B392F0">index</span><span style="color:#E1E4E8">([expiresAt]) </span><span style="color:#6A737D">// 期限切れセッション削除用インデックス</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  @@</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"sessions"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="better-authとの比較">Better Authとの比較</h2>
+<p>Lucia v3と同時期に登場したBetter Authとの比較です。</p>
+<h3 id="lucia-v3の強み">Lucia v3の強み</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Lucia v3: シンプルで柔軟</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Lucia } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'lucia'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> lucia</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Lucia</span><span style="color:#E1E4E8">(adapter, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  sessionCookie: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    attributes: { secure: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 完全な制御</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> lucia.</span><span style="color:#B392F0">createSession</span><span style="color:#E1E4E8">(userId, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  customData: </span><span style="color:#9ECBFF">'anything'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="better-authの強み">Better Authの強み</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Better Auth: 機能豊富、設定ベース</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { betterAuth } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'better-auth'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> auth</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> betterAuth</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  database: prisma,</span></span>
+<span class="line"><span style="color:#E1E4E8">  emailAndPassword: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    enabled: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    autoSignIn: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  socialProviders: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    github: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientId: process.env.</span><span style="color:#79B8FF">GITHUB_CLIENT_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientSecret: process.env.</span><span style="color:#79B8FF">GITHUB_CLIENT_SECRET</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  plugins: [</span></span>
+<span class="line"><span style="color:#B392F0">    twoFactor</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#B392F0">    magicLink</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="選択基準">選択基準</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>項目</th><th>Lucia v3</th><th>Better Auth</th></tr></thead><tbody><tr><td>学習曲線</td><td>低い</td><td>中程度</td></tr><tr><td>カスタマイズ性</td><td>非常に高い</td><td>高い</td></tr><tr><td>標準機能</td><td>最小限</td><td>豊富</td></tr><tr><td>バンドルサイズ</td><td>小さい</td><td>やや大きい</td></tr><tr><td>TypeScript対応</td><td>優れている</td><td>優れている</td></tr><tr><td>適用ケース</td><td>カスタム要件が多い</td><td>標準的な認証</td></tr></tbody></table>
+<h2 id="トラブルシューティング">トラブルシューティング</h2>
+<h3 id="よくあるエラーと解決策">よくあるエラーと解決策</h3>
+<h4 id="1-セッションクッキーが設定されない">1. セッションクッキーが設定されない</h4>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 問題: cookies().set()が動作しない</span></span>
+<span class="line"><span style="color:#B392F0">cookies</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 解決: Next.js 14以降では、Server Actionsまたはhttps://が必要</span></span>
+<span class="line"><span style="color:#6A737D">// next.config.jsで確認</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  experimental: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    serverActions: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h4 id="2-型エラー">2. 型エラー</h4>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 問題: user.emailが型エラー</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">user</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> validateRequest</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(user.email); </span><span style="color:#6A737D">// Property 'email' does not exist</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 解決: DatabaseUserAttributes型定義が必要</span></span>
+<span class="line"><span style="color:#F97583">declare</span><span style="color:#F97583"> module</span><span style="color:#9ECBFF"> 'lucia'</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  interface</span><span style="color:#B392F0"> Register</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    Lucia</span><span style="color:#F97583">:</span><span style="color:#F97583"> typeof</span><span style="color:#E1E4E8"> lucia;</span></span>
+<span class="line"><span style="color:#FFAB70">    DatabaseUserAttributes</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">      email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">      username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h4 id="3-セッションが期限切れにならない">3. セッションが期限切れにならない</h4>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 問題: セッションが永続的に残る</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> lucia</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Lucia</span><span style="color:#E1E4E8">(adapter, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  sessionCookie: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    expires: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// これが問題！</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 解決: 適切な有効期限を設定</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { TimeSpan } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'lucia'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> lucia</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Lucia</span><span style="color:#E1E4E8">(adapter, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  sessionExpiresIn: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> TimeSpan</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">30</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'d'</span><span style="color:#E1E4E8">), </span><span style="color:#6A737D">// 30日</span></span>
+<span class="line"><span style="color:#E1E4E8">  sessionCookie: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    attributes: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      secure: process.env.</span><span style="color:#79B8FF">NODE_ENV</span><span style="color:#F97583"> ===</span><span style="color:#9ECBFF"> 'production'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Lucia v3への移行のポイント：</p>
+<ol>
+<li><strong>APIの簡素化</strong> - ミドルウェアが不要に</li>
+<li><strong>型推論の改善</strong> - より安全なTypeScript開発</li>
+<li><strong>パフォーマンス向上</strong> - 最適化されたセッション管理</li>
+<li><strong>段階的移行</strong> - v2との共存が可能</li>
+</ol>
+<p>Lucia v3は、セッションベース認証の実装を大幅に簡素化し、開発者体験を向上させます。既存プロジェクトの移行は、段階的に進めることで安全に実施できます。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

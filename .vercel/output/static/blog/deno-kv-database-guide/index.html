@@ -1,0 +1,591 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/deno-kv-database-guide/"><!-- Primary Meta Tags --><title>Deno KV実践ガイド: グローバル分散キーバリューストアの活用</title><meta name="title" content="Deno KV実践ガイド: グローバル分散キーバリューストアの活用"><meta name="description" content="Deno KVの基本から、グローバル分散、リアルタイム同期、トランザクション、セカンダリインデックスまで、実践的な活用方法を解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/deno-kv-database-guide/"><meta property="og:title" content="Deno KV実践ガイド: グローバル分散キーバリューストアの活用"><meta property="og:description" content="Deno KVの基本から、グローバル分散、リアルタイム同期、トランザクション、セカンダリインデックスまで、実践的な活用方法を解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/deno-kv-database-guide/"><meta name="twitter:title" content="Deno KV実践ガイド: グローバル分散キーバリューストアの活用"><meta name="twitter:description" content="Deno KVの基本から、グローバル分散、リアルタイム同期、トランザクション、セカンダリインデックスまで、実践的な活用方法を解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/deno-kv-database-guide/"},"headline":"Deno KV実践ガイド: グローバル分散キーバリューストアの活用","description":"Deno KVの基本から、グローバル分散、リアルタイム同期、トランザクション、セカンダリインデックスまで、実践的な活用方法を解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。","datePublished":"2025-09-28T00:00:00.000Z","dateModified":"2025-09-28T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Deno, Deno KV, データベース, Key-Value Store, 分散システム, プログラミング"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Deno KV実践ガイド: グローバル分散キーバリューストアの活用"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-09-28T00:00:00.000Z"> Sep 27, 2025 </time> <div class="last-updated-on" data-astro-cid-bvzihdzo>
+Last updated on <time datetime="2025-09-28T00:00:00.000Z"> Sep 27, 2025 </time> </div> </div> <h1 data-astro-cid-bvzihdzo>Deno KV実践ガイド: グローバル分散キーバリューストアの活用</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Deno" class="article-tag" data-astro-cid-bvzihdzo>
+#Deno </a><a href="/blog/tag/Deno%20KV" class="article-tag" data-astro-cid-bvzihdzo>
+#Deno KV </a><a href="/blog/tag/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%99%E3%83%BC%E3%82%B9" class="article-tag" data-astro-cid-bvzihdzo>
+#データベース </a><a href="/blog/tag/Key-Value%20Store" class="article-tag" data-astro-cid-bvzihdzo>
+#Key-Value Store </a><a href="/blog/tag/%E5%88%86%E6%95%A3%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0" class="article-tag" data-astro-cid-bvzihdzo>
+#分散システム </a><a href="/blog/tag/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="article-tag" data-astro-cid-bvzihdzo>
+#プログラミング </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Deno KVは、Denoに組み込まれたグローバル分散キーバリューストアです。SQLiteベースのローカルストレージと、グローバルに分散されたクラウドストレージの両方をサポートし、低レイテンシーとリアルタイム同期を実現します。</p>
+<h2 id="deno-kvの特徴">Deno KVの特徴</h2>
+<h3 id="1-ゼロ設定のデータベース">1. ゼロ設定のデータベース</h3>
+<p>外部データベースのセットアップ不要で、すぐに使えます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Deno KVを開く</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> kv</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> Deno.</span><span style="color:#B392F0">openKv</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// データの保存</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'user123'</span><span style="color:#E1E4E8">], {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id: </span><span style="color:#9ECBFF">'user123'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: </span><span style="color:#9ECBFF">'Alice'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  email: </span><span style="color:#9ECBFF">'alice@example.com'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  createdAt: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// データの取得</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'user123'</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(result.value) </span><span style="color:#6A737D">// { id: 'user123', name: 'Alice', ... }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// データの削除</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'user123'</span><span style="color:#E1E4E8">])</span></span></code></pre>
+<h3 id="2-階層的なキー構造">2. 階層的なキー構造</h3>
+<p>配列をキーとして使用し、階層的にデータを整理できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> kv</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> Deno.</span><span style="color:#B392F0">openKv</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザーデータ</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'user123'</span><span style="color:#E1E4E8">], {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id: </span><span style="color:#9ECBFF">'user123'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: </span><span style="color:#9ECBFF">'Alice'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザーの投稿</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'user123'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'post456'</span><span style="color:#E1E4E8">], {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id: </span><span style="color:#9ECBFF">'post456'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  title: </span><span style="color:#9ECBFF">'Hello Deno KV'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  content: </span><span style="color:#9ECBFF">'This is my first post'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザーの設定</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'user123'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'settings'</span><span style="color:#E1E4E8">], {</span></span>
+<span class="line"><span style="color:#E1E4E8">  theme: </span><span style="color:#9ECBFF">'dark'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  notifications: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// プレフィックス検索</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> posts</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">list</span><span style="color:#E1E4E8">({ prefix: [</span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'user123'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">] })</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> entry</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> posts) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(entry.key, entry.value)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="3-acid-トランザクション">3. ACID トランザクション</h3>
+<p>複数の操作をアトミックに実行できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 銀行口座間の送金（アトミック操作）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> kv</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> Deno.</span><span style="color:#B392F0">openKv</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> transfer</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">fromId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">toId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">amount</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> fromKey</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'accounts'</span><span style="color:#E1E4E8">, fromId]</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> toKey</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'accounts'</span><span style="color:#E1E4E8">, toId]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> success </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> false</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  while</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">success) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 現在の残高を取得</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">fromAccount</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">toAccount</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">getMany</span><span style="color:#E1E4E8">([fromKey, toKey])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (fromAccount.value </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> null</span><span style="color:#F97583"> ||</span><span style="color:#E1E4E8"> toAccount.value </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Account not found'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> fromBalance</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> fromAccount.value.balance</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> toBalance</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> toAccount.value.balance</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (fromBalance </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> amount) {</span></span>
+<span class="line"><span style="color:#F97583">      throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Insufficient funds'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // アトミックトランザクション</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">atomic</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">check</span><span style="color:#E1E4E8">(fromAccount) </span><span style="color:#6A737D">// バージョンチェック</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">check</span><span style="color:#E1E4E8">(toAccount)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(fromKey, { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8">fromAccount.value, balance: fromBalance </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> amount })</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(toKey, { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8">toAccount.value, balance: toBalance </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> amount })</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">commit</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    success </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> result.ok</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // コミット失敗時は自動的にリトライ</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'accounts'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'alice'</span><span style="color:#E1E4E8">], { id: </span><span style="color:#9ECBFF">'alice'</span><span style="color:#E1E4E8">, balance: </span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'accounts'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'bob'</span><span style="color:#E1E4E8">], { id: </span><span style="color:#9ECBFF">'bob'</span><span style="color:#E1E4E8">, balance: </span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#B392F0"> transfer</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'alice'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'bob'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> alice</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'accounts'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'alice'</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(alice.value.balance) </span><span style="color:#6A737D">// 900</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> bob</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'accounts'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'bob'</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(bob.value.balance) </span><span style="color:#6A737D">// 600</span></span></code></pre>
+<h2 id="実践-ブログシステムの構築">実践: ブログシステムの構築</h2>
+<p>Deno KVを使った実際のアプリケーション例を見ていきます。</p>
+<h3 id="データモデル設計">データモデル設計</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// types.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> User</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  passwordHash</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  createdAt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> Post</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  authorId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  title</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  content</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  slug</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  published</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span></span>
+<span class="line"><span style="color:#FFAB70">  createdAt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  updatedAt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> Comment</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  authorId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  content</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#FFAB70">  createdAt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="キー設計">キー設計</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// db.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> keys</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">  // プライマリキー</span></span>
+<span class="line"><span style="color:#B392F0">  user</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8">, userId],</span></span>
+<span class="line"><span style="color:#B392F0">  post</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">, postId],</span></span>
+<span class="line"><span style="color:#B392F0">  comment</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">commentId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'comments'</span><span style="color:#E1E4E8">, commentId],</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // セカンダリインデックス</span></span>
+<span class="line"><span style="color:#B392F0">  userByUsername</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'users_by_username'</span><span style="color:#E1E4E8">, username],</span></span>
+<span class="line"><span style="color:#B392F0">  userByEmail</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'users_by_email'</span><span style="color:#E1E4E8">, email],</span></span>
+<span class="line"><span style="color:#B392F0">  postBySlug</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">slug</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'posts_by_slug'</span><span style="color:#E1E4E8">, slug],</span></span>
+<span class="line"><span style="color:#B392F0">  postsByAuthor</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">authorId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">    [</span><span style="color:#9ECBFF">'posts_by_author'</span><span style="color:#E1E4E8">, authorId, postId],</span></span>
+<span class="line"><span style="color:#B392F0">  commentsByPost</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">commentId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">    [</span><span style="color:#9ECBFF">'comments_by_post'</span><span style="color:#E1E4E8">, postId, commentId],</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // カウンター</span></span>
+<span class="line"><span style="color:#B392F0">  postCount</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">authorId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'post_count'</span><span style="color:#E1E4E8">, authorId],</span></span>
+<span class="line"><span style="color:#B392F0">  commentCount</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'comment_count'</span><span style="color:#E1E4E8">, postId],</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ユーザー管理">ユーザー管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// users.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { keys } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './db.ts'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { User } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './types.ts'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { hash, compare } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'bcrypt'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createUser</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  kv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Kv</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  password</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> userId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> crypto.</span><span style="color:#B392F0">randomUUID</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ユーザー名とメールの重複チェック</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">existingUsername</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">existingEmail</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">getMany</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">    keys.</span><span style="color:#B392F0">userByUsername</span><span style="color:#E1E4E8">(username),</span></span>
+<span class="line"><span style="color:#E1E4E8">    keys.</span><span style="color:#B392F0">userByEmail</span><span style="color:#E1E4E8">(email),</span></span>
+<span class="line"><span style="color:#E1E4E8">  ])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (existingUsername.value </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Username already taken'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (existingEmail.value </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Email already registered'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583">:</span><span style="color:#B392F0"> User</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: userId,</span></span>
+<span class="line"><span style="color:#E1E4E8">    username,</span></span>
+<span class="line"><span style="color:#E1E4E8">    email,</span></span>
+<span class="line"><span style="color:#E1E4E8">    passwordHash: </span><span style="color:#F97583">await</span><span style="color:#B392F0"> hash</span><span style="color:#E1E4E8">(password),</span></span>
+<span class="line"><span style="color:#E1E4E8">    createdAt: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // アトミックにユーザーとインデックスを作成</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">atomic</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">check</span><span style="color:#E1E4E8">(existingUsername) </span><span style="color:#6A737D">// ユーザー名が取得されていないことを確認</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">check</span><span style="color:#E1E4E8">(existingEmail) </span><span style="color:#6A737D">// メールが取得されていないことを確認</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">user</span><span style="color:#E1E4E8">(userId), user)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">userByUsername</span><span style="color:#E1E4E8">(username), userId)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">userByEmail</span><span style="color:#E1E4E8">(email), userId)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">commit</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">result.ok) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Failed to create user (race condition)'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> user</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getUserByUsername</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  kv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Kv</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#6A737D">  // インデックスからユーザーIDを取得</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> userIdEntry</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">>(keys.</span><span style="color:#B392F0">userByUsername</span><span style="color:#E1E4E8">(username))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (userIdEntry.value </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> null</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ユーザーIDから実際のユーザーデータを取得</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> userEntry</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">>(keys.</span><span style="color:#B392F0">user</span><span style="color:#E1E4E8">(userIdEntry.value))</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> userEntry.value</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> authenticateUser</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  kv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Kv</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  password</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getUserByUsername</span><span style="color:#E1E4E8">(kv, username)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">user) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> null</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> isValid</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> compare</span><span style="color:#E1E4E8">(password, user.passwordHash)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> isValid </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> user </span><span style="color:#F97583">:</span><span style="color:#79B8FF"> null</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="投稿管理">投稿管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// posts.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { keys } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './db.ts'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Post } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './types.ts'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createPost</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  kv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Kv</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  authorId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  title</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  content</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  slug</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> postId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> crypto.</span><span style="color:#B392F0">randomUUID</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // スラグの重複チェック</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> existingSlug</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">postBySlug</span><span style="color:#E1E4E8">(slug))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (existingSlug.value </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Slug already exists'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> post</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Post</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: postId,</span></span>
+<span class="line"><span style="color:#E1E4E8">    authorId,</span></span>
+<span class="line"><span style="color:#E1E4E8">    title,</span></span>
+<span class="line"><span style="color:#E1E4E8">    content,</span></span>
+<span class="line"><span style="color:#E1E4E8">    slug,</span></span>
+<span class="line"><span style="color:#E1E4E8">    published: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    createdAt: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    updatedAt: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 投稿とインデックスを作成</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">atomic</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">check</span><span style="color:#E1E4E8">(existingSlug)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(postId), post)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">postBySlug</span><span style="color:#E1E4E8">(slug), postId)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">postsByAuthor</span><span style="color:#E1E4E8">(authorId, postId), postId)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">sum</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">postCount</span><span style="color:#E1E4E8">(authorId), </span><span style="color:#79B8FF">1</span><span style="color:#F97583">n</span><span style="color:#E1E4E8">) </span><span style="color:#6A737D">// カウンターを1増やす</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">commit</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> post</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getPostsByAuthor</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  kv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Kv</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  authorId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  options</span><span style="color:#F97583">?:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">limit</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">reverse</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">[]> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> posts</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Post</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> entries</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">list</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">    prefix: [</span><span style="color:#9ECBFF">'posts_by_author'</span><span style="color:#E1E4E8">, authorId],</span></span>
+<span class="line"><span style="color:#E1E4E8">    limit: options?.limit,</span></span>
+<span class="line"><span style="color:#E1E4E8">    reverse: options?.reverse,</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> entry</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> entries) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> postId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> entry.value</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> postEntry</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">>(keys.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(postId))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (postEntry.value </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      posts.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(postEntry.value)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> posts</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> updatePost</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  kv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Kv</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  updates</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Partial</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Pick</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'title'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'content'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'published'</span><span style="color:#E1E4E8">>></span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> postEntry</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">>(keys.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(postId))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (postEntry.value </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Post not found'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> updatedPost</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Post</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    ...</span><span style="color:#E1E4E8">postEntry.value,</span></span>
+<span class="line"><span style="color:#F97583">    ...</span><span style="color:#E1E4E8">updates,</span></span>
+<span class="line"><span style="color:#E1E4E8">    updatedAt: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">atomic</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">check</span><span style="color:#E1E4E8">(postEntry) </span><span style="color:#6A737D">// バージョンチェック</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(postId), updatedPost)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">commit</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> updatedPost</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> deletePost</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  kv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Kv</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> postEntry</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">>(keys.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(postId))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (postEntry.value </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Post not found'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> post</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> postEntry.value</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 関連するコメントも削除</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> comments</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">list</span><span style="color:#E1E4E8">({ prefix: [</span><span style="color:#9ECBFF">'comments_by_post'</span><span style="color:#E1E4E8">, postId] })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> atomic</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">atomic</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">check</span><span style="color:#E1E4E8">(postEntry)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(postId))</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">postBySlug</span><span style="color:#E1E4E8">(post.slug))</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">postsByAuthor</span><span style="color:#E1E4E8">(post.authorId, postId))</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">sum</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">postCount</span><span style="color:#E1E4E8">(post.authorId), </span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#F97583">n</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> comment</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> comments) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    atomic.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(comment.key)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> atomic.</span><span style="color:#B392F0">commit</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="コメント管理">コメント管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// comments.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { keys } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './db.ts'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Comment } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './types.ts'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createComment</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  kv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Kv</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  authorId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  content</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Comment</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> commentId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> crypto.</span><span style="color:#B392F0">randomUUID</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> comment</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Comment</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: commentId,</span></span>
+<span class="line"><span style="color:#E1E4E8">    postId,</span></span>
+<span class="line"><span style="color:#E1E4E8">    authorId,</span></span>
+<span class="line"><span style="color:#E1E4E8">    content,</span></span>
+<span class="line"><span style="color:#E1E4E8">    createdAt: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">atomic</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">comment</span><span style="color:#E1E4E8">(commentId), comment)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">commentsByPost</span><span style="color:#E1E4E8">(postId, commentId), commentId)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">sum</span><span style="color:#E1E4E8">(keys.</span><span style="color:#B392F0">commentCount</span><span style="color:#E1E4E8">(postId), </span><span style="color:#79B8FF">1</span><span style="color:#F97583">n</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">commit</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> comment</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getCommentsByPost</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  kv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Kv</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Comment</span><span style="color:#E1E4E8">[]> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> comments</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Comment</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> entries</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">list</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">    prefix: [</span><span style="color:#9ECBFF">'comments_by_post'</span><span style="color:#E1E4E8">, postId],</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> entry</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> entries) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> commentId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> entry.value</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> commentEntry</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Comment</span><span style="color:#E1E4E8">>(keys.</span><span style="color:#B392F0">comment</span><span style="color:#E1E4E8">(commentId))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (commentEntry.value </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      comments.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(commentEntry.value)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> comments</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="リアルタイム機能の実装">リアルタイム機能の実装</h2>
+<p>Deno KVは<code>watch()</code>メソッドで変更を監視できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// realtime.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> watchPost</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  kv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Kv</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  postId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">  callback</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">post</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Post</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> void</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> stream</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">watch</span><span style="color:#E1E4E8">([keys.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(postId)])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> entries</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> stream) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> postEntry</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> entries[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#B392F0">    callback</span><span style="color:#E1E4E8">(postEntry.value </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Post</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> kv</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> Deno.</span><span style="color:#B392F0">openKv</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">watchPost</span><span style="color:#E1E4E8">(kv, </span><span style="color:#9ECBFF">'post123'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">post</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (post) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Post updated:'</span><span style="color:#E1E4E8">, post.title)</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Post deleted'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<p>WebSocketと組み合わせてリアルタイム同期を実装できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// server.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { serve } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'https://deno.land/std/http/server.ts'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> kv</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> Deno.</span><span style="color:#B392F0">openKv</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">serve</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (req.headers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'upgrade'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">!==</span><span style="color:#9ECBFF"> 'websocket'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Expected websocket'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">400</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">socket</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">response</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Deno.</span><span style="color:#B392F0">upgradeWebSocket</span><span style="color:#E1E4E8">(req)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  socket.</span><span style="color:#B392F0">onopen</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'WebSocket connected'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  socket.</span><span style="color:#B392F0">onmessage</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">type</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">postId</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(event.data)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'subscribe'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">      // 投稿の変更を監視</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> stream</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">watch</span><span style="color:#E1E4E8">([keys.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(postId)])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> entries</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> stream) {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> post</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> entries[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].value</span></span>
+<span class="line"><span style="color:#E1E4E8">        socket.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">({ type: </span><span style="color:#9ECBFF">'update'</span><span style="color:#E1E4E8">, post }))</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h2 id="パフォーマンス最適化">パフォーマンス最適化</h2>
+<h3 id="1-バッチ処理">1. バッチ処理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 複数の取得を一度に実行</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">user</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">post</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">comments</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">getMany</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">  keys.</span><span style="color:#B392F0">user</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'user123'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  keys.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'post456'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  keys.</span><span style="color:#B392F0">commentsByPost</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'post456'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'comment789'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">])</span></span></code></pre>
+<h3 id="2-ページネーション">2. ページネーション</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getPostsPaginated</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  kv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Kv</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  authorId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  cursor</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  limit</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">posts</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Post</span><span style="color:#E1E4E8">[]; </span><span style="color:#FFAB70">cursor</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> posts</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Post</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> entries</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">list</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">    prefix: [</span><span style="color:#9ECBFF">'posts_by_author'</span><span style="color:#E1E4E8">, authorId],</span></span>
+<span class="line"><span style="color:#E1E4E8">    limit: limit </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 次のページがあるかチェック</span></span>
+<span class="line"><span style="color:#E1E4E8">    cursor,</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> entry</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> entries) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (posts.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> >=</span><span style="color:#E1E4E8"> limit) {</span></span>
+<span class="line"><span style="color:#6A737D">      // 次のページがある</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        posts,</span></span>
+<span class="line"><span style="color:#E1E4E8">        cursor: entry.cursor,</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> postId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> entry.value</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> postEntry</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Post</span><span style="color:#E1E4E8">>(keys.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(postId))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (postEntry.value </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      posts.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(postEntry.value)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { posts }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="3-キャッシュ戦略">3. キャッシュ戦略</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// TTL付きキャッシュ</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getCachedData</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">>(</span></span>
+<span class="line"><span style="color:#FFAB70">  kv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Kv</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  key</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Deno</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">KvKey</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">  fetchFn</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">>,</span></span>
+<span class="line"><span style="color:#FFAB70">  ttlMs</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 60000</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cached</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">data</span><span style="color:#F97583">:</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">expiresAt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> }>(key)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (cached.value </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> null</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#E1E4E8"> cached.value.expiresAt </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> cached.value.data</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchFn</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> kv.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(key, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    data,</span></span>
+<span class="line"><span style="color:#E1E4E8">    expiresAt: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> ttlMs,</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> data</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="deno-deployでのグローバル分散">Deno Deployでのグローバル分散</h2>
+<p>Deno Deployにデプロイすると、Deno KVが自動的にグローバル分散されます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// main.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { serve } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'https://deno.land/std/http/server.ts'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> kv</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> Deno.</span><span style="color:#B392F0">openKv</span><span style="color:#E1E4E8">() </span><span style="color:#6A737D">// Deno Deployでは自動的にグローバルKV</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">serve</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> url</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(req.url)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (url.pathname </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> '/api/posts'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> posts</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getPostsPaginated</span><span style="color:#E1E4E8">(kv, </span><span style="color:#9ECBFF">'author123'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> Response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(posts)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Not found'</span><span style="color:#E1E4E8">, { status: </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<p>デプロイ:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> deno</span><span style="color:#9ECBFF"> deploy</span><span style="color:#79B8FF"> --project=my-blog</span></span></code></pre>
+<p><strong>特徴:</strong></p>
+<ul>
+<li>世界中のエッジロケーションで自動レプリケーション</li>
+<li>読み取りは最寄りのリージョンから（低レイテンシー）</li>
+<li>書き込みは強い整合性を保証</li>
+<li>追加設定不要</li>
+</ul>
+<h2 id="まとめ">まとめ</h2>
+<p>Deno KVは、シンプルながら強力な分散データベースです。</p>
+<p><strong>主な利点:</strong></p>
+<ul>
+<li>ゼロ設定で使える</li>
+<li>グローバル分散とリアルタイム同期</li>
+<li>ACIDトランザクション</li>
+<li>型安全なTypeScript統合</li>
+<li>Deno Deployで自動スケール</li>
+</ul>
+<p><strong>適用シーン:</strong></p>
+<ul>
+<li>エッジアプリケーション</li>
+<li>リアルタイムアプリ</li>
+<li>プロトタイプ開発</li>
+<li>中小規模のアプリケーション</li>
+</ul>
+<p>従来のデータベースと比較して、運用コストとインフラ複雑性を大幅に削減できます。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

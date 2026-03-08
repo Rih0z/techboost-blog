@@ -1,0 +1,607 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/kubernetes-operators-guide/"><!-- Primary Meta Tags --><title>Kubernetesオペレーター開発完全ガイド</title><meta name="title" content="Kubernetesオペレーター開発完全ガイド"><meta name="description" content="Kubernetes Operatorパターンの基礎から、Kubebuilderを使った実装、本番運用まで、実践的なカスタムコントローラーの開発方法を解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/kubernetes-operators-guide/"><meta property="og:title" content="Kubernetesオペレーター開発完全ガイド"><meta property="og:description" content="Kubernetes Operatorパターンの基礎から、Kubebuilderを使った実装、本番運用まで、実践的なカスタムコントローラーの開発方法を解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/kubernetes-operators-guide/"><meta name="twitter:title" content="Kubernetesオペレーター開発完全ガイド"><meta name="twitter:description" content="Kubernetes Operatorパターンの基礎から、Kubebuilderを使った実装、本番運用まで、実践的なカスタムコントローラーの開発方法を解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/kubernetes-operators-guide/"},"headline":"Kubernetesオペレーター開発完全ガイド","description":"Kubernetes Operatorパターンの基礎から、Kubebuilderを使った実装、本番運用まで、実践的なカスタムコントローラーの開発方法を解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。","datePublished":"2025-02-05T00:00:00.000Z","dateModified":"2025-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Kubernetes, インフラ, 開発ツール"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Kubernetesオペレーター開発完全ガイド"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-05T00:00:00.000Z"> Feb 4, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>Kubernetesオペレーター開発完全ガイド</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Kubernetes" class="article-tag" data-astro-cid-bvzihdzo>
+#Kubernetes </a><a href="/blog/tag/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#インフラ </a><a href="/blog/tag/%E9%96%8B%E7%99%BA%E3%83%84%E3%83%BC%E3%83%AB" class="article-tag" data-astro-cid-bvzihdzo>
+#開発ツール </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Kubernetes Operatorパターンは、Kubernetesの拡張性を最大限に活用し、複雑なアプリケーションのライフサイクル管理を自動化する強力な手法です。本記事では、Operatorの基礎概念から、Kubebuilderを使った実装、本番環境での運用まで、実践的な開発方法を詳しく解説します。</p>
+<h2 id="kubernetes-operatorとは">Kubernetes Operatorとは</h2>
+<p>Kubernetes Operatorは、Kubernetesの拡張機能として動作するカスタムコントローラーです。人間のオペレーターが行うような運用知識をコードに落とし込み、アプリケーションのデプロイ、スケーリング、バックアップ、復旧などを自動化します。</p>
+<h3 id="operatorパターンの3つの要素">Operatorパターンの3つの要素</h3>
+<ol>
+<li><strong>Custom Resource Definition (CRD)</strong>: 独自のリソースタイプを定義</li>
+<li><strong>Custom Controller</strong>: CRDの変更を監視し、実際の状態を望ましい状態に近づける</li>
+<li><strong>Operator Logic</strong>: アプリケーション固有の運用知識を実装</li>
+</ol>
+<h3 id="なぜoperatorが必要なのか">なぜOperatorが必要なのか</h3>
+<p>標準のKubernetesリソース（Deployment、Serviceなど）は汎用的な機能を提供しますが、データベースのレプリケーション設定、分散システムのクラスタリング、アプリケーション固有のバックアップ戦略など、複雑な運用ロジックには対応できません。Operatorを使うことで、これらの専門知識をコードとして表現し、自動化できます。</p>
+<h2 id="開発環境のセットアップ">開発環境のセットアップ</h2>
+<p>Kubernetesオペレーターの開発には、以下のツールが必要です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Go 1.21以上のインストール</span></span>
+<span class="line"><span style="color:#B392F0">brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> go</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Kubebuilderのインストール</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -L</span><span style="color:#79B8FF"> -o</span><span style="color:#9ECBFF"> kubebuilder</span><span style="color:#9ECBFF"> https://go.kubebuilder.io/dl/latest/</span><span style="color:#E1E4E8">$(</span><span style="color:#B392F0">go</span><span style="color:#9ECBFF"> env</span><span style="color:#9ECBFF"> GOOS</span><span style="color:#E1E4E8">)</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">$(</span><span style="color:#B392F0">go</span><span style="color:#9ECBFF"> env</span><span style="color:#9ECBFF"> GOARCH</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#B392F0">chmod</span><span style="color:#9ECBFF"> +x</span><span style="color:#9ECBFF"> kubebuilder</span><span style="color:#E1E4E8"> &#x26;&#x26; </span><span style="color:#B392F0">mv</span><span style="color:#9ECBFF"> kubebuilder</span><span style="color:#9ECBFF"> /usr/local/bin/</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># kubectl、kind（ローカルKubernetesクラスタ）のインストール</span></span>
+<span class="line"><span style="color:#B392F0">brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> kubectl</span><span style="color:#9ECBFF"> kind</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ローカルクラスタの作成</span></span>
+<span class="line"><span style="color:#B392F0">kind</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> cluster</span><span style="color:#79B8FF"> --name</span><span style="color:#9ECBFF"> operator-dev</span></span></code></pre>
+<h2 id="kubebuilderプロジェクトの初期化">Kubebuilderプロジェクトの初期化</h2>
+<p>Kubebuilderは、Operator開発のためのフレームワークで、プロジェクトのスキャフォールディング、CRDの生成、コントローラーのボイラープレートコードを自動生成します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 新しいプロジェクトの作成</span></span>
+<span class="line"><span style="color:#B392F0">mkdir</span><span style="color:#9ECBFF"> webapp-operator</span><span style="color:#E1E4E8"> &#x26;&#x26; </span><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> webapp-operator</span></span>
+<span class="line"><span style="color:#B392F0">kubebuilder</span><span style="color:#9ECBFF"> init</span><span style="color:#79B8FF"> --domain</span><span style="color:#9ECBFF"> example.com</span><span style="color:#79B8FF"> --repo</span><span style="color:#9ECBFF"> github.com/myorg/webapp-operator</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># APIとコントローラーの作成</span></span>
+<span class="line"><span style="color:#B392F0">kubebuilder</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> api</span><span style="color:#79B8FF"> --group</span><span style="color:#9ECBFF"> apps</span><span style="color:#79B8FF"> --version</span><span style="color:#9ECBFF"> v1alpha1</span><span style="color:#79B8FF"> --kind</span><span style="color:#9ECBFF"> WebApp</span></span></code></pre>
+<p>このコマンドを実行すると、以下のような構造のプロジェクトが生成されます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>webapp-operator/</span></span>
+<span class="line"><span>├── api/v1alpha1/</span></span>
+<span class="line"><span>│   ├── webapp_types.go      # CRDの型定義</span></span>
+<span class="line"><span>│   └── zz_generated.deepcopy.go</span></span>
+<span class="line"><span>├── config/</span></span>
+<span class="line"><span>│   ├── crd/                 # CRDマニフェスト</span></span>
+<span class="line"><span>│   ├── rbac/                # RBAC設定</span></span>
+<span class="line"><span>│   └── manager/             # Operator deployment</span></span>
+<span class="line"><span>├── internal/controller/</span></span>
+<span class="line"><span>│   └── webapp_controller.go # コントローラーロジック</span></span>
+<span class="line"><span>└── main.go</span></span></code></pre>
+<h2 id="crdの設計">CRDの設計</h2>
+<p>まず、管理したいリソースの型を定義します。<code>api/v1alpha1/webapp_types.go</code>を編集します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> v1alpha1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    metav1 </span><span style="color:#9ECBFF">"</span><span style="color:#B392F0">k8s.io/apimachinery/pkg/apis/meta/v1</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// WebAppSpec defines the desired state of WebApp</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> WebAppSpec</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // Replicas is the number of desired pods</span></span>
+<span class="line"><span style="color:#6A737D">    // +kubebuilder:validation:Minimum=1</span></span>
+<span class="line"><span style="color:#6A737D">    // +kubebuilder:validation:Maximum=10</span></span>
+<span class="line"><span style="color:#E1E4E8">    Replicas </span><span style="color:#F97583">int32</span><span style="color:#9ECBFF"> `json:"replicas"`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Image is the container image to use</span></span>
+<span class="line"><span style="color:#6A737D">    // +kubebuilder:validation:Required</span></span>
+<span class="line"><span style="color:#E1E4E8">    Image </span><span style="color:#F97583">string</span><span style="color:#9ECBFF"> `json:"image"`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Port is the port the application listens on</span></span>
+<span class="line"><span style="color:#6A737D">    // +kubebuilder:default:=8080</span></span>
+<span class="line"><span style="color:#E1E4E8">    Port </span><span style="color:#F97583">int32</span><span style="color:#9ECBFF"> `json:"port,omitempty"`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Environment variables</span></span>
+<span class="line"><span style="color:#E1E4E8">    Env []</span><span style="color:#B392F0">EnvVar</span><span style="color:#9ECBFF"> `json:"env,omitempty"`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Resources for the pods</span></span>
+<span class="line"><span style="color:#E1E4E8">    Resources </span><span style="color:#B392F0">ResourceRequirements</span><span style="color:#9ECBFF"> `json:"resources,omitempty"`</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> EnvVar</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    Name  </span><span style="color:#F97583">string</span><span style="color:#9ECBFF"> `json:"name"`</span></span>
+<span class="line"><span style="color:#E1E4E8">    Value </span><span style="color:#F97583">string</span><span style="color:#9ECBFF"> `json:"value"`</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> ResourceRequirements</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // +kubebuilder:default:="100m"</span></span>
+<span class="line"><span style="color:#E1E4E8">    CPU </span><span style="color:#F97583">string</span><span style="color:#9ECBFF"> `json:"cpu,omitempty"`</span></span>
+<span class="line"><span style="color:#6A737D">    // +kubebuilder:default:="128Mi"</span></span>
+<span class="line"><span style="color:#E1E4E8">    Memory </span><span style="color:#F97583">string</span><span style="color:#9ECBFF"> `json:"memory,omitempty"`</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// WebAppStatus defines the observed state of WebApp</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> WebAppStatus</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // AvailableReplicas is the number of ready pods</span></span>
+<span class="line"><span style="color:#E1E4E8">    AvailableReplicas </span><span style="color:#F97583">int32</span><span style="color:#9ECBFF"> `json:"availableReplicas"`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Conditions represent the latest available observations</span></span>
+<span class="line"><span style="color:#E1E4E8">    Conditions []</span><span style="color:#B392F0">metav1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Condition</span><span style="color:#9ECBFF"> `json:"conditions,omitempty"`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // LastUpdateTime is the last time the status was updated</span></span>
+<span class="line"><span style="color:#E1E4E8">    LastUpdateTime </span><span style="color:#B392F0">metav1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Time</span><span style="color:#9ECBFF"> `json:"lastUpdateTime,omitempty"`</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// +kubebuilder:object:root=true</span></span>
+<span class="line"><span style="color:#6A737D">// +kubebuilder:subresource:status</span></span>
+<span class="line"><span style="color:#6A737D">// +kubebuilder:printcolumn:name="Replicas",type=integer,JSONPath=`.spec.replicas`</span></span>
+<span class="line"><span style="color:#6A737D">// +kubebuilder:printcolumn:name="Available",type=integer,JSONPath=`.status.availableReplicas`</span></span>
+<span class="line"><span style="color:#6A737D">// +kubebuilder:printcolumn:name="Age",type=date,JSONPath=`.metadata.creationTimestamp`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// WebApp is the Schema for the webapps API</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> WebApp</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    metav1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">TypeMeta</span><span style="color:#9ECBFF">   `json:",inline"`</span></span>
+<span class="line"><span style="color:#B392F0">    metav1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ObjectMeta</span><span style="color:#9ECBFF"> `json:"metadata,omitempty"`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    Spec   </span><span style="color:#B392F0">WebAppSpec</span><span style="color:#9ECBFF">   `json:"spec,omitempty"`</span></span>
+<span class="line"><span style="color:#E1E4E8">    Status </span><span style="color:#B392F0">WebAppStatus</span><span style="color:#9ECBFF"> `json:"status,omitempty"`</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// +kubebuilder:object:root=true</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// WebAppList contains a list of WebApp</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> WebAppList</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    metav1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">TypeMeta</span><span style="color:#9ECBFF"> `json:",inline"`</span></span>
+<span class="line"><span style="color:#B392F0">    metav1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ListMeta</span><span style="color:#9ECBFF"> `json:"metadata,omitempty"`</span></span>
+<span class="line"><span style="color:#E1E4E8">    Items           []</span><span style="color:#B392F0">WebApp</span><span style="color:#9ECBFF"> `json:"items"`</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> init</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    SchemeBuilder.</span><span style="color:#B392F0">Register</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#B392F0">WebApp</span><span style="color:#E1E4E8">{}, </span><span style="color:#F97583">&#x26;</span><span style="color:#B392F0">WebAppList</span><span style="color:#E1E4E8">{})</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>ここで使われている<code>+kubebuilder:</code>コメントは、CRDの生成時にバリデーションルールやカスタムカラムを追加するためのマーカーです。</p>
+<h2 id="コントローラーの実装">コントローラーの実装</h2>
+<p>コントローラーは、CRDの変更を監視し、実際のリソース（Deployment、Serviceなど）を作成・更新します。<code>internal/controller/webapp_controller.go</code>を実装します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> controller</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">context</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">fmt</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    appsv1 </span><span style="color:#9ECBFF">"</span><span style="color:#B392F0">k8s.io/api/apps/v1</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">    corev1 </span><span style="color:#9ECBFF">"</span><span style="color:#B392F0">k8s.io/api/core/v1</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">k8s.io/apimachinery/pkg/api/errors</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">k8s.io/apimachinery/pkg/api/resource</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">    metav1 </span><span style="color:#9ECBFF">"</span><span style="color:#B392F0">k8s.io/apimachinery/pkg/apis/meta/v1</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">k8s.io/apimachinery/pkg/runtime</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">k8s.io/apimachinery/pkg/types</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">k8s.io/apimachinery/pkg/util/intstr</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">    ctrl </span><span style="color:#9ECBFF">"</span><span style="color:#B392F0">sigs.k8s.io/controller-runtime</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">sigs.k8s.io/controller-runtime/pkg/client</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">sigs.k8s.io/controller-runtime/pkg/controller/controllerutil</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">sigs.k8s.io/controller-runtime/pkg/log</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    appsv1alpha1 </span><span style="color:#9ECBFF">"</span><span style="color:#B392F0">github.com/myorg/webapp-operator/api/v1alpha1</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// WebAppReconciler reconciles a WebApp object</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> WebAppReconciler</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    client</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Client</span></span>
+<span class="line"><span style="color:#E1E4E8">    Scheme </span><span style="color:#F97583">*</span><span style="color:#B392F0">runtime</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Scheme</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// +kubebuilder:rbac:groups=apps.example.com,resources=webapps,verbs=get;list;watch;create;update;patch;delete</span></span>
+<span class="line"><span style="color:#6A737D">// +kubebuilder:rbac:groups=apps.example.com,resources=webapps/status,verbs=get;update;patch</span></span>
+<span class="line"><span style="color:#6A737D">// +kubebuilder:rbac:groups=apps.example.com,resources=webapps/finalizers,verbs=update</span></span>
+<span class="line"><span style="color:#6A737D">// +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete</span></span>
+<span class="line"><span style="color:#6A737D">// +kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#F97583">*</span><span style="color:#B392F0">WebAppReconciler</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">Reconcile</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">req</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Request</span><span style="color:#E1E4E8">) (</span><span style="color:#B392F0">ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">error</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    log </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> log.</span><span style="color:#B392F0">FromContext</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // WebAppリソースの取得</span></span>
+<span class="line"><span style="color:#F97583">    var</span><span style="color:#E1E4E8"> webapp </span><span style="color:#B392F0">appsv1alpha1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">WebApp</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">Get</span><span style="color:#E1E4E8">(ctx, req.NamespacedName, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">webapp); err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> errors.</span><span style="color:#B392F0">IsNotFound</span><span style="color:#E1E4E8">(err) {</span></span>
+<span class="line"><span style="color:#6A737D">            // リソースが削除された場合</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">{}, </span><span style="color:#79B8FF">nil</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">        log.</span><span style="color:#B392F0">Error</span><span style="color:#E1E4E8">(err, </span><span style="color:#9ECBFF">"unable to fetch WebApp"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">{}, err</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Deploymentの調整</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">reconcileDeployment</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">webapp); err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">{}, err</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Serviceの調整</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">reconcileService</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">webapp); err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">{}, err</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ステータスの更新</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">updateStatus</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">webapp); err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">{}, err</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">{}, </span><span style="color:#79B8FF">nil</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#F97583">*</span><span style="color:#B392F0">WebAppReconciler</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">reconcileDeployment</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">webapp</span><span style="color:#F97583"> *</span><span style="color:#B392F0">appsv1alpha1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">WebApp</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    log </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> log.</span><span style="color:#B392F0">FromContext</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    deployment </span><span style="color:#F97583">:=</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">appsv1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Deployment</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">        ObjectMeta: </span><span style="color:#B392F0">metav1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ObjectMeta</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">            Name:      webapp.Name,</span></span>
+<span class="line"><span style="color:#E1E4E8">            Namespace: webapp.Namespace,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // CreateOrUpdateを使って、Deploymentを作成または更新</span></span>
+<span class="line"><span style="color:#E1E4E8">    op, err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> controllerutil.</span><span style="color:#B392F0">CreateOrUpdate</span><span style="color:#E1E4E8">(ctx, r.Client, deployment, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // Deploymentのspecを設定</span></span>
+<span class="line"><span style="color:#E1E4E8">        deployment.Spec.Replicas </span><span style="color:#F97583">=</span><span style="color:#F97583"> &#x26;</span><span style="color:#E1E4E8">webapp.Spec.Replicas</span></span>
+<span class="line"><span style="color:#E1E4E8">        deployment.Spec.Selector </span><span style="color:#F97583">=</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">metav1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">LabelSelector</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">            MatchLabels: </span><span style="color:#F97583">map</span><span style="color:#E1E4E8">[</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">]</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">                "app"</span><span style="color:#E1E4E8">:     webapp.Name,</span></span>
+<span class="line"><span style="color:#9ECBFF">                "managed"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"webapp-operator"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // Pod templateの定義</span></span>
+<span class="line"><span style="color:#E1E4E8">        deployment.Spec.Template </span><span style="color:#F97583">=</span><span style="color:#B392F0"> corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">PodTemplateSpec</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">            ObjectMeta: </span><span style="color:#B392F0">metav1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ObjectMeta</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">                Labels: </span><span style="color:#F97583">map</span><span style="color:#E1E4E8">[</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">]</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">                    "app"</span><span style="color:#E1E4E8">:     webapp.Name,</span></span>
+<span class="line"><span style="color:#9ECBFF">                    "managed"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"webapp-operator"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#E1E4E8">            Spec: </span><span style="color:#B392F0">corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">PodSpec</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">                Containers: []</span><span style="color:#B392F0">corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Container</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">                    {</span></span>
+<span class="line"><span style="color:#E1E4E8">                        Name:  webapp.Name,</span></span>
+<span class="line"><span style="color:#E1E4E8">                        Image: webapp.Spec.Image,</span></span>
+<span class="line"><span style="color:#E1E4E8">                        Ports: []</span><span style="color:#B392F0">corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ContainerPort</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">                            {</span></span>
+<span class="line"><span style="color:#E1E4E8">                                ContainerPort: webapp.Spec.Port,</span></span>
+<span class="line"><span style="color:#E1E4E8">                                Protocol:      corev1.ProtocolTCP,</span></span>
+<span class="line"><span style="color:#E1E4E8">                            },</span></span>
+<span class="line"><span style="color:#E1E4E8">                        },</span></span>
+<span class="line"><span style="color:#E1E4E8">                        Env: </span><span style="color:#B392F0">convertEnvVars</span><span style="color:#E1E4E8">(webapp.Spec.Env),</span></span>
+<span class="line"><span style="color:#E1E4E8">                        Resources: </span><span style="color:#B392F0">corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ResourceRequirements</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">                            Requests: </span><span style="color:#B392F0">corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ResourceList</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">                                corev1.ResourceCPU:    resource.</span><span style="color:#B392F0">MustParse</span><span style="color:#E1E4E8">(webapp.Spec.Resources.CPU),</span></span>
+<span class="line"><span style="color:#E1E4E8">                                corev1.ResourceMemory: resource.</span><span style="color:#B392F0">MustParse</span><span style="color:#E1E4E8">(webapp.Spec.Resources.Memory),</span></span>
+<span class="line"><span style="color:#E1E4E8">                            },</span></span>
+<span class="line"><span style="color:#E1E4E8">                            Limits: </span><span style="color:#B392F0">corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ResourceList</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">                                corev1.ResourceCPU:    resource.</span><span style="color:#B392F0">MustParse</span><span style="color:#E1E4E8">(webapp.Spec.Resources.CPU),</span></span>
+<span class="line"><span style="color:#E1E4E8">                                corev1.ResourceMemory: resource.</span><span style="color:#B392F0">MustParse</span><span style="color:#E1E4E8">(webapp.Spec.Resources.Memory),</span></span>
+<span class="line"><span style="color:#E1E4E8">                            },</span></span>
+<span class="line"><span style="color:#E1E4E8">                        },</span></span>
+<span class="line"><span style="color:#E1E4E8">                    },</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // Owner referenceを設定（WebAppが削除されたら関連リソースも削除）</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> controllerutil.</span><span style="color:#B392F0">SetControllerReference</span><span style="color:#E1E4E8">(webapp, deployment, r.Scheme)</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> err</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">    log.</span><span style="color:#B392F0">Info</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Deployment reconciled"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"operation"</span><span style="color:#E1E4E8">, op)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> nil</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#F97583">*</span><span style="color:#B392F0">WebAppReconciler</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">reconcileService</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">webapp</span><span style="color:#F97583"> *</span><span style="color:#B392F0">appsv1alpha1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">WebApp</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    log </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> log.</span><span style="color:#B392F0">FromContext</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    service </span><span style="color:#F97583">:=</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Service</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">        ObjectMeta: </span><span style="color:#B392F0">metav1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ObjectMeta</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">            Name:      webapp.Name,</span></span>
+<span class="line"><span style="color:#E1E4E8">            Namespace: webapp.Namespace,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    op, err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> controllerutil.</span><span style="color:#B392F0">CreateOrUpdate</span><span style="color:#E1E4E8">(ctx, r.Client, service, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        service.Spec.Selector </span><span style="color:#F97583">=</span><span style="color:#F97583"> map</span><span style="color:#E1E4E8">[</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">]</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">            "app"</span><span style="color:#E1E4E8">: webapp.Name,</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">        service.Spec.Type </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> corev1.ServiceTypeClusterIP</span></span>
+<span class="line"><span style="color:#E1E4E8">        service.Spec.Ports </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ServicePort</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">            {</span></span>
+<span class="line"><span style="color:#E1E4E8">                Port:       </span><span style="color:#79B8FF">80</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                TargetPort: intstr.</span><span style="color:#B392F0">FromInt</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">(webapp.Spec.Port)),</span></span>
+<span class="line"><span style="color:#E1E4E8">                Protocol:   corev1.ProtocolTCP,</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> controllerutil.</span><span style="color:#B392F0">SetControllerReference</span><span style="color:#E1E4E8">(webapp, service, r.Scheme)</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> err</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">    log.</span><span style="color:#B392F0">Info</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Service reconciled"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"operation"</span><span style="color:#E1E4E8">, op)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> nil</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#F97583">*</span><span style="color:#B392F0">WebAppReconciler</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">updateStatus</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">webapp</span><span style="color:#F97583"> *</span><span style="color:#B392F0">appsv1alpha1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">WebApp</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // Deploymentの状態を取得</span></span>
+<span class="line"><span style="color:#F97583">    var</span><span style="color:#E1E4E8"> deployment </span><span style="color:#B392F0">appsv1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Deployment</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">Get</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#B392F0">types</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">NamespacedName</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">        Name:      webapp.Name,</span></span>
+<span class="line"><span style="color:#E1E4E8">        Namespace: webapp.Namespace,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">deployment); err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> err</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ステータスを更新</span></span>
+<span class="line"><span style="color:#E1E4E8">    webapp.Status.AvailableReplicas </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> deployment.Status.AvailableReplicas</span></span>
+<span class="line"><span style="color:#E1E4E8">    webapp.Status.LastUpdateTime </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> metav1.</span><span style="color:#B392F0">Now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 条件の設定</span></span>
+<span class="line"><span style="color:#E1E4E8">    condition </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> metav1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Condition</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">        Type:               </span><span style="color:#9ECBFF">"Ready"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        Status:             metav1.ConditionTrue,</span></span>
+<span class="line"><span style="color:#E1E4E8">        Reason:             </span><span style="color:#9ECBFF">"DeploymentReady"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        Message:            fmt.</span><span style="color:#B392F0">Sprintf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">/</span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF"> replicas available"</span><span style="color:#E1E4E8">, deployment.Status.AvailableReplicas, </span><span style="color:#F97583">*</span><span style="color:#E1E4E8">deployment.Spec.Replicas),</span></span>
+<span class="line"><span style="color:#E1E4E8">        LastTransitionTime: metav1.</span><span style="color:#B392F0">Now</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> deployment.Status.AvailableReplicas </span><span style="color:#F97583">&#x3C;</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8">deployment.Spec.Replicas {</span></span>
+<span class="line"><span style="color:#E1E4E8">        condition.Status </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> metav1.ConditionFalse</span></span>
+<span class="line"><span style="color:#E1E4E8">        condition.Reason </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "DeploymentNotReady"</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 条件の更新（既存の条件を置き換え）</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> i, c </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> webapp.Status.Conditions {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> c.Type </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "Ready"</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">            webapp.Status.Conditions[i] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> condition</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">Status</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">Update</span><span style="color:#E1E4E8">(ctx, webapp)</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">    webapp.Status.Conditions </span><span style="color:#F97583">=</span><span style="color:#B392F0"> append</span><span style="color:#E1E4E8">(webapp.Status.Conditions, condition)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">Status</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">Update</span><span style="color:#E1E4E8">(ctx, webapp)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> convertEnvVars</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">envVars</span><span style="color:#E1E4E8"> []</span><span style="color:#B392F0">appsv1alpha1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">EnvVar</span><span style="color:#E1E4E8">) []</span><span style="color:#B392F0">corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">EnvVar</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">:=</span><span style="color:#B392F0"> make</span><span style="color:#E1E4E8">([]</span><span style="color:#B392F0">corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">EnvVar</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">len</span><span style="color:#E1E4E8">(envVars))</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> i, env </span><span style="color:#F97583">:=</span><span style="color:#F97583"> range</span><span style="color:#E1E4E8"> envVars {</span></span>
+<span class="line"><span style="color:#E1E4E8">        result[i] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">EnvVar</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">            Name:  env.Name,</span></span>
+<span class="line"><span style="color:#E1E4E8">            Value: env.Value,</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// SetupWithManager sets up the controller with the Manager.</span></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#F97583">*</span><span style="color:#B392F0">WebAppReconciler</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">SetupWithManager</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">mgr</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Manager</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> ctrl.</span><span style="color:#B392F0">NewControllerManagedBy</span><span style="color:#E1E4E8">(mgr).</span></span>
+<span class="line"><span style="color:#B392F0">        For</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#B392F0">appsv1alpha1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">WebApp</span><span style="color:#E1E4E8">{}).</span></span>
+<span class="line"><span style="color:#B392F0">        Owns</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#B392F0">appsv1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Deployment</span><span style="color:#E1E4E8">{}).</span></span>
+<span class="line"><span style="color:#B392F0">        Owns</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#B392F0">corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Service</span><span style="color:#E1E4E8">{}).</span></span>
+<span class="line"><span style="color:#B392F0">        Complete</span><span style="color:#E1E4E8">(r)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="crdとコントローラーのデプロイ">CRDとコントローラーのデプロイ</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># CRDマニフェストの生成</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> manifests</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># CRDのインストール</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> install</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ローカルでコントローラーを実行（開発用）</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> run</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># または、クラスタ内にデプロイ</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> docker-build</span><span style="color:#9ECBFF"> docker-push</span><span style="color:#9ECBFF"> IMG=myregistry/webapp-operator:latest</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> deploy</span><span style="color:#9ECBFF"> IMG=myregistry/webapp-operator:latest</span></span></code></pre>
+<h2 id="カスタムリソースの作成">カスタムリソースの作成</h2>
+<p>CRDをインストールしたら、実際にWebAppリソースを作成してテストします。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># config/samples/apps_v1alpha1_webapp.yaml</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">apps.example.com/v1alpha1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">WebApp</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">sample-webapp</span></span>
+<span class="line"><span style="color:#85E89D">spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  replicas</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span></span>
+<span class="line"><span style="color:#85E89D">  image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">nginx:latest</span></span>
+<span class="line"><span style="color:#85E89D">  port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span></span>
+<span class="line"><span style="color:#85E89D">  env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ENV</span></span>
+<span class="line"><span style="color:#85E89D">      value</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">production</span></span>
+<span class="line"><span style="color:#85E89D">  resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"200m"</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"256Mi"</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># サンプルリソースの適用</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> apply</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> config/samples/apps_v1alpha1_webapp.yaml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># リソースの確認</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> webapp</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> describe</span><span style="color:#9ECBFF"> webapp</span><span style="color:#9ECBFF"> sample-webapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 作成されたリソースの確認</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> deployments</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> services</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> pods</span></span></code></pre>
+<h2 id="高度な機能の実装">高度な機能の実装</h2>
+<h3 id="1-ファイナライザーによるクリーンアップ">1. ファイナライザーによるクリーンアップ</h3>
+<p>リソース削除時に外部リソース（外部ストレージ、DNS設定など）をクリーンアップする場合、ファイナライザーを使用します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> webappFinalizer</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "webapp.example.com/finalizer"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#F97583">*</span><span style="color:#B392F0">WebAppReconciler</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">Reconcile</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">req</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Request</span><span style="color:#E1E4E8">) (</span><span style="color:#B392F0">ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">error</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    log </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> log.</span><span style="color:#B392F0">FromContext</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    var</span><span style="color:#E1E4E8"> webapp </span><span style="color:#B392F0">appsv1alpha1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">WebApp</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">Get</span><span style="color:#E1E4E8">(ctx, req.NamespacedName, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">webapp); err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">{}, client.</span><span style="color:#B392F0">IgnoreNotFound</span><span style="color:#E1E4E8">(err)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 削除処理</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">webapp.ObjectMeta.DeletionTimestamp.</span><span style="color:#B392F0">IsZero</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> controllerutil.</span><span style="color:#B392F0">ContainsFinalizer</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">webapp, webappFinalizer) {</span></span>
+<span class="line"><span style="color:#6A737D">            // クリーンアップ処理</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">cleanupExternalResources</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">webapp); err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">                return</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">{}, err</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // ファイナライザーを削除</span></span>
+<span class="line"><span style="color:#E1E4E8">            controllerutil.</span><span style="color:#B392F0">RemoveFinalizer</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">webapp, webappFinalizer)</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">Update</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">webapp); err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">                return</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">{}, err</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">{}, </span><span style="color:#79B8FF">nil</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ファイナライザーの追加</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">controllerutil.</span><span style="color:#B392F0">ContainsFinalizer</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">webapp, webappFinalizer) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        controllerutil.</span><span style="color:#B392F0">AddFinalizer</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">webapp, webappFinalizer)</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">Update</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">webapp); err </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> nil</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#B392F0"> ctrl</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">{}, err</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 通常の調整処理</span></span>
+<span class="line"><span style="color:#6A737D">    // ...</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#F97583">*</span><span style="color:#B392F0">WebAppReconciler</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">cleanupExternalResources</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">ctx</span><span style="color:#B392F0"> context</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">webapp</span><span style="color:#F97583"> *</span><span style="color:#B392F0">appsv1alpha1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">WebApp</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    log </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> log.</span><span style="color:#B392F0">FromContext</span><span style="color:#E1E4E8">(ctx)</span></span>
+<span class="line"><span style="color:#E1E4E8">    log.</span><span style="color:#B392F0">Info</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Cleaning up external resources"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"webapp"</span><span style="color:#E1E4E8">, webapp.Name)</span></span>
+<span class="line"><span style="color:#6A737D">    // 外部リソースのクリーンアップロジック</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> nil</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-webhookによるバリデーション">2. Webhookによるバリデーション</h3>
+<p>CRDの作成・更新時にカスタムバリデーションを実行するWebhookを追加できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Webhookの作成</span></span>
+<span class="line"><span style="color:#B392F0">kubebuilder</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> webhook</span><span style="color:#79B8FF"> --group</span><span style="color:#9ECBFF"> apps</span><span style="color:#79B8FF"> --version</span><span style="color:#9ECBFF"> v1alpha1</span><span style="color:#79B8FF"> --kind</span><span style="color:#9ECBFF"> WebApp</span><span style="color:#79B8FF"> --defaulting</span><span style="color:#79B8FF"> --programmatic-validation</span></span></code></pre>
+<p><code>api/v1alpha1/webapp_webhook.go</code>が生成されるので、バリデーションロジックを実装します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#F97583">*</span><span style="color:#B392F0">WebApp</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">ValidateCreate</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    log.</span><span style="color:#B392F0">Info</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"validate create"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"name"</span><span style="color:#E1E4E8">, r.Name)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> r.Spec.Replicas </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> fmt.</span><span style="color:#B392F0">Errorf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"replicas cannot exceed 10"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">strings.</span><span style="color:#B392F0">Contains</span><span style="color:#E1E4E8">(r.Spec.Image, </span><span style="color:#9ECBFF">":"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> fmt.</span><span style="color:#B392F0">Errorf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"image must include a tag"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> nil</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">r </span><span style="color:#F97583">*</span><span style="color:#B392F0">WebApp</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">ValidateUpdate</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">old</span><span style="color:#B392F0"> runtime</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Object</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    log.</span><span style="color:#B392F0">Info</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"validate update"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"name"</span><span style="color:#E1E4E8">, r.Name)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    oldWebApp </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> old.(</span><span style="color:#F97583">*</span><span style="color:#B392F0">WebApp</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // イメージの変更を禁止（例）</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> r.Spec.Image </span><span style="color:#F97583">!=</span><span style="color:#E1E4E8"> oldWebApp.Spec.Image {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> fmt.</span><span style="color:#B392F0">Errorf</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"image cannot be changed after creation"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">ValidateCreate</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="テストの実装">テストの実装</h2>
+<p>Kubebuilderプロジェクトには、envtestを使った統合テストのフレームワークが含まれています。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// internal/controller/webapp_controller_test.go</span></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> controller</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">context</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">time</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    . </span><span style="color:#9ECBFF">"</span><span style="color:#B392F0">github.com/onsi/ginkgo/v2</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">    . </span><span style="color:#9ECBFF">"</span><span style="color:#B392F0">github.com/onsi/gomega</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">    appsv1 </span><span style="color:#9ECBFF">"</span><span style="color:#B392F0">k8s.io/api/apps/v1</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">    corev1 </span><span style="color:#9ECBFF">"</span><span style="color:#B392F0">k8s.io/api/core/v1</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">    metav1 </span><span style="color:#9ECBFF">"</span><span style="color:#B392F0">k8s.io/apimachinery/pkg/apis/meta/v1</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">k8s.io/apimachinery/pkg/types</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    appsv1alpha1 </span><span style="color:#9ECBFF">"</span><span style="color:#B392F0">github.com/myorg/webapp-operator/api/v1alpha1</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> _ </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Describe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"WebApp Controller"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#B392F0">    Context</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"When creating a WebApp"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#B392F0">        It</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Should create Deployment and Service"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">            ctx </span><span style="color:#F97583">:=</span><span style="color:#E1E4E8"> context.</span><span style="color:#B392F0">Background</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">            webapp </span><span style="color:#F97583">:=</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">appsv1alpha1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">WebApp</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">                ObjectMeta: </span><span style="color:#B392F0">metav1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ObjectMeta</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">                    Name:      </span><span style="color:#9ECBFF">"test-webapp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                    Namespace: </span><span style="color:#9ECBFF">"default"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#E1E4E8">                Spec: </span><span style="color:#B392F0">appsv1alpha1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">WebAppSpec</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">                    Replicas: </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                    Image:    </span><span style="color:#9ECBFF">"nginx:latest"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                    Port:     </span><span style="color:#79B8FF">8080</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">            Expect</span><span style="color:#E1E4E8">(k8sClient.</span><span style="color:#B392F0">Create</span><span style="color:#E1E4E8">(ctx, webapp)).</span><span style="color:#B392F0">Should</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Succeed</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // Deploymentが作成されることを確認</span></span>
+<span class="line"><span style="color:#E1E4E8">            deployment </span><span style="color:#F97583">:=</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">appsv1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Deployment</span><span style="color:#E1E4E8">{}</span></span>
+<span class="line"><span style="color:#B392F0">            Eventually</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">func</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">                return</span><span style="color:#E1E4E8"> k8sClient.</span><span style="color:#B392F0">Get</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#B392F0">types</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">NamespacedName</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">                    Name:      </span><span style="color:#9ECBFF">"test-webapp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                    Namespace: </span><span style="color:#9ECBFF">"default"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                }, deployment)</span></span>
+<span class="line"><span style="color:#E1E4E8">            }, time.Second</span><span style="color:#F97583">*</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, time.Second).</span><span style="color:#B392F0">Should</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Succeed</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">            Expect</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">deployment.Spec.Replicas).</span><span style="color:#B392F0">Should</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Equal</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int32</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // Serviceが作成されることを確認</span></span>
+<span class="line"><span style="color:#E1E4E8">            service </span><span style="color:#F97583">:=</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">corev1</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Service</span><span style="color:#E1E4E8">{}</span></span>
+<span class="line"><span style="color:#B392F0">            Eventually</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">func</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">                return</span><span style="color:#E1E4E8"> k8sClient.</span><span style="color:#B392F0">Get</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#B392F0">types</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">NamespacedName</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">                    Name:      </span><span style="color:#9ECBFF">"test-webapp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                    Namespace: </span><span style="color:#9ECBFF">"default"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                }, service)</span></span>
+<span class="line"><span style="color:#E1E4E8">            }, time.Second</span><span style="color:#F97583">*</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, time.Second).</span><span style="color:#B392F0">Should</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Succeed</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">            Expect</span><span style="color:#E1E4E8">(service.Spec.Ports[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].TargetPort.IntVal).</span><span style="color:#B392F0">Should</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Equal</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int32</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">8080</span><span style="color:#E1E4E8">)))</span></span>
+<span class="line"><span style="color:#E1E4E8">        })</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<p>テストの実行:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> test</span></span></code></pre>
+<h2 id="本番運用のベストプラクティス">本番運用のベストプラクティス</h2>
+<h3 id="1-メトリクスとモニタリング">1. メトリクスとモニタリング</h3>
+<p>Controller Runtimeは、Prometheusメトリクスをデフォルトでエクスポートします。カスタムメトリクスを追加することもできます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">github.com/prometheus/client_golang/prometheus</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#9ECBFF">    "</span><span style="color:#B392F0">sigs.k8s.io/controller-runtime/pkg/metrics</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">var</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    webappReconcileTotal </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> prometheus.</span><span style="color:#B392F0">NewCounterVec</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#B392F0">        prometheus</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">CounterOpts</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">            Name: </span><span style="color:#9ECBFF">"webapp_reconcile_total"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            Help: </span><span style="color:#9ECBFF">"Total number of reconciliations"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        []</span><span style="color:#F97583">string</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">"webapp"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"result"</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">func</span><span style="color:#B392F0"> init</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">    metrics.Registry.</span><span style="color:#B392F0">MustRegister</span><span style="color:#E1E4E8">(webappReconcileTotal)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Reconcile内で使用</span></span>
+<span class="line"><span style="color:#E1E4E8">webappReconcileTotal.</span><span style="color:#B392F0">WithLabelValues</span><span style="color:#E1E4E8">(webapp.Name, </span><span style="color:#9ECBFF">"success"</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">Inc</span><span style="color:#E1E4E8">()</span></span></code></pre>
+<h3 id="2-ロギング">2. ロギング</h3>
+<p>構造化ロギングを使用し、トレーサビリティを確保します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#E1E4E8">log.</span><span style="color:#B392F0">Info</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Reconciling WebApp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "namespace"</span><span style="color:#E1E4E8">, webapp.Namespace,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "name"</span><span style="color:#E1E4E8">, webapp.Name,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "replicas"</span><span style="color:#E1E4E8">, webapp.Spec.Replicas,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<h3 id="3-リソースリミット">3. リソースリミット</h3>
+<p>Operatorの Deployment に適切なリソースリミットを設定します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># config/manager/manager.yaml</span></span>
+<span class="line"><span style="color:#85E89D">resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  limits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">500m</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">256Mi</span></span>
+<span class="line"><span style="color:#85E89D">  requests</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">100m</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">128Mi</span></span></code></pre>
+<h3 id="4-rbac最小権限">4. RBAC最小権限</h3>
+<p>必要最小限の権限のみを付与します。Kubebuilderのマーカーコメントを正確に設定してください。</p>
+<h3 id="5-高可用性">5. 高可用性</h3>
+<p>本番環境では、Operatorを複数レプリカで実行し、Leader Electionを有効にします（Controller Runtimeはデフォルトで対応）。</p>
+<h2 id="まとめ">まとめ</h2>
+<p>Kubernetes Operatorは、複雑なアプリケーションの運用を自動化する強力なパターンです。Kubebuilderを使うことで、CRDの定義からコントローラーの実装、デプロイまでを効率的に行えます。</p>
+<p>本記事で解説した内容:</p>
+<ul>
+<li>Operatorパターンの基礎概念</li>
+<li>Kubebuilderを使ったプロジェクトのセットアップ</li>
+<li>CRDの設計とコントローラーの実装</li>
+<li>高度な機能（ファイナライザー、Webhook）</li>
+<li>テストと本番運用のベストプラクティス</li>
+</ul>
+<p>Operatorの開発を通じて、Kubernetesの内部動作を深く理解し、より高度なクラウドネイティブアプリケーションを構築できるようになります。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

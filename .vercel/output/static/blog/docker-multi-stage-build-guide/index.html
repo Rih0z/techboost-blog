@@ -1,0 +1,1020 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/docker-multi-stage-build-guide/"><!-- Primary Meta Tags --><title>Docker マルチステージビルド完全ガイド — イメージサイズを90%削減する最適化テクニック</title><meta name="title" content="Docker マルチステージビルド完全ガイド — イメージサイズを90%削減する最適化テクニック"><meta name="description" content="Dockerマルチステージビルドでイメージを最小化。Node.js/Go/Python/Java対応。BuildKit活用・キャッシュ最適化・セキュリティ強化まで実践解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/docker-multi-stage-build-guide/"><meta property="og:title" content="Docker マルチステージビルド完全ガイド — イメージサイズを90%削減する最適化テクニック"><meta property="og:description" content="Dockerマルチステージビルドでイメージを最小化。Node.js/Go/Python/Java対応。BuildKit活用・キャッシュ最適化・セキュリティ強化まで実践解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/docker-multi-stage-build-guide/"><meta name="twitter:title" content="Docker マルチステージビルド完全ガイド — イメージサイズを90%削減する最適化テクニック"><meta name="twitter:description" content="Dockerマルチステージビルドでイメージを最小化。Node.js/Go/Python/Java対応。BuildKit活用・キャッシュ最適化・セキュリティ強化まで実践解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/docker-multi-stage-build-guide/"},"headline":"Docker マルチステージビルド完全ガイド — イメージサイズを90%削減する最適化テクニック","description":"Dockerマルチステージビルドでイメージを最小化。Node.js/Go/Python/Java対応。BuildKit活用・キャッシュ最適化・セキュリティ強化まで実践解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。","datePublished":"2026-02-21T00:00:00.000Z","dateModified":"2026-02-21T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Docker, DevOps, Container, CICD, Optimization"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Docker マルチステージビルド完全ガイド — イメージサイズを90%削減する最適化テクニック"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-21T00:00:00.000Z"> Feb 20, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Docker マルチステージビルド完全ガイド — イメージサイズを90%削減する最適化テクニック</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Docker" class="article-tag" data-astro-cid-bvzihdzo>
+#Docker </a><a href="/blog/tag/DevOps" class="article-tag" data-astro-cid-bvzihdzo>
+#DevOps </a><a href="/blog/tag/Container" class="article-tag" data-astro-cid-bvzihdzo>
+#Container </a><a href="/blog/tag/CICD" class="article-tag" data-astro-cid-bvzihdzo>
+#CICD </a><a href="/blog/tag/Optimization" class="article-tag" data-astro-cid-bvzihdzo>
+#Optimization </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>本番環境にデプロイされているDockerイメージのサイズを確認したことはあるだろうか。何も考えずに作ったNode.jsイメージは1GB超え、Pythonイメージが800MB……そんな状況は珍しくない。</p>
+<p>Dockerマルチステージビルドを使えば、同じアプリケーションのイメージを<strong>50MB以下</strong>まで削減することも十分可能だ。CI/CDパイプラインの高速化、本番デプロイの信頼性向上、セキュリティリスクの低減——マルチステージビルドはこれらすべてを一度に実現する現代コンテナ開発の必須技術だ。</p>
+<p>本記事では、基本概念の説明から始め、Node.js・Go・Python・Javaの実践的なDockerfileを通じて、イメージ最適化の全技術を網羅する。</p>
+<hr>
+<h2 id="1-シングルステージビルドの問題点">1. シングルステージビルドの問題点</h2>
+<h3 id="なぜイメージが肥大化するのか">なぜイメージが肥大化するのか</h3>
+<p>最初にシングルステージビルドの典型的なアンチパターンを見てみよう。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># ❌ アンチパターン：シングルステージビルド</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 依存関係のインストール</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ソースコードのコピーとビルド</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 3000</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"dist/index.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<p>このDockerfileでビルドすると何が起こるか。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>$ docker images</span></span>
+<span class="line"><span>REPOSITORY   TAG     IMAGE ID       SIZE</span></span>
+<span class="line"><span>my-node-app  latest  a1b2c3d4e5f6   1.23 GB</span></span></code></pre>
+<p><strong>1.23GBのイメージの内訳:</strong></p>
+<ul>
+<li>node:20ベースイメージ: ~1.1GB（Debian Linux + Node.js + npm + 全開発ツール）</li>
+<li>node_modules（devDependencies含む）: ~150MB</li>
+<li>ソースコード・テストファイル: ~数MB</li>
+<li>ビルド成果物: ~10MB</li>
+</ul>
+<p>本番環境で実際に必要なのはビルド成果物の10MBだけなのに、1.23GBを丸ごと本番サーバーに持ち込んでいる。</p>
+<h3 id="セキュリティリスク">セキュリティリスク</h3>
+<p>サイズだけが問題ではない。開発ツールが含まれたイメージには重大なセキュリティリスクが潜んでいる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>$ docker run --rm my-node-app npm --version</span></span>
+<span class="line"><span>9.8.1  # ← 攻撃者がnpmを悪用できる</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>$ docker run --rm my-node-app sh  # ← シェルが使える</span></span>
+<span class="line"><span># curl, wget, git ... 攻撃ツールとして利用される</span></span></code></pre>
+<p><strong>シングルステージビルドの問題点まとめ:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>問題</th><th>影響</th></tr></thead><tbody><tr><td>イメージサイズ肥大</td><td>レジストリストレージコスト増、デプロイ時間増加</td></tr><tr><td>開発ツール混入</td><td>CVEの表面積拡大、攻撃経路の増加</td></tr><tr><td>ビルドキャッシュ非効率</td><td>CI/CDパイプラインの低速化</td></tr><tr><td>devDependencies混入</td><td>セキュリティスキャンでの過剰検出</td></tr></tbody></table>
+<hr>
+<h2 id="2-マルチステージビルドの基本概念">2. マルチステージビルドの基本概念</h2>
+<h3 id="仕組みと原理">仕組みと原理</h3>
+<p>マルチステージビルドは、一つのDockerfileの中に複数の <code>FROM</code> 命令を記述することで実現する。各ステージは独立した一時的なイメージとして扱われ、前のステージで作られたファイルを <strong><code>COPY --from=&#x3C;stage></code></strong> で選択的に取り込む。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌──────────────────────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│  Stage 1: builder                                             │</span></span>
+<span class="line"><span>│  ┌─────────────────┐                                         │</span></span>
+<span class="line"><span>│  │  node:20        │ ← 開発ツール全部入り                     │</span></span>
+<span class="line"><span>│  │  + devDeps      │                                         │</span></span>
+<span class="line"><span>│  │  + ソースコード  │  RUN npm run build                       │</span></span>
+<span class="line"><span>│  │  + ビルド成果物 ←────────────────────────────┐            │</span></span>
+<span class="line"><span>│  └─────────────────┘                           │            │</span></span>
+<span class="line"><span>│                                                │ COPY --from │</span></span>
+<span class="line"><span>│  Stage 2: runner                               │            │</span></span>
+<span class="line"><span>│  ┌─────────────────┐                          │            │</span></span>
+<span class="line"><span>│  │  node:20-alpine │ ← 軽量ベースイメージ       │            │</span></span>
+<span class="line"><span>│  │  + 本番deps     │                           │            │</span></span>
+<span class="line"><span>│  │  + ビルド成果物 ←────────────────────────────┘            │</span></span>
+<span class="line"><span>│  └─────────────────┘                                         │</span></span>
+<span class="line"><span>│       ↑                                                      │</span></span>
+<span class="line"><span>│       最終イメージ（これだけが docker push される）             │</span></span>
+<span class="line"><span>└──────────────────────────────────────────────────────────────┘</span></span></code></pre>
+<p><strong>最小限のマルチステージビルド:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># Stage 1: ビルドステージ（一時的、最終イメージに含まれない）</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20 </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Stage 2: 実行ステージ（これが最終イメージになる）</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> runner</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/dist ./dist</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/node_modules ./node_modules</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"dist/index.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>$ docker images</span></span>
+<span class="line"><span>REPOSITORY   TAG     IMAGE ID       SIZE</span></span>
+<span class="line"><span>my-node-app  latest  b2c3d4e5f6a7   185 MB  # ← 1.23GB → 185MB（85%削減）</span></span></code></pre>
+<hr>
+<h2 id="3-nodejsnextjs本番向けマルチステージdockerfile">3. Node.js（Next.js）本番向けマルチステージDockerfile</h2>
+<p>Next.jsアプリケーションは特に最適化の恩恵が大きい。Next.jsの <code>output: 'standalone'</code> 設定と組み合わせることで劇的なサイズ削減が実現する。</p>
+<h3 id="nextconfigts-の設定">next.config.ts の設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// next.config.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { NextConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'next'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nextConfig</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NextConfig</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  output: </span><span style="color:#9ECBFF">'standalone'</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D">// ← これが重要</span></span>
+<span class="line"><span style="color:#6A737D">  // standaloneモードでは必要な依存関係だけが .next/standalone/ にコピーされる</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> nextConfig;</span></span></code></pre>
+<h3 id="最適化されたnextjs-dockerfile">最適化されたNext.js Dockerfile</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># Stage 1: 依存関係インストール</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> deps</span></span>
+<span class="line"><span style="color:#6A737D"># libc6-compatはAlpineでのネイティブモジュール用</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> apk add --no-cache libc6-compat</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># パッケージファイルのみコピー（ソースコード変更時のキャッシュ効率化）</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \</span></span>
+<span class="line"><span style="color:#E1E4E8">  elif [ -f package-lock.json ]; then npm ci; \</span></span>
+<span class="line"><span style="color:#E1E4E8">  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm &#x26;&#x26; pnpm i --frozen-lockfile; \</span></span>
+<span class="line"><span style="color:#E1E4E8">  else echo </span><span style="color:#9ECBFF">"Lockfile not found."</span><span style="color:#E1E4E8"> &#x26;&#x26; exit 1; \</span></span>
+<span class="line"><span style="color:#E1E4E8">  fi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># Stage 2: ビルド</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=deps /app/node_modules ./node_modules</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ビルド時環境変数（公開情報のみ）</span></span>
+<span class="line"><span style="color:#F97583">ARG</span><span style="color:#E1E4E8"> NEXT_PUBLIC_API_URL</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> NEXT_TELEMETRY_DISABLED=1</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># Stage 3: 本番ランナー（最終イメージ）</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> runner</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> NODE_ENV=production</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> NEXT_TELEMETRY_DISABLED=1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># セキュリティ：非rootユーザーの作成</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> addgroup --system --gid 1001 nodejs &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    adduser --system --uid 1001 nextjs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 静的アセットのコピー</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/public ./public</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># standaloneビルド成果物のコピー（パーミッション設定付き）</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder --chown=nextjs:nodejs /app/.next/standalone ./</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> nextjs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 3000</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> PORT=3000</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> HOSTNAME=</span><span style="color:#9ECBFF">"0.0.0.0"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"server.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<p><strong>サイズ比較:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>シングルステージ（node:20）:       1,234 MB</span></span>
+<span class="line"><span>マルチステージ（node:20-alpine）:    185 MB  ← 85%削減</span></span>
+<span class="line"><span>standalone + alpine:                 ~85 MB  ← 93%削減</span></span></code></pre>
+<hr>
+<h2 id="4-go言語--究極の最小イメージ">4. Go言語 — 究極の最小イメージ</h2>
+<p>Goは静的バイナリを生成できるため、マルチステージビルドとの相性が最高だ。<code>scratch</code>（空イメージ）または<code>distroless</code>と組み合わせることで、数MBのイメージが実現できる。</p>
+<h3 id="scratch-を使った最小イメージ">scratch を使った最小イメージ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># Stage 1: ビルド</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> golang:1.23-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Go モジュールキャッシュの最大活用</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> go.mod go.sum ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> go mod download &#x26;&#x26; go mod verify</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 静的バイナリのビルド</span></span>
+<span class="line"><span style="color:#6A737D"># CGO_ENABLED=0: CGOを無効化して完全静的リンク</span></span>
+<span class="line"><span style="color:#6A737D"># -ldflags="-w -s": デバッグ情報とシンボルテーブルを削除</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \</span></span>
+<span class="line"><span style="color:#E1E4E8">    go build \</span></span>
+<span class="line"><span style="color:#E1E4E8">    -ldflags=</span><span style="color:#9ECBFF">"-w -s -extldflags '-static'"</span><span style="color:#E1E4E8"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">    -trimpath \</span></span>
+<span class="line"><span style="color:#E1E4E8">    -o /app/server \</span></span>
+<span class="line"><span style="color:#E1E4E8">    ./cmd/server</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># Stage 2: 最小ランナー（scratch = 空のイメージ）</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> scratch </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> runner</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># タイムゾーンデータ（必要な場合）</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /usr/share/zoneinfo /usr/share/zoneinfo</span></span>
+<span class="line"><span style="color:#6A737D"># CA証明書（HTTPS通信に必要）</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 非rootユーザー設定（scratchにはuseradd がないため手動設定）</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /etc/passwd /etc/passwd</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /etc/group /etc/group</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/server /server</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> nobody:nobody</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 8080</span></span>
+<span class="line"><span style="color:#F97583">ENTRYPOINT</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"/server"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h3 id="distroless-を使った安全な最小イメージ">distroless を使った安全な最小イメージ</h3>
+<p><code>scratch</code> はデバッグが困難なため、本番では<code>distroless</code>を推奨する。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> golang:1.23-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> go.mod go.sum ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> go mod download</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> CGO_ENABLED=0 GOOS=linux go build \</span></span>
+<span class="line"><span style="color:#E1E4E8">    -ldflags=</span><span style="color:#9ECBFF">"-w -s"</span><span style="color:#E1E4E8"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">    -o /app/server \</span></span>
+<span class="line"><span style="color:#E1E4E8">    ./cmd/server</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># distroless: シェルなし、パッケージマネージャなし、最小限のOSライブラリ</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> gcr.io/distroless/static-debian12:nonroot </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> runner</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/server /server</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 8080</span></span>
+<span class="line"><span style="color:#F97583">ENTRYPOINT</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"/server"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<p><strong>Goイメージのサイズ比較:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>golang:1.23（シングルステージ）:  862 MB</span></span>
+<span class="line"><span>golang:1.23-alpine + scratch:     ~8 MB  ← 99%削減</span></span>
+<span class="line"><span>golang:1.23-alpine + distroless:  ~12 MB ← 98.6%削減</span></span></code></pre>
+<hr>
+<h2 id="5-python-fastapi-のマルチステージビルド">5. Python FastAPI のマルチステージビルド</h2>
+<p>Pythonは <code>uv</code> パッケージマネージャと組み合わせることで、さらに高速なビルドが実現できる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># Stage 1: 依存関係インストール（uvを使用）</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> python:3.12-slim </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># uvのインストール（高速Pythonパッケージマネージャ）</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 仮想環境の作成</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> UV_COMPILE_BYTECODE=1</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> UV_LINK_MODE=copy</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> VIRTUAL_ENV=/app/.venv</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> PATH=</span><span style="color:#9ECBFF">"/app/.venv/bin:$PATH"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 依存関係ファイルのコピーと仮想環境構築</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> pyproject.toml uv.lock ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> uv sync --frozen --no-install-project --no-dev</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># Stage 2: アプリケーションのビルド</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> python:3.12-slim </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> runner</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># セキュリティ：非rootユーザー</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> groupadd --gid 1001 appgroup &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    useradd --uid 1001 --gid appgroup --no-create-home appuser</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 仮想環境のコピー（ビルドツール不要）</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/.venv /app/.venv</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> PATH=</span><span style="color:#9ECBFF">"/app/.venv/bin:$PATH"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># アプリケーションコードのコピー</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --chown=appuser:appgroup ./src ./src</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> appuser</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 8000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"uvicorn"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"src.main:app"</span><span style="color:#E1E4E8">, \</span></span>
+<span class="line"><span style="color:#9ECBFF">     "--host"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"0.0.0.0"</span><span style="color:#E1E4E8">, \</span></span>
+<span class="line"><span style="color:#9ECBFF">     "--port"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"8000"</span><span style="color:#E1E4E8">, \</span></span>
+<span class="line"><span style="color:#9ECBFF">     "--workers"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"4"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h3 id="fastapi--gunicorn-本番設定">FastAPI + Gunicorn 本番設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> python:3.12-slim </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> pyproject.toml uv.lock ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> uv sync --frozen --no-dev</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># 本番イメージ</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> python:3.12-slim </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> runner</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># セキュリティパッチ適用</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> apt-get update &#x26;&#x26; apt-get upgrade -y &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    rm -rf /var/lib/apt/lists/*</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> groupadd -r appgroup &#x26;&#x26; useradd -r -g appgroup appuser</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/.venv /app/.venv</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> PATH=</span><span style="color:#9ECBFF">"/app/.venv/bin:$PATH"</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> PYTHONPATH=/app</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> PYTHONDONTWRITEBYTECODE=1</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> PYTHONUNBUFFERED=1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --chown=appuser:appgroup ./app ./app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> appuser</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 8000</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"gunicorn"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"app.main:app"</span><span style="color:#E1E4E8">, \</span></span>
+<span class="line"><span style="color:#9ECBFF">     "-k"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"uvicorn.workers.UvicornWorker"</span><span style="color:#E1E4E8">, \</span></span>
+<span class="line"><span style="color:#9ECBFF">     "-w"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"4"</span><span style="color:#E1E4E8">, \</span></span>
+<span class="line"><span style="color:#9ECBFF">     "-b"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"0.0.0.0:8000"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<p><strong>Pythonイメージのサイズ比較:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>python:3.12（シングルステージ）:   1,012 MB</span></span>
+<span class="line"><span>python:3.12-slim（マルチステージ）:  ~180 MB  ← 82%削減</span></span></code></pre>
+<hr>
+<h2 id="6-buildkit-の高度な活用">6. BuildKit の高度な活用</h2>
+<p>Docker BuildKit（Docker 23.0以降はデフォルト有効）は、キャッシュマウント・シークレットマウントなど強力な機能を提供する。</p>
+<h3 id="--mounttypecache-でビルドを高速化"><code>--mount=type=cache</code> でビルドを高速化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># syntax=docker/dockerfile:1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ✅ BuildKitキャッシュマウント：npmキャッシュを永続化</span></span>
+<span class="line"><span style="color:#6A737D"># ビルドするたびにnpmキャッシュが蓄積され、2回目以降が激速になる</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> --mount=type=cache,target=/root/.npm \</span></span>
+<span class="line"><span style="color:#E1E4E8">    npm ci --prefer-offline</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Next.jsのビルドキャッシュも永続化</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> --mount=type=cache,target=/app/.next/cache \</span></span>
+<span class="line"><span style="color:#E1E4E8">    npm run build</span></span></code></pre>
+<p><strong>Go + goキャッシュ:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> golang:1.23-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> go.mod go.sum ./</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Goモジュールキャッシュの永続化</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> --mount=type=cache,target=/go/pkg/mod \</span></span>
+<span class="line"><span style="color:#E1E4E8">    go mod download</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ビルドキャッシュの永続化</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> --mount=type=cache,target=/root/.cache/go-build \</span></span>
+<span class="line"><span style="color:#E1E4E8">    --mount=type=cache,target=/go/pkg/mod \</span></span>
+<span class="line"><span style="color:#E1E4E8">    CGO_ENABLED=0 go build -o /app/server ./cmd/server</span></span></code></pre>
+<p><strong>Python + uvキャッシュ:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> python:3.12-slim </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> pyproject.toml uv.lock ./</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># uvキャッシュの永続化（2回目以降のビルドが劇的に高速化）</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> --mount=type=cache,target=/root/.cache/uv \</span></span>
+<span class="line"><span style="color:#E1E4E8">    uv sync --frozen --no-dev</span></span></code></pre>
+<h3 id="--mounttypesecret-でシークレットを安全に扱う"><code>--mount=type=secret</code> でシークレットを安全に扱う</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># syntax=docker/dockerfile:1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ❌ 危険：ARGで渡すとイメージ履歴に残る</span></span>
+<span class="line"><span style="color:#6A737D"># ARG NPM_TOKEN</span></span>
+<span class="line"><span style="color:#6A737D"># RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ✅ 安全：シークレットマウントはイメージ履歴に残らない</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> --mount=type=secret,id=npm_token \</span></span>
+<span class="line"><span style="color:#E1E4E8">    NPM_TOKEN=$(cat /run/secrets/npm_token) &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    echo </span><span style="color:#9ECBFF">"//registry.npmjs.org/:_authToken=${NPM_TOKEN}"</span><span style="color:#E1E4E8"> > .npmrc &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    npm ci &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    rm -f .npmrc  # .npmrcも確実に削除</span></span></code></pre>
+<p><strong>ビルド時のシークレット渡し方:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># ファイルから渡す</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --secret</span><span style="color:#9ECBFF"> id=npm_token,src=.npmtoken</span><span style="color:#9ECBFF"> .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 環境変数から渡す</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$NPM_TOKEN</span><span style="color:#9ECBFF">"</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> docker</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --secret</span><span style="color:#9ECBFF"> id=npm_token,src=-</span><span style="color:#9ECBFF"> .</span></span></code></pre>
+<hr>
+<h2 id="7-dockerignore-の最適化">7. .dockerignore の最適化</h2>
+<p><code>.dockerignore</code> を正しく設定しないと、ビルドコンテキストに不要なファイルが含まれ、ビルドが遅くなるだけでなく、機密ファイルがイメージに混入するリスクがある。</p>
+<h3 id="最適な-dockerignore">最適な .dockerignore</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span># バージョン管理</span></span>
+<span class="line"><span>.git</span></span>
+<span class="line"><span>.gitignore</span></span>
+<span class="line"><span>.gitattributes</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># CI/CD設定</span></span>
+<span class="line"><span>.github</span></span>
+<span class="line"><span>.circleci</span></span>
+<span class="line"><span>.travis.yml</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ドキュメント</span></span>
+<span class="line"><span>README.md</span></span>
+<span class="line"><span>CHANGELOG.md</span></span>
+<span class="line"><span>docs/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># テスト関連（本番イメージに不要）</span></span>
+<span class="line"><span>**/__tests__</span></span>
+<span class="line"><span>**/*.test.ts</span></span>
+<span class="line"><span>**/*.spec.ts</span></span>
+<span class="line"><span>**/*.test.js</span></span>
+<span class="line"><span>**/*.spec.js</span></span>
+<span class="line"><span>coverage/</span></span>
+<span class="line"><span>.nyc_output/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ローカル開発設定</span></span>
+<span class="line"><span>.env</span></span>
+<span class="line"><span>.env.local</span></span>
+<span class="line"><span>.env.*.local</span></span>
+<span class="line"><span>.env.development</span></span>
+<span class="line"><span>*.pem</span></span>
+<span class="line"><span>*.key</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># IDEとエディタ</span></span>
+<span class="line"><span>.vscode/</span></span>
+<span class="line"><span>.idea/</span></span>
+<span class="line"><span>*.swp</span></span>
+<span class="line"><span>*.swo</span></span>
+<span class="line"><span>.DS_Store</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Node.js</span></span>
+<span class="line"><span>node_modules/</span></span>
+<span class="line"><span>npm-debug.log*</span></span>
+<span class="line"><span>yarn-error.log*</span></span>
+<span class="line"><span>.npm/</span></span>
+<span class="line"><span>.yarn/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Next.js</span></span>
+<span class="line"><span>.next/</span></span>
+<span class="line"><span>out/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Python</span></span>
+<span class="line"><span>__pycache__/</span></span>
+<span class="line"><span>*.pyc</span></span>
+<span class="line"><span>*.pyo</span></span>
+<span class="line"><span>.venv/</span></span>
+<span class="line"><span>venv/</span></span>
+<span class="line"><span>*.egg-info/</span></span>
+<span class="line"><span>dist/</span></span>
+<span class="line"><span>.pytest_cache/</span></span>
+<span class="line"><span>.mypy_cache/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Go</span></span>
+<span class="line"><span>vendor/（使用している場合のみ除外を検討）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Docker</span></span>
+<span class="line"><span>Dockerfile</span></span>
+<span class="line"><span>Dockerfile.*</span></span>
+<span class="line"><span>docker-compose*.yml</span></span>
+<span class="line"><span>.dockerignore</span></span></code></pre>
+<p><strong>ビルドコンテキストサイズへの影響:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>.dockerignore なし: ビルドコンテキスト 450 MB（node_modules含む）</span></span>
+<span class="line"><span>.dockerignore あり: ビルドコンテキスト   2 MB  ← 99.5%削減</span></span></code></pre>
+<hr>
+<h2 id="8-イメージサイズ比較beforeafter">8. イメージサイズ比較（Before/After）</h2>
+<p>実際のプロジェクトでの効果を数値で示す。</p>
+<h3 id="nodejs-express-api">Node.js Express API</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>シングルステージ (node:20)               1,234 MB</span></span>
+<span class="line"><span>↓ alpine ベースに変更                     420 MB  (66%削減)</span></span>
+<span class="line"><span>↓ マルチステージ導入                      185 MB  (85%削減)</span></span>
+<span class="line"><span>↓ devDeps 除外                           145 MB  (88%削減)</span></span>
+<span class="line"><span>↓ .dockerignore 最適化                   143 MB  (88%削減)</span></span></code></pre>
+<h3 id="nextjs-アプリ">Next.js アプリ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>シングルステージ (node:20)               1,456 MB</span></span>
+<span class="line"><span>↓ マルチステージ + alpine                 320 MB  (78%削減)</span></span>
+<span class="line"><span>↓ standalone モード有効                    98 MB  (93%削減)</span></span>
+<span class="line"><span>↓ 非rootユーザー追加（サイズ変化なし）      98 MB</span></span></code></pre>
+<h3 id="go-web-api">Go Web API</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>シングルステージ (golang:1.23)            862 MB</span></span>
+<span class="line"><span>↓ マルチステージ + alpine runner           45 MB  (95%削減)</span></span>
+<span class="line"><span>↓ distroless 使用                          12 MB  (99%削減)</span></span>
+<span class="line"><span>↓ scratch 使用                              8 MB  (99%削減)</span></span></code></pre>
+<h3 id="python-fastapi">Python FastAPI</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>シングルステージ (python:3.12)           1,012 MB</span></span>
+<span class="line"><span>↓ マルチステージ + slim                   180 MB  (82%削減)</span></span>
+<span class="line"><span>↓ uv使用 + キャッシュ最適化               165 MB  (84%削減)</span></span></code></pre>
+<hr>
+<h2 id="9-特定ステージだけをビルドtarget">9. 特定ステージだけをビルド（—target）</h2>
+<p><code>--target</code> フラグを使うと、特定のステージまでビルドを止めることができる。開発環境・テスト環境・本番環境の使い分けに非常に有効だ。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># syntax=docker/dockerfile:1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># Stage 1: 基本依存関係（全ステージ共通）</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> base</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># Stage 2: 開発環境（ホットリロード対応）</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> base </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> development</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> NODE_ENV=development</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 3000</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"npm"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"run"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"dev"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># Stage 3: テスト実行</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> base </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> test</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run lint</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run type-check</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"npm"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"run"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"test"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># Stage 4: ビルド</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> base </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#6A737D"># Stage 5: 本番（最終イメージ）</span></span>
+<span class="line"><span style="color:#6A737D"># ============================================================</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> production</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> NODE_ENV=production</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/dist ./dist</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=base /app/node_modules ./node_modules</span></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 3000</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"dist/index.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<p><strong>ステージ別ビルドコマンド:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 開発環境イメージのみビルド</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --target</span><span style="color:#9ECBFF"> development</span><span style="color:#79B8FF"> -t</span><span style="color:#9ECBFF"> myapp:dev</span><span style="color:#9ECBFF"> .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># テストステージまでビルドしてテスト実行</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --target</span><span style="color:#9ECBFF"> test</span><span style="color:#79B8FF"> -t</span><span style="color:#9ECBFF"> myapp:test</span><span style="color:#9ECBFF"> .</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> --rm</span><span style="color:#9ECBFF"> myapp:test</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 本番イメージのビルド（デフォルト動作）</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --target</span><span style="color:#9ECBFF"> production</span><span style="color:#79B8FF"> -t</span><span style="color:#9ECBFF"> myapp:prod</span><span style="color:#9ECBFF"> .</span></span>
+<span class="line"><span style="color:#6A737D"># または単に</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> -t</span><span style="color:#9ECBFF"> myapp:prod</span><span style="color:#9ECBFF"> .</span></span></code></pre>
+<hr>
+<h2 id="10-cicdgithub-actionsとの統合">10. CI/CD（GitHub Actions）との統合</h2>
+<p>マルチステージビルドをCI/CDパイプラインに組み込む際のベストプラクティスを解説する。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># .github/workflows/docker-build.yml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Docker Build &#x26; Push</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  push</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">main</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">develop</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#85E89D">  pull_request</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">main</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  REGISTRY</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ghcr.io</span></span>
+<span class="line"><span style="color:#85E89D">  IMAGE_NAME</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ github.repository }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  test</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Set up Docker Buildx</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">docker/setup-buildx-action@v3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      # テストステージだけビルドしてテスト実行</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Run tests in Docker</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">docker/build-push-action@v6</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          context</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">.</span></span>
+<span class="line"><span style="color:#85E89D">          target</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">test</span></span>
+<span class="line"><span style="color:#6A737D">          # GitHub Actions キャッシュを活用</span></span>
+<span class="line"><span style="color:#85E89D">          cache-from</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">type=gha</span></span>
+<span class="line"><span style="color:#85E89D">          cache-to</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">type=gha,mode=max</span></span>
+<span class="line"><span style="color:#85E89D">          load</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">          tags</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp:test</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Execute tests</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">docker run --rm myapp:test</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  build-and-push</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    needs</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">test</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    if</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">github.ref == 'refs/heads/main'</span></span>
+<span class="line"><span style="color:#85E89D">    permissions</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      contents</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">read</span></span>
+<span class="line"><span style="color:#85E89D">      packages</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">write</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Set up Docker Buildx</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">docker/setup-buildx-action@v3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Log in to Container Registry</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">docker/login-action@v3</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          registry</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ env.REGISTRY }}</span></span>
+<span class="line"><span style="color:#85E89D">          username</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ github.actor }}</span></span>
+<span class="line"><span style="color:#85E89D">          password</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.GITHUB_TOKEN }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Extract metadata</span></span>
+<span class="line"><span style="color:#85E89D">        id</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">meta</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">docker/metadata-action@v5</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          images</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}</span></span>
+<span class="line"><span style="color:#85E89D">          tags</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">            type=sha,prefix=sha-</span></span>
+<span class="line"><span style="color:#9ECBFF">            type=ref,event=branch</span></span>
+<span class="line"><span style="color:#9ECBFF">            type=semver,pattern={{version}}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      # 本番イメージのビルドとプッシュ（キャッシュ最大活用）</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Build and push production image</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">docker/build-push-action@v6</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          context</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">.</span></span>
+<span class="line"><span style="color:#85E89D">          target</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">production</span></span>
+<span class="line"><span style="color:#85E89D">          push</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">          tags</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ steps.meta.outputs.tags }}</span></span>
+<span class="line"><span style="color:#85E89D">          labels</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ steps.meta.outputs.labels }}</span></span>
+<span class="line"><span style="color:#85E89D">          cache-from</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">type=gha</span></span>
+<span class="line"><span style="color:#85E89D">          cache-to</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">type=gha,mode=max</span></span>
+<span class="line"><span style="color:#6A737D">          # BuildKit シークレット（npm private registry等）</span></span>
+<span class="line"><span style="color:#85E89D">          secrets</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">            npm_token=${{ secrets.NPM_TOKEN }}</span></span>
+<span class="line"><span style="color:#85E89D">          platforms</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">linux/amd64,linux/arm64</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      # セキュリティスキャン（Trivy）</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Run Trivy vulnerability scanner</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">aquasecurity/trivy-action@master</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          image-ref</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}</span></span>
+<span class="line"><span style="color:#85E89D">          format</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'sarif'</span></span>
+<span class="line"><span style="color:#85E89D">          output</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'trivy-results.sarif'</span></span>
+<span class="line"><span style="color:#85E89D">          severity</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'CRITICAL,HIGH'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Upload Trivy scan results</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">github/codeql-action/upload-sarif@v3</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          sarif_file</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'trivy-results.sarif'</span></span></code></pre>
+<hr>
+<h2 id="11-docker-compose-での本番開発環境分離">11. Docker Compose での本番/開発環境分離</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># docker-compose.yml（ベース設定）</span></span>
+<span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.9'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    build</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      context</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">.</span></span>
+<span class="line"><span style="color:#85E89D">      dockerfile</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Dockerfile</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">DATABASE_URL=${DATABASE_URL}</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">REDIS_URL=${REDIS_URL}</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">app-network</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  db</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">postgres:16-alpine</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">postgres_data:/var/lib/postgresql/data</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      POSTGRES_DB</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${POSTGRES_DB}</span></span>
+<span class="line"><span style="color:#85E89D">      POSTGRES_USER</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${POSTGRES_USER}</span></span>
+<span class="line"><span style="color:#85E89D">      POSTGRES_PASSWORD</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${POSTGRES_PASSWORD}</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">app-network</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  redis</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">redis:7-alpine</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">app-network</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app-network</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    driver</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">bridge</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  postgres_data</span><span style="color:#E1E4E8">:</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># docker-compose.dev.yml（開発オーバーライド）</span></span>
+<span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.9'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    build</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      target</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">development</span><span style="color:#6A737D">  # ← 開発ステージを指定</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">      # ホットリロードのためのボリュームマウント</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">.:/app</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/app/node_modules</span><span style="color:#6A737D">  # node_modulesは除外</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"3000:3000"</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">NODE_ENV=development</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  db</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"5432:5432"</span><span style="color:#6A737D">  # 開発環境ではDBポートを公開</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  # 開発環境のみMailhog</span></span>
+<span class="line"><span style="color:#85E89D">  mailhog</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">mailhog/mailhog</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"8025:8025"</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># docker-compose.prod.yml（本番オーバーライド）</span></span>
+<span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.9'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    build</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      target</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">production</span><span style="color:#6A737D">  # ← 本番ステージを指定</span></span>
+<span class="line"><span style="color:#85E89D">    restart</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">unless-stopped</span></span>
+<span class="line"><span style="color:#85E89D">    deploy</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      replicas</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span></span>
+<span class="line"><span style="color:#85E89D">      resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        limits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          cpus</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'1'</span></span>
+<span class="line"><span style="color:#85E89D">          memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">512M</span></span>
+<span class="line"><span style="color:#85E89D">    healthcheck</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      test</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"CMD"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"curl"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"-f"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"http://localhost:3000/health"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#85E89D">      interval</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">30s</span></span>
+<span class="line"><span style="color:#85E89D">      timeout</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">10s</span></span>
+<span class="line"><span style="color:#85E89D">      retries</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span></span>
+<span class="line"><span style="color:#85E89D">      start_period</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">40s</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  nginx</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">nginx:alpine</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"80:80"</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"443:443"</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">./nginx.conf:/etc/nginx/nginx.conf:ro</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/etc/letsencrypt:/etc/letsencrypt:ro</span></span>
+<span class="line"><span style="color:#85E89D">    depends_on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">app</span></span></code></pre>
+<p><strong>起動コマンド:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 開発環境起動</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> compose</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> docker-compose.yml</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> docker-compose.dev.yml</span><span style="color:#9ECBFF"> up</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 本番環境起動</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> compose</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> docker-compose.yml</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> docker-compose.prod.yml</span><span style="color:#9ECBFF"> up</span><span style="color:#79B8FF"> -d</span></span></code></pre>
+<hr>
+<h2 id="12-セキュリティ強化">12. セキュリティ強化</h2>
+<h3 id="非rootユーザーの設定">非rootユーザーの設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># ❌ デフォルトはroot実行（危険）</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"index.js"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#6A737D"># → RootでNode.jsが動くため、コンテナ侵害時の被害が最大化</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ✅ 非rootユーザーで実行</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> runner</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ユーザー・グループの作成</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> addgroup --system --gid 1001 nodejs &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    adduser --system --uid 1001 nodeuser</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --chown=nodeuser:nodejs . .</span></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> nodeuser</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"index.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h3 id="distrolessイメージの選択">distrolessイメージの選択</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># gcr.io/distroless シリーズ</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Node.js アプリ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> gcr.io/distroless/nodejs20-debian12:nonroot</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 静的バイナリ（Go等）</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> gcr.io/distroless/static-debian12:nonroot</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 動的リンクライブラリが必要なアプリ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> gcr.io/distroless/base-debian12:nonroot</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># nonroot タグで自動的に非rootユーザーが適用される</span></span></code></pre>
+<h3 id="trivyでのセキュリティスキャン">Trivyでのセキュリティスキャン</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># イメージのスキャン</span></span>
+<span class="line"><span style="color:#B392F0">trivy</span><span style="color:#9ECBFF"> image</span><span style="color:#79B8FF"> --severity</span><span style="color:#9ECBFF"> CRITICAL,HIGH</span><span style="color:#9ECBFF"> myapp:latest</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Dockerfile自体のスキャン</span></span>
+<span class="line"><span style="color:#B392F0">trivy</span><span style="color:#9ECBFF"> config</span><span style="color:#9ECBFF"> Dockerfile</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># CI/CDでの統合（終了コードで失敗を検知）</span></span>
+<span class="line"><span style="color:#B392F0">trivy</span><span style="color:#9ECBFF"> image</span><span style="color:#79B8FF"> --exit-code</span><span style="color:#79B8FF"> 1</span><span style="color:#79B8FF"> --severity</span><span style="color:#9ECBFF"> CRITICAL</span><span style="color:#9ECBFF"> myapp:latest</span></span></code></pre>
+<p><strong>スキャン結果の例:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>myapp:latest (alpine 3.19.0)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Total: 0 (CRITICAL: 0, HIGH: 0)</span></span>
+<span class="line"><span># ← distroless + 最新alpine でゼロ脆弱性を達成</span></span></code></pre>
+<hr>
+<h2 id="13-レイヤーキャッシュの最適化テクニック">13. レイヤーキャッシュの最適化テクニック</h2>
+<p>Dockerのレイヤーキャッシュは、変更されたレイヤーより下位のキャッシュをすべて無効化する。この特性を理解してDockerfileを設計することが重要だ。</p>
+<h3 id="キャッシュを壊さないcopyの順序">キャッシュを壊さないCOPYの順序</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># ❌ キャッシュ効率が悪い</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ソースコードを先にコピーすると、コード変更のたびにnpm ciが再実行される</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci  # ← ソースコードが変わるたびにキャッシュ無効</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># ✅ キャッシュ効率が良い</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 変更頻度の低いものを先にコピー</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package.json package-lock.json ./</span></span>
+<span class="line"><span style="color:#6A737D"># ← package.jsonが変わらない限りnpm ciのキャッシュが有効</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 変更頻度の高いソースコードは後でコピー</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build</span></span></code></pre>
+<h3 id="モノレポでのキャッシュ最適化">モノレポでのキャッシュ最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> deps</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ルートのpackage.jsonとワークスペース設定</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> packages/api/package*.json ./packages/api/</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> packages/shared/package*.json ./packages/shared/</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 特定ワークスペースの依存関係のみインストール</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci --workspace=packages/api --workspace=packages/shared</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> deps </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> packages/shared ./packages/shared</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> packages/api ./packages/api</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build --workspace=packages/api</span></span></code></pre>
+<hr>
+<h2 id="14-copy-link-フラグbuildkit新機能">14. COPY —link フラグ（BuildKit新機能）</h2>
+<p>Docker BuildKit 1.4以降で利用可能な <code>COPY --link</code> は、レイヤーの依存関係を切り離し、並列ビルドとキャッシュ効率を大幅に向上させる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># syntax=docker/dockerfile:1.4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm run build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> runner</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># --link を使うと、このCOPYはビルダーステージの変更に依存しない</span></span>
+<span class="line"><span style="color:#6A737D"># → キャッシュヒット率が向上、並列ビルドが可能になる</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --link --from=builder /app/dist /app/dist</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 複数のCOPY --link は並列実行される</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --link --from=builder /app/public /app/public</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --link --from=builder /app/node_modules /app/node_modules</span></span></code></pre>
+<p><strong><code>--link</code> の効果:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>シナリオ</th><th>COPY（通常）</th><th>COPY —link</th></tr></thead><tbody><tr><td>ビルド成果物のみ変更</td><td>RUNNERステージ全キャッシュ無効</td><td>COPYのみ再実行</td></tr><tr><td>ベースイメージ更新</td><td>全レイヤー再ビルド</td><td>COPYレイヤーは再利用</td></tr><tr><td>複数アセットのコピー</td><td>直列実行</td><td>並列実行</td></tr></tbody></table>
+<hr>
+<h2 id="15-ベストプラクティスチェックリスト">15. ベストプラクティスチェックリスト</h2>
+<p>Dockerfileをレビューする際に使用できる完全チェックリストだ。</p>
+<h3 id="ビルド効率">ビルド効率</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> <code>package.json</code> などの依存関係ファイルをソースコードより先にCOPYしているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>--mount=type=cache</code> でパッケージマネージャのキャッシュを永続化しているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>.dockerignore</code> で不要ファイル（<code>node_modules/</code>, <code>.git/</code>, <code>coverage/</code> 等）を除外しているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>COPY --link</code> でレイヤーキャッシュを最適化しているか（BuildKit 1.4+）</li>
+<li class="task-list-item"><input type="checkbox" disabled> 変更頻度の低いレイヤーをDockerfileの上部に配置しているか</li>
+</ul>
+<h3 id="イメージサイズ">イメージサイズ</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> マルチステージビルドを使用し、ビルドツールを本番イメージから除外しているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>alpine</code> または <code>slim</code> ベースイメージを使用しているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> Goの場合、<code>scratch</code> または <code>distroless</code> で数MB以下を目指しているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> 不要なファイル（ドキュメント、テスト、設定ファイル）を本番イメージに含めていないか</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>RUN apt-get install</code> の後に <code>rm -rf /var/lib/apt/lists/*</code> を実行しているか</li>
+</ul>
+<h3 id="セキュリティ">セキュリティ</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 非rootユーザー（<code>USER</code> 命令）で実行しているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> シークレット（APIキー、トークン）を <code>--mount=type=secret</code> で渡しているか（ARG/ENV禁止）</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>distroless</code> または最小ベースイメージでアタックサーフェスを最小化しているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> Trivy等でCVEスキャンをCI/CDパイプラインに組み込んでいるか</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>COPY</code> に <code>--chown</code> でファイルオーナーを設定しているか</li>
+</ul>
+<h3 id="cicd統合">CI/CD統合</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> GitHub Actions等でGitHubキャッシュ（<code>type=gha</code>）を使ってキャッシュを永続化しているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>--target</code> でテストステージと本番ステージを分けてビルドしているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> イメージにコンテンツハッシュ（git SHA）でタグを付けているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>docker/metadata-action</code> でタグとラベルを自動生成しているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> マルチアーキテクチャ（<code>linux/amd64,linux/arm64</code>）ビルドを検討しているか</li>
+</ul>
+<h3 id="運用">運用</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> <code>HEALTHCHECK</code> 命令を設定しているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>CMD</code> に代わり <code>ENTRYPOINT</code> + <code>CMD</code> を使い、シグナルハンドリングを適切にしているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> PID 1問題に対応するため <code>init</code> プロセス（<code>tini</code> 等）を使っているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>docker compose</code> で本番/開発設定を分離しているか</li>
+<li class="task-list-item"><input type="checkbox" disabled> イメージサイズを定期的に計測し、肥大化を検知しているか</li>
+</ul>
+<hr>
+<h2 id="まとめ">まとめ</h2>
+<p>Dockerマルチステージビルドは、単なるイメージサイズ削減の技術ではない。セキュリティ強化・CI/CD高速化・開発体験の向上をすべて同時に実現する、現代コンテナ開発の中核技術だ。</p>
+<p><strong>効果の総まとめ:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>技術</th><th>イメージサイズへの効果</th><th>副次効果</th></tr></thead><tbody><tr><td>マルチステージ基本</td><td>60〜85%削減</td><td>devDeps除外</td></tr><tr><td>alpine/slim採用</td><td>さらに70%削減</td><td>攻撃面積縮小</td></tr><tr><td>distroless/scratch</td><td>さらに80〜95%削減</td><td>シェルなし最高セキュリティ</td></tr><tr><td>BuildKitキャッシュ</td><td>サイズ変化なし</td><td>ビルド50〜80%高速化</td></tr><tr><td>.dockerignore最適化</td><td>ビルドコンテキスト99%削減</td><td>初回ビルド高速化</td></tr><tr><td>COPY —link</td><td>サイズ変化なし</td><td>キャッシュヒット率向上</td></tr></tbody></table>
+<p>まずは既存のDockerfileに <code>AS builder</code> / <code>AS runner</code> を追加するだけでも大きな効果が出る。そこから段階的に <code>alpine</code> ベースへの移行・BuildKitキャッシュ・セキュリティ強化と進めていこう。</p>
+<p>本記事のDockerfileサンプルはすべてそのまま実際のプロジェクトに適用できる形で書いている。ぜひ手を動かして、あなたのイメージを最小化してみてほしい。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

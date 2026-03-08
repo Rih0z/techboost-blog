@@ -1,0 +1,622 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/effect-ts-guide/"><!-- Primary Meta Tags --><title>Effect-TSで型安全なエラーハンドリング - 完全実装ガイド</title><meta name="title" content="Effect-TSで型安全なエラーハンドリング - 完全実装ガイド"><meta name="description" content="Effect-TSを使った型安全な副作用管理とエラーハンドリングの完全ガイド。依存性注入、並行処理、リトライ戦略、テスト手法まで実践的なパターンを解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/effect-ts-guide/"><meta property="og:title" content="Effect-TSで型安全なエラーハンドリング - 完全実装ガイド"><meta property="og:description" content="Effect-TSを使った型安全な副作用管理とエラーハンドリングの完全ガイド。依存性注入、並行処理、リトライ戦略、テスト手法まで実践的なパターンを解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/effect-ts-guide/"><meta name="twitter:title" content="Effect-TSで型安全なエラーハンドリング - 完全実装ガイド"><meta name="twitter:description" content="Effect-TSを使った型安全な副作用管理とエラーハンドリングの完全ガイド。依存性注入、並行処理、リトライ戦略、テスト手法まで実践的なパターンを解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/effect-ts-guide/"},"headline":"Effect-TSで型安全なエラーハンドリング - 完全実装ガイド","description":"Effect-TSを使った型安全な副作用管理とエラーハンドリングの完全ガイド。依存性注入、並行処理、リトライ戦略、テスト手法まで実践的なパターンを解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。","datePublished":"2025-02-05T00:00:00.000Z","dateModified":"2025-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"プログラミング, 開発ツール"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Effect-TSで型安全なエラーハンドリング - 完全実装ガイド"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-05T00:00:00.000Z"> Feb 4, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>Effect-TSで型安全なエラーハンドリング - 完全実装ガイド</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="article-tag" data-astro-cid-bvzihdzo>
+#プログラミング </a><a href="/blog/tag/%E9%96%8B%E7%99%BA%E3%83%84%E3%83%BC%E3%83%AB" class="article-tag" data-astro-cid-bvzihdzo>
+#開発ツール </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Effect-TSは、TypeScriptで<strong>型安全に副作用を扱う</strong>ための革新的なライブラリです。従来の<code>Promise</code>や<code>async/await</code>では実現できなかった、エラー型の完全な追跡と依存性注入を提供します。</p>
+<p>本記事では、Effect-TSの基礎から実践的な実装パターン、本番環境での活用方法まで詳しく解説します。</p>
+<h2 id="effect-tsとは">Effect-TSとは</h2>
+<p>Effect-TSは、関数型プログラミングの概念をTypeScriptに持ち込み、<strong>副作用を一級市民として扱う</strong>ライブラリです。Scalaの<code>ZIO</code>やHaskellの<code>IO</code>モナドに影響を受けています。</p>
+<h3 id="従来の問題点">従来の問題点</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 従来のPromise: エラー型が失われる</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> fetchUser</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/api/users/${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">response.ok) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Failed to fetch user'</span><span style="color:#E1E4E8">); </span><span style="color:#6A737D">// どんなエラーかわからない</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 呼び出し側</span></span>
+<span class="line"><span style="color:#F97583">try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchUser</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'123'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(user.name);</span></span>
+<span class="line"><span style="color:#E1E4E8">} </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#6A737D">  // errorは unknown、型安全性ゼロ</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(error);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="effect-tsでの解決">Effect-TSでの解決</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Effect, pipe } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'effect'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// エラー型が明示される</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> FetchError</span><span style="color:#F97583"> =</span></span>
+<span class="line"><span style="color:#F97583">  |</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">_tag</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 'NetworkError'</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">cause</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#F97583">  |</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">_tag</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 'NotFoundError'</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#F97583">  |</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">_tag</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 'ParseError'</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">body</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> fetchUser</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Effect</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Effect</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">FetchError</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">never</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">tryPromise</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">      try</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/api/users/${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#B392F0">      catch</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({ _tag: </span><span style="color:#9ECBFF">'NetworkError'</span><span style="color:#F97583"> as</span><span style="color:#F97583"> const</span><span style="color:#E1E4E8">, cause: error </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8"> }),</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">flatMap</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">response</span><span style="color:#F97583"> =></span></span>
+<span class="line"><span style="color:#E1E4E8">      response.ok</span></span>
+<span class="line"><span style="color:#F97583">        ?</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">tryPromise</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">            try</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#B392F0">            catch</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({ _tag: </span><span style="color:#9ECBFF">'ParseError'</span><span style="color:#F97583"> as</span><span style="color:#F97583"> const</span><span style="color:#E1E4E8">, body: </span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">(error) }),</span></span>
+<span class="line"><span style="color:#E1E4E8">          })</span></span>
+<span class="line"><span style="color:#F97583">        :</span><span style="color:#E1E4E8"> response.status </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 404</span></span>
+<span class="line"><span style="color:#F97583">          ?</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">fail</span><span style="color:#E1E4E8">({ _tag: </span><span style="color:#9ECBFF">'NotFoundError'</span><span style="color:#F97583"> as</span><span style="color:#F97583"> const</span><span style="color:#E1E4E8">, id })</span></span>
+<span class="line"><span style="color:#F97583">          :</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">fail</span><span style="color:#E1E4E8">({ _tag: </span><span style="color:#9ECBFF">'NetworkError'</span><span style="color:#F97583"> as</span><span style="color:#F97583"> const</span><span style="color:#E1E4E8">, cause: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`HTTP ${</span><span style="color:#E1E4E8">response</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">status</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">) })</span></span>
+<span class="line"><span style="color:#E1E4E8">    ),</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 呼び出し側: エラーが型で保証される</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> program</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#B392F0">  fetchUser</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'123'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">match</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">    onFailure</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // errorの型は FetchError</span></span>
+<span class="line"><span style="color:#F97583">      switch</span><span style="color:#E1E4E8"> (error._tag) {</span></span>
+<span class="line"><span style="color:#F97583">        case</span><span style="color:#9ECBFF"> 'NetworkError'</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">          console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Network error:'</span><span style="color:#E1E4E8">, error.cause);</span></span>
+<span class="line"><span style="color:#F97583">          break</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">        case</span><span style="color:#9ECBFF"> 'NotFoundError'</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">          console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'User not found:'</span><span style="color:#E1E4E8">, error.id);</span></span>
+<span class="line"><span style="color:#F97583">          break</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">        case</span><span style="color:#9ECBFF"> 'ParseError'</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">          console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Parse error:'</span><span style="color:#E1E4E8">, error.body);</span></span>
+<span class="line"><span style="color:#F97583">          break</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#B392F0">    onSuccess</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'User:'</span><span style="color:#E1E4E8">, user.name);</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">Effect.</span><span style="color:#B392F0">runPromise</span><span style="color:#E1E4E8">(program);</span></span></code></pre>
+<h2 id="セットアップ">セットアップ</h2>
+<h3 id="インストール">インストール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> effect</span></span></code></pre>
+<h3 id="基本概念">基本概念</h3>
+<p>Effect-TSの型シグネチャは3つのパラメータを持ちます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">Effect.Effect</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">Success, Error, Requirements</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Success: 成功時の値の型</span></span>
+<span class="line"><span style="color:#6A737D">// Error: 失敗時のエラーの型</span></span>
+<span class="line"><span style="color:#6A737D">// Requirements: 実行に必要な依存関係の型</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 例</span></span>
+<span class="line"><span style="color:#E1E4E8">Effect.Effect</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">User, FetchError, Database</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#6A737D">// - 成功したら User を返す</span></span>
+<span class="line"><span style="color:#6A737D">// - 失敗したら FetchError を返す</span></span>
+<span class="line"><span style="color:#6A737D">// - 実行には Database サービスが必要</span></span></code></pre>
+<h2 id="基本的な使い方">基本的な使い方</h2>
+<h3 id="effectの作成">Effectの作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Effect } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'effect'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 成功するEffect</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> success</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">42</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">// Effect&#x3C;number, never, never></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 失敗するEffect</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> failure</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">fail</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Something went wrong'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">// Effect&#x3C;never, string, never></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 同期的な計算</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> computation</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">sync</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Running computation'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">random</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"><span style="color:#6A737D">// Effect&#x3C;number, never, never></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 非同期的な計算</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> asyncComputation</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">promise</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/data'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">res</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> res.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"><span style="color:#6A737D">// Effect&#x3C;unknown, never, never></span></span></code></pre>
+<h3 id="effectの合成">Effectの合成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { pipe } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'effect'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// map: 成功値を変換</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> doubled</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">x</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> x </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">// Effect&#x3C;number, never, never> (20)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// flatMap: Effectを連鎖</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> program</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">flatMap</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">x</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(x </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">)),</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">flatMap</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">x</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(x </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 3</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">// Effect&#x3C;number, never, never> (13)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// mapError: エラーを変換</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> withMappedError</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">fail</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'low level error'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">mapError</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">err</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> ({ _tag: </span><span style="color:#9ECBFF">'AppError'</span><span style="color:#F97583"> as</span><span style="color:#F97583"> const</span><span style="color:#E1E4E8">, message: err }))</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="エラーハンドリング">エラーハンドリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// エラーをキャッチして回復</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> recovered</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">fail</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'error'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">catchAll</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'default value'</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">// Effect&#x3C;string, never, never></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 特定のエラーのみキャッチ</span></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> MyError</span><span style="color:#F97583"> =</span></span>
+<span class="line"><span style="color:#F97583">  |</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">_tag</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 'NotFound'</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#F97583">  |</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">_tag</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 'Unauthorized'</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#F97583">  |</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">_tag</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 'ServerError'</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> selective</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#B392F0">  fetchData</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">catchTag</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'NotFound'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">)),</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">catchTag</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Unauthorized'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">fail</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Please login'</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// フォールバック</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> withFallback</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#B392F0">  fetchFromPrimary</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">orElse</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#B392F0"> fetchFromSecondary</span><span style="color:#E1E4E8">()),</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">orElse</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#B392F0"> fetchFromCache</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h2 id="実践パターン">実践パターン</h2>
+<h3 id="パターン1-apiクライアントの実装">パターン1: APIクライアントの実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// api-client.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Effect, pipe } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'effect'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Schema } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@effect/schema'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// エラー型の定義</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> NetworkError</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  readonly</span><span style="color:#FFAB70"> _tag</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'NetworkError'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">readonly</span><span style="color:#FFAB70"> cause</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">) {}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> ValidationError</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  readonly</span><span style="color:#FFAB70"> _tag</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'ValidationError'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">readonly</span><span style="color:#FFAB70"> errors</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">) {}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> HttpError</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  readonly</span><span style="color:#FFAB70"> _tag</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'HttpError'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">readonly</span><span style="color:#FFAB70"> status</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">readonly</span><span style="color:#FFAB70"> body</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザースキーマ</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> UserSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Schema.</span><span style="color:#B392F0">Struct</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  id: Schema.String,</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: Schema.String,</span></span>
+<span class="line"><span style="color:#E1E4E8">  email: Schema.String,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> User</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> Schema</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Schema</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Type</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> UserSchema>;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// API クライアント</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> ApiClient</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">private</span><span style="color:#FFAB70"> baseUrl</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // GETリクエスト</span></span>
+<span class="line"><span style="color:#B392F0">  get</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">A</span><span style="color:#E1E4E8">>(</span></span>
+<span class="line"><span style="color:#FFAB70">    path</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    schema</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Schema</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Schema</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">A</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Effect</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Effect</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">A</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">NetworkError</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> ValidationError</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> HttpError</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">never</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">tryPromise</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">        try</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#79B8FF">this</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">baseUrl</span><span style="color:#9ECBFF">}${</span><span style="color:#E1E4E8">path</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#B392F0">        catch</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#F97583"> new</span><span style="color:#B392F0"> NetworkError</span><span style="color:#E1E4E8">(error </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">flatMap</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">response</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">        response.ok</span></span>
+<span class="line"><span style="color:#F97583">          ?</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">tryPromise</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">              try</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#B392F0">              catch</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#F97583"> new</span><span style="color:#B392F0"> NetworkError</span><span style="color:#E1E4E8">(error </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">            })</span></span>
+<span class="line"><span style="color:#F97583">          :</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">fail</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> HttpError</span><span style="color:#E1E4E8">(response.status, response.statusText))</span></span>
+<span class="line"><span style="color:#E1E4E8">      ),</span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">flatMap</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">        Schema.</span><span style="color:#B392F0">decodeUnknown</span><span style="color:#E1E4E8">(schema)(data).</span><span style="color:#B392F0">pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">          Effect.</span><span style="color:#B392F0">mapError</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#F97583"> new</span><span style="color:#B392F0"> ValidationError</span><span style="color:#E1E4E8">(error))</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">      )</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // POSTリクエスト</span></span>
+<span class="line"><span style="color:#B392F0">  post</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">A</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">B</span><span style="color:#E1E4E8">>(</span></span>
+<span class="line"><span style="color:#FFAB70">    path</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    body</span><span style="color:#F97583">:</span><span style="color:#B392F0"> A</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    schema</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Schema</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Schema</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">B</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Effect</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Effect</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">B</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">NetworkError</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> ValidationError</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> HttpError</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">never</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">tryPromise</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">        try</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#B392F0">          fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#79B8FF">this</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">baseUrl</span><span style="color:#9ECBFF">}${</span><span style="color:#E1E4E8">path</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">            method: </span><span style="color:#9ECBFF">'POST'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            headers: { </span><span style="color:#9ECBFF">'Content-Type'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'application/json'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">            body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(body),</span></span>
+<span class="line"><span style="color:#E1E4E8">          }),</span></span>
+<span class="line"><span style="color:#B392F0">        catch</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#F97583"> new</span><span style="color:#B392F0"> NetworkError</span><span style="color:#E1E4E8">(error </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">flatMap</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">response</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">        response.ok</span></span>
+<span class="line"><span style="color:#F97583">          ?</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">tryPromise</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">              try</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#B392F0">              catch</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#F97583"> new</span><span style="color:#B392F0"> NetworkError</span><span style="color:#E1E4E8">(error </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">            })</span></span>
+<span class="line"><span style="color:#F97583">          :</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">fail</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> HttpError</span><span style="color:#E1E4E8">(response.status, response.statusText))</span></span>
+<span class="line"><span style="color:#E1E4E8">      ),</span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">flatMap</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">        Schema.</span><span style="color:#B392F0">decodeUnknown</span><span style="color:#E1E4E8">(schema)(data).</span><span style="color:#B392F0">pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">          Effect.</span><span style="color:#B392F0">mapError</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#F97583"> new</span><span style="color:#B392F0"> ValidationError</span><span style="color:#E1E4E8">(error))</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">      )</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> client</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> ApiClient</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://api.example.com'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> fetchUser</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#B392F0">  pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    client.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`/users/${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, UserSchema),</span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">retry</span><span style="color:#E1E4E8">({ times: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8"> }),</span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">timeout</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'5 seconds'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">catchTag</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'HttpError'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">      error.status </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 404</span></span>
+<span class="line"><span style="color:#F97583">        ?</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        :</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">fail</span><span style="color:#E1E4E8">(error)</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span></code></pre>
+<h3 id="パターン2-依存性注入">パターン2: 依存性注入</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// services.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Context, Effect, Layer } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'effect'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// データベースサービスの定義</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> Database</span><span style="color:#F97583"> extends</span><span style="color:#E1E4E8"> Context.</span><span style="color:#B392F0">Tag</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Database'</span><span style="color:#E1E4E8">)&#x3C;</span></span>
+<span class="line"><span style="color:#B392F0">  Database</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#B392F0">    query</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">A</span><span style="color:#E1E4E8">>(</span><span style="color:#FFAB70">sql</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">params</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">[]) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> Effect</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Effect</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">A</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Error</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">never</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">>() {}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ロガーサービスの定義</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> Logger</span><span style="color:#F97583"> extends</span><span style="color:#E1E4E8"> Context.</span><span style="color:#B392F0">Tag</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Logger'</span><span style="color:#E1E4E8">)&#x3C;</span></span>
+<span class="line"><span style="color:#B392F0">  Logger</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#B392F0">    info</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">message</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> Effect</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Effect</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">never</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">never</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#B392F0">    error</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">message</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> Effect</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Effect</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">never</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">never</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">>() {}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// データベース実装</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> DatabaseLive</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Layer.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  Database,</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#B392F0">    query</span><span style="color:#E1E4E8">: &#x3C;</span><span style="color:#B392F0">A</span><span style="color:#E1E4E8">>(</span><span style="color:#FFAB70">sql</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">params</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">[]) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">tryPromise</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">        try</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">          // 実際のデータベースクエリ</span></span>
+<span class="line"><span style="color:#F97583">          const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> pool.</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">(sql, params);</span></span>
+<span class="line"><span style="color:#F97583">          return</span><span style="color:#E1E4E8"> result.rows </span><span style="color:#F97583">as</span><span style="color:#B392F0"> A</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#B392F0">        catch</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> error </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ロガー実装</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> LoggerLive</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Layer.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  Logger,</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#B392F0">    info</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">message</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">sync</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`[INFO] ${</span><span style="color:#E1E4E8">message</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"><span style="color:#B392F0">    error</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">message</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">sync</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`[ERROR] ${</span><span style="color:#E1E4E8">message</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザーリポジトリ</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> UserRepository</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">  findById</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">gen</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">function*</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">_</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#F97583"> yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(Database);</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> logger</span><span style="color:#F97583"> =</span><span style="color:#F97583"> yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(Logger);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(logger.</span><span style="color:#B392F0">info</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Fetching user: ${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> users</span><span style="color:#F97583"> =</span><span style="color:#F97583"> yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        db.</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">>(</span><span style="color:#9ECBFF">'SELECT * FROM users WHERE id = $1'</span><span style="color:#E1E4E8">, [id])</span></span>
+<span class="line"><span style="color:#E1E4E8">      );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (users.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ===</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">        yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(logger.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`User not found: ${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(Effect.</span><span style="color:#B392F0">fail</span><span style="color:#E1E4E8">({ _tag: </span><span style="color:#9ECBFF">'NotFound'</span><span style="color:#F97583"> as</span><span style="color:#F97583"> const</span><span style="color:#E1E4E8"> }));</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> users[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  create</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">data</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">gen</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">function*</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">_</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#F97583"> yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(Database);</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> logger</span><span style="color:#F97583"> =</span><span style="color:#F97583"> yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(Logger);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(logger.</span><span style="color:#B392F0">info</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Creating user: ${</span><span style="color:#E1E4E8">data</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">email</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> users</span><span style="color:#F97583"> =</span><span style="color:#F97583"> yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        db.</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">User</span><span style="color:#E1E4E8">>(</span></span>
+<span class="line"><span style="color:#9ECBFF">          'INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          [data.name, data.email]</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">      );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> users[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// アプリケーションの構築</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> AppLayer</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Layer.</span><span style="color:#B392F0">mergeAll</span><span style="color:#E1E4E8">(DatabaseLive, LoggerLive);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> program</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  UserRepository.</span><span style="color:#B392F0">findById</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'123'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">flatMap</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">gen</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">function*</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">_</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> logger</span><span style="color:#F97583"> =</span><span style="color:#F97583"> yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(Logger);</span></span>
+<span class="line"><span style="color:#F97583">      yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(logger.</span><span style="color:#B392F0">info</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Found user: ${</span><span style="color:#E1E4E8">user</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> user;</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 実行</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> runnable</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">provide</span><span style="color:#E1E4E8">(program, AppLayer);</span></span>
+<span class="line"><span style="color:#E1E4E8">Effect.</span><span style="color:#B392F0">runPromise</span><span style="color:#E1E4E8">(runnable);</span></span></code></pre>
+<h3 id="パターン3-並行処理とリトライ">パターン3: 並行処理とリトライ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// parallel.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Effect, pipe } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'effect'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 複数のAPIを並行で呼び出し</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> fetchUserProfile</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      user: </span><span style="color:#B392F0">fetchUser</span><span style="color:#E1E4E8">(userId),</span></span>
+<span class="line"><span style="color:#E1E4E8">      posts: </span><span style="color:#B392F0">fetchUserPosts</span><span style="color:#E1E4E8">(userId),</span></span>
+<span class="line"><span style="color:#E1E4E8">      followers: </span><span style="color:#B392F0">fetchFollowers</span><span style="color:#E1E4E8">(userId),</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { concurrency: </span><span style="color:#9ECBFF">'unbounded'</span><span style="color:#E1E4E8"> } </span><span style="color:#6A737D">// 並行実行</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// リトライ戦略</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> fetchWithRetry</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">url</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#B392F0">  pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">tryPromise</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">      try</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(url),</span></span>
+<span class="line"><span style="color:#B392F0">      catch</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#F97583"> new</span><span style="color:#B392F0"> NetworkError</span><span style="color:#E1E4E8">(error </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">retry</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      times: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      schedule: Schedule.</span><span style="color:#B392F0">exponential</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'100 millis'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">timeout</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'10 seconds'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// レースコンディション（最初に成功したものを使用）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> fetchFromMultipleSources</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> pipe</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">race</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#B392F0">    fetchFromPrimary</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">race</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">fetchFromSecondary</span><span style="color:#E1E4E8">(), </span><span style="color:#B392F0">fetchFromTertiary</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// バッチ処理</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> processBatch</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">items</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">[]) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    items.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">item</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> processItem</span><span style="color:#E1E4E8">(item)),</span></span>
+<span class="line"><span style="color:#E1E4E8">    { concurrency: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8"> } </span><span style="color:#6A737D">// 最大5並行</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span></code></pre>
+<h3 id="パターン4-リソース管理">パターン4: リソース管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// resource.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Effect, pipe } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'effect'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// データベース接続のリソース管理</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> withDatabase</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">A</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">E</span><span style="color:#E1E4E8">>(</span></span>
+<span class="line"><span style="color:#B392F0">  f</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">db</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Database</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> Effect</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Effect</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">A</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">E</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">never</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Effect</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Effect</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">A</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">E</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">never</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">acquireUseRelease</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#6A737D">    // acquire</span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">sync</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Opening database connection'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#B392F0"> createDatabaseConnection</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#6A737D">    // use</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">db</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> f</span><span style="color:#E1E4E8">(db),</span></span>
+<span class="line"><span style="color:#6A737D">    // release</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">db</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">sync</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Closing database connection'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">        db.</span><span style="color:#B392F0">close</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> queryUsers</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> withDatabase</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">db</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">tryPromise</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">    try</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'SELECT * FROM users'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#B392F0">    catch</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> error </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ファイル処理</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> processFile</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">path</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">acquireUseRelease</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">tryPromise</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">      try</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> fs.promises.</span><span style="color:#B392F0">open</span><span style="color:#E1E4E8">(path, </span><span style="color:#9ECBFF">'r'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#B392F0">      catch</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> error </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">file</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">tryPromise</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">        try</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> file.</span><span style="color:#B392F0">readFile</span><span style="color:#E1E4E8">({ encoding: </span><span style="color:#9ECBFF">'utf-8'</span><span style="color:#E1E4E8"> }),</span></span>
+<span class="line"><span style="color:#B392F0">        catch</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> error </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">file</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">sync</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        file.</span><span style="color:#B392F0">close</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span></code></pre>
+<h2 id="テスティング">テスティング</h2>
+<h3 id="ユニットテスト">ユニットテスト</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// user.service.test.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Effect, Layer } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'effect'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { describe, it, expect } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'vitest'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// モックデータベース</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> MockDatabase</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Layer.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(Database, {</span></span>
+<span class="line"><span style="color:#B392F0">  query</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">sql</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">params</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">      { id: </span><span style="color:#9ECBFF">'1'</span><span style="color:#E1E4E8">, name: </span><span style="color:#9ECBFF">'Alice'</span><span style="color:#E1E4E8">, email: </span><span style="color:#9ECBFF">'alice@example.com'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// モックロガー</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> MockLogger</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Layer.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(Logger, {</span></span>
+<span class="line"><span style="color:#B392F0">  info</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">message</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> Effect.void,</span></span>
+<span class="line"><span style="color:#B392F0">  error</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">message</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> Effect.void,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> MockAppLayer</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Layer.</span><span style="color:#B392F0">mergeAll</span><span style="color:#E1E4E8">(MockDatabase, MockLogger);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">describe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'UserRepository'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">  it</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'should find user by id'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> program</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> UserRepository.</span><span style="color:#B392F0">findById</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'1'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">runPromise</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">provide</span><span style="color:#E1E4E8">(program, MockAppLayer)</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    expect</span><span style="color:#E1E4E8">(result.name).</span><span style="color:#B392F0">toBe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Alice'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  it</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'should fail when user not found'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> EmptyDatabase</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Layer.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">(Database, {</span></span>
+<span class="line"><span style="color:#B392F0">      query</span><span style="color:#E1E4E8">: () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">succeed</span><span style="color:#E1E4E8">([]),</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> program</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> UserRepository.</span><span style="color:#B392F0">findById</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'999'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#B392F0"> expect</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">runPromise</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        Effect.</span><span style="color:#B392F0">provide</span><span style="color:#E1E4E8">(program, Layer.</span><span style="color:#B392F0">mergeAll</span><span style="color:#E1E4E8">(EmptyDatabase, MockLogger))</span></span>
+<span class="line"><span style="color:#E1E4E8">      )</span></span>
+<span class="line"><span style="color:#E1E4E8">    ).rejects.</span><span style="color:#B392F0">toEqual</span><span style="color:#E1E4E8">({ _tag: </span><span style="color:#9ECBFF">'NotFound'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="統合テスト">統合テスト</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// integration.test.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Effect } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'effect'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { describe, it, beforeAll, afterAll } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'vitest'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">describe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Integration Tests'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> container</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TestContainer</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  beforeAll</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    container </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> GenericContainer</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'postgres:16'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">withExposedPorts</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">5432</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">start</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // マイグレーション実行</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#B392F0"> runMigrations</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  afterAll</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> container.</span><span style="color:#B392F0">stop</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  it</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'should create and fetch user'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> program</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">gen</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">function*</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">_</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> newUser</span><span style="color:#F97583"> =</span><span style="color:#F97583"> yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        UserRepository.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          name: </span><span style="color:#9ECBFF">'Bob'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          email: </span><span style="color:#9ECBFF">'bob@example.com'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        })</span></span>
+<span class="line"><span style="color:#E1E4E8">      );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> fetchedUser</span><span style="color:#F97583"> =</span><span style="color:#F97583"> yield*</span><span style="color:#B392F0"> _</span><span style="color:#E1E4E8">(UserRepository.</span><span style="color:#B392F0">findById</span><span style="color:#E1E4E8">(newUser.id));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> fetchedUser;</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> Effect.</span><span style="color:#B392F0">runPromise</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">      Effect.</span><span style="color:#B392F0">provide</span><span style="color:#E1E4E8">(program, RealAppLayer)</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    expect</span><span style="color:#E1E4E8">(result.name).</span><span style="color:#B392F0">toBe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Bob'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h2 id="パフォーマンス最適化">パフォーマンス最適化</h2>
+<h3 id="メモ化">メモ化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Effect, Cache } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'effect'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 計算結果のキャッシュ</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> cache</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Cache.</span><span style="color:#B392F0">make</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  capacity: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  timeToLive: </span><span style="color:#9ECBFF">'1 hour'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">  lookup</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> expensiveComputation</span><span style="color:#E1E4E8">(key),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> getCachedResult</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">key</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">  Effect.</span><span style="color:#B392F0">flatMap</span><span style="color:#E1E4E8">(cache, (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> Cache.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(c, key));</span></span></code></pre>
+<h3 id="バッチ処理の最適化">バッチ処理の最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// リクエストのバッチング</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> batchedFetch</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> RequestResolver.</span><span style="color:#B392F0">makeBatched</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#FFAB70">requests</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Array</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }>) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">    Effect.</span><span style="color:#B392F0">tryPromise</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#B392F0">      try</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> ids</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> requests.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">r</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> r.id);</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> users</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchUsersBatch</span><span style="color:#E1E4E8">(ids);</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> users;</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#B392F0">      catch</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> error </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Effect-TSは、TypeScriptで型安全な副作用管理を実現する強力なライブラリです。</p>
+<h3 id="主な利点">主な利点</h3>
+<ul>
+<li><strong>完全な型安全性</strong>: エラー型を含めて完全に型で保証</li>
+<li><strong>合成可能性</strong>: 小さなEffectを組み合わせて複雑なロジックを構築</li>
+<li><strong>依存性注入</strong>: 型安全なDIが標準装備</li>
+<li><strong>リソース管理</strong>: 自動的なクリーンアップを保証</li>
+<li><strong>並行処理</strong>: 並列実行、リトライ、タイムアウトを簡単に扱える</li>
+</ul>
+<h3 id="適用領域">適用領域</h3>
+<ul>
+<li><strong>バックエンドAPI</strong>: エラーハンドリングが重要なシステム</li>
+<li><strong>マイクロサービス</strong>: 複雑な依存関係の管理</li>
+<li><strong>データパイプライン</strong>: リソースの適切な管理</li>
+<li><strong>CLI ツール</strong>: 型安全な副作用の制御</li>
+</ul>
+<h3 id="学習リソース">学習リソース</h3>
+<ul>
+<li><a href="https://effect.website/">Effect公式サイト</a></li>
+<li><a href="https://github.com/Effect-TS/effect">Effect GitHub</a></li>
+<li><a href="https://effect.website/docs/introduction">Effect Documentation</a></li>
+<li><a href="https://github.com/Effect-TS/examples">Effect Examples</a></li>
+</ul>
+<p>Effect-TSを活用することで、エラーハンドリングが型レベルで保証され、バグの少ない堅牢なアプリケーションを構築できます。特にエンタープライズアプリケーションや、信頼性が重要なシステムに最適です。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

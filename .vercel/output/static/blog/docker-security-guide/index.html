@@ -1,0 +1,705 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/docker-security-guide/"><!-- Primary Meta Tags --><title>Dockerセキュリティ完全ガイド - 安全なコンテナ運用のベストプラクティス</title><meta name="title" content="Dockerセキュリティ完全ガイド - 安全なコンテナ運用のベストプラクティス"><meta name="description" content="イメージスキャン、rootless実行、Secrets管理、ネットワーク分離など、Dockerの本番運用に必要なセキュリティ対策を徹底解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/docker-security-guide/"><meta property="og:title" content="Dockerセキュリティ完全ガイド - 安全なコンテナ運用のベストプラクティス"><meta property="og:description" content="イメージスキャン、rootless実行、Secrets管理、ネットワーク分離など、Dockerの本番運用に必要なセキュリティ対策を徹底解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/docker-security-guide/"><meta name="twitter:title" content="Dockerセキュリティ完全ガイド - 安全なコンテナ運用のベストプラクティス"><meta name="twitter:description" content="イメージスキャン、rootless実行、Secrets管理、ネットワーク分離など、Dockerの本番運用に必要なセキュリティ対策を徹底解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/docker-security-guide/"},"headline":"Dockerセキュリティ完全ガイド - 安全なコンテナ運用のベストプラクティス","description":"イメージスキャン、rootless実行、Secrets管理、ネットワーク分離など、Dockerの本番運用に必要なセキュリティ対策を徹底解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。","datePublished":"2026-02-05T00:00:00.000Z","dateModified":"2026-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Docker, セキュリティ, DevOps, コンテナ"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Dockerセキュリティ完全ガイド - 安全なコンテナ運用のベストプラクティス"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-05T00:00:00.000Z"> Feb 4, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Dockerセキュリティ完全ガイド - 安全なコンテナ運用のベストプラクティス</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Docker" class="article-tag" data-astro-cid-bvzihdzo>
+#Docker </a><a href="/blog/tag/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3" class="article-tag" data-astro-cid-bvzihdzo>
+#セキュリティ </a><a href="/blog/tag/DevOps" class="article-tag" data-astro-cid-bvzihdzo>
+#DevOps </a><a href="/blog/tag/%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A" class="article-tag" data-astro-cid-bvzihdzo>
+#コンテナ </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Dockerは開発から本番まで幅広く使われていますが、セキュリティ対策を怠ると重大な脆弱性につながります。本記事では、安全なコンテナ運用に必要なセキュリティ対策を包括的に解説します。</p>
+<h2 id="なぜdockerのセキュリティが重要なのか">なぜDockerのセキュリティが重要なのか</h2>
+<p>Dockerコンテナは隔離されているように見えますが、適切な設定がなければホストシステムへの攻撃経路となり得ます。</p>
+<h3 id="主なセキュリティリスク">主なセキュリティリスク</h3>
+<ol>
+<li><strong>脆弱なベースイメージ</strong> - 既知の脆弱性を含むイメージの使用</li>
+<li><strong>root権限での実行</strong> - コンテナ脱出時の影響範囲拡大</li>
+<li><strong>機密情報の漏洩</strong> - 環境変数やレイヤーに埋め込まれたシークレット</li>
+<li><strong>過剰な権限付与</strong> - 不要なCapabilityやボリュームマウント</li>
+<li><strong>ネットワーク露出</strong> - 不適切なポート公開やネットワーク設定</li>
+</ol>
+<h2 id="イメージスキャン">イメージスキャン</h2>
+<h3 id="trivy-による脆弱性スキャン">Trivy による脆弱性スキャン</h3>
+<p>Trivyは包括的な脆弱性スキャナーです。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Trivyのインストール（macOS）</span></span>
+<span class="line"><span style="color:#B392F0">brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> aquasecurity/trivy/trivy</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># イメージのスキャン</span></span>
+<span class="line"><span style="color:#B392F0">trivy</span><span style="color:#9ECBFF"> image</span><span style="color:#9ECBFF"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 高・重大な脆弱性のみ表示</span></span>
+<span class="line"><span style="color:#B392F0">trivy</span><span style="color:#9ECBFF"> image</span><span style="color:#79B8FF"> --severity</span><span style="color:#9ECBFF"> HIGH,CRITICAL</span><span style="color:#9ECBFF"> nginx:latest</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># JSON形式で出力</span></span>
+<span class="line"><span style="color:#B392F0">trivy</span><span style="color:#9ECBFF"> image</span><span style="color:#79B8FF"> --format</span><span style="color:#9ECBFF"> json</span><span style="color:#79B8FF"> --output</span><span style="color:#9ECBFF"> results.json</span><span style="color:#9ECBFF"> python:3.12</span></span></code></pre>
+<h3 id="cicdパイプラインへの統合">CI/CDパイプラインへの統合</h3>
+<p>GitHub Actionsでの自動スキャン例:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Container Security</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  push</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">: [ </span><span style="color:#9ECBFF">main</span><span style="color:#E1E4E8"> ]</span></span>
+<span class="line"><span style="color:#85E89D">  pull_request</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">: [ </span><span style="color:#9ECBFF">main</span><span style="color:#E1E4E8"> ]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  scan</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Build image</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">docker build -t myapp:${{ github.sha }} .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Run Trivy scanner</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">aquasecurity/trivy-action@master</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          image-ref</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp:${{ github.sha }}</span></span>
+<span class="line"><span style="color:#85E89D">          format</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'sarif'</span></span>
+<span class="line"><span style="color:#85E89D">          output</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'trivy-results.sarif'</span></span>
+<span class="line"><span style="color:#85E89D">          severity</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'CRITICAL,HIGH'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Upload results to GitHub Security</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">github/codeql-action/upload-sarif@v3</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          sarif_file</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'trivy-results.sarif'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Fail on high severity</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">aquasecurity/trivy-action@master</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          image-ref</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp:${{ github.sha }}</span></span>
+<span class="line"><span style="color:#85E89D">          exit-code</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'1'</span></span>
+<span class="line"><span style="color:#85E89D">          severity</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'CRITICAL,HIGH'</span></span></code></pre>
+<h3 id="docker-scout">Docker Scout</h3>
+<p>Docker公式のセキュリティツール:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Docker Scoutの有効化</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> scout</span><span style="color:#9ECBFF"> enroll</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># イメージの分析</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> scout</span><span style="color:#9ECBFF"> cves</span><span style="color:#9ECBFF"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 推奨事項の取得</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> scout</span><span style="color:#9ECBFF"> recommendations</span><span style="color:#9ECBFF"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># CVEの詳細表示</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> scout</span><span style="color:#9ECBFF"> cves</span><span style="color:#79B8FF"> --format</span><span style="color:#9ECBFF"> only-packages</span><span style="color:#9ECBFF"> node:20-alpine</span></span></code></pre>
+<h3 id="スキャン結果の対処">スキャン結果の対処</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># 悪い例：古いベースイメージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:16</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 良い例：最新の安定版</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># さらに良い例：特定バージョンの指定</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20.11.0-alpine3.19</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ベストプラクティス：マルチステージビルドで最小化</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci --only=production</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/node_modules ./node_modules</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"server.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h2 id="rootless-docker">Rootless Docker</h2>
+<p>コンテナをroot以外のユーザーで実行することで、セキュリティを大幅に向上させます。</p>
+<h3 id="rootless-dockerのセットアップ">Rootless Dockerのセットアップ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 既存のDockerを停止</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> systemctl</span><span style="color:#9ECBFF"> stop</span><span style="color:#9ECBFF"> docker</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># rootlessモードのインストール</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -fsSL</span><span style="color:#9ECBFF"> https://get.docker.com/rootless</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> sh</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 環境変数の設定</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> PATH</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">/home/$USER/bin:$PATH</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> DOCKER_HOST</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">unix:///run/user/$(</span><span style="color:#B392F0">id</span><span style="color:#79B8FF"> -u</span><span style="color:#E1E4E8">)/docker.sock</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ~/.bashrcに追加</span></span>
+<span class="line"><span style="color:#B392F0">cat</span><span style="color:#F97583"> >></span><span style="color:#9ECBFF"> ~/.bashrc</span><span style="color:#F97583"> &#x3C;&#x3C;</span><span style="color:#9ECBFF"> 'EOF'</span></span>
+<span class="line"><span style="color:#9ECBFF">export PATH=/home/$USER/bin:$PATH</span></span>
+<span class="line"><span style="color:#9ECBFF">export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock</span></span>
+<span class="line"><span style="color:#9ECBFF">EOF</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># サービスの起動</span></span>
+<span class="line"><span style="color:#B392F0">systemctl</span><span style="color:#79B8FF"> --user</span><span style="color:#9ECBFF"> start</span><span style="color:#9ECBFF"> docker</span></span>
+<span class="line"><span style="color:#B392F0">systemctl</span><span style="color:#79B8FF"> --user</span><span style="color:#9ECBFF"> enable</span><span style="color:#9ECBFF"> docker</span></span></code></pre>
+<h3 id="コンテナ内でのユーザー指定">コンテナ内でのユーザー指定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># 方法1: USERディレクティブ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># アプリケーションディレクトリの作成</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 依存関係のインストール（rootで実行）</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci --only=production</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># アプリケーションファイルのコピー</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 非rootユーザーへ切り替え</span></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"server.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># 方法2: カスタムユーザーの作成</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> ubuntu:22.04</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 専用ユーザーの作成</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> groupadd -r appuser &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    useradd -r -g appuser -u 1001 appuser</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ファイルのコピーと所有権の設定</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --chown=appuser:appuser . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> appuser</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"./myapp"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># 方法3: 数値UIDの使用（Kubernetes推奨）</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> python:3.12-slim</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> requirements.txt .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> pip install --no-cache-dir -r requirements.txt</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 数値UIDで指定</span></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> 1000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"python"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"app.py"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h3 id="rootが必要な処理の分離">rootが必要な処理の分離</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> setup</span></span>
+<span class="line"><span style="color:#6A737D"># root権限が必要な処理</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> apk add --no-cache python3 make g++</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> npm ci</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"><span style="color:#6A737D"># ビルド済みのnode_modulesをコピー</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=setup /app/node_modules ./node_modules</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --chown=node:node . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 最初から非rootユーザーで実行</span></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"server.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h2 id="secrets管理">Secrets管理</h2>
+<p>機密情報を安全に扱う方法を解説します。</p>
+<h3 id="docker-secretsswarmcompose">Docker Secrets（Swarm/Compose）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># docker-compose.yml</span></span>
+<span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.8'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp:latest</span></span>
+<span class="line"><span style="color:#85E89D">    secrets</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">db_password</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">api_key</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      DB_PASSWORD_FILE</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/run/secrets/db_password</span></span>
+<span class="line"><span style="color:#85E89D">      API_KEY_FILE</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/run/secrets/api_key</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">secrets</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  db_password</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    file</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">./secrets/db_password.txt</span></span>
+<span class="line"><span style="color:#85E89D">  api_key</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    file</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">./secrets/api_key.txt</span></span></code></pre>
+<p>アプリケーション側での読み込み:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// Node.js example</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> fs</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'fs'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> getSecret</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">secretName</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> secretPath</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> process.env[</span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">secretName</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">toUpperCase</span><span style="color:#9ECBFF">()</span><span style="color:#9ECBFF">}_FILE`</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (secretPath) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> fs.</span><span style="color:#B392F0">readFileSync</span><span style="color:#E1E4E8">(secretPath, </span><span style="color:#9ECBFF">'utf8'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#6A737D">  // フォールバック: 環境変数から直接読み込み</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> process.env[secretName.</span><span style="color:#B392F0">toUpperCase</span><span style="color:#E1E4E8">()];</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> dbPassword</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> getSecret</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'db_password'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> apiKey</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> getSecret</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'api_key'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="buildkit-secrets">BuildKit Secrets</h3>
+<p>ビルド時のみ必要なシークレットの安全な利用:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># syntax=docker/dockerfile:1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ビルド時のみNPM_TOKENを利用</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> --mount=type=secret,id=npm_token \</span></span>
+<span class="line"><span style="color:#E1E4E8">    NPM_TOKEN=$(cat /run/secrets/npm_token) \</span></span>
+<span class="line"><span style="color:#E1E4E8">    echo </span><span style="color:#9ECBFF">"//registry.npmjs.org/:_authToken=${NPM_TOKEN}"</span><span style="color:#E1E4E8"> > .npmrc &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    npm ci &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    rm .npmrc</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"server.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<p>ビルドコマンド:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># シークレットを渡してビルド</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --secret</span><span style="color:#9ECBFF"> id=npm_token,src=</span><span style="color:#E1E4E8">$HOME</span><span style="color:#9ECBFF">/.npm_token</span><span style="color:#79B8FF"> -t</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># BuildKitの有効化（古いバージョン）</span></span>
+<span class="line"><span style="color:#E1E4E8">DOCKER_BUILDKIT</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">1</span><span style="color:#B392F0"> docker</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --secret</span><span style="color:#9ECBFF"> id=npm_token,src=./.npm_token</span><span style="color:#79B8FF"> -t</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> .</span></span></code></pre>
+<h3 id="環境変数の安全な使用">環境変数の安全な使用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># 悪い例：機密情報をレイヤーに残す</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> API_KEY=secret123</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> DB_PASSWORD=pass456</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 良い例：実行時に渡す（Dockerfileには記載しない）</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20-alpine</span></span>
+<span class="line"><span style="color:#6A737D"># 環境変数は実行時に注入</span></span></code></pre>
+<p>実行時の注入:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># docker run</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -e</span><span style="color:#9ECBFF"> API_KEY=</span><span style="color:#E1E4E8">$API_KEY </span><span style="color:#79B8FF">-e</span><span style="color:#9ECBFF"> DB_PASSWORD=</span><span style="color:#E1E4E8">$DB_PASSWORD </span><span style="color:#9ECBFF">myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># docker-compose.yml</span></span>
+<span class="line"><span style="color:#B392F0">services:</span></span>
+<span class="line"><span style="color:#B392F0">  app:</span></span>
+<span class="line"><span style="color:#B392F0">    image:</span><span style="color:#9ECBFF"> myapp</span></span>
+<span class="line"><span style="color:#B392F0">    environment:</span></span>
+<span class="line"><span style="color:#B392F0">      -</span><span style="color:#9ECBFF"> API_KEY=</span><span style="color:#E1E4E8">${API_KEY}</span></span>
+<span class="line"><span style="color:#B392F0">      -</span><span style="color:#9ECBFF"> DB_PASSWORD=</span><span style="color:#E1E4E8">${DB_PASSWORD}</span></span></code></pre>
+<h3 id="envファイルの管理">.envファイルの管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># .env.example（リポジトリにコミット）</span></span>
+<span class="line"><span style="color:#E1E4E8">API_KEY</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your_api_key_here</span></span>
+<span class="line"><span style="color:#E1E4E8">DB_PASSWORD</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your_db_password_here</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># .env（.gitignoreに追加、コミットしない）</span></span>
+<span class="line"><span style="color:#E1E4E8">API_KEY</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">actual_secret_key</span></span>
+<span class="line"><span style="color:#E1E4E8">DB_PASSWORD</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">actual_password</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span># .gitignore</span></span>
+<span class="line"><span>.env</span></span>
+<span class="line"><span>.env.local</span></span>
+<span class="line"><span>secrets/</span></span>
+<span class="line"><span>*.key</span></span>
+<span class="line"><span>*.pem</span></span></code></pre>
+<h2 id="ネットワーク分離">ネットワーク分離</h2>
+<h3 id="カスタムネットワークの作成">カスタムネットワークの作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># フロントエンド用ネットワーク</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> network</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> frontend</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># バックエンド用ネットワーク</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> network</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> backend</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># データベース用ネットワーク</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> network</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> database</span></span></code></pre>
+<h3 id="docker-composeでの分離">docker-composeでの分離</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.8'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  nginx</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">nginx:alpine</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">frontend</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"80:80"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  api</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapi:latest</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">frontend</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">backend</span></span>
+<span class="line"><span style="color:#6A737D">    # 外部ポートは公開しない</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  worker</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myworker:latest</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">backend</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  postgres</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">postgres:16-alpine</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">backend</span></span>
+<span class="line"><span style="color:#6A737D">    # 外部からアクセス不可</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      POSTGRES_PASSWORD_FILE</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/run/secrets/db_password</span></span>
+<span class="line"><span style="color:#85E89D">    secrets</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">db_password</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  frontend</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    driver</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">bridge</span></span>
+<span class="line"><span style="color:#85E89D">  backend</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    driver</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">bridge</span></span>
+<span class="line"><span style="color:#85E89D">    internal</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#6A737D">  # 外部インターネットへのアクセスを遮断</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">secrets</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  db_password</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    file</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">./secrets/db_password.txt</span></span></code></pre>
+<h3 id="ネットワークポリシーの検証">ネットワークポリシーの検証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># コンテナのネットワーク接続確認</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> exec</span><span style="color:#9ECBFF"> api</span><span style="color:#9ECBFF"> ping</span><span style="color:#79B8FF"> -c</span><span style="color:#79B8FF"> 1</span><span style="color:#9ECBFF"> postgres</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> exec</span><span style="color:#9ECBFF"> nginx</span><span style="color:#9ECBFF"> ping</span><span style="color:#79B8FF"> -c</span><span style="color:#79B8FF"> 1</span><span style="color:#9ECBFF"> postgres</span><span style="color:#6A737D">  # 失敗するはず</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ネットワークの詳細表示</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> network</span><span style="color:#9ECBFF"> inspect</span><span style="color:#9ECBFF"> backend</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># コンテナのネットワーク一覧</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> inspect</span><span style="color:#9ECBFF"> api</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> jq</span><span style="color:#9ECBFF"> '.[0].NetworkSettings.Networks'</span></span></code></pre>
+<h2 id="capabilityの制限">Capabilityの制限</h2>
+<p>Linuxの Capability を最小限にすることでセキュリティを向上させます。</p>
+<h3 id="デフォルトcapabilityの確認">デフォルトCapabilityの確認</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># コンテナのCapability確認</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> --rm</span><span style="color:#9ECBFF"> alpine</span><span style="color:#9ECBFF"> sh</span><span style="color:#79B8FF"> -c</span><span style="color:#9ECBFF"> 'apk add -U libcap; capsh --print'</span></span></code></pre>
+<h3 id="不要なcapabilityの削除">不要なCapabilityの削除</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># docker-compose.yml</span></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp:latest</span></span>
+<span class="line"><span style="color:#85E89D">    cap_drop</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">ALL</span></span>
+<span class="line"><span style="color:#85E89D">    cap_add</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">NET_BIND_SERVICE</span><span style="color:#6A737D">  # 1024番未満のポートをバインド</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">CHOWN</span><span style="color:#6A737D">             # ファイル所有者の変更</span></span>
+<span class="line"><span style="color:#85E89D">    security_opt</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">no-new-privileges:true</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># docker run</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --cap-drop=ALL</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --cap-add=NET_BIND_SERVICE</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --security-opt=no-new-privileges:true</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  myapp:latest</span></span></code></pre>
+<h3 id="特権モードの回避">特権モードの回避</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># 悪い例：絶対に避けるべき</span></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    privileged</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 良い例：必要最小限の権限のみ</span></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cap_drop</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">ALL</span></span>
+<span class="line"><span style="color:#85E89D">    cap_add</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">NET_ADMIN</span><span style="color:#6A737D">  # 本当に必要な場合のみ</span></span></code></pre>
+<h2 id="read-onlyファイルシステム">Read-onlyファイルシステム</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp:latest</span></span>
+<span class="line"><span style="color:#85E89D">    read_only</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">    tmpfs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/tmp</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/var/run</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">app-data:/app/data</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app-data</span><span style="color:#E1E4E8">:</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># docker run</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --read-only</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --tmpfs</span><span style="color:#9ECBFF"> /tmp</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --tmpfs</span><span style="color:#9ECBFF"> /var/run</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -v</span><span style="color:#9ECBFF"> app-data:/app/data</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  myapp:latest</span></span></code></pre>
+<h2 id="コンテナリソース制限">コンテナリソース制限</h2>
+<p>DoS攻撃や暴走を防ぐためのリソース制限:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp:latest</span></span>
+<span class="line"><span style="color:#85E89D">    deploy</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        limits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          cpus</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'0.5'</span></span>
+<span class="line"><span style="color:#85E89D">          memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">512M</span></span>
+<span class="line"><span style="color:#85E89D">        reservations</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          cpus</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'0.25'</span></span>
+<span class="line"><span style="color:#85E89D">          memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">256M</span></span>
+<span class="line"><span style="color:#85E89D">    ulimits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      nofile</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        soft</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">65536</span></span>
+<span class="line"><span style="color:#85E89D">        hard</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">65536</span></span>
+<span class="line"><span style="color:#85E89D">      nproc</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">512</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># docker run</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --cpus=</span><span style="color:#9ECBFF">"0.5"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --memory=</span><span style="color:#9ECBFF">"512m"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --memory-swap=</span><span style="color:#9ECBFF">"512m"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --pids-limit=100</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  myapp:latest</span></span></code></pre>
+<h2 id="セキュリティスキャンとモニタリング">セキュリティスキャンとモニタリング</h2>
+<h3 id="dockerベンチセキュリティ">Dockerベンチセキュリティ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Docker Bench Securityの実行</span></span>
+<span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> clone</span><span style="color:#9ECBFF"> https://github.com/docker/docker-bench-security.git</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> docker-bench-security</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> sh</span><span style="color:#9ECBFF"> docker-bench-security.sh</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Docker コンテナとして実行</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> --rm</span><span style="color:#79B8FF"> --net</span><span style="color:#9ECBFF"> host</span><span style="color:#79B8FF"> --pid</span><span style="color:#9ECBFF"> host</span><span style="color:#79B8FF"> --userns</span><span style="color:#9ECBFF"> host</span><span style="color:#79B8FF"> --cap-add</span><span style="color:#9ECBFF"> audit_control</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -e</span><span style="color:#9ECBFF"> DOCKER_CONTENT_TRUST=</span><span style="color:#E1E4E8">$DOCKER_CONTENT_TRUST </span><span style="color:#79B8FF">\</span></span>
+<span class="line"><span style="color:#79B8FF">  -v</span><span style="color:#9ECBFF"> /etc:/etc:ro</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -v</span><span style="color:#9ECBFF"> /usr/bin/containerd:/usr/bin/containerd:ro</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -v</span><span style="color:#9ECBFF"> /usr/bin/runc:/usr/bin/runc:ro</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -v</span><span style="color:#9ECBFF"> /usr/lib/systemd:/usr/lib/systemd:ro</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -v</span><span style="color:#9ECBFF"> /var/lib:/var/lib:ro</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -v</span><span style="color:#9ECBFF"> /var/run/docker.sock:/var/run/docker.sock:ro</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --label</span><span style="color:#9ECBFF"> docker_bench_security</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  docker/docker-bench-security</span></span></code></pre>
+<h3 id="falco-によるランタイム監視">Falco によるランタイム監視</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># docker-compose.yml</span></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  falco</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">falcosecurity/falco:latest</span></span>
+<span class="line"><span style="color:#85E89D">    privileged</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/var/run/docker.sock:/host/var/run/docker.sock</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/dev:/host/dev</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/proc:/host/proc:ro</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/boot:/host/boot:ro</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/lib/modules:/host/lib/modules:ro</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/usr:/host/usr:ro</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">./falco-rules.yaml:/etc/falco/falco_rules.local.yaml</span></span></code></pre>
+<p>カスタムルール例 (<code>falco-rules.yaml</code>):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#E1E4E8">- </span><span style="color:#85E89D">rule</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Unauthorized Process in Container</span></span>
+<span class="line"><span style="color:#85E89D">  desc</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Detect unauthorized processes</span></span>
+<span class="line"><span style="color:#85E89D">  condition</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#9ECBFF">    spawned_process and</span></span>
+<span class="line"><span style="color:#9ECBFF">    container and</span></span>
+<span class="line"><span style="color:#9ECBFF">    not proc.name in (node, npm, sh, bash)</span></span>
+<span class="line"><span style="color:#85E89D">  output</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#9ECBFF">    Unauthorized process started</span></span>
+<span class="line"><span style="color:#9ECBFF">    (user=%user.name command=%proc.cmdline container=%container.id)</span></span>
+<span class="line"><span style="color:#85E89D">  priority</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">WARNING</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">- </span><span style="color:#85E89D">rule</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Write below root</span></span>
+<span class="line"><span style="color:#85E89D">  desc</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Detect writes to root filesystem</span></span>
+<span class="line"><span style="color:#85E89D">  condition</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#9ECBFF">    write and</span></span>
+<span class="line"><span style="color:#9ECBFF">    container and</span></span>
+<span class="line"><span style="color:#9ECBFF">    fd.name startswith /</span></span>
+<span class="line"><span style="color:#85E89D">  output</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#9ECBFF">    File write below root</span></span>
+<span class="line"><span style="color:#9ECBFF">    (user=%user.name file=%fd.name container=%container.id)</span></span>
+<span class="line"><span style="color:#85E89D">  priority</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ERROR</span></span></code></pre>
+<h2 id="content-trustイメージ署名">Content Trust（イメージ署名）</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Content Trustの有効化</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> DOCKER_CONTENT_TRUST</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># イメージのpush（自動的に署名される）</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> push</span><span style="color:#9ECBFF"> myregistry.com/myapp:latest</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 署名付きイメージのpull（検証される）</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> pull</span><span style="color:#9ECBFF"> myregistry.com/myapp:latest</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 署名情報の確認</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> trust</span><span style="color:#9ECBFF"> inspect</span><span style="color:#9ECBFF"> myregistry.com/myapp:latest</span></span></code></pre>
+<h2 id="実践的なセキュアdockerfile">実践的なセキュアDockerfile</h2>
+<p>すべてのベストプラクティスを適用した例:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># syntax=docker/dockerfile:1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ビルドステージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20.11.0-alpine3.19 </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># セキュリティアップデート</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> apk upgrade --no-cache</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 依存関係のみ先にコピー（キャッシュ効率化）</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package*.json ./</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ビルド時のシークレット使用</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> --mount=type=secret,id=npm_token \</span></span>
+<span class="line"><span style="color:#E1E4E8">    if [ -f /run/secrets/npm_token ]; then \</span></span>
+<span class="line"><span style="color:#E1E4E8">      NPM_TOKEN=$(cat /run/secrets/npm_token) \</span></span>
+<span class="line"><span style="color:#E1E4E8">      echo </span><span style="color:#9ECBFF">"//registry.npmjs.org/:_authToken=${NPM_TOKEN}"</span><span style="color:#E1E4E8"> > .npmrc; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    fi &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    npm ci --only=production &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    rm -f .npmrc</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># アプリケーションコード</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 本番ステージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> node:20.11.0-alpine3.19</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># セキュリティアップデート</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> apk upgrade --no-cache &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#6A737D">    # 不要なパッケージの削除</span></span>
+<span class="line"><span style="color:#E1E4E8">    apk del apk-tools &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#6A737D">    # 一時ファイルのクリーンアップ</span></span>
+<span class="line"><span style="color:#E1E4E8">    rm -rf /var/cache/apk/* /tmp/*</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ビルド成果物のみコピー</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder --chown=node:node /app/node_modules ./node_modules</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --chown=node:node . .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ヘルスチェック</span></span>
+<span class="line"><span style="color:#F97583">HEALTHCHECK</span><span style="color:#E1E4E8"> --interval=30s --timeout=3s --start-period=5s --retries=3 \</span></span>
+<span class="line"><span style="color:#F97583">  CMD</span><span style="color:#E1E4E8"> node healthcheck.js</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 非rootユーザーで実行</span></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> node</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 最小限のポート公開</span></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 3000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># シグナルハンドリング</span></span>
+<span class="line"><span style="color:#F97583">STOPSIGNAL</span><span style="color:#E1E4E8"> SIGTERM</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"server.js"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<p>対応する <code>docker-compose.yml</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.8'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    build</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      context</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">.</span></span>
+<span class="line"><span style="color:#85E89D">      secrets</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">npm_token</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp:latest</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # セキュリティ設定</span></span>
+<span class="line"><span style="color:#85E89D">    read_only</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">    cap_drop</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">ALL</span></span>
+<span class="line"><span style="color:#85E89D">    cap_add</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">NET_BIND_SERVICE</span></span>
+<span class="line"><span style="color:#85E89D">    security_opt</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">no-new-privileges:true</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # リソース制限</span></span>
+<span class="line"><span style="color:#85E89D">    deploy</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        limits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          cpus</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'1'</span></span>
+<span class="line"><span style="color:#85E89D">          memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">1G</span></span>
+<span class="line"><span style="color:#85E89D">        reservations</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          cpus</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'0.5'</span></span>
+<span class="line"><span style="color:#85E89D">          memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">512M</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # 一時ファイルシステム</span></span>
+<span class="line"><span style="color:#85E89D">    tmpfs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/tmp</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">/app/tmp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # ボリューム</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">app-logs:/app/logs:rw</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # ネットワーク</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">frontend</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">backend</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # 環境変数（機密情報はsecretsで）</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      NODE_ENV</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">production</span></span>
+<span class="line"><span style="color:#85E89D">      PORT</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">    secrets</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">db_password</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">api_key</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # ヘルスチェック</span></span>
+<span class="line"><span style="color:#85E89D">    healthcheck</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      test</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"CMD"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"healthcheck.js"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#85E89D">      interval</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">30s</span></span>
+<span class="line"><span style="color:#85E89D">      timeout</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">3s</span></span>
+<span class="line"><span style="color:#85E89D">      retries</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span></span>
+<span class="line"><span style="color:#85E89D">      start_period</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">40s</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  frontend</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    driver</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">bridge</span></span>
+<span class="line"><span style="color:#85E89D">  backend</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    driver</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">bridge</span></span>
+<span class="line"><span style="color:#85E89D">    internal</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  app-logs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    driver</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">local</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">secrets</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  npm_token</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    file</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">./secrets/npm_token.txt</span></span>
+<span class="line"><span style="color:#85E89D">  db_password</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    file</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">./secrets/db_password.txt</span></span>
+<span class="line"><span style="color:#85E89D">  api_key</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    file</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">./secrets/api_key.txt</span></span></code></pre>
+<h2 id="セキュリティチェックリスト">セキュリティチェックリスト</h2>
+<p>本番環境デプロイ前の確認事項:</p>
+<h3 id="イメージ">イメージ</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 最新の安定版ベースイメージを使用</li>
+<li class="task-list-item"><input type="checkbox" disabled> 脆弱性スキャン（Trivy/Scout）実施</li>
+<li class="task-list-item"><input type="checkbox" disabled> マルチステージビルドで最小化</li>
+<li class="task-list-item"><input type="checkbox" disabled> 不要なファイル・ツールの削除</li>
+<li class="task-list-item"><input type="checkbox" disabled> Content Trust有効化</li>
+</ul>
+<h3 id="ユーザー権限">ユーザー・権限</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 非rootユーザーで実行</li>
+<li class="task-list-item"><input type="checkbox" disabled> Capabilityを最小化</li>
+<li class="task-list-item"><input type="checkbox" disabled> 特権モード未使用</li>
+<li class="task-list-item"><input type="checkbox" disabled> Read-onlyファイルシステム</li>
+<li class="task-list-item"><input type="checkbox" disabled> no-new-privileges設定</li>
+</ul>
+<h3 id="機密情報">機密情報</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Secrets機能の使用</li>
+<li class="task-list-item"><input type="checkbox" disabled> 環境変数に機密情報なし</li>
+<li class="task-list-item"><input type="checkbox" disabled> イメージレイヤーに機密情報なし</li>
+<li class="task-list-item"><input type="checkbox" disabled> .envファイルを.gitignore</li>
+</ul>
+<h3 id="ネットワーク">ネットワーク</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 必要最小限のポート公開</li>
+<li class="task-list-item"><input type="checkbox" disabled> カスタムネットワーク使用</li>
+<li class="task-list-item"><input type="checkbox" disabled> サービス間の適切な分離</li>
+<li class="task-list-item"><input type="checkbox" disabled> ファイアウォール設定</li>
+</ul>
+<h3 id="リソース">リソース</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> CPU/メモリ制限設定</li>
+<li class="task-list-item"><input type="checkbox" disabled> PID制限設定</li>
+<li class="task-list-item"><input type="checkbox" disabled> ディスクI/O制限</li>
+</ul>
+<h3 id="モニタリング">モニタリング</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> ログ収集設定</li>
+<li class="task-list-item"><input type="checkbox" disabled> ヘルスチェック実装</li>
+<li class="task-list-item"><input type="checkbox" disabled> ランタイム監視（Falco等）</li>
+<li class="task-list-item"><input type="checkbox" disabled> アラート設定</li>
+</ul>
+<h2 id="まとめ">まとめ</h2>
+<p>Dockerのセキュリティは、単一の対策ではなく、多層防御の考え方が重要です。</p>
+<h3 id="重要ポイント">重要ポイント</h3>
+<ol>
+<li><strong>イメージセキュリティ</strong>: 定期的なスキャンと更新</li>
+<li><strong>最小権限の原則</strong>: rootless、Capability制限、read-only</li>
+<li><strong>機密情報保護</strong>: Secrets機能の活用、環境変数の適切な管理</li>
+<li><strong>ネットワーク分離</strong>: カスタムネットワークによる適切な分離</li>
+<li><strong>継続的監視</strong>: スキャン自動化とランタイム監視</li>
+</ol>
+<p>これらの対策を組み合わせることで、安全なコンテナ運用が実現できます。</p>
+<h3 id="次のステップ">次のステップ</h3>
+<ul>
+<li>Kubernetesのセキュリティ（Pod Security Standards、Network Policies）</li>
+<li>サプライチェーンセキュリティ（SBOM、Sigstore）</li>
+<li>ゼロトラストアーキテクチャの実装</li>
+<li>コンプライアンス対応（CIS Benchmark、NIST）</li>
+</ul>
+<p>セキュリティは一度設定して終わりではありません。継続的な改善と監視を心がけましょう。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

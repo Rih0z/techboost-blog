@@ -1,0 +1,740 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/postgres-tips-guide/"><!-- Primary Meta Tags --><title>PostgreSQL実践テクニック集2026</title><meta name="title" content="PostgreSQL実践テクニック集2026"><meta name="description" content="PostgreSQLの実践的テクニックを完全網羅。インデックス最適化、JSONB活用、ウィンドウ関数、CTE、パフォーマンスチューニングまで実例で解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/postgres-tips-guide/"><meta property="og:title" content="PostgreSQL実践テクニック集2026"><meta property="og:description" content="PostgreSQLの実践的テクニックを完全網羅。インデックス最適化、JSONB活用、ウィンドウ関数、CTE、パフォーマンスチューニングまで実例で解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/postgres-tips-guide/"><meta name="twitter:title" content="PostgreSQL実践テクニック集2026"><meta name="twitter:description" content="PostgreSQLの実践的テクニックを完全網羅。インデックス最適化、JSONB活用、ウィンドウ関数、CTE、パフォーマンスチューニングまで実例で解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/postgres-tips-guide/"},"headline":"PostgreSQL実践テクニック集2026","description":"PostgreSQLの実践的テクニックを完全網羅。インデックス最適化、JSONB活用、ウィンドウ関数、CTE、パフォーマンスチューニングまで実例で解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。","datePublished":"2026-02-05T00:00:00.000Z","dateModified":"2026-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"PostgreSQL, Database, SQL, パフォーマンス, インフラ"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"PostgreSQL実践テクニック集2026"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-05T00:00:00.000Z"> Feb 4, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>PostgreSQL実践テクニック集2026</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/PostgreSQL" class="article-tag" data-astro-cid-bvzihdzo>
+#PostgreSQL </a><a href="/blog/tag/Database" class="article-tag" data-astro-cid-bvzihdzo>
+#Database </a><a href="/blog/tag/SQL" class="article-tag" data-astro-cid-bvzihdzo>
+#SQL </a><a href="/blog/tag/%E3%83%91%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%B3%E3%82%B9" class="article-tag" data-astro-cid-bvzihdzo>
+#パフォーマンス </a><a href="/blog/tag/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#インフラ </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>PostgreSQLは強力な機能を持つリレーショナルデータベースです。本記事では、実務で使える実践的テクニックを徹底解説します。</p>
+<h2 id="目次">目次</h2>
+<ol>
+<li>インデックス最適化</li>
+<li>JSONB活用</li>
+<li>ウィンドウ関数</li>
+<li>CTE（共通テーブル式）</li>
+<li>パーティショニング</li>
+<li>フルテキスト検索</li>
+<li>パフォーマンスチューニング</li>
+<li>実践パターン</li>
+<li>ベストプラクティス</li>
+</ol>
+<h2 id="インデックス最適化">インデックス最適化</h2>
+<h3 id="b-treeインデックス">B-Treeインデックス</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 基本的なインデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_users_email</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> users(email);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 複合インデックス（順序が重要）</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_orders_user_created</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> orders(user_id, created_at </span><span style="color:#F97583">DESC</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 部分インデックス（条件付き）</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_active_users</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> users(email)</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#F97583"> status</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'active'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ユニークインデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> UNIQUE INDEX</span><span style="color:#B392F0"> idx_users_username</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> users(username);</span></span></code></pre>
+<h3 id="インデックスの使用状況確認">インデックスの使用状況確認</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- インデックスのサイズと使用状況</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  schemaname,</span></span>
+<span class="line"><span style="color:#E1E4E8">  tablename,</span></span>
+<span class="line"><span style="color:#E1E4E8">  indexname,</span></span>
+<span class="line"><span style="color:#E1E4E8">  pg_size_pretty(pg_relation_size(indexrelid)) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> index_size,</span></span>
+<span class="line"><span style="color:#E1E4E8">  idx_scan </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> index_scans,</span></span>
+<span class="line"><span style="color:#E1E4E8">  idx_tup_read </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> tuples_read,</span></span>
+<span class="line"><span style="color:#E1E4E8">  idx_tup_fetch </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> tuples_fetched</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> pg_stat_user_indexes</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> idx_scan </span><span style="color:#F97583">DESC</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 未使用インデックスの検出</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  schemaname,</span></span>
+<span class="line"><span style="color:#E1E4E8">  tablename,</span></span>
+<span class="line"><span style="color:#E1E4E8">  indexname,</span></span>
+<span class="line"><span style="color:#E1E4E8">  pg_size_pretty(pg_relation_size(indexrelid)) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> index_size</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> pg_stat_user_indexes</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> idx_scan </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#F97583">AND</span><span style="color:#E1E4E8"> indexrelid </span><span style="color:#F97583">NOT</span><span style="color:#F97583"> IN</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span><span style="color:#E1E4E8"> indexrelid </span><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> pg_index </span><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> indisunique</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="ginインデックス">GINインデックス</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 配列検索用</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_tags_gin</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> posts </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN(tags);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 使用例</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> posts </span><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> tags @</span><span style="color:#F97583">></span><span style="color:#F97583"> ARRAY</span><span style="color:#E1E4E8">['postgresql', 'database'];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- JSONB用</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_metadata_gin</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> products </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN(metadata);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 使用例</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata @</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> '{"category": "electronics"}'</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="gistインデックス">GiSTインデックス</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 範囲検索用</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_events_daterange</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> events </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIST(daterange(</span><span style="color:#F97583">start_date</span><span style="color:#E1E4E8">, end_date));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 使用例</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> events</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> daterange(</span><span style="color:#F97583">start_date</span><span style="color:#E1E4E8">, end_date) &#x26;&#x26; daterange(</span><span style="color:#9ECBFF">'2026-01-01'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'2026-12-31'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 地理空間データ用（PostGIS）</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_locations_geom</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> locations </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIST(geom);</span></span></code></pre>
+<h3 id="式インデックス">式インデックス</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 小文字変換後の検索用</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_users_lower_email</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> users(</span><span style="color:#79B8FF">LOWER</span><span style="color:#E1E4E8">(email));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 使用例</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> users </span><span style="color:#F97583">WHERE</span><span style="color:#79B8FF"> LOWER</span><span style="color:#E1E4E8">(email) </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'user@example.com'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- JSON抽出用</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_data_name</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> documents((</span><span style="color:#F97583">data->></span><span style="color:#9ECBFF">'name'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 使用例</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> documents </span><span style="color:#F97583">WHERE</span><span style="color:#F97583"> data->></span><span style="color:#9ECBFF">'name'</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'John'</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h2 id="jsonb活用">JSONB活用</h2>
+<h3 id="基本操作">基本操作</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- テーブル作成</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> products</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  name</span><span style="color:#F97583"> VARCHAR</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">255</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  metadata JSONB,</span></span>
+<span class="line"><span style="color:#E1E4E8">  created_at </span><span style="color:#F97583">TIMESTAMP</span><span style="color:#F97583"> DEFAULT</span><span style="color:#E1E4E8"> CURRENT_TIMESTAMP</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- データ挿入</span></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> products (</span><span style="color:#F97583">name</span><span style="color:#E1E4E8">, metadata) </span><span style="color:#F97583">VALUES</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Laptop'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'{"brand": "Dell", "specs": {"cpu": "i7", "ram": 16}}'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Phone'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'{"brand": "Apple", "specs": {"storage": 128, "color": "black"}}'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- データ取得</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#F97583">  name</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> brand,</span></span>
+<span class="line"><span style="color:#E1E4E8">  metadata</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'specs'</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'cpu'</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> cpu</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> products;</span></span></code></pre>
+<h3 id="jsonb検索">JSONB検索</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- キーの存在確認</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products </span><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata ? </span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 複数キーの存在確認</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products </span><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata ?&#x26; </span><span style="color:#F97583">ARRAY</span><span style="color:#E1E4E8">['brand', 'specs'];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 値の一致</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products </span><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata @</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> '{"brand": "Apple"}'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ネストした値の検索</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'specs'</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'cpu'</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'i7'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 配列要素の検索</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'tags'</span><span style="color:#E1E4E8"> @</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> '"featured"'</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="jsonb更新">JSONB更新</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 値の追加・更新</span></span>
+<span class="line"><span style="color:#F97583">UPDATE</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">SET</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> '{"warranty": "2 years"}'</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ネストした値の更新</span></span>
+<span class="line"><span style="color:#F97583">UPDATE</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">SET</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> jsonb_set(</span></span>
+<span class="line"><span style="color:#E1E4E8">  metadata,</span></span>
+<span class="line"><span style="color:#9ECBFF">  '{specs, ram}'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  '32'</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- キーの削除</span></span>
+<span class="line"><span style="color:#F97583">UPDATE</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">SET</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">-</span><span style="color:#9ECBFF"> 'warranty'</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ネストしたキーの削除</span></span>
+<span class="line"><span style="color:#F97583">UPDATE</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">SET</span><span style="color:#E1E4E8"> metadata </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> metadata #</span><span style="color:#F97583">-</span><span style="color:#9ECBFF"> '{specs, color}'</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="jsonb集計">JSONB集計</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- JSONBから集計</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> brand,</span></span>
+<span class="line"><span style="color:#79B8FF">  COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> product_count,</span></span>
+<span class="line"><span style="color:#79B8FF">  AVG</span><span style="color:#E1E4E8">((metadata</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'specs'</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'ram'</span><span style="color:#E1E4E8">)::</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> avg_ram</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'specs'</span><span style="color:#E1E4E8"> ? </span><span style="color:#9ECBFF">'ram'</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#E1E4E8"> metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- JSONB配列の展開</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#79B8FF">  p</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">name</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  tag</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">value</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> tag</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> products p,</span></span>
+<span class="line"><span style="color:#E1E4E8">  jsonb_array_elements_text(</span><span style="color:#79B8FF">p</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">metadata</span><span style="color:#F97583">-></span><span style="color:#9ECBFF">'tags'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> tag;</span></span></code></pre>
+<h3 id="jsonbインデックス戦略">JSONBインデックス戦略</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- GINインデックス（汎用）</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_metadata_gin</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> products </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN(metadata);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 特定のパス用インデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_brand</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> products((metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 複合インデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_brand_category</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> products((metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'brand'</span><span style="color:#E1E4E8">), (metadata</span><span style="color:#F97583">->></span><span style="color:#9ECBFF">'category'</span><span style="color:#E1E4E8">));</span></span></code></pre>
+<h2 id="ウィンドウ関数">ウィンドウ関数</h2>
+<h3 id="row_number">ROW_NUMBER</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 各ユーザーの最新注文</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span></span>
+<span class="line"><span style="color:#F97583">    *</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    ROW_NUMBER</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">OVER</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">PARTITION</span><span style="color:#F97583"> BY</span><span style="color:#E1E4E8"> user_id </span><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> created_at </span><span style="color:#F97583">DESC</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> rn</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> orders</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> ranked</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> rn </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="rank--dense_rank">RANK / DENSE_RANK</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 売上ランキング</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  user_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">  total_sales,</span></span>
+<span class="line"><span style="color:#79B8FF">  RANK</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">OVER</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> total_sales </span><span style="color:#F97583">DESC</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> rank,</span></span>
+<span class="line"><span style="color:#79B8FF">  DENSE_RANK</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">OVER</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> total_sales </span><span style="color:#F97583">DESC</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> dense_rank</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id,</span></span>
+<span class="line"><span style="color:#79B8FF">    SUM</span><span style="color:#E1E4E8">(amount) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> total_sales</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> orders</span></span>
+<span class="line"><span style="color:#F97583">  GROUP BY</span><span style="color:#E1E4E8"> user_id</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> sales;</span></span></code></pre>
+<h3 id="lag--lead">LAG / LEAD</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 前月比の計算</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  date_trunc(</span><span style="color:#9ECBFF">'month'</span><span style="color:#E1E4E8">, created_at) </span><span style="color:#F97583">as</span><span style="color:#F97583"> month</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  SUM</span><span style="color:#E1E4E8">(amount) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> current_month,</span></span>
+<span class="line"><span style="color:#79B8FF">  LAG</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">SUM</span><span style="color:#E1E4E8">(amount)) </span><span style="color:#F97583">OVER</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> date_trunc(</span><span style="color:#9ECBFF">'month'</span><span style="color:#E1E4E8">, created_at)) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> prev_month,</span></span>
+<span class="line"><span style="color:#79B8FF">  SUM</span><span style="color:#E1E4E8">(amount) </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> LAG</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">SUM</span><span style="color:#E1E4E8">(amount)) </span><span style="color:#F97583">OVER</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> date_trunc(</span><span style="color:#9ECBFF">'month'</span><span style="color:#E1E4E8">, created_at)) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> diff</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> orders</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#E1E4E8"> date_trunc(</span><span style="color:#9ECBFF">'month'</span><span style="color:#E1E4E8">, created_at)</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> month</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="累積合計">累積合計</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 累積売上</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#F97583">  date</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  daily_sales,</span></span>
+<span class="line"><span style="color:#79B8FF">  SUM</span><span style="color:#E1E4E8">(daily_sales) </span><span style="color:#F97583">OVER</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> date</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> cumulative_sales</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span></span>
+<span class="line"><span style="color:#F97583">    DATE</span><span style="color:#E1E4E8">(created_at) </span><span style="color:#F97583">as</span><span style="color:#F97583"> date</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    SUM</span><span style="color:#E1E4E8">(amount) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> daily_sales</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> orders</span></span>
+<span class="line"><span style="color:#F97583">  GROUP BY</span><span style="color:#F97583"> DATE</span><span style="color:#E1E4E8">(created_at)</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> daily;</span></span></code></pre>
+<h3 id="移動平均">移動平均</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 7日間移動平均</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#F97583">  date</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  daily_sales,</span></span>
+<span class="line"><span style="color:#79B8FF">  AVG</span><span style="color:#E1E4E8">(daily_sales) </span><span style="color:#F97583">OVER</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    ORDER BY</span><span style="color:#F97583"> date</span></span>
+<span class="line"><span style="color:#F97583">    ROWS</span><span style="color:#F97583"> BETWEEN</span><span style="color:#79B8FF"> 6</span><span style="color:#F97583"> PRECEDING</span><span style="color:#F97583"> AND</span><span style="color:#E1E4E8"> CURRENT </span><span style="color:#F97583">ROW</span></span>
+<span class="line"><span style="color:#E1E4E8">  ) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> moving_avg_7d</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span></span>
+<span class="line"><span style="color:#F97583">    DATE</span><span style="color:#E1E4E8">(created_at) </span><span style="color:#F97583">as</span><span style="color:#F97583"> date</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    SUM</span><span style="color:#E1E4E8">(amount) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> daily_sales</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> orders</span></span>
+<span class="line"><span style="color:#F97583">  GROUP BY</span><span style="color:#F97583"> DATE</span><span style="color:#E1E4E8">(created_at)</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> daily;</span></span></code></pre>
+<h3 id="パーセンタイル">パーセンタイル</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 売上の四分位数</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  user_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">  total_sales,</span></span>
+<span class="line"><span style="color:#79B8FF">  NTILE</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">4</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">OVER</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> total_sales) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> quartile</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id,</span></span>
+<span class="line"><span style="color:#79B8FF">    SUM</span><span style="color:#E1E4E8">(amount) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> total_sales</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> orders</span></span>
+<span class="line"><span style="color:#F97583">  GROUP BY</span><span style="color:#E1E4E8"> user_id</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> sales;</span></span></code></pre>
+<h2 id="cte共通テーブル式">CTE（共通テーブル式）</h2>
+<h3 id="基本的なcte">基本的なCTE</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 読みやすいクエリ</span></span>
+<span class="line"><span style="color:#F97583">WITH</span><span style="color:#E1E4E8"> monthly_sales </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    date_trunc(</span><span style="color:#9ECBFF">'month'</span><span style="color:#E1E4E8">, created_at) </span><span style="color:#F97583">as</span><span style="color:#F97583"> month</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    SUM</span><span style="color:#E1E4E8">(amount) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> total</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> orders</span></span>
+<span class="line"><span style="color:#F97583">  GROUP BY</span><span style="color:#E1E4E8"> date_trunc(</span><span style="color:#9ECBFF">'month'</span><span style="color:#E1E4E8">, created_at)</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#F97583">  month</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  total,</span></span>
+<span class="line"><span style="color:#79B8FF">  LAG</span><span style="color:#E1E4E8">(total) </span><span style="color:#F97583">OVER</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> month</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> prev_month,</span></span>
+<span class="line"><span style="color:#E1E4E8">  total </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> LAG</span><span style="color:#E1E4E8">(total) </span><span style="color:#F97583">OVER</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> month</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> growth</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> monthly_sales</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> month</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="複数のcte">複数のCTE</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 複雑な分析を段階的に</span></span>
+<span class="line"><span style="color:#F97583">WITH</span><span style="color:#E1E4E8"> user_stats </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id,</span></span>
+<span class="line"><span style="color:#79B8FF">    COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> order_count,</span></span>
+<span class="line"><span style="color:#79B8FF">    SUM</span><span style="color:#E1E4E8">(amount) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> total_spent</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> orders</span></span>
+<span class="line"><span style="color:#F97583">  GROUP BY</span><span style="color:#E1E4E8"> user_id</span></span>
+<span class="line"><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">user_segments </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    order_count,</span></span>
+<span class="line"><span style="color:#E1E4E8">    total_spent,</span></span>
+<span class="line"><span style="color:#F97583">    CASE</span></span>
+<span class="line"><span style="color:#F97583">      WHEN</span><span style="color:#E1E4E8"> total_spent </span><span style="color:#F97583">>=</span><span style="color:#79B8FF"> 10000</span><span style="color:#F97583"> THEN</span><span style="color:#9ECBFF"> 'VIP'</span></span>
+<span class="line"><span style="color:#F97583">      WHEN</span><span style="color:#E1E4E8"> total_spent </span><span style="color:#F97583">>=</span><span style="color:#79B8FF"> 5000</span><span style="color:#F97583"> THEN</span><span style="color:#9ECBFF"> 'Premium'</span></span>
+<span class="line"><span style="color:#F97583">      ELSE</span><span style="color:#9ECBFF"> 'Regular'</span></span>
+<span class="line"><span style="color:#F97583">    END</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> segment</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> user_stats</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  segment,</span></span>
+<span class="line"><span style="color:#79B8FF">  COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> user_count,</span></span>
+<span class="line"><span style="color:#79B8FF">  AVG</span><span style="color:#E1E4E8">(total_spent) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> avg_spent,</span></span>
+<span class="line"><span style="color:#79B8FF">  AVG</span><span style="color:#E1E4E8">(order_count) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> avg_orders</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> user_segments</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#E1E4E8"> segment;</span></span></code></pre>
+<h3 id="再帰cte">再帰CTE</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 組織階層の取得</span></span>
+<span class="line"><span style="color:#F97583">WITH</span><span style="color:#F97583"> RECURSIVE</span><span style="color:#E1E4E8"> org_tree </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#6A737D">  -- ベースケース</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">    id,</span></span>
+<span class="line"><span style="color:#F97583">    name</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    manager_id,</span></span>
+<span class="line"><span style="color:#79B8FF">    1</span><span style="color:#F97583"> as</span><span style="color:#F97583"> level</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    ARRAY</span><span style="color:#E1E4E8">[id] </span><span style="color:#F97583">as</span><span style="color:#F97583"> path</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> employees</span></span>
+<span class="line"><span style="color:#F97583">  WHERE</span><span style="color:#E1E4E8"> manager_id </span><span style="color:#F97583">IS</span><span style="color:#F97583"> NULL</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  UNION ALL</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  -- 再帰ケース</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span></span>
+<span class="line"><span style="color:#79B8FF">    e</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">id</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    e</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">name</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    e</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">manager_id</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    ot</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">level</span><span style="color:#F97583"> +</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    ot</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">path</span><span style="color:#F97583"> ||</span><span style="color:#79B8FF"> e</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">id</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> employees e</span></span>
+<span class="line"><span style="color:#F97583">  INNER JOIN</span><span style="color:#E1E4E8"> org_tree ot </span><span style="color:#F97583">ON</span><span style="color:#79B8FF"> e</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">manager_id</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> ot</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">id</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  id,</span></span>
+<span class="line"><span style="color:#F97583">  repeat</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'  '</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">level</span><span style="color:#F97583"> -</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#F97583"> name</span><span style="color:#F97583"> as</span><span style="color:#F97583"> name</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  level</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  path</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> org_tree</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#F97583"> path</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="変更を伴うcte">変更を伴うCTE</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 削除したレコードを返す</span></span>
+<span class="line"><span style="color:#F97583">WITH</span><span style="color:#E1E4E8"> deleted_orders </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  DELETE</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> orders</span></span>
+<span class="line"><span style="color:#F97583">  WHERE</span><span style="color:#E1E4E8"> created_at </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> CURRENT_DATE </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> INTERVAL </span><span style="color:#9ECBFF">'1 year'</span></span>
+<span class="line"><span style="color:#E1E4E8">  RETURNING </span><span style="color:#F97583">*</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> archived_orders</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> deleted_orders;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 更新と同時に集計</span></span>
+<span class="line"><span style="color:#F97583">WITH</span><span style="color:#E1E4E8"> updated_users </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  UPDATE</span><span style="color:#E1E4E8"> users</span></span>
+<span class="line"><span style="color:#F97583">  SET</span><span style="color:#E1E4E8"> last_login </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> CURRENT_TIMESTAMP</span></span>
+<span class="line"><span style="color:#F97583">  WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">IN</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  RETURNING </span><span style="color:#F97583">*</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#79B8FF">  COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> updated_count,</span></span>
+<span class="line"><span style="color:#79B8FF">  AVG</span><span style="color:#E1E4E8">(age) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> avg_age</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> updated_users;</span></span></code></pre>
+<h2 id="パーティショニング">パーティショニング</h2>
+<h3 id="範囲パーティショニング">範囲パーティショニング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 親テーブル</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> orders</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">BIGSERIAL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  user_id </span><span style="color:#F97583">INTEGER</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  amount </span><span style="color:#F97583">DECIMAL</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  created_at </span><span style="color:#F97583">TIMESTAMP</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  PRIMARY KEY</span><span style="color:#E1E4E8"> (id, created_at)</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">PARTITION</span><span style="color:#F97583"> BY</span><span style="color:#F97583"> RANGE</span><span style="color:#E1E4E8"> (created_at);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- パーティション作成</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> orders_2024</span><span style="color:#F97583"> PARTITION</span><span style="color:#E1E4E8"> OF orders</span></span>
+<span class="line"><span style="color:#F97583">FOR</span><span style="color:#F97583"> VALUES</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'2024-01-01'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">TO</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'2025-01-01'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> orders_2025</span><span style="color:#F97583"> PARTITION</span><span style="color:#E1E4E8"> OF orders</span></span>
+<span class="line"><span style="color:#F97583">FOR</span><span style="color:#F97583"> VALUES</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'2025-01-01'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">TO</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'2026-01-01'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> orders_2026</span><span style="color:#F97583"> PARTITION</span><span style="color:#E1E4E8"> OF orders</span></span>
+<span class="line"><span style="color:#F97583">FOR</span><span style="color:#F97583"> VALUES</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'2026-01-01'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">TO</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'2027-01-01'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- インデックス（各パーティションに自動作成）</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> ON</span><span style="color:#E1E4E8"> orders (user_id);</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> ON</span><span style="color:#E1E4E8"> orders (created_at);</span></span></code></pre>
+<h3 id="リストパーティショニング">リストパーティショニング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 地域別パーティション</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> users</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  name</span><span style="color:#F97583"> VARCHAR</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">255</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  region </span><span style="color:#F97583">VARCHAR</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">50</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  created_at </span><span style="color:#F97583">TIMESTAMP</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  PRIMARY KEY</span><span style="color:#E1E4E8"> (id, region)</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">PARTITION</span><span style="color:#F97583"> BY</span><span style="color:#E1E4E8"> LIST (region);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> users_us</span><span style="color:#F97583"> PARTITION</span><span style="color:#E1E4E8"> OF users</span></span>
+<span class="line"><span style="color:#F97583">FOR</span><span style="color:#F97583"> VALUES</span><span style="color:#F97583"> IN</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'US'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'CA'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'MX'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> users_eu</span><span style="color:#F97583"> PARTITION</span><span style="color:#E1E4E8"> OF users</span></span>
+<span class="line"><span style="color:#F97583">FOR</span><span style="color:#F97583"> VALUES</span><span style="color:#F97583"> IN</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'UK'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'DE'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'FR'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> users_asia</span><span style="color:#F97583"> PARTITION</span><span style="color:#E1E4E8"> OF users</span></span>
+<span class="line"><span style="color:#F97583">FOR</span><span style="color:#F97583"> VALUES</span><span style="color:#F97583"> IN</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'JP'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'CN'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'KR'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="パーティション管理">パーティション管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 新しいパーティションの追加</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> orders_2027</span><span style="color:#F97583"> PARTITION</span><span style="color:#E1E4E8"> OF orders</span></span>
+<span class="line"><span style="color:#F97583">FOR</span><span style="color:#F97583"> VALUES</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'2027-01-01'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">TO</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'2028-01-01'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 古いパーティションのデタッチ</span></span>
+<span class="line"><span style="color:#F97583">ALTER</span><span style="color:#F97583"> TABLE</span><span style="color:#E1E4E8"> orders DETACH </span><span style="color:#F97583">PARTITION</span><span style="color:#E1E4E8"> orders_2024;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- パーティションの削除</span></span>
+<span class="line"><span style="color:#F97583">DROP</span><span style="color:#F97583"> TABLE</span><span style="color:#E1E4E8"> orders_2024;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- パーティション情報の確認</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#79B8FF">  parent</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">relname</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> parent_table,</span></span>
+<span class="line"><span style="color:#79B8FF">  child</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">relname</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> partition_name,</span></span>
+<span class="line"><span style="color:#E1E4E8">  pg_get_expr(</span><span style="color:#79B8FF">child</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">relpartbound</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">child</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">oid</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> partition_expression</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> pg_inherits</span></span>
+<span class="line"><span style="color:#F97583">JOIN</span><span style="color:#E1E4E8"> pg_class parent </span><span style="color:#F97583">ON</span><span style="color:#79B8FF"> pg_inherits</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">inhparent</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> parent</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">oid</span></span>
+<span class="line"><span style="color:#F97583">JOIN</span><span style="color:#E1E4E8"> pg_class child </span><span style="color:#F97583">ON</span><span style="color:#79B8FF"> pg_inherits</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">inhrelid</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> child</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">oid</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#79B8FF"> parent</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">relname</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'orders'</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h2 id="フルテキスト検索">フルテキスト検索</h2>
+<h3 id="基本的な検索">基本的な検索</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- tsvectorの作成</span></span>
+<span class="line"><span style="color:#F97583">ALTER</span><span style="color:#F97583"> TABLE</span><span style="color:#E1E4E8"> articles</span></span>
+<span class="line"><span style="color:#F97583">ADD</span><span style="color:#E1E4E8"> COLUMN search_vector tsvector;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 検索インデックス</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_articles_search</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> articles </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN(search_vector);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 検索ベクトルの更新</span></span>
+<span class="line"><span style="color:#F97583">UPDATE</span><span style="color:#E1E4E8"> articles</span></span>
+<span class="line"><span style="color:#F97583">SET</span><span style="color:#E1E4E8"> search_vector </span><span style="color:#F97583">=</span></span>
+<span class="line"><span style="color:#E1E4E8">  to_tsvector(</span><span style="color:#9ECBFF">'english'</span><span style="color:#E1E4E8">, title </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> ' '</span><span style="color:#F97583"> ||</span><span style="color:#E1E4E8"> content);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 自動更新トリガー</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> FUNCTION</span><span style="color:#B392F0"> articles_search_trigger</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">RETURNS</span><span style="color:#E1E4E8"> trigger </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> $$</span></span>
+<span class="line"><span style="color:#F97583">BEGIN</span></span>
+<span class="line"><span style="color:#79B8FF">  NEW</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">search_vector</span><span style="color:#E1E4E8"> :</span><span style="color:#F97583">=</span></span>
+<span class="line"><span style="color:#E1E4E8">    to_tsvector(</span><span style="color:#9ECBFF">'english'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">NEW</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">title</span><span style="color:#F97583"> ||</span><span style="color:#9ECBFF"> ' '</span><span style="color:#F97583"> ||</span><span style="color:#79B8FF"> NEW</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">content</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  RETURN</span><span style="color:#E1E4E8"> NEW;</span></span>
+<span class="line"><span style="color:#F97583">END</span></span>
+<span class="line"><span style="color:#E1E4E8">$$ </span><span style="color:#F97583">LANGUAGE</span><span style="color:#E1E4E8"> plpgsql;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TRIGGER</span><span style="color:#B392F0"> tsvector_update</span></span>
+<span class="line"><span style="color:#F97583">BEFORE</span><span style="color:#F97583"> INSERT</span><span style="color:#F97583"> OR</span><span style="color:#F97583"> UPDATE</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> articles</span></span>
+<span class="line"><span style="color:#F97583">FOR</span><span style="color:#E1E4E8"> EACH </span><span style="color:#F97583">ROW</span></span>
+<span class="line"><span style="color:#F97583">EXECUTE</span><span style="color:#F97583"> FUNCTION</span><span style="color:#E1E4E8"> articles_search_trigger();</span></span></code></pre>
+<h3 id="検索クエリ">検索クエリ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 基本検索</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> articles</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> search_vector @@ to_tsquery(</span><span style="color:#9ECBFF">'english'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'postgresql &#x26; performance'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ランキング付き検索</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  title,</span></span>
+<span class="line"><span style="color:#E1E4E8">  ts_rank(search_vector, query) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> rank</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> articles,</span></span>
+<span class="line"><span style="color:#E1E4E8">  to_tsquery(</span><span style="color:#9ECBFF">'english'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'postgresql &#x26; performance'</span><span style="color:#E1E4E8">) query</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> search_vector @@ query</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> rank </span><span style="color:#F97583">DESC</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ハイライト表示</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  title,</span></span>
+<span class="line"><span style="color:#E1E4E8">  ts_headline(</span><span style="color:#9ECBFF">'english'</span><span style="color:#E1E4E8">, content, query) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> snippet</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> articles,</span></span>
+<span class="line"><span style="color:#E1E4E8">  to_tsquery(</span><span style="color:#9ECBFF">'english'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'postgresql &#x26; performance'</span><span style="color:#E1E4E8">) query</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> search_vector @@ query;</span></span></code></pre>
+<h3 id="多言語対応">多言語対応</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 日本語検索（pg_bigm拡張）</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#E1E4E8"> EXTENSION pg_bigm;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_articles_title_bigm</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> articles </span><span style="color:#F97583">USING</span><span style="color:#E1E4E8"> GIN(title gin_bigm_ops);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 検索</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> articles</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> title </span><span style="color:#F97583">LIKE</span><span style="color:#9ECBFF"> '%PostgreSQL%'</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h2 id="パフォーマンスチューニング">パフォーマンスチューニング</h2>
+<h3 id="explain-analyze">EXPLAIN ANALYZE</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 実行計画の確認</span></span>
+<span class="line"><span style="color:#E1E4E8">EXPLAIN ANALYZE</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#79B8FF"> u</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">name</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">o</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">id</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> users u</span></span>
+<span class="line"><span style="color:#F97583">LEFT JOIN</span><span style="color:#E1E4E8"> orders o </span><span style="color:#F97583">ON</span><span style="color:#79B8FF"> u</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">id</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> o</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">user_id</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#79B8FF"> u</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">created_at</span><span style="color:#F97583"> ></span><span style="color:#9ECBFF"> '2025-01-01'</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#79B8FF"> u</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">name</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 詳細な情報</span></span>
+<span class="line"><span style="color:#E1E4E8">EXPLAIN (ANALYZE, BUFFERS, </span><span style="color:#F97583">VERBOSE</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> orders </span><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> user_id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 123</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="クエリ最適化">クエリ最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 悪い例：N+1問題</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> users;</span></span>
+<span class="line"><span style="color:#6A737D">-- 各ユーザーごとに注文を取得</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> orders </span><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> user_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ?;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 良い例：JOINを使用</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  u.</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  json_agg(o.</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> orders</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> users u</span></span>
+<span class="line"><span style="color:#F97583">LEFT JOIN</span><span style="color:#E1E4E8"> orders o </span><span style="color:#F97583">ON</span><span style="color:#79B8FF"> u</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">id</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> o</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">user_id</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#79B8FF"> u</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">id</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- さらに良い例：LATERAL JOIN</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  u.</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  recent_orders</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">orders</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> users u</span></span>
+<span class="line"><span style="color:#F97583">LEFT JOIN</span><span style="color:#E1E4E8"> LATERAL (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span><span style="color:#E1E4E8"> json_agg(o.</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> orders</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> orders o</span></span>
+<span class="line"><span style="color:#F97583">  WHERE</span><span style="color:#79B8FF"> o</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">user_id</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> u</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">id</span></span>
+<span class="line"><span style="color:#F97583">  ORDER BY</span><span style="color:#79B8FF"> o</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">created_at</span><span style="color:#F97583"> DESC</span></span>
+<span class="line"><span style="color:#F97583">  LIMIT</span><span style="color:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#E1E4E8">) recent_orders </span><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> true;</span></span></code></pre>
+<h3 id="バキューム">バキューム</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 手動バキューム</span></span>
+<span class="line"><span style="color:#E1E4E8">VACUUM ANALYZE orders;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 完全バキューム（テーブルロック）</span></span>
+<span class="line"><span style="color:#E1E4E8">VACUUM FULL orders;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 自動バキューム設定の確認</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  relname,</span></span>
+<span class="line"><span style="color:#E1E4E8">  n_tup_ins,</span></span>
+<span class="line"><span style="color:#E1E4E8">  n_tup_upd,</span></span>
+<span class="line"><span style="color:#E1E4E8">  n_tup_del,</span></span>
+<span class="line"><span style="color:#E1E4E8">  n_live_tup,</span></span>
+<span class="line"><span style="color:#E1E4E8">  n_dead_tup,</span></span>
+<span class="line"><span style="color:#E1E4E8">  last_autovacuum</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> pg_stat_user_tables</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> schemaname </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'public'</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> n_dead_tup </span><span style="color:#F97583">DESC</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="接続プーリング">接続プーリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- PgBouncerの設定例</span></span>
+<span class="line"><span style="color:#6A737D">-- pgbouncer.ini</span></span>
+<span class="line"><span style="color:#E1E4E8">[databases]</span></span>
+<span class="line"><span style="color:#E1E4E8">mydb </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> host</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">localhost dbname</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">mydb</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">[pgbouncer]</span></span>
+<span class="line"><span style="color:#E1E4E8">pool_mode </span><span style="color:#F97583">=</span><span style="color:#F97583"> transaction</span></span>
+<span class="line"><span style="color:#E1E4E8">max_client_conn </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 1000</span></span>
+<span class="line"><span style="color:#E1E4E8">default_pool_size </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 25</span></span></code></pre>
+<h2 id="実践パターン">実践パターン</h2>
+<h3 id="ソフトデリート">ソフトデリート</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- テーブル定義</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> posts</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  title </span><span style="color:#F97583">VARCHAR</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">255</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  content </span><span style="color:#F97583">TEXT</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  deleted_at </span><span style="color:#F97583">TIMESTAMP</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  created_at </span><span style="color:#F97583">TIMESTAMP</span><span style="color:#F97583"> DEFAULT</span><span style="color:#E1E4E8"> CURRENT_TIMESTAMP</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 部分インデックス（アクティブなレコードのみ）</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_posts_active</span></span>
+<span class="line"><span style="color:#F97583">ON</span><span style="color:#E1E4E8"> posts(created_at)</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> deleted_at </span><span style="color:#F97583">IS</span><span style="color:#F97583"> NULL</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ビュー（削除されていないレコード）</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> VIEW</span><span style="color:#B392F0"> active_posts</span><span style="color:#F97583"> AS</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> posts </span><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> deleted_at </span><span style="color:#F97583">IS</span><span style="color:#F97583"> NULL</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- ソフトデリート関数</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> FUNCTION</span><span style="color:#B392F0"> soft_delete_post</span><span style="color:#E1E4E8">(post_id </span><span style="color:#F97583">INTEGER</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">RETURNS</span><span style="color:#E1E4E8"> void </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> $$</span></span>
+<span class="line"><span style="color:#F97583">BEGIN</span></span>
+<span class="line"><span style="color:#F97583">  UPDATE</span><span style="color:#E1E4E8"> posts</span></span>
+<span class="line"><span style="color:#F97583">  SET</span><span style="color:#E1E4E8"> deleted_at </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> CURRENT_TIMESTAMP</span></span>
+<span class="line"><span style="color:#F97583">  WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> post_id </span><span style="color:#F97583">AND</span><span style="color:#E1E4E8"> deleted_at </span><span style="color:#F97583">IS</span><span style="color:#F97583"> NULL</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">END</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">$$ </span><span style="color:#F97583">LANGUAGE</span><span style="color:#E1E4E8"> plpgsql;</span></span></code></pre>
+<h3 id="楽観的ロック">楽観的ロック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- バージョン列を追加</span></span>
+<span class="line"><span style="color:#F97583">ALTER</span><span style="color:#F97583"> TABLE</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">ADD</span><span style="color:#E1E4E8"> COLUMN </span><span style="color:#F97583">version</span><span style="color:#F97583"> INTEGER</span><span style="color:#F97583"> DEFAULT</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 更新関数</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> FUNCTION</span><span style="color:#B392F0"> update_product</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  p_id </span><span style="color:#F97583">INTEGER</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  p_name </span><span style="color:#F97583">VARCHAR</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  p_version </span><span style="color:#F97583">INTEGER</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">RETURNS</span><span style="color:#F97583"> BOOLEAN</span><span style="color:#F97583"> AS</span><span style="color:#E1E4E8"> $$</span></span>
+<span class="line"><span style="color:#F97583">DECLARE</span></span>
+<span class="line"><span style="color:#E1E4E8">  updated_rows </span><span style="color:#F97583">INTEGER</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">BEGIN</span></span>
+<span class="line"><span style="color:#F97583">  UPDATE</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">  SET</span></span>
+<span class="line"><span style="color:#F97583">    name</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> p_name,</span></span>
+<span class="line"><span style="color:#F97583">    version</span><span style="color:#F97583"> =</span><span style="color:#F97583"> version</span><span style="color:#F97583"> +</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    updated_at </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> CURRENT_TIMESTAMP</span></span>
+<span class="line"><span style="color:#F97583">  WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> p_id </span><span style="color:#F97583">AND</span><span style="color:#F97583"> version</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> p_version;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  GET</span><span style="color:#E1E4E8"> DIAGNOSTICS updated_rows </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ROW_COUNT;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  RETURN</span><span style="color:#E1E4E8"> updated_rows </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">END</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">$$ </span><span style="color:#F97583">LANGUAGE</span><span style="color:#E1E4E8"> plpgsql;</span></span></code></pre>
+<h3 id="監査ログ">監査ログ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 監査ログテーブル</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> audit_log</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">BIGSERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  table_name </span><span style="color:#F97583">VARCHAR</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">255</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  operation </span><span style="color:#F97583">VARCHAR</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  old_data JSONB,</span></span>
+<span class="line"><span style="color:#E1E4E8">  new_data JSONB,</span></span>
+<span class="line"><span style="color:#E1E4E8">  user_id </span><span style="color:#F97583">INTEGER</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  created_at </span><span style="color:#F97583">TIMESTAMP</span><span style="color:#F97583"> DEFAULT</span><span style="color:#E1E4E8"> CURRENT_TIMESTAMP</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 監査トリガー関数</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> FUNCTION</span><span style="color:#B392F0"> audit_trigger</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">RETURNS</span><span style="color:#E1E4E8"> TRIGGER </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> $$</span></span>
+<span class="line"><span style="color:#F97583">BEGIN</span></span>
+<span class="line"><span style="color:#F97583">  IF</span><span style="color:#E1E4E8"> TG_OP </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'DELETE'</span><span style="color:#F97583"> THEN</span></span>
+<span class="line"><span style="color:#F97583">    INSERT INTO</span><span style="color:#E1E4E8"> audit_log (table_name, operation, old_data, user_id)</span></span>
+<span class="line"><span style="color:#F97583">    VALUES</span><span style="color:#E1E4E8"> (TG_TABLE_NAME, TG_OP, row_to_json(OLD), current_setting(</span><span style="color:#9ECBFF">'app.user_id'</span><span style="color:#E1E4E8">)::</span><span style="color:#F97583">INTEGER</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    RETURN</span><span style="color:#E1E4E8"> OLD;</span></span>
+<span class="line"><span style="color:#E1E4E8">  ELSIF TG_OP </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'UPDATE'</span><span style="color:#F97583"> THEN</span></span>
+<span class="line"><span style="color:#F97583">    INSERT INTO</span><span style="color:#E1E4E8"> audit_log (table_name, operation, old_data, new_data, user_id)</span></span>
+<span class="line"><span style="color:#F97583">    VALUES</span><span style="color:#E1E4E8"> (TG_TABLE_NAME, TG_OP, row_to_json(OLD), row_to_json(NEW), current_setting(</span><span style="color:#9ECBFF">'app.user_id'</span><span style="color:#E1E4E8">)::</span><span style="color:#F97583">INTEGER</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    RETURN</span><span style="color:#E1E4E8"> NEW;</span></span>
+<span class="line"><span style="color:#E1E4E8">  ELSIF TG_OP </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'INSERT'</span><span style="color:#F97583"> THEN</span></span>
+<span class="line"><span style="color:#F97583">    INSERT INTO</span><span style="color:#E1E4E8"> audit_log (table_name, operation, new_data, user_id)</span></span>
+<span class="line"><span style="color:#F97583">    VALUES</span><span style="color:#E1E4E8"> (TG_TABLE_NAME, TG_OP, row_to_json(NEW), current_setting(</span><span style="color:#9ECBFF">'app.user_id'</span><span style="color:#E1E4E8">)::</span><span style="color:#F97583">INTEGER</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    RETURN</span><span style="color:#E1E4E8"> NEW;</span></span>
+<span class="line"><span style="color:#F97583">  END</span><span style="color:#F97583"> IF</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">END</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">$$ </span><span style="color:#F97583">LANGUAGE</span><span style="color:#E1E4E8"> plpgsql;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- トリガーの設定</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TRIGGER</span><span style="color:#B392F0"> products_audit</span></span>
+<span class="line"><span style="color:#F97583">AFTER</span><span style="color:#F97583"> INSERT</span><span style="color:#F97583"> OR</span><span style="color:#F97583"> UPDATE</span><span style="color:#F97583"> OR</span><span style="color:#F97583"> DELETE</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> products</span></span>
+<span class="line"><span style="color:#F97583">FOR</span><span style="color:#E1E4E8"> EACH </span><span style="color:#F97583">ROW</span></span>
+<span class="line"><span style="color:#F97583">EXECUTE</span><span style="color:#F97583"> FUNCTION</span><span style="color:#E1E4E8"> audit_trigger();</span></span></code></pre>
+<h2 id="ベストプラクティス">ベストプラクティス</h2>
+<h3 id="スキーマ設計">スキーマ設計</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- NOT NULL制約を適切に使用</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> users</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  email </span><span style="color:#F97583">VARCHAR</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">255</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  name</span><span style="color:#F97583"> VARCHAR</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">255</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  bio </span><span style="color:#F97583">TEXT</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">-- NULLを許可</span></span>
+<span class="line"><span style="color:#E1E4E8">  created_at </span><span style="color:#F97583">TIMESTAMP</span><span style="color:#F97583"> NOT NULL</span><span style="color:#F97583"> DEFAULT</span><span style="color:#E1E4E8"> CURRENT_TIMESTAMP</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- CHECK制約でデータ整合性を保証</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> products</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">  name</span><span style="color:#F97583"> VARCHAR</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">255</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  price </span><span style="color:#F97583">DECIMAL</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">NOT NULL</span><span style="color:#F97583"> CHECK</span><span style="color:#E1E4E8"> (price </span><span style="color:#F97583">>=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  stock </span><span style="color:#F97583">INTEGER</span><span style="color:#F97583"> NOT NULL</span><span style="color:#F97583"> CHECK</span><span style="color:#E1E4E8"> (stock </span><span style="color:#F97583">>=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#F97583">  status</span><span style="color:#F97583"> VARCHAR</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">NOT NULL</span><span style="color:#F97583"> CHECK</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">status</span><span style="color:#F97583"> IN</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">'draft'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'published'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'archived'</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- 外部キー制約</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> orders</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">SERIAL</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  user_id </span><span style="color:#F97583">INTEGER</span><span style="color:#F97583"> NOT NULL</span><span style="color:#F97583"> REFERENCES</span><span style="color:#E1E4E8"> users(id) </span><span style="color:#F97583">ON DELETE CASCADE</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  product_id </span><span style="color:#F97583">INTEGER</span><span style="color:#F97583"> NOT NULL</span><span style="color:#F97583"> REFERENCES</span><span style="color:#E1E4E8"> products(id) </span><span style="color:#F97583">ON DELETE</span><span style="color:#E1E4E8"> RESTRICT</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="トランザクション管理">トランザクション管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- アトミックな操作</span></span>
+<span class="line"><span style="color:#F97583">BEGIN</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">UPDATE</span><span style="color:#E1E4E8"> accounts </span><span style="color:#F97583">SET</span><span style="color:#E1E4E8"> balance </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> balance </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 100</span><span style="color:#F97583"> WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">UPDATE</span><span style="color:#E1E4E8"> accounts </span><span style="color:#F97583">SET</span><span style="color:#E1E4E8"> balance </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> balance </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 100</span><span style="color:#F97583"> WHERE</span><span style="color:#E1E4E8"> id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COMMIT</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- セーブポイントの使用</span></span>
+<span class="line"><span style="color:#F97583">BEGIN</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> orders (user_id, amount) </span><span style="color:#F97583">VALUES</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">SAVEPOINT order_created;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">INSERT INTO</span><span style="color:#E1E4E8"> order_items (order_id, product_id) </span><span style="color:#F97583">VALUES</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">-- エラーが発生した場合</span></span>
+<span class="line"><span style="color:#F97583">ROLLBACK</span><span style="color:#F97583"> TO</span><span style="color:#E1E4E8"> SAVEPOINT order_created;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">COMMIT</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="パフォーマンスモニタリング">パフォーマンスモニタリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- スロークエリの検出</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  query,</span></span>
+<span class="line"><span style="color:#E1E4E8">  calls,</span></span>
+<span class="line"><span style="color:#E1E4E8">  total_time,</span></span>
+<span class="line"><span style="color:#E1E4E8">  mean_time,</span></span>
+<span class="line"><span style="color:#E1E4E8">  max_time</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> pg_stat_statements</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> mean_time </span><span style="color:#F97583">DESC</span></span>
+<span class="line"><span style="color:#F97583">LIMIT</span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- テーブルサイズの確認</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span></span>
+<span class="line"><span style="color:#E1E4E8">  schemaname,</span></span>
+<span class="line"><span style="color:#E1E4E8">  tablename,</span></span>
+<span class="line"><span style="color:#E1E4E8">  pg_size_pretty(pg_total_relation_size(schemaname</span><span style="color:#F97583">||</span><span style="color:#9ECBFF">'.'</span><span style="color:#F97583">||</span><span style="color:#E1E4E8">tablename)) </span><span style="color:#F97583">as</span><span style="color:#F97583"> size</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> pg_tables</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> schemaname </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'public'</span></span>
+<span class="line"><span style="color:#F97583">ORDER BY</span><span style="color:#E1E4E8"> pg_total_relation_size(schemaname</span><span style="color:#F97583">||</span><span style="color:#9ECBFF">'.'</span><span style="color:#F97583">||</span><span style="color:#E1E4E8">tablename) </span><span style="color:#F97583">DESC</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>PostgreSQLの高度な機能を活用することで、パフォーマンスと保守性を大幅に向上できます。</p>
+<p><strong>重要なテクニック</strong>:</p>
+<ol>
+<li><strong>インデックス最適化</strong>: 適切なインデックスタイプを選択</li>
+<li><strong>JSONB活用</strong>: 柔軟なデータ構造</li>
+<li><strong>ウィンドウ関数</strong>: 複雑な分析を簡潔に</li>
+<li><strong>CTE</strong>: 読みやすいクエリ</li>
+<li><strong>パーティショニング</strong>: 大規模データの管理</li>
+</ol>
+<p><strong>2026年のベストプラクティス</strong>:</p>
+<ul>
+<li>インデックス戦略を慎重に計画</li>
+<li>JSONBで柔軟性と性能を両立</li>
+<li>ウィンドウ関数で分析を効率化</li>
+<li>パーティショニングでスケーラビリティを確保</li>
+<li>定期的なパフォーマンス監視</li>
+</ul>
+<p>これらのテクニックを駆使して、高性能なデータベースアプリケーションを構築しましょう。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

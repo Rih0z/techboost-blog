@@ -1,0 +1,868 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/inngest-background-jobs-guide/"><!-- Primary Meta Tags --><title>Inngest：イベント駆動バックグラウンドジョブ完全ガイド</title><meta name="title" content="Inngest：イベント駆動バックグラウンドジョブ完全ガイド"><meta name="description" content="Inngestを使ったイベント駆動バックグラウンドジョブの構築方法。ステップ関数、スケジュール、リトライ、Next.js統合まで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/inngest-background-jobs-guide/"><meta property="og:title" content="Inngest：イベント駆動バックグラウンドジョブ完全ガイド"><meta property="og:description" content="Inngestを使ったイベント駆動バックグラウンドジョブの構築方法。ステップ関数、スケジュール、リトライ、Next.js統合まで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/inngest-background-jobs-guide/"><meta name="twitter:title" content="Inngest：イベント駆動バックグラウンドジョブ完全ガイド"><meta name="twitter:description" content="Inngestを使ったイベント駆動バックグラウンドジョブの構築方法。ステップ関数、スケジュール、リトライ、Next.js統合まで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/inngest-background-jobs-guide/"},"headline":"Inngest：イベント駆動バックグラウンドジョブ完全ガイド","description":"Inngestを使ったイベント駆動バックグラウンドジョブの構築方法。ステップ関数、スケジュール、リトライ、Next.js統合まで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。","datePublished":"2026-02-05T00:00:00.000Z","dateModified":"2026-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Inngest, バックグラウンドジョブ, Next.js, TypeScript, イベント駆動"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Inngest：イベント駆動バックグラウンドジョブ完全ガイド"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-05T00:00:00.000Z"> Feb 4, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Inngest：イベント駆動バックグラウンドジョブ完全ガイド</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Inngest" class="article-tag" data-astro-cid-bvzihdzo>
+#Inngest </a><a href="/blog/tag/%E3%83%90%E3%83%83%E3%82%AF%E3%82%B0%E3%83%A9%E3%82%A6%E3%83%B3%E3%83%89%E3%82%B8%E3%83%A7%E3%83%96" class="article-tag" data-astro-cid-bvzihdzo>
+#バックグラウンドジョブ </a><a href="/blog/tag/Next.js" class="article-tag" data-astro-cid-bvzihdzo>
+#Next.js </a><a href="/blog/tag/TypeScript" class="article-tag" data-astro-cid-bvzihdzo>
+#TypeScript </a><a href="/blog/tag/%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E9%A7%86%E5%8B%95" class="article-tag" data-astro-cid-bvzihdzo>
+#イベント駆動 </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>バックグラウンドジョブの管理は、モダンなWebアプリケーション開発において避けて通れない課題です。メール送信、画像処理、データ同期など、時間のかかる処理をユーザーを待たせずに実行したい場面は数多くあります。</p>
+<p>Inngestは、イベント駆動型のバックグラウンドジョブフレームワークで、開発者体験に優れた設計が特徴です。この記事では、Inngestの基本から実践的な使い方まで、詳しく解説していきます。</p>
+<h2 id="inngestとは">Inngestとは</h2>
+<p>Inngestは、イベント駆動型のバックグラウンドジョブとワークフローを構築するためのプラットフォームです。主な特徴は以下の通りです。</p>
+<h3 id="主な特徴">主な特徴</h3>
+<ul>
+<li><strong>TypeScriptファースト</strong>: 型安全な開発体験</li>
+<li><strong>イベント駆動</strong>: イベントベースのトリガー</li>
+<li><strong>ステップ関数</strong>: 複雑なワークフローを簡単に構築</li>
+<li><strong>自動リトライ</strong>: エラー時の自動再試行</li>
+<li><strong>スケジューリング</strong>: Cron式でのジョブスケジュール</li>
+<li><strong>開発者体験</strong>: ローカル開発サーバーとダッシュボード</li>
+<li><strong>無料枠</strong>: 月25,000ステップまで無料</li>
+</ul>
+<h3 id="競合との比較">競合との比較</h3>
+<p>Inngestは以下のツールと比較されることが多いです。</p>
+<p><strong>Inngest vs BullMQ</strong></p>
+<ul>
+<li>Inngestはサーバーレス向き、BullMQはRedis必須</li>
+<li>Inngestは型安全、BullMQは動的</li>
+<li>Inngestは有料プランあり、BullMQは完全オープンソース</li>
+</ul>
+<p><strong>Inngest vs Trigger.dev</strong></p>
+<ul>
+<li>両方ともTypeScriptファースト</li>
+<li>Inngestはイベント駆動、Trigger.devはタスク駆動</li>
+<li>料金体系が異なる（Inngestはステップ数、Trigger.devは実行時間）</li>
+</ul>
+<h2 id="セットアップ">セットアップ</h2>
+<h3 id="インストール">インストール</h3>
+<p>まずは必要なパッケージをインストールします。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> inngest</span></span>
+<span class="line"><span style="color:#6A737D"># または</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> inngest</span></span>
+<span class="line"><span style="color:#6A737D"># または</span></span>
+<span class="line"><span style="color:#B392F0">yarn</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> inngest</span></span></code></pre>
+<h3 id="inngestクライアントの作成">Inngestクライアントの作成</h3>
+<p>プロジェクトのルートに <code>inngest</code> ディレクトリを作成し、クライアントを初期化します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// inngest/client.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Inngest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "inngest"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> inngest</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Inngest</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  id: </span><span style="color:#9ECBFF">"my-app"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: </span><span style="color:#9ECBFF">"My Application"</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="環境変数の設定">環境変数の設定</h3>
+<p><code>.env.local</code> に以下を追加します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 開発環境</span></span>
+<span class="line"><span style="color:#E1E4E8">INNGEST_EVENT_KEY</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your_event_key</span></span>
+<span class="line"><span style="color:#E1E4E8">INNGEST_SIGNING_KEY</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your_signing_key</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 本番環境</span></span>
+<span class="line"><span style="color:#E1E4E8">INNGEST_SIGNING_KEY</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your_production_signing_key</span></span></code></pre>
+<p>Inngestのダッシュボード（<a href="https://www.inngest.com/%EF%BC%89%E3%81%A7%E3%82%A2%E3%82%AB%E3%82%A6%E3%83%B3%E3%83%88%E3%82%92%E4%BD%9C%E6%88%90%E3%81%97%E3%80%81API%E3%82%AD%E3%83%BC%E3%82%92%E5%8F%96%E5%BE%97%E3%81%97%E3%81%BE%E3%81%99%E3%80%82">https://www.inngest.com/）でアカウントを作成し、APIキーを取得します。</a></p>
+<h2 id="基本的な使い方">基本的な使い方</h2>
+<h3 id="最初のファンクション">最初のファンクション</h3>
+<p>シンプルなバックグラウンドジョブを作成してみましょう。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// inngest/functions/hello.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { inngest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "../client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> helloWorld</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"hello-world"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/hello.world"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"say-hello"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Hello, ${</span><span style="color:#E1E4E8">event</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">data</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">}!`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> { message: </span><span style="color:#9ECBFF">`Hello, ${</span><span style="color:#E1E4E8">event</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">data</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">}!`</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="イベントの送信">イベントの送信</h3>
+<p>作成したファンクションは、イベントを送信することで実行されます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/trigger-hello/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { inngest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@/inngest/client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { NextResponse } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "next/server"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> POST</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Request</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">name</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> request.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    name: </span><span style="color:#9ECBFF">"app/hello.world"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      name,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> NextResponse.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ message: </span><span style="color:#9ECBFF">"Event sent"</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="nextjsとの統合">Next.jsとの統合</h3>
+<p>Next.jsのApp Routerと統合するには、API routeを作成します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// app/api/inngest/route.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { serve } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "inngest/next"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { inngest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@/inngest/client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { helloWorld } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@/inngest/functions/hello"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">GET</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">POST</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">PUT</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> serve</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  client: inngest,</span></span>
+<span class="line"><span style="color:#E1E4E8">  functions: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    helloWorld,</span></span>
+<span class="line"><span style="color:#6A737D">    // 他のファンクションもここに追加</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<p>このエンドポイントが、Inngestとアプリケーションの橋渡しをします。</p>
+<h2 id="ステップ関数">ステップ関数</h2>
+<p>ステップ関数は、Inngestの最も強力な機能の一つです。複雑なワークフローを簡単に構築できます。</p>
+<h3 id="ステップの基本">ステップの基本</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// inngest/functions/user-onboarding.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { inngest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "../client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> userOnboarding</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"user-onboarding"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/user.created"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // ステップ1: ウェルカムメール送信</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> emailResult</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"send-welcome-email"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> sendEmail</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        to: event.data.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">        subject: </span><span style="color:#9ECBFF">"Welcome!"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        body: </span><span style="color:#9ECBFF">"Thank you for signing up!"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> { sent: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ステップ2: ユーザープロファイル作成</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> profile</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"create-user-profile"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.userProfile.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          userId: event.data.userId,</span></span>
+<span class="line"><span style="color:#E1E4E8">          displayName: event.data.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ステップ3: 通知送信</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"send-slack-notification"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> sendSlackMessage</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        channel: </span><span style="color:#9ECBFF">"#new-users"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        text: </span><span style="color:#9ECBFF">`New user signed up: ${</span><span style="color:#E1E4E8">event</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">data</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> { success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">, profileId: profile.id };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="ステップの利点">ステップの利点</h3>
+<p>各ステップは独立して実行され、失敗した場合はそのステップからリトライされます。すべてのステップを最初からやり直す必要はありません。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ステップ1が成功 → ステップ2が失敗 → リトライ時はステップ2から再開</span></span></code></pre>
+<h3 id="並列実行">並列実行</h3>
+<p>複数のステップを並列実行することもできます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> parallelProcessing</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"parallel-processing"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/image.uploaded"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 並列実行</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">thumbnail</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">webp</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">metadata</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">      step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"create-thumbnail"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> createThumbnail</span><span style="color:#E1E4E8">(event.data.imageUrl);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"><span style="color:#E1E4E8">      step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"convert-to-webp"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> convertToWebP</span><span style="color:#E1E4E8">(event.data.imageUrl);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"><span style="color:#E1E4E8">      step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"extract-metadata"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> extractMetadata</span><span style="color:#E1E4E8">(event.data.imageUrl);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // すべて完了後に実行</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"save-results"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> db.image.</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        where: { id: event.data.imageId },</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          thumbnail: thumbnail.url,</span></span>
+<span class="line"><span style="color:#E1E4E8">          webp: webp.url,</span></span>
+<span class="line"><span style="color:#E1E4E8">          metadata: metadata,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h2 id="スリープとウェイト">スリープとウェイト</h2>
+<p>時間をあけて処理を実行したい場合、<code>step.sleep</code> を使います。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> delayedNotification</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"delayed-notification"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/trial.started"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 7日後に実行</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">sleep</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"wait-7-days"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"7d"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // トライアル終了3日前の通知</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"send-reminder"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> sendEmail</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        to: event.data.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">        subject: </span><span style="color:#9ECBFF">"Your trial is ending soon!"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        body: </span><span style="color:#9ECBFF">"Only 3 days left in your trial."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<p>時間の指定方法：</p>
+<ul>
+<li><code>"1h"</code> - 1時間</li>
+<li><code>"30m"</code> - 30分</li>
+<li><code>"7d"</code> - 7日</li>
+<li><code>"2w"</code> - 2週間</li>
+</ul>
+<h2 id="イベント待機">イベント待機</h2>
+<p>他のイベントを待ってから処理を続けることもできます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> paymentFlow</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"payment-flow"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/payment.initiated"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 決済処理</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"process-payment"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> processPayment</span><span style="color:#E1E4E8">(event.data.paymentId);</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 決済完了イベントを最大1時間待つ</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> paymentEvent</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">waitForEvent</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"wait-for-payment"</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">      event: </span><span style="color:#9ECBFF">"app/payment.completed"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      timeout: </span><span style="color:#9ECBFF">"1h"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      match: </span><span style="color:#9ECBFF">"data.paymentId"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (paymentEvent) {</span></span>
+<span class="line"><span style="color:#6A737D">      // 決済成功</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"send-receipt"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#B392F0"> sendReceipt</span><span style="color:#E1E4E8">(event.data.userId, paymentEvent.data);</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // タイムアウト</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"handle-timeout"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#B392F0"> cancelPayment</span><span style="color:#E1E4E8">(event.data.paymentId);</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h2 id="スケジュールジョブ">スケジュールジョブ</h2>
+<p>Cron式を使って定期実行ジョブを設定できます。</p>
+<h3 id="基本的なスケジュール">基本的なスケジュール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// inngest/functions/daily-report.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { inngest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "../client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> dailyReport</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"daily-report"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { cron: </span><span style="color:#9ECBFF">"0 9 * * *"</span><span style="color:#E1E4E8"> }, </span><span style="color:#6A737D">// 毎日9時に実行</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> report</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"generate-report"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> stats</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">getYesterdayStats</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> stats;</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"send-report"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> sendEmail</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        to: </span><span style="color:#9ECBFF">"admin@example.com"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        subject: </span><span style="color:#9ECBFF">"Daily Report"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(report, </span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="複数のスケジュール">複数のスケジュール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> multiSchedule</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"multi-schedule"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { cron: [</span><span style="color:#9ECBFF">"0 9 * * *"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"0 17 * * *"</span><span style="color:#E1E4E8">] }, </span><span style="color:#6A737D">// 9時と17時</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> hour</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">getHours</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (hour </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 9</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"morning-task"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // 朝のタスク</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"evening-task"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // 夕方のタスク</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="タイムゾーン指定">タイムゾーン指定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> tokyoSchedule</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"tokyo-schedule"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    cron: </span><span style="color:#9ECBFF">"0 9 * * *"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    timezone: </span><span style="color:#9ECBFF">"Asia/Tokyo"</span><span style="color:#6A737D"> // 日本時間で9時</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 処理</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h2 id="リトライとエラーハンドリング">リトライとエラーハンドリング</h2>
+<h3 id="自動リトライ">自動リトライ</h3>
+<p>Inngestはデフォルトでエラー時に自動的にリトライします。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> reliableJob</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: </span><span style="color:#9ECBFF">"reliable-job"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    retries: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 最大3回リトライ</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/api.call"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"call-external-api"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // 失敗すると自動的にリトライされる</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"https://api.example.com/data"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">response.ok) </span><span style="color:#F97583">throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"API call failed"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="カスタムリトライ設定">カスタムリトライ設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> customRetry</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: </span><span style="color:#9ECBFF">"custom-retry"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    retries: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      attempts: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#6A737D">      // リトライ間隔を指数バックオフで設定</span></span>
+<span class="line"><span style="color:#E1E4E8">      backoff: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        type: </span><span style="color:#9ECBFF">"exponential"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        base: </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 2秒から開始</span></span>
+<span class="line"><span style="color:#E1E4E8">        max: </span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 最大60秒</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/heavy.task"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 処理</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="エラーハンドリング">エラーハンドリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> errorHandling</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"error-handling"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/process.data"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"risky-operation"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // リスクのある操作</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> riskyOperation</span><span style="color:#E1E4E8">(event.data);</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"handle-success"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#B392F0"> notifySuccess</span><span style="color:#E1E4E8">(result);</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#6A737D">      // エラー処理</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"handle-error"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#B392F0"> logError</span><span style="color:#E1E4E8">(error);</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#B392F0"> notifyAdmin</span><span style="color:#E1E4E8">(error);</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">      // エラーを再スロー（リトライさせる場合）</span></span>
+<span class="line"><span style="color:#F97583">      throw</span><span style="color:#E1E4E8"> error;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h2 id="実践例">実践例</h2>
+<h3 id="メール送信キュー">メール送信キュー</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// inngest/functions/email-queue.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { inngest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "../client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Resend } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "resend"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> resend</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Resend</span><span style="color:#E1E4E8">(process.env.</span><span style="color:#79B8FF">RESEND_API_KEY</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> sendEmailJob</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: </span><span style="color:#9ECBFF">"send-email"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    retries: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/email.send"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">to</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">subject</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">body</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.data;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"send-email"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> resend.emails.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        from: </span><span style="color:#9ECBFF">"noreply@example.com"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        to,</span></span>
+<span class="line"><span style="color:#E1E4E8">        subject,</span></span>
+<span class="line"><span style="color:#E1E4E8">        html: body,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"log-result"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> db.emailLog.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          to,</span></span>
+<span class="line"><span style="color:#E1E4E8">          subject,</span></span>
+<span class="line"><span style="color:#E1E4E8">          status: </span><span style="color:#9ECBFF">"sent"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          messageId: result.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> { success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">, messageId: result.id };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="画像処理パイプライン">画像処理パイプライン</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// inngest/functions/image-pipeline.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { inngest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "../client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> sharp </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "sharp"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { S3Client, PutObjectCommand } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@aws-sdk/client-s3"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> s3</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> S3Client</span><span style="color:#E1E4E8">({ region: </span><span style="color:#9ECBFF">"us-east-1"</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> imageProcessing</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"image-processing"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/image.uploaded"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">imageUrl</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">imageId</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.data;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 画像をダウンロード</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> imageBuffer</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"download-image"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(imageUrl);</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> Buffer.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">await</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">arrayBuffer</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // サムネイル作成（並列処理）</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">thumbnail</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">medium</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">large</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">      step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"create-thumbnail"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> buffer</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> sharp</span><span style="color:#E1E4E8">(imageBuffer)</span></span>
+<span class="line"><span style="color:#E1E4E8">          .</span><span style="color:#B392F0">resize</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">150</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">150</span><span style="color:#E1E4E8">, { fit: </span><span style="color:#9ECBFF">"cover"</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">          .</span><span style="color:#B392F0">jpeg</span><span style="color:#E1E4E8">({ quality: </span><span style="color:#79B8FF">80</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">          .</span><span style="color:#B392F0">toBuffer</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `thumbnails/${</span><span style="color:#E1E4E8">imageId</span><span style="color:#9ECBFF">}.jpg`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#E1E4E8"> s3.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> PutObjectCommand</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          Bucket: </span><span style="color:#9ECBFF">"my-bucket"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          Key: key,</span></span>
+<span class="line"><span style="color:#E1E4E8">          Body: buffer,</span></span>
+<span class="line"><span style="color:#E1E4E8">          ContentType: </span><span style="color:#9ECBFF">"image/jpeg"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        }));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> { key, size: buffer.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"create-medium"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> buffer</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> sharp</span><span style="color:#E1E4E8">(imageBuffer)</span></span>
+<span class="line"><span style="color:#E1E4E8">          .</span><span style="color:#B392F0">resize</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">800</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">800</span><span style="color:#E1E4E8">, { fit: </span><span style="color:#9ECBFF">"inside"</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">          .</span><span style="color:#B392F0">jpeg</span><span style="color:#E1E4E8">({ quality: </span><span style="color:#79B8FF">85</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">          .</span><span style="color:#B392F0">toBuffer</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `medium/${</span><span style="color:#E1E4E8">imageId</span><span style="color:#9ECBFF">}.jpg`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#E1E4E8"> s3.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> PutObjectCommand</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          Bucket: </span><span style="color:#9ECBFF">"my-bucket"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          Key: key,</span></span>
+<span class="line"><span style="color:#E1E4E8">          Body: buffer,</span></span>
+<span class="line"><span style="color:#E1E4E8">          ContentType: </span><span style="color:#9ECBFF">"image/jpeg"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        }));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> { key, size: buffer.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"create-large"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> buffer</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> sharp</span><span style="color:#E1E4E8">(imageBuffer)</span></span>
+<span class="line"><span style="color:#E1E4E8">          .</span><span style="color:#B392F0">resize</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1920</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1920</span><span style="color:#E1E4E8">, { fit: </span><span style="color:#9ECBFF">"inside"</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">          .</span><span style="color:#B392F0">jpeg</span><span style="color:#E1E4E8">({ quality: </span><span style="color:#79B8FF">90</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">          .</span><span style="color:#B392F0">toBuffer</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `large/${</span><span style="color:#E1E4E8">imageId</span><span style="color:#9ECBFF">}.jpg`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#E1E4E8"> s3.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> PutObjectCommand</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          Bucket: </span><span style="color:#9ECBFF">"my-bucket"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          Key: key,</span></span>
+<span class="line"><span style="color:#E1E4E8">          Body: buffer,</span></span>
+<span class="line"><span style="color:#E1E4E8">          ContentType: </span><span style="color:#9ECBFF">"image/jpeg"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        }));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> { key, size: buffer.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#E1E4E8">      }),</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // データベース更新</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"update-database"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> db.image.</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        where: { id: imageId },</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          thumbnailUrl: </span><span style="color:#9ECBFF">`https://cdn.example.com/${</span><span style="color:#E1E4E8">thumbnail</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          mediumUrl: </span><span style="color:#9ECBFF">`https://cdn.example.com/${</span><span style="color:#E1E4E8">medium</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          largeUrl: </span><span style="color:#9ECBFF">`https://cdn.example.com/${</span><span style="color:#E1E4E8">large</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          processed: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      sizes: { thumbnail, medium, large },</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="サブスクリプション管理">サブスクリプション管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// inngest/functions/subscription.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { inngest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "../client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> trialEndingReminder</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"trial-ending-reminder"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/trial.started"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">userId</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">email</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">trialEndsAt</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.data;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 7日目（終了3日前）にリマインダー</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">sleep</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"wait-7-days"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"7d"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"send-first-reminder"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> sendEmail</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        to: email,</span></span>
+<span class="line"><span style="color:#E1E4E8">        subject: </span><span style="color:#9ECBFF">"Your trial is ending in 3 days"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        template: </span><span style="color:#9ECBFF">"trial-reminder-3days"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: { userId },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 9日目（終了1日前）に最終リマインダー</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">sleep</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"wait-2-more-days"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"2d"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"send-final-reminder"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> sendEmail</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        to: email,</span></span>
+<span class="line"><span style="color:#E1E4E8">        subject: </span><span style="color:#9ECBFF">"Last chance! Trial ends tomorrow"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        template: </span><span style="color:#9ECBFF">"trial-reminder-1day"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: { userId },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // トライアル終了を待つ</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">sleep</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"wait-until-end"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"1d"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // サブスクリプション状態を確認</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"check-subscription"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.user.</span><span style="color:#B392F0">findUnique</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        where: { id: userId },</span></span>
+<span class="line"><span style="color:#E1E4E8">        include: { subscription: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">user.subscription) {</span></span>
+<span class="line"><span style="color:#6A737D">      // サブスクリプションなし → アカウント制限</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"restrict-account"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#E1E4E8"> db.user.</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          where: { id: userId },</span></span>
+<span class="line"><span style="color:#E1E4E8">          data: { accountStatus: </span><span style="color:#9ECBFF">"restricted"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        await</span><span style="color:#B392F0"> sendEmail</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">          to: email,</span></span>
+<span class="line"><span style="color:#E1E4E8">          subject: </span><span style="color:#9ECBFF">"Your trial has ended"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          template: </span><span style="color:#9ECBFF">"trial-ended"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          data: { userId },</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> subscriptionCanceled</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"subscription-canceled"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/subscription.canceled"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">userId</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">cancelsAt</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.data;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // キャンセル確認メール</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"send-cancellation-email"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.user.</span><span style="color:#B392F0">findUnique</span><span style="color:#E1E4E8">({ where: { id: userId } });</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> sendEmail</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        to: user.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">        subject: </span><span style="color:#9ECBFF">"Subscription canceled"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        template: </span><span style="color:#9ECBFF">"subscription-canceled"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          userId,</span></span>
+<span class="line"><span style="color:#E1E4E8">          accessEndsAt: cancelsAt,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 期限まで待つ</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> waitTime</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(cancelsAt).</span><span style="color:#B392F0">getTime</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">sleep</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"wait-until-expiry"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">waitTime</span><span style="color:#9ECBFF">}ms`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // アクセス制限</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"revoke-access"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> db.user.</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        where: { id: userId },</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          accountStatus: </span><span style="color:#9ECBFF">"restricted"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          subscriptionId: </span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="データ同期">データ同期</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// inngest/functions/data-sync.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { inngest } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "../client"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> syncToExternalService</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: </span><span style="color:#9ECBFF">"sync-to-external"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    retries: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/data.updated"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">entityType</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">entityId</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.data;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // データ取得</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"fetch-data"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      switch</span><span style="color:#E1E4E8"> (entityType) {</span></span>
+<span class="line"><span style="color:#F97583">        case</span><span style="color:#9ECBFF"> "user"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">          return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.user.</span><span style="color:#B392F0">findUnique</span><span style="color:#E1E4E8">({ where: { id: entityId } });</span></span>
+<span class="line"><span style="color:#F97583">        case</span><span style="color:#9ECBFF"> "order"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">          return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.order.</span><span style="color:#B392F0">findUnique</span><span style="color:#E1E4E8">({ where: { id: entityId } });</span></span>
+<span class="line"><span style="color:#F97583">        default</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">          throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Unknown entity type: ${</span><span style="color:#E1E4E8">entityType</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 外部サービスA に送信</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"sync-to-service-a"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"https://service-a.example.com/api/sync"</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        method: </span><span style="color:#9ECBFF">"POST"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">          "Content-Type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"application/json"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">          "Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">`Bearer ${</span><span style="color:#E1E4E8">process</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">env</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">SERVICE_A_TOKEN</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(data),</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 外部サービスB に送信</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"sync-to-service-b"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"https://service-b.example.com/api/sync"</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">        method: </span><span style="color:#9ECBFF">"POST"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">          "Content-Type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"application/json"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">          "Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">`Bearer ${</span><span style="color:#E1E4E8">process</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">env</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">SERVICE_B_TOKEN</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(data),</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 同期ログ記録</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"log-sync"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> db.syncLog.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          entityType,</span></span>
+<span class="line"><span style="color:#E1E4E8">          entityId,</span></span>
+<span class="line"><span style="color:#E1E4E8">          syncedAt: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">          services: [</span><span style="color:#9ECBFF">"service-a"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"service-b"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 定期的な全データ同期</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> fullSync</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"full-sync"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { cron: </span><span style="color:#9ECBFF">"0 2 * * *"</span><span style="color:#E1E4E8"> }, </span><span style="color:#6A737D">// 毎日深夜2時</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 未同期のレコードを取得</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> unsyncedRecords</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"fetch-unsynced"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.syncLog.</span><span style="color:#B392F0">findMany</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        where: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          syncedAt: {</span></span>
+<span class="line"><span style="color:#E1E4E8">            lt: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 24</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">), </span><span style="color:#6A737D">// 24時間以上前</span></span>
+<span class="line"><span style="color:#E1E4E8">          },</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        take: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// バッチサイズ</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 各レコードの同期イベントを発行</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"trigger-sync-events"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        unsyncedRecords.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">record</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">          name: </span><span style="color:#9ECBFF">"app/data.updated"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          data: {</span></span>
+<span class="line"><span style="color:#E1E4E8">            entityType: record.entityType,</span></span>
+<span class="line"><span style="color:#E1E4E8">            entityId: record.entityId,</span></span>
+<span class="line"><span style="color:#E1E4E8">          },</span></span>
+<span class="line"><span style="color:#E1E4E8">        }))</span></span>
+<span class="line"><span style="color:#E1E4E8">      );</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> { syncedCount: unsyncedRecords.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h2 id="ローカル開発">ローカル開発</h2>
+<h3 id="開発サーバーの起動">開発サーバーの起動</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> inngest-cli@latest</span><span style="color:#9ECBFF"> dev</span></span></code></pre>
+<p>このコマンドで、ローカルの開発環境が立ち上がります。</p>
+<h3 id="ダッシュボード">ダッシュボード</h3>
+<p>ブラウザで <code>http://localhost:8288</code> を開くと、Inngestの開発ダッシュボードが表示されます。</p>
+<p>ここでは以下のことができます。</p>
+<ul>
+<li>登録されたファンクションの一覧</li>
+<li>イベントの手動送信</li>
+<li>実行履歴の確認</li>
+<li>ステップごとの実行状況</li>
+</ul>
+<h3 id="イベントのテスト送信">イベントのテスト送信</h3>
+<p>ダッシュボードからイベントを送信してテストできます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"app/hello.world"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "data"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Test User"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="デプロイ">デプロイ</h2>
+<h3 id="vercelへのデプロイ">Vercelへのデプロイ</h3>
+<p>Vercelにデプロイする場合、特別な設定は不要です。</p>
+<ol>
+<li>環境変数を設定</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Vercel Dashboard で設定</span></span>
+<span class="line"><span style="color:#E1E4E8">INNGEST_SIGNING_KEY</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your_production_signing_key</span></span>
+<span class="line"><span style="color:#E1E4E8">INNGEST_EVENT_KEY</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your_event_key</span></span></code></pre>
+<ol start="2">
+<li>デプロイ</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">vercel</span><span style="color:#79B8FF"> --prod</span></span></code></pre>
+<ol start="3">
+<li>Inngestダッシュボードでアプリを同期</li>
+</ol>
+<p>Inngestのダッシュボードで、デプロイしたアプリのURLを登録します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>https://your-app.vercel.app/api/inngest</span></span></code></pre>
+<h3 id="他のプラットフォーム">他のプラットフォーム</h3>
+<p>Inngestは以下のプラットフォームでも動作します。</p>
+<ul>
+<li><strong>Netlify</strong>: Netlify Functions</li>
+<li><strong>AWS Lambda</strong>: Serverless Framework</li>
+<li><strong>Cloudflare Workers</strong>: Hono統合</li>
+<li><strong>Express</strong>: Node.jsサーバー</li>
+</ul>
+<h2 id="ベストプラクティス">ベストプラクティス</h2>
+<h3 id="1-ステップを小さく保つ">1. ステップを小さく保つ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Good</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"send-email"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> sendEmail</span><span style="color:#E1E4E8">(data);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"update-database"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">(data);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Bad</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"do-everything"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> sendEmail</span><span style="color:#E1E4E8">(data);</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">update</span><span style="color:#E1E4E8">(data);</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> notifySlack</span><span style="color:#E1E4E8">(data);</span></span>
+<span class="line"><span style="color:#6A737D">  // リトライ時にすべてやり直し</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="2-イベント名に規則を設ける">2. イベント名に規則を設ける</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Good</span></span>
+<span class="line"><span style="color:#9ECBFF">"app/user.created"</span></span>
+<span class="line"><span style="color:#9ECBFF">"app/order.completed"</span></span>
+<span class="line"><span style="color:#9ECBFF">"app/payment.failed"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Bad</span></span>
+<span class="line"><span style="color:#9ECBFF">"user-created"</span></span>
+<span class="line"><span style="color:#9ECBFF">"orderComplete"</span></span>
+<span class="line"><span style="color:#9ECBFF">"PAYMENT_FAILED"</span></span></code></pre>
+<h3 id="3-データ検証">3. データ検証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { z } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "zod"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> schema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  userId: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  email: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">email</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> validatedFunction</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"validated-function"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/user.created"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // データ検証</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> schema.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(event.data);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 以降は型安全</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"process"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> processUser</span><span style="color:#E1E4E8">(data.userId, data.email);</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="4-冪等性を確保">4. 冪等性を確保</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> idempotentJob</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { id: </span><span style="color:#9ECBFF">"idempotent-job"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/process.data"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">requestId</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.data;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // すでに処理済みかチェック</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> existing</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"check-existing"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.processLog.</span><span style="color:#B392F0">findUnique</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        where: { requestId },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (existing) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> { message: </span><span style="color:#9ECBFF">"Already processed"</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 処理実行</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"process"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> heavyProcess</span><span style="color:#E1E4E8">(event.data);</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 処理済みマーク</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"mark-processed"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> db.processLog.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        data: { requestId, result },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<h2 id="トラブルシューティング">トラブルシューティング</h2>
+<h3 id="よくある問題">よくある問題</h3>
+<p><strong>1. ファンクションが実行されない</strong></p>
+<ul>
+<li>イベント名が正確か確認</li>
+<li>Inngestダッシュボードでアプリが同期されているか確認</li>
+<li>環境変数が正しく設定されているか確認</li>
+</ul>
+<p><strong>2. タイムアウトエラー</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> longRunningJob</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> inngest.</span><span style="color:#B392F0">createFunction</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: </span><span style="color:#9ECBFF">"long-running-job"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#6A737D">    // タイムアウトを延長</span></span>
+<span class="line"><span style="color:#E1E4E8">    maxRuntime: </span><span style="color:#9ECBFF">"5m"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  { event: </span><span style="color:#9ECBFF">"app/heavy.task"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">event</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">step</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 処理</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<p><strong>3. リトライループ</strong></p>
+<p>エラーハンドリングで適切に処理し、必要に応じて例外を再スローしないようにします。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> step.</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"safe-operation"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> riskyOperation</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#6A737D">    // ログだけして成功扱い（リトライしない）</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(error);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Inngestは、TypeScriptファーストなイベント駆動バックグラウンドジョブフレームワークです。主な利点は以下の通りです。</p>
+<ul>
+<li><strong>開発者体験</strong>: 型安全で直感的なAPI</li>
+<li><strong>信頼性</strong>: 自動リトライとステップ関数</li>
+<li><strong>スケーラビリティ</strong>: サーバーレス環境に最適</li>
+<li><strong>可視性</strong>: リアルタイムダッシュボード</li>
+</ul>
+<p>複雑なワークフローを簡単に構築でき、ローカル開発環境も充実しています。無料枠も十分なので、小規模なプロジェクトからでも気軽に始められます。</p>
+<p>バックグラウンドジョブが必要なプロジェクトでは、Inngestを検討してみてください。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

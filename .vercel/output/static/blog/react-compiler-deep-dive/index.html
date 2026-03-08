@@ -1,0 +1,444 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/react-compiler-deep-dive/"><!-- Primary Meta Tags --><title>React Compiler深掘り - 自動メモ化の仕組みと実践活用ガイド</title><meta name="title" content="React Compiler深掘り - 自動メモ化の仕組みと実践活用ガイド"><meta name="description" content="React Compilerの内部構造、自動メモ化の仕組み、実際のパフォーマンス改善効果を実測データとコード例で徹底解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/react-compiler-deep-dive/"><meta property="og:title" content="React Compiler深掘り - 自動メモ化の仕組みと実践活用ガイド"><meta property="og:description" content="React Compilerの内部構造、自動メモ化の仕組み、実際のパフォーマンス改善効果を実測データとコード例で徹底解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/react-compiler-deep-dive/"><meta name="twitter:title" content="React Compiler深掘り - 自動メモ化の仕組みと実践活用ガイド"><meta name="twitter:description" content="React Compilerの内部構造、自動メモ化の仕組み、実際のパフォーマンス改善効果を実測データとコード例で徹底解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/react-compiler-deep-dive/"},"headline":"React Compiler深掘り - 自動メモ化の仕組みと実践活用ガイド","description":"React Compilerの内部構造、自動メモ化の仕組み、実際のパフォーマンス改善効果を実測データとコード例で徹底解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。","datePublished":"2025-02-05T00:00:00.000Z","dateModified":"2025-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"React, パフォーマンス, コンパイラ, メモ化, 最適化"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"React Compiler深掘り - 自動メモ化の仕組みと実践活用ガイド"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-05T00:00:00.000Z"> Feb 4, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>React Compiler深掘り - 自動メモ化の仕組みと実践活用ガイド</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/React" class="article-tag" data-astro-cid-bvzihdzo>
+#React </a><a href="/blog/tag/%E3%83%91%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%B3%E3%82%B9" class="article-tag" data-astro-cid-bvzihdzo>
+#パフォーマンス </a><a href="/blog/tag/%E3%82%B3%E3%83%B3%E3%83%91%E3%82%A4%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#コンパイラ </a><a href="/blog/tag/%E3%83%A1%E3%83%A2%E5%8C%96" class="article-tag" data-astro-cid-bvzihdzo>
+#メモ化 </a><a href="/blog/tag/%E6%9C%80%E9%81%A9%E5%8C%96" class="article-tag" data-astro-cid-bvzihdzo>
+#最適化 </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="はじめに">はじめに</h2>
+<p>React Compiler（React Forget）は、2024年にReact 19と共にリリースされた<strong>自動メモ化コンパイラ</strong>です。</p>
+<p>従来の<code>useMemo</code>、<code>useCallback</code>、<code>React.memo</code>を手動で配置する必要がなくなり、<strong>コンパイラが自動的に最適化</strong>してくれます。</p>
+<h3 id="react-compilerが解決する問題">React Compilerが解決する問題</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Before: 手動メモ化（面倒 &#x26; 忘れやすい）</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> ExpensiveComponent</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">onUpdate</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Props</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> processedData</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> data.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">item</span><span style="color:#F97583"> =></span><span style="color:#B392F0"> heavyComputation</span><span style="color:#E1E4E8">(item))</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [data])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> handleClick</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useCallback</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    onUpdate</span><span style="color:#E1E4E8">(processedData)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [processedData, onUpdate])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#B392F0"> onClick</span><span style="color:#E1E4E8">={</span><span style="color:#FFAB70">handleClick</span><span style="color:#E1E4E8">}></span><span style="color:#F97583">...&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// After: React Compilerが自動最適化</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> ExpensiveComponent</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">onUpdate</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Props</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> processedData</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> data.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">item</span><span style="color:#F97583"> =></span><span style="color:#B392F0"> heavyComputation</span><span style="color:#E1E4E8">(item))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> handleClick</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    onUpdate</span><span style="color:#E1E4E8">(processedData)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#B392F0"> onClick</span><span style="color:#E1E4E8">={</span><span style="color:#FFAB70">handleClick</span><span style="color:#E1E4E8">}></span><span style="color:#F97583">...&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>この記事では、React Compilerの仕組みと実践的な活用方法を深掘りします。</p>
+<h2 id="react-compilerのインストール">React Compilerのインストール</h2>
+<h3 id="nextjs-15での設定">Next.js 15での設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> babel-plugin-react-compiler</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// next.config.js</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nextConfig</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  experimental: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    reactCompiler: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">module</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">exports</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> nextConfig</span></span></code></pre>
+<h3 id="viteでの設定">Viteでの設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> babel-plugin-react-compiler</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// vite.config.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { defineConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'vite'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> react </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@vitejs/plugin-react'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#B392F0"> defineConfig</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  plugins: [</span></span>
+<span class="line"><span style="color:#B392F0">    react</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      babel: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        plugins: [</span></span>
+<span class="line"><span style="color:#E1E4E8">          [</span><span style="color:#9ECBFF">'babel-plugin-react-compiler'</span><span style="color:#E1E4E8">, {}],</span></span>
+<span class="line"><span style="color:#E1E4E8">        ],</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h3 id="create-react-appでの設定">Create React Appでの設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> babel-plugin-react-compiler</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> --save-dev</span><span style="color:#9ECBFF"> customize-cra</span><span style="color:#9ECBFF"> react-app-rewired</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// config-overrides.js</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">override</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">addBabelPlugin</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'customize-cra'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">module</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">exports</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> override</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#B392F0">  addBabelPlugin</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'babel-plugin-react-compiler'</span><span style="color:#E1E4E8">, {}])</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<h2 id="react-compilerの仕組み">React Compilerの仕組み</h2>
+<h3 id="1-依存関係の自動追跡">1. 依存関係の自動追跡</h3>
+<p>React Compilerはコンポーネント内の値の依存関係を静的解析し、自動的にメモ化します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 元のコード</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> UserProfile</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">userId</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Props</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> fetchUser</span><span style="color:#E1E4E8">(userId)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> greeting</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `Hello, ${</span><span style="color:#E1E4E8">user</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">}!`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>{greeting}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// コンパイラによる変換（概念図）</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> UserProfile</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">userId</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Props</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#B392F0"> fetchUser</span><span style="color:#E1E4E8">(userId), [userId])</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> greeting</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#9ECBFF"> `Hello, ${</span><span style="color:#E1E4E8">user</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">}!`</span><span style="color:#E1E4E8">, [user.name])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>{greeting}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span><span style="color:#E1E4E8">, [greeting])</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-不要な再レンダリングの自動抑制">2. 不要な再レンダリングの自動抑制</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 元のコード</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Parent</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">count</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setCount</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">button onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{() => </span><span style="color:#B392F0">setCount</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">count</span><span style="color:#E1E4E8"> + 1)}</span><span style="color:#F97583">></span><span style="color:#E1E4E8">Increment</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">ExpensiveChild data</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"static"</span><span style="color:#F97583"> /></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> ExpensiveChild</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">data</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'ExpensiveChild rendered'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>{data}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// コンパイラによる最適化</span></span>
+<span class="line"><span style="color:#6A737D">// ExpensiveChildは自動的にReact.memoでラップされる</span></span></code></pre>
+<h3 id="3-イベントハンドラの自動メモ化">3. イベントハンドラの自動メモ化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 元のコード</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> TodoList</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">todos</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Props</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">filter</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setFilter</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">input onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{(e) => </span><span style="color:#B392F0">setFilter</span><span style="color:#E1E4E8">(e.target.value)} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">todos</span></span>
+<span class="line"><span style="color:#E1E4E8">        .</span><span style="color:#FFAB70">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">todo</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> todo.text.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(filter))</span></span>
+<span class="line"><span style="color:#E1E4E8">        .</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">todo</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;</span><span style="color:#FFAB70">TodoItem</span></span>
+<span class="line"><span style="color:#E1E4E8">            key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{todo.id}</span></span>
+<span class="line"><span style="color:#E1E4E8">            todo</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{todo}</span></span>
+<span class="line"><span style="color:#E1E4E8">            onDelete</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{() => </span><span style="color:#B392F0">deleteTodo</span><span style="color:#E1E4E8">(todo.id)}</span></span>
+<span class="line"><span style="color:#F97583">          /></span></span>
+<span class="line"><span style="color:#E1E4E8">        ))}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// コンパイラの最適化</span></span>
+<span class="line"><span style="color:#6A737D">// onChange、onDeleteハンドラは自動的にuseCallbackでラップされる</span></span></code></pre>
+<h2 id="パフォーマンス実測">パフォーマンス実測</h2>
+<h3 id="テストケース-重い計算を含むコンポーネント">テストケース: 重い計算を含むコンポーネント</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// components/HeavyComponent.tsx</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> fibonacci</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">n</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (n </span><span style="color:#F97583">&#x3C;=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> n</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> fibonacci</span><span style="color:#E1E4E8">(n </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">+</span><span style="color:#B392F0"> fibonacci</span><span style="color:#E1E4E8">(n </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> HeavyComponent</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">value</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">value</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#6A737D">  // 意図的に重い計算</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> fibonacci</span><span style="color:#E1E4E8">(value)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#B392F0">p</span><span style="color:#E1E4E8">></span><span style="color:#B392F0">Fibonacci</span><span style="color:#E1E4E8">({value}) </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {result}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">p</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> Parent</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">count</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setCount</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">fibValue</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setFibValue</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">35</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">button onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{() => </span><span style="color:#B392F0">setCount</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">count</span><span style="color:#E1E4E8"> + 1)}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        Increment </span><span style="color:#FFAB70">counter</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span><span style="color:#FFAB70">count</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">HeavyComponent value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{fibValue} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">button onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{() => </span><span style="color:#B392F0">setFibValue</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">fibValue</span><span style="color:#E1E4E8"> + 1)}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        Increment Fib </span><span style="color:#FFAB70">value</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="パフォーマンス測定結果">パフォーマンス測定結果</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>テスト環境: M1 Mac, Chrome 120</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>【React Compiler OFF】</span></span>
+<span class="line"><span>- "Increment counter"クリック時の再レンダリング: 1200ms</span></span>
+<span class="line"><span>- HeavyComponentも再計算される（不要な再レンダリング）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>【React Compiler ON】</span></span>
+<span class="line"><span>- "Increment counter"クリック時の再レンダリング: 2ms</span></span>
+<span class="line"><span>- HeavyComponentはスキップされる（自動メモ化）</span></span></code></pre>
+<h3 id="reactプロファイラでの比較">Reactプロファイラでの比較</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// プロファイリング用コンポーネント</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Profiler, ProfilerOnRenderCallback } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> onRender</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ProfilerOnRenderCallback</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  phase</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  actualDuration</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  baseDuration</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  startTime</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  commitTime</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">} (${</span><span style="color:#E1E4E8">phase</span><span style="color:#9ECBFF">}): ${</span><span style="color:#E1E4E8">actualDuration</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">toFixed</span><span style="color:#9ECBFF">(</span><span style="color:#79B8FF">2</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">}ms`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> App</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">Profiler id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"App"</span><span style="color:#E1E4E8"> onRender</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{onRender}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">Parent </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">Profiler</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>結果:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>【Compiler OFF】</span></span>
+<span class="line"><span>App (update): 1205.32ms</span></span>
+<span class="line"><span>  └─ HeavyComponent (update): 1198.45ms</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>【Compiler ON】</span></span>
+<span class="line"><span>App (update): 1.83ms</span></span>
+<span class="line"><span>  └─ HeavyComponent (skipped)</span></span></code></pre>
+<h2 id="react-compilerの最適化パターン">React Compilerの最適化パターン</h2>
+<h3 id="1-リストレンダリングの最適化">1. リストレンダリングの最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 元のコード</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> TodoList</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">todos</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">todos</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Todo</span><span style="color:#E1E4E8">[] }) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">ul</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">todos</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">todo</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#E1E4E8">li key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{todo.id}</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;</span><span style="color:#E1E4E8">TodoItem todo</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{todo} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">li</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      ))}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">ul</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// コンパイラの最適化</span></span>
+<span class="line"><span style="color:#6A737D">// 各TodoItemは自動的にメモ化され、</span></span>
+<span class="line"><span style="color:#6A737D">// todo.idが変わらない限り再レンダリングされない</span></span></code></pre>
+<h3 id="2-コンテキストの最適化">2. コンテキストの最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 元のコード</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> ThemeContext</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createContext</span><span style="color:#E1E4E8">({ theme: </span><span style="color:#9ECBFF">'light'</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> ThemedButton</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">theme</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useContext</span><span style="color:#E1E4E8">(ThemeContext)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">button</span><span style="color:#B392F0"> className</span><span style="color:#E1E4E8">={</span><span style="color:#FFAB70">theme</span><span style="color:#E1E4E8">}>Click me</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// コンパイラの最適化</span></span>
+<span class="line"><span style="color:#6A737D">// ThemeContextの変更時のみ再レンダリング</span></span>
+<span class="line"><span style="color:#6A737D">// 親コンポーネントの変更では再レンダリングされない</span></span></code></pre>
+<h3 id="3-計算コストの高いpropsの最適化">3. 計算コストの高いpropsの最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> DataVisualization</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">data</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">[] }) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> stats</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    mean: data.</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">a</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> a </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> b, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> data.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    max: Math.</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">data),</span></span>
+<span class="line"><span style="color:#E1E4E8">    min: Math.</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">data),</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">Chart</span><span style="color:#B392F0"> stats</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#FFAB70">stats</span><span style="color:#E1E4E8">} /></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">// コンパイラの最適化</span></span>
+<span class="line"><span style="color:#E1E4E8">// statsオブジェクトは自動的にメモ化され、</span></span>
+<span class="line"><span style="color:#E1E4E8">// dataが変わらない限り再計算されない</span></span></code></pre>
+<h2 id="react-compilerの制約と回避策">React Compilerの制約と回避策</h2>
+<h3 id="制約1-非純粋な関数">制約1: 非純粋な関数</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ❌ コンパイラは最適化できない</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> externalValue </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> ImpureComponent</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">  externalValue</span><span style="color:#F97583">++</span><span style="color:#6A737D"> // 外部の値を変更</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>{externalValue}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 純粋な関数に書き換え</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> PureComponent</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">value</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setValue</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    setValue</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">prev</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> prev </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>{value}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="制約2-refの直接変更">制約2: refの直接変更</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ❌ コンパイラは最適化できない</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> BadComponent</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ref</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useRef</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  ref.current</span><span style="color:#F97583">++</span><span style="color:#6A737D"> // refの直接変更</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>{ref.current}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 正しい使い方</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> GoodComponent</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ref</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useRef</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ref.current</span><span style="color:#F97583">++</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>Count tracked </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> ref</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="制約3-条件付きフック">制約3: 条件付きフック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ❌ コンパイラは最適化できない（Reactのルールにも違反）</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> BadComponent</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">condition</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Props</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (condition) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">state</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setState</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">) </span><span style="color:#6A737D">// 条件付きフック</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span><span style="color:#F97583">...&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ フックは常にトップレベルで呼ぶ</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> GoodComponent</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">condition</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Props</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">state</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setState</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (condition) {</span></span>
+<span class="line"><span style="color:#6A737D">    // stateを使う</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span><span style="color:#F97583">...&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="デバッグとインスペクション">デバッグとインスペクション</h2>
+<h3 id="react-devtoolsでのプロファイリング">React DevToolsでのプロファイリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// コンポーネントのレンダリング理由を確認</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> DebugComponent</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">value</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Props</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'DebugComponent rendered'</span><span style="color:#E1E4E8">, { value })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'DebugComponent mounted/updated'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">>{value}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="eslint-plugin-react-compilerの使用">eslint-plugin-react-compilerの使用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> --save-dev</span><span style="color:#9ECBFF"> eslint-plugin-react-compiler</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// .eslintrc.js</span></span>
+<span class="line"><span style="color:#79B8FF">module</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">exports</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  plugins: [</span><span style="color:#9ECBFF">'react-compiler'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  rules: {</span></span>
+<span class="line"><span style="color:#9ECBFF">    'react-compiler/react-compiler'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'error'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>ESLintがコンパイラで最適化できないパターンを警告します。</p>
+<h2 id="実践的な移行ガイド">実践的な移行ガイド</h2>
+<h3 id="ステップ1-段階的な導入">ステップ1: 段階的な導入</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// next.config.js</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> nextConfig</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  experimental: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    reactCompiler: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      compilationMode: </span><span style="color:#9ECBFF">'annotation'</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 'use react-compiler'のみコンパイル</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 明示的にコンパイラを有効化</span></span>
+<span class="line"><span style="color:#9ECBFF">'use react-compiler'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> OptimizedComponent</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#6A737D">  // このコンポーネントだけコンパイラが最適化</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ステップ2-既存のメモ化を削除">ステップ2: 既存のメモ化を削除</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Before</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> MemoizedComponent</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> memo</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">function</span><span style="color:#B392F0"> MyComponent</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">value</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Props</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useMemo</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#B392F0"> expensiveCalc</span><span style="color:#E1E4E8">(value), [value])</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> handler</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> useCallback</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#B392F0"> doSomething</span><span style="color:#E1E4E8">(), [])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#B392F0"> onClick</span><span style="color:#E1E4E8">={</span><span style="color:#FFAB70">handler</span><span style="color:#E1E4E8">}>{result}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// After（React Compiler有効時）</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> MyComponent</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">value</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Props</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> expensiveCalc</span><span style="color:#E1E4E8">(value)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> handler</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#B392F0"> doSomething</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#B392F0"> onClick</span><span style="color:#E1E4E8">={</span><span style="color:#FFAB70">handler</span><span style="color:#E1E4E8">}>{result}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="ステップ3-パフォーマンス検証">ステップ3: パフォーマンス検証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 測定用コンポーネント</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Profiler } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> MeasuredApp</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#FFAB70">Profiler</span></span>
+<span class="line"><span style="color:#E1E4E8">      id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"App"</span></span>
+<span class="line"><span style="color:#E1E4E8">      onRender</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{(id, phase, actualDuration) => {</span></span>
+<span class="line"><span style="color:#E1E4E8">        console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">} ${</span><span style="color:#E1E4E8">phase</span><span style="color:#9ECBFF">}: ${</span><span style="color:#E1E4E8">actualDuration</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">toFixed</span><span style="color:#9ECBFF">(</span><span style="color:#79B8FF">2</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">}ms`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      }}</span></span>
+<span class="line"><span style="color:#F97583">    ></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">App </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">Profiler</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="実測パフォーマンス改善例">実測パフォーマンス改善例</h2>
+<h3 id="case-1-大規模リスト">Case 1: 大規模リスト</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 10,000個のアイテムを持つリスト</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> LargeList</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">items</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">items</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Item</span><span style="color:#E1E4E8">[] }) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">filter</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setFilter</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">input onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{(e) => </span><span style="color:#B392F0">setFilter</span><span style="color:#E1E4E8">(e.target.value)} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">items</span></span>
+<span class="line"><span style="color:#E1E4E8">        .</span><span style="color:#FFAB70">filter</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">item</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> item.name.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(filter))</span></span>
+<span class="line"><span style="color:#E1E4E8">        .</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">item</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;</span><span style="color:#E1E4E8">ListItem key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{item.id} item</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{item} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#E1E4E8">        ))}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// パフォーマンス</span></span>
+<span class="line"><span style="color:#6A737D">// - Compiler OFF: 入力のたびに500ms</span></span>
+<span class="line"><span style="color:#6A737D">// - Compiler ON: 入力のたびに15ms（33倍高速化）</span></span></code></pre>
+<h3 id="case-2-ダッシュボードアプリ">Case 2: ダッシュボードアプリ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> Dashboard</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">selectedTab</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setSelectedTab</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'overview'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">Tabs value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{selectedTab} onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{setSelectedTab} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">StatisticsPanel </span><span style="color:#F97583">/></span><span style="color:#E1E4E8">    {</span><span style="color:#6A737D">/* 重い計算 */</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">ChartPanel </span><span style="color:#F97583">/></span><span style="color:#E1E4E8">         {</span><span style="color:#6A737D">/* 重い描画 */</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">DataTablePanel </span><span style="color:#F97583">/></span><span style="color:#E1E4E8">     {</span><span style="color:#6A737D">/* 大量データ */</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/></span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// タブ切り替え時のパフォーマンス</span></span>
+<span class="line"><span style="color:#6A737D">// - Compiler OFF: 800ms（全パネル再レンダリング）</span></span>
+<span class="line"><span style="color:#6A737D">// - Compiler ON: 50ms（変更されたパネルのみ）</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>React Compilerは、Reactアプリケーションのパフォーマンス最適化を<strong>自動化</strong>する画期的な機能です。</p>
+<h3 id="主な利点">主な利点</h3>
+<ul>
+<li><strong>useMemo/useCallback/memoが不要</strong> - コードがシンプルに</li>
+<li><strong>自動的に最適化</strong> - 人的ミスを防止</li>
+<li><strong>大幅なパフォーマンス改善</strong> - 特に大規模アプリで効果的</li>
+</ul>
+<h3 id="導入チェックリスト">導入チェックリスト</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> React 19以上にアップグレード</li>
+<li class="task-list-item"><input type="checkbox" disabled> babel-plugin-react-compilerをインストール</li>
+<li class="task-list-item"><input type="checkbox" disabled> next.config.js / vite.config.tsでコンパイラを有効化</li>
+<li class="task-list-item"><input type="checkbox" disabled> eslint-plugin-react-compilerでコードをチェック</li>
+<li class="task-list-item"><input type="checkbox" disabled> React DevToolsでパフォーマンス検証</li>
+<li class="task-list-item"><input type="checkbox" disabled> 既存のuseMemo/useCallbackを段階的に削除</li>
+</ul>
+<p>React Compilerを活用すれば、手動メモ化の手間から解放され、保守性とパフォーマンスを両立できます。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

@@ -1,0 +1,609 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/supabase-realtime-guide/"><!-- Primary Meta Tags --><title>Supabase Realtime完全ガイド: WebSocketベースのリアルタイムデータ同期</title><meta name="title" content="Supabase Realtime完全ガイド: WebSocketベースのリアルタイムデータ同期"><meta name="description" content="Supabase Realtimeを使ったリアルタイムアプリケーション開発を完全解説。データベース変更の購読、Presence、Broadcastの実装パターンとパフォーマンス最適化テクニックを紹介します。2026年最新の情報を反映しています。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/supabase-realtime-guide/"><meta property="og:title" content="Supabase Realtime完全ガイド: WebSocketベースのリアルタイムデータ同期"><meta property="og:description" content="Supabase Realtimeを使ったリアルタイムアプリケーション開発を完全解説。データベース変更の購読、Presence、Broadcastの実装パターンとパフォーマンス最適化テクニックを紹介します。2026年最新の情報を反映しています。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/supabase-realtime-guide/"><meta name="twitter:title" content="Supabase Realtime完全ガイド: WebSocketベースのリアルタイムデータ同期"><meta name="twitter:description" content="Supabase Realtimeを使ったリアルタイムアプリケーション開発を完全解説。データベース変更の購読、Presence、Broadcastの実装パターンとパフォーマンス最適化テクニックを紹介します。2026年最新の情報を反映しています。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/supabase-realtime-guide/"},"headline":"Supabase Realtime完全ガイド: WebSocketベースのリアルタイムデータ同期","description":"Supabase Realtimeを使ったリアルタイムアプリケーション開発を完全解説。データベース変更の購読、Presence、Broadcastの実装パターンとパフォーマンス最適化テクニックを紹介します。2026年最新の情報を反映しています。","datePublished":"2025-09-28T00:00:00.000Z","dateModified":"2025-09-28T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Supabase, Realtime, websocket, React, Database"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Supabase Realtime完全ガイド: WebSocketベースのリアルタイムデータ同期"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-09-28T00:00:00.000Z"> Sep 27, 2025 </time> <div class="last-updated-on" data-astro-cid-bvzihdzo>
+Last updated on <time datetime="2025-09-28T00:00:00.000Z"> Sep 27, 2025 </time> </div> </div> <h1 data-astro-cid-bvzihdzo>Supabase Realtime完全ガイド: WebSocketベースのリアルタイムデータ同期</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Supabase" class="article-tag" data-astro-cid-bvzihdzo>
+#Supabase </a><a href="/blog/tag/Realtime" class="article-tag" data-astro-cid-bvzihdzo>
+#Realtime </a><a href="/blog/tag/websocket" class="article-tag" data-astro-cid-bvzihdzo>
+#websocket </a><a href="/blog/tag/React" class="article-tag" data-astro-cid-bvzihdzo>
+#React </a><a href="/blog/tag/Database" class="article-tag" data-astro-cid-bvzihdzo>
+#Database </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="supabase-realtimeとは">Supabase Realtimeとは</h2>
+<p>Supabase Realtimeは、PostgreSQLデータベースの変更をWebSocket経由でリアルタイムに購読できる機能です。チャットアプリ、コラボレーションツール、ライブダッシュボードなど、リアルタイム性が求められるアプリケーション開発に最適です。</p>
+<h3 id="3つの主要機能">3つの主要機能</h3>
+<ol>
+<li><strong>Database Changes</strong> - テーブルのINSERT/UPDATE/DELETEを購読</li>
+<li><strong>Presence</strong> - オンラインユーザーの状態管理</li>
+<li><strong>Broadcast</strong> - クライアント間のメッセージ送信</li>
+</ol>
+<h2 id="セットアップ">セットアップ</h2>
+<h3 id="1-supabaseプロジェクト作成">1. Supabaseプロジェクト作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Supabase CLIインストール</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -g</span><span style="color:#9ECBFF"> supabase</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ローカル開発環境起動</span></span>
+<span class="line"><span style="color:#B392F0">supabase</span><span style="color:#9ECBFF"> init</span></span>
+<span class="line"><span style="color:#B392F0">supabase</span><span style="color:#9ECBFF"> start</span></span></code></pre>
+<h3 id="2-クライアントライブラリのインストール">2. クライアントライブラリのインストール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> @supabase/supabase-js</span></span></code></pre>
+<h3 id="3-クライアント初期化">3. クライアント初期化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// lib/supabase.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createClient } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@supabase/supabase-js'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { Database } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './database.types'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> supabaseUrl</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> process.env.</span><span style="color:#79B8FF">NEXT_PUBLIC_SUPABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> supabaseAnonKey</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> process.env.</span><span style="color:#79B8FF">NEXT_PUBLIC_SUPABASE_ANON_KEY</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> supabase</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createClient</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Database</span><span style="color:#E1E4E8">>(supabaseUrl, supabaseAnonKey, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  realtime: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    params: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      eventsPerSecond: </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// レート制限</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h2 id="database-changes-データベース変更の購読">Database Changes: データベース変更の購読</h2>
+<h3 id="基本的な購読">基本的な購読</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// テーブル全体の変更を購読</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> channel</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> supabase</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'public:messages'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'postgres_changes'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      event: </span><span style="color:#9ECBFF">'*'</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// INSERT, UPDATE, DELETE, すべて</span></span>
+<span class="line"><span style="color:#E1E4E8">      schema: </span><span style="color:#9ECBFF">'public'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      table: </span><span style="color:#9ECBFF">'messages'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">payload</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Change received!'</span><span style="color:#E1E4E8">, payload);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// クリーンアップ</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> supabase.</span><span style="color:#B392F0">removeChannel</span><span style="color:#E1E4E8">(channel);</span></span></code></pre>
+<h3 id="イベント別の処理">イベント別の処理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// INSERT専用</span></span>
+<span class="line"><span style="color:#E1E4E8">supabase</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'inserts'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'postgres_changes'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      event: </span><span style="color:#9ECBFF">'INSERT'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      schema: </span><span style="color:#9ECBFF">'public'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      table: </span><span style="color:#9ECBFF">'messages'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">payload</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'New message:'</span><span style="color:#E1E4E8">, payload.new);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// UPDATE専用</span></span>
+<span class="line"><span style="color:#E1E4E8">supabase</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'updates'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'postgres_changes'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      event: </span><span style="color:#9ECBFF">'UPDATE'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      schema: </span><span style="color:#9ECBFF">'public'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      table: </span><span style="color:#9ECBFF">'messages'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">payload</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Updated:'</span><span style="color:#E1E4E8">, payload.old, </span><span style="color:#9ECBFF">'->'</span><span style="color:#E1E4E8">, payload.new);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// DELETE専用</span></span>
+<span class="line"><span style="color:#E1E4E8">supabase</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'deletes'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'postgres_changes'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      event: </span><span style="color:#9ECBFF">'DELETE'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      schema: </span><span style="color:#9ECBFF">'public'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      table: </span><span style="color:#9ECBFF">'messages'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">payload</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Deleted:'</span><span style="color:#E1E4E8">, payload.old);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h3 id="フィルター付き購読">フィルター付き購読</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 特定のユーザーのメッセージのみ購読</span></span>
+<span class="line"><span style="color:#E1E4E8">supabase</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'user-messages'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'postgres_changes'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      event: </span><span style="color:#9ECBFF">'*'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      schema: </span><span style="color:#9ECBFF">'public'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      table: </span><span style="color:#9ECBFF">'messages'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      filter: </span><span style="color:#9ECBFF">'user_id=eq.123'</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// WHERE user_id = '123'</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#FFAB70">payload</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'User message:'</span><span style="color:#E1E4E8">, payload);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h2 id="reactでの実装パターン">Reactでの実装パターン</h2>
+<h3 id="カスタムフック-userealtimesubscription">カスタムフック: useRealtimeSubscription</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// hooks/use-realtime-subscription.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useEffect, useState } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { supabase } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/supabase'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { RealtimeChannel, RealtimePostgresChangesPayload } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@supabase/supabase-js'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> UseRealtimeOptions</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#FFAB70">  table</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  filter</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  event</span><span style="color:#F97583">?:</span><span style="color:#9ECBFF"> 'INSERT'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'UPDATE'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> 'DELETE'</span><span style="color:#F97583"> |</span><span style="color:#9ECBFF"> '*'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  schema</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useRealtimeSubscription</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">>(</span></span>
+<span class="line"><span style="color:#FFAB70">  options</span><span style="color:#F97583">:</span><span style="color:#B392F0"> UseRealtimeOptions</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">data</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setData</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">[]>([]);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">channel</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setChannel</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">RealtimeChannel</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">>(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 初期データ取得</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#B392F0"> fetchInitialData</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      let</span><span style="color:#E1E4E8"> query </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> supabase.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(options.table).</span><span style="color:#B392F0">select</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'*'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (options.filter) {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">column</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">value</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> options.filter.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'=eq.'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">        query </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> query.</span><span style="color:#B392F0">eq</span><span style="color:#E1E4E8">(column, value);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">initialData</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> query;</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (initialData) {</span></span>
+<span class="line"><span style="color:#B392F0">        setData</span><span style="color:#E1E4E8">(initialData </span><span style="color:#F97583">as</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">[]);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    fetchInitialData</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // リアルタイム購読</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> newChannel</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> supabase</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">options</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">table</span><span style="color:#9ECBFF">}-changes`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">        'postgres_changes'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#E1E4E8">          event: options.event </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> '*'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          schema: options.schema </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'public'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          table: options.table,</span></span>
+<span class="line"><span style="color:#E1E4E8">          filter: options.filter,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        (</span><span style="color:#FFAB70">payload</span><span style="color:#F97583">:</span><span style="color:#B392F0"> RealtimePostgresChangesPayload</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">>) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">          if</span><span style="color:#E1E4E8"> (payload.eventType </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'INSERT'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#B392F0">            setData</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">prev</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> [</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">prev, payload.new </span><span style="color:#F97583">as</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">]);</span></span>
+<span class="line"><span style="color:#E1E4E8">          } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (payload.eventType </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'UPDATE'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#B392F0">            setData</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">prev</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">              prev.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">item</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">                item.id </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> (payload.new </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">).id </span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> (payload.new </span><span style="color:#F97583">as</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> item</span></span>
+<span class="line"><span style="color:#E1E4E8">              )</span></span>
+<span class="line"><span style="color:#E1E4E8">            );</span></span>
+<span class="line"><span style="color:#E1E4E8">          } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (payload.eventType </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'DELETE'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#B392F0">            setData</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">prev</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">              prev.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">item</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> item.id </span><span style="color:#F97583">!==</span><span style="color:#E1E4E8"> (payload.old </span><span style="color:#F97583">as</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">).id)</span></span>
+<span class="line"><span style="color:#E1E4E8">            );</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      )</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    setChannel</span><span style="color:#E1E4E8">(newChannel);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (newChannel) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        supabase.</span><span style="color:#B392F0">removeChannel</span><span style="color:#E1E4E8">(newChannel);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [options.table, options.filter, options.event, options.schema]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { data, channel };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="チャットアプリの実装">チャットアプリの実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// components/chat-room.tsx</span></span>
+<span class="line"><span style="color:#9ECBFF">'use client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useState } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useRealtimeSubscription } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/hooks/use-realtime-subscription'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { supabase } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/supabase'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> Message</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  content</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  user_id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  room_id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  created_at</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> ChatRoomProps</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  roomId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> ChatRoom</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">roomId</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">userId</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ChatRoomProps</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">message</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setMessage</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">messages</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useRealtimeSubscription</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Message</span><span style="color:#E1E4E8">>({</span></span>
+<span class="line"><span style="color:#E1E4E8">    table: </span><span style="color:#9ECBFF">'messages'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    filter: </span><span style="color:#9ECBFF">`room_id=eq.${</span><span style="color:#E1E4E8">roomId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    event: </span><span style="color:#9ECBFF">'*'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> sendMessage</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">message.</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">()) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> supabase.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'messages'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">insert</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      content: message,</span></span>
+<span class="line"><span style="color:#E1E4E8">      user_id: userId,</span></span>
+<span class="line"><span style="color:#E1E4E8">      room_id: roomId,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    setMessage</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"flex flex-col h-screen"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"flex-1 overflow-y-auto p-4 space-y-2"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#FFAB70">messages</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">msg</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;</span><span style="color:#FFAB70">div</span></span>
+<span class="line"><span style="color:#E1E4E8">            key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{msg.id}</span></span>
+<span class="line"><span style="color:#E1E4E8">            className</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">`flex ${</span><span style="color:#E1E4E8">msg</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">user_id</span><span style="color:#F97583"> ===</span><span style="color:#E1E4E8"> userId</span><span style="color:#F97583"> ?</span><span style="color:#9ECBFF"> 'justify-end'</span><span style="color:#F97583"> :</span><span style="color:#9ECBFF"> 'justify-start'}`</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">          ></span></span>
+<span class="line"><span style="color:#F97583">            &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"bg-blue-500 text-white rounded-lg px-4 py-2 max-w-md"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">              {</span><span style="color:#FFAB70">msg</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">content</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">            &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        ))}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"p-4 border-t flex gap-2"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#FFAB70">input</span></span>
+<span class="line"><span style="color:#E1E4E8">          type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text"</span></span>
+<span class="line"><span style="color:#E1E4E8">          value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{message}</span></span>
+<span class="line"><span style="color:#E1E4E8">          onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{(e) => </span><span style="color:#B392F0">setMessage</span><span style="color:#E1E4E8">(e.target.value)}</span></span>
+<span class="line"><span style="color:#E1E4E8">          onKeyDown</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{(e) => e.key </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'Enter'</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#B392F0"> sendMessage</span><span style="color:#E1E4E8">()}</span></span>
+<span class="line"><span style="color:#E1E4E8">          className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"flex-1 border rounded px-3 py-2"</span></span>
+<span class="line"><span style="color:#E1E4E8">          placeholder</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"メッセージを入力..."</span></span>
+<span class="line"><span style="color:#F97583">        /></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#FFAB70">button</span></span>
+<span class="line"><span style="color:#E1E4E8">          onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{sendMessage}</span></span>
+<span class="line"><span style="color:#E1E4E8">          className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"</span></span>
+<span class="line"><span style="color:#F97583">        ></span></span>
+<span class="line"><span style="color:#FFAB70">          送信</span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">button</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="presence-オンラインユーザー管理">Presence: オンラインユーザー管理</h2>
+<h3 id="基本的な実装">基本的な実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// hooks/use-presence.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useEffect, useState } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { supabase } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/supabase'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { RealtimeChannel } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@supabase/supabase-js'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> PresenceState</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  user_id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  online_at</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> usePresence</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">roomId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">currentUser</span><span style="color:#F97583">:</span><span style="color:#B392F0"> PresenceState</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">onlineUsers</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setOnlineUsers</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">PresenceState</span><span style="color:#E1E4E8">[]>([]);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">channel</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setChannel</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">RealtimeChannel</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">>(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> presenceChannel</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> supabase.</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`room:${</span><span style="color:#E1E4E8">roomId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">      config: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        presence: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          key: currentUser.user_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    presenceChannel</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'presence'</span><span style="color:#E1E4E8">, { event: </span><span style="color:#9ECBFF">'sync'</span><span style="color:#E1E4E8"> }, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> state</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> presenceChannel.</span><span style="color:#B392F0">presenceState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">PresenceState</span><span style="color:#E1E4E8">>();</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> users</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Object.</span><span style="color:#B392F0">values</span><span style="color:#E1E4E8">(state).</span><span style="color:#B392F0">flat</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#B392F0">        setOnlineUsers</span><span style="color:#E1E4E8">(users);</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'presence'</span><span style="color:#E1E4E8">, { event: </span><span style="color:#9ECBFF">'join'</span><span style="color:#E1E4E8"> }, ({ </span><span style="color:#FFAB70">newPresences</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'New user joined:'</span><span style="color:#E1E4E8">, newPresences);</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'presence'</span><span style="color:#E1E4E8">, { event: </span><span style="color:#9ECBFF">'leave'</span><span style="color:#E1E4E8"> }, ({ </span><span style="color:#FFAB70">leftPresences</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'User left:'</span><span style="color:#E1E4E8">, leftPresences);</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">status</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (status </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'SUBSCRIBED'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">          await</span><span style="color:#E1E4E8"> presenceChannel.</span><span style="color:#B392F0">track</span><span style="color:#E1E4E8">(currentUser);</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    setChannel</span><span style="color:#E1E4E8">(presenceChannel);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (presenceChannel) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        presenceChannel.</span><span style="color:#B392F0">untrack</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">        supabase.</span><span style="color:#B392F0">removeChannel</span><span style="color:#E1E4E8">(presenceChannel);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [roomId, currentUser.user_id]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { onlineUsers, channel };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="オンラインユーザー表示">オンラインユーザー表示</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// components/online-users.tsx</span></span>
+<span class="line"><span style="color:#9ECBFF">'use client'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { usePresence } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/hooks/use-presence'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> OnlineUsersProps</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  roomId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  currentUser</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    user_id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> OnlineUsers</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">roomId</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">currentUser</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> OnlineUsersProps</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">onlineUsers</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> usePresence</span><span style="color:#E1E4E8">(roomId, {</span></span>
+<span class="line"><span style="color:#F97583">    ...</span><span style="color:#E1E4E8">currentUser,</span></span>
+<span class="line"><span style="color:#E1E4E8">    online_at: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"border rounded-lg p-4"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">h3 className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"font-semibold mb-2"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#B392F0">        オンライン</span><span style="color:#E1E4E8"> ({onlineUsers.length})</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">h3</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">ul className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"space-y-1"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#FFAB70">onlineUsers</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;</span><span style="color:#E1E4E8">li key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{user.user_id} className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"flex items-center gap-2"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">            &#x3C;</span><span style="color:#E1E4E8">span className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"w-2 h-2 bg-green-500 rounded-full"</span><span style="color:#F97583"> /></span></span>
+<span class="line"><span style="color:#E1E4E8">            &#x3C;</span><span style="color:#B392F0">span</span><span style="color:#E1E4E8">>{user.username}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">span</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;/</span><span style="color:#E1E4E8">li</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">        ))}</span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;/</span><span style="color:#E1E4E8">ul</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="broadcast-クライアント間メッセージング">Broadcast: クライアント間メッセージング</h2>
+<h3 id="タイピングインジケーター">タイピングインジケーター</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// hooks/use-typing-indicator.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useEffect, useState } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { supabase } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/supabase'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { RealtimeChannel } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@supabase/supabase-js'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> TypingUser</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  user_id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useTypingIndicator</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">roomId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">currentUser</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TypingUser</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">typingUsers</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setTypingUsers</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">TypingUser</span><span style="color:#E1E4E8">[]>([]);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">channel</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setChannel</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">RealtimeChannel</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">>(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> broadcastChannel</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> supabase.</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`typing:${</span><span style="color:#E1E4E8">roomId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    broadcastChannel</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'broadcast'</span><span style="color:#E1E4E8">, { event: </span><span style="color:#9ECBFF">'typing'</span><span style="color:#E1E4E8"> }, ({ </span><span style="color:#FFAB70">payload</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> payload </span><span style="color:#F97583">as</span><span style="color:#B392F0"> TypingUser</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">        setTypingUsers</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">prev</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">          const</span><span style="color:#79B8FF"> exists</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> prev.</span><span style="color:#B392F0">some</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">u</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> u.user_id </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> user.user_id);</span></span>
+<span class="line"><span style="color:#F97583">          if</span><span style="color:#E1E4E8"> (exists) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> prev;</span></span>
+<span class="line"><span style="color:#F97583">          return</span><span style="color:#E1E4E8"> [</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">prev, user];</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // 3秒後に自動削除</span></span>
+<span class="line"><span style="color:#B392F0">        setTimeout</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">          setTypingUsers</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">prev</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">            prev.</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">u</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> u.user_id </span><span style="color:#F97583">!==</span><span style="color:#E1E4E8"> user.user_id)</span></span>
+<span class="line"><span style="color:#E1E4E8">          );</span></span>
+<span class="line"><span style="color:#E1E4E8">        }, </span><span style="color:#79B8FF">3000</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    setChannel</span><span style="color:#E1E4E8">(broadcastChannel);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (broadcastChannel) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        supabase.</span><span style="color:#B392F0">removeChannel</span><span style="color:#E1E4E8">(broadcastChannel);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [roomId]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> sendTyping</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (channel) {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> channel.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        type: </span><span style="color:#9ECBFF">'broadcast'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        event: </span><span style="color:#9ECBFF">'typing'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        payload: currentUser,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { typingUsers, sendTyping };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> ChatInput</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">roomId</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">currentUser</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ChatInputProps</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">message</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setMessage</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">typingUsers</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">sendTyping</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useTypingIndicator</span><span style="color:#E1E4E8">(roomId, currentUser);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> handleChange</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">e</span><span style="color:#F97583">:</span><span style="color:#B392F0"> React</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">ChangeEvent</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">HTMLInputElement</span><span style="color:#E1E4E8">>) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    setMessage</span><span style="color:#E1E4E8">(e.target.value);</span></span>
+<span class="line"><span style="color:#B392F0">    sendTyping</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#B392F0">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">      &#x3C;</span><span style="color:#E1E4E8">input value</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{message} onChange</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleChange} </span><span style="color:#F97583">/></span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">typingUsers</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">length</span><span style="color:#E1E4E8"> > 0 &#x26;&#x26; (</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;</span><span style="color:#FFAB70">div</span><span style="color:#FFAB70"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-sm text-gray-500"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">          {</span><span style="color:#FFAB70">typingUsers</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">u</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> u.username).</span><span style="color:#FFAB70">join</span><span style="color:#E1E4E8">(', ')} </span><span style="color:#FFAB70">が入力中</span><span style="color:#E1E4E8">...</span></span>
+<span class="line"><span style="color:#E1E4E8">        &#x3C;/</span><span style="color:#FFAB70">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">      )}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="カーソル位置の同期コラボレーション">カーソル位置の同期(コラボレーション)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// hooks/use-cursor-sync.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { useEffect, useState } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'react'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { supabase } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@/lib/supabase'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> Cursor</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  user_id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  x</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  y</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  color</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> useCursorSync</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">roomId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">currentUser</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">user_id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">username</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">cursors</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setCursors</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Map</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Cursor</span><span style="color:#E1E4E8">>>(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">channel</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">setChannel</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useState</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">RealtimeChannel</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">>(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  useEffect</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> cursorChannel</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> supabase.</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`cursors:${</span><span style="color:#E1E4E8">roomId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    cursorChannel</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'broadcast'</span><span style="color:#E1E4E8">, { event: </span><span style="color:#9ECBFF">'cursor'</span><span style="color:#E1E4E8"> }, ({ </span><span style="color:#FFAB70">payload</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> cursor</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> payload </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Cursor</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">        setCursors</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">prev</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">(prev).</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(cursor.user_id, cursor));</span></span>
+<span class="line"><span style="color:#E1E4E8">      })</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    setChannel</span><span style="color:#E1E4E8">(cursorChannel);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (cursorChannel) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        supabase.</span><span style="color:#B392F0">removeChannel</span><span style="color:#E1E4E8">(cursorChannel);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, [roomId]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> updateCursor</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">x</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">y</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (channel) {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#E1E4E8"> channel.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        type: </span><span style="color:#9ECBFF">'broadcast'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        event: </span><span style="color:#9ECBFF">'cursor'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        payload: {</span></span>
+<span class="line"><span style="color:#E1E4E8">          user_id: currentUser.user_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">          username: currentUser.username,</span></span>
+<span class="line"><span style="color:#E1E4E8">          x,</span></span>
+<span class="line"><span style="color:#E1E4E8">          y,</span></span>
+<span class="line"><span style="color:#E1E4E8">          color: </span><span style="color:#9ECBFF">`hsl(${</span><span style="color:#E1E4E8">Math</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">random</span><span style="color:#9ECBFF">() </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 360</span><span style="color:#9ECBFF">}, 70%, 50%)`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { cursors: Array.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(cursors.</span><span style="color:#B392F0">values</span><span style="color:#E1E4E8">()), updateCursor };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> CollaborativeCanvas</span><span style="color:#E1E4E8">({ </span><span style="color:#FFAB70">roomId</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">currentUser</span><span style="color:#E1E4E8"> }</span><span style="color:#F97583">:</span><span style="color:#B392F0"> CanvasProps</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">cursors</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">updateCursor</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> useCursorSync</span><span style="color:#E1E4E8">(roomId, currentUser);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> handleMouseMove</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">e</span><span style="color:#F97583">:</span><span style="color:#B392F0"> React</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">MouseEvent</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    updateCursor</span><span style="color:#E1E4E8">(e.clientX, e.clientY);</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;</span><span style="color:#E1E4E8">div onMouseMove</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleMouseMove} className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"relative w-full h-screen"</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span><span style="color:#FFAB70">cursors</span><span style="color:#E1E4E8">.</span><span style="color:#FFAB70">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">cursor</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;</span><span style="color:#FFAB70">div</span></span>
+<span class="line"><span style="color:#E1E4E8">          key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{cursor.user_id}</span></span>
+<span class="line"><span style="color:#E1E4E8">          className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"absolute pointer-events-none"</span></span>
+<span class="line"><span style="color:#E1E4E8">          style</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{{</span></span>
+<span class="line"><span style="color:#B392F0">            left</span><span style="color:#E1E4E8">: cursor.x,</span></span>
+<span class="line"><span style="color:#B392F0">            top</span><span style="color:#E1E4E8">: cursor.y,</span></span>
+<span class="line"><span style="color:#B392F0">            backgroundColor</span><span style="color:#E1E4E8">: cursor.color,</span></span>
+<span class="line"><span style="color:#E1E4E8">          }}</span></span>
+<span class="line"><span style="color:#F97583">        ></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;</span><span style="color:#E1E4E8">div className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"w-4 h-4 rounded-full"</span><span style="color:#F97583"> /></span></span>
+<span class="line"><span style="color:#F97583">          &#x3C;</span><span style="color:#E1E4E8">span className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"ml-2 text-xs"</span><span style="color:#F97583">></span><span style="color:#E1E4E8">{cursor.username}</span><span style="color:#F97583">&#x3C;/</span><span style="color:#E1E4E8">span</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#F97583">        &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">      ))}</span></span>
+<span class="line"><span style="color:#F97583">    &#x3C;/</span><span style="color:#E1E4E8">div</span><span style="color:#F97583">></span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="パフォーマンス最適化">パフォーマンス最適化</h2>
+<h3 id="1-チャンネルの再利用">1. チャンネルの再利用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ❌ 非効率: 複数のチャンネルを作成</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> channel1</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> supabase.</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'messages'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> channel2</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> supabase.</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 効率的: 1つのチャンネルで複数の購読</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> channel</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> supabase</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'room'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'postgres_changes'</span><span style="color:#E1E4E8">, { table: </span><span style="color:#9ECBFF">'messages'</span><span style="color:#E1E4E8"> }, handleMessages)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'postgres_changes'</span><span style="color:#E1E4E8">, { table: </span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8"> }, handleUsers)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'broadcast'</span><span style="color:#E1E4E8">, { event: </span><span style="color:#9ECBFF">'typing'</span><span style="color:#E1E4E8"> }, handleTyping)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'presence'</span><span style="color:#E1E4E8">, { event: </span><span style="color:#9ECBFF">'sync'</span><span style="color:#E1E4E8"> }, handlePresence)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h3 id="2-デバウンス処理">2. デバウンス処理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { debounce } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'lodash'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// タイピングインジケーターのデバウンス</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> sendTyping</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> debounce</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> channel.</span><span style="color:#B392F0">send</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    type: </span><span style="color:#9ECBFF">'broadcast'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    event: </span><span style="color:#9ECBFF">'typing'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    payload: currentUser,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}, </span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="3-row-level-security-rls">3. Row Level Security (RLS)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- メッセージの購読制限</span></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> POLICY</span><span style="color:#9ECBFF"> "Users can only subscribe to their rooms"</span></span>
+<span class="line"><span style="color:#F97583">  ON</span><span style="color:#E1E4E8"> messages</span></span>
+<span class="line"><span style="color:#F97583">  FOR</span><span style="color:#F97583"> SELECT</span></span>
+<span class="line"><span style="color:#F97583">  USING</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    room_id </span><span style="color:#F97583">IN</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">      SELECT</span><span style="color:#E1E4E8"> room_id</span></span>
+<span class="line"><span style="color:#F97583">      FROM</span><span style="color:#E1E4E8"> room_members</span></span>
+<span class="line"><span style="color:#F97583">      WHERE</span><span style="color:#E1E4E8"> user_id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> auth</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">uid</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span></code></pre>
+<h2 id="エラーハンドリング">エラーハンドリング</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> channel</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> supabase</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">channel</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'room'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'postgres_changes'</span><span style="color:#E1E4E8">, { table: </span><span style="color:#9ECBFF">'messages'</span><span style="color:#E1E4E8"> }, (</span><span style="color:#FFAB70">payload</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">      handleMessage</span><span style="color:#E1E4E8">(payload);</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Failed to handle message:'</span><span style="color:#E1E4E8">, error);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">subscribe</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">status</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">error</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (status </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'SUBSCRIBED'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Connected!'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (status </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'CHANNEL_ERROR'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Channel error:'</span><span style="color:#E1E4E8">, error);</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (status </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'TIMED_OUT'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Connection timed out'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">      // 再接続ロジック</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Supabase Realtimeを使うことで、WebSocketベースのリアルタイム機能を簡単に実装できます。Database Changes、Presence、Broadcastの3つの機能を組み合わせることで、チャット、コラボレーション、ライブダッシュボードなど、あらゆるリアルタイムアプリケーションを構築できます。</p>
+<h3 id="次のステップ">次のステップ</h3>
+<ul>
+<li>Row Level Securityでセキュリティ強化</li>
+<li>Realtimeのスケーリング戦略を検討</li>
+<li>オフライン対応の実装(Optimistic UI)</li>
+<li>パフォーマンスモニタリングの導入</li>
+</ul>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

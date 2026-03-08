@@ -1,0 +1,520 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/wasm-component-model/"><!-- Primary Meta Tags --><title>WebAssembly Component Model 入門 - 次世代のコンポーネント指向開発</title><meta name="title" content="WebAssembly Component Model 入門 - 次世代のコンポーネント指向開発"><meta name="description" content="WebAssembly Component Modelの基本から実践まで。WASI、WIT、コンポーネント間通信、言語間の相互運用性を実現する新しいWebAssembly標準を徹底解説。webassembly・wasm・component-modelに関する実践情報。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/wasm-component-model/"><meta property="og:title" content="WebAssembly Component Model 入門 - 次世代のコンポーネント指向開発"><meta property="og:description" content="WebAssembly Component Modelの基本から実践まで。WASI、WIT、コンポーネント間通信、言語間の相互運用性を実現する新しいWebAssembly標準を徹底解説。webassembly・wasm・component-modelに関する実践情報。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/wasm-component-model/"><meta name="twitter:title" content="WebAssembly Component Model 入門 - 次世代のコンポーネント指向開発"><meta name="twitter:description" content="WebAssembly Component Modelの基本から実践まで。WASI、WIT、コンポーネント間通信、言語間の相互運用性を実現する新しいWebAssembly標準を徹底解説。webassembly・wasm・component-modelに関する実践情報。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/wasm-component-model/"},"headline":"WebAssembly Component Model 入門 - 次世代のコンポーネント指向開発","description":"WebAssembly Component Modelの基本から実践まで。WASI、WIT、コンポーネント間通信、言語間の相互運用性を実現する新しいWebAssembly標準を徹底解説。webassembly・wasm・component-modelに関する実践情報。","datePublished":"2025-02-05T00:00:00.000Z","dateModified":"2025-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"webassembly, wasm, component-model, wasi, wit"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"WebAssembly Component Model 入門 - 次世代のコンポーネント指向開発"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-05T00:00:00.000Z"> Feb 4, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>WebAssembly Component Model 入門 - 次世代のコンポーネント指向開発</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/webassembly" class="article-tag" data-astro-cid-bvzihdzo>
+#webassembly </a><a href="/blog/tag/wasm" class="article-tag" data-astro-cid-bvzihdzo>
+#wasm </a><a href="/blog/tag/component-model" class="article-tag" data-astro-cid-bvzihdzo>
+#component-model </a><a href="/blog/tag/wasi" class="article-tag" data-astro-cid-bvzihdzo>
+#wasi </a><a href="/blog/tag/wit" class="article-tag" data-astro-cid-bvzihdzo>
+#wit </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>WebAssembly Component Model（WASM Component Model）は、WebAssemblyモジュールを再利用可能なコンポーネントとして構成するための新しい標準です。異なる言語で書かれたコンポーネント同士が型安全に通信できる、次世代のソフトウェア開発パラダイムを実現します。</p>
+<p>本記事では、Component Modelの基本概念から実践的な使い方まで、コード例を交えて詳しく解説します。</p>
+<h2 id="component-modelとは">Component Modelとは</h2>
+<h3 id="背景">背景</h3>
+<p>従来のWebAssembly（Core WASM）には以下の制約がありました:</p>
+<ul>
+<li><strong>プリミティブ型のみ</strong> - 数値（i32, i64, f32, f64）のみサポート</li>
+<li><strong>メモリ共有の複雑さ</strong> - 文字列や構造体の受け渡しが困難</li>
+<li><strong>言語依存の境界</strong> - 各言語の独自ABI</li>
+<li><strong>再利用性の低さ</strong> - モジュール間の連携が難しい</li>
+</ul>
+<p>Component Modelはこれらの問題を解決します。</p>
+<h3 id="主な特徴">主な特徴</h3>
+<ol>
+<li><strong>豊富な型システム</strong> - 文字列、レコード、バリアント、リストなど</li>
+<li><strong>インターフェース定義言語（WIT）</strong> - 明確なコントラクト定義</li>
+<li><strong>言語非依存</strong> - Rust、C、C++、Go、JavaScriptなど多言語対応</li>
+<li><strong>コンポーザビリティ</strong> - コンポーネントの組み合わせが容易</li>
+<li><strong>WASI統合</strong> - システムAPIへの標準アクセス</li>
+</ol>
+<h2 id="セットアップ">セットアップ</h2>
+<h3 id="必要なツール">必要なツール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Rust (Component Modelのツールチェーン)</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> --proto</span><span style="color:#9ECBFF"> '=https'</span><span style="color:#79B8FF"> --tlsv1.2</span><span style="color:#79B8FF"> -sSf</span><span style="color:#9ECBFF"> https://sh.rustup.rs</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> sh</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># wasm32-wasi ターゲット</span></span>
+<span class="line"><span style="color:#B392F0">rustup</span><span style="color:#9ECBFF"> target</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> wasm32-wasi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># cargo-component (コンポーネントビルドツール)</span></span>
+<span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> cargo-component</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># wasm-tools (コンポーネント検査・変換)</span></span>
+<span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> wasm-tools</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># wasmtime (ランタイム)</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#9ECBFF"> https://wasmtime.dev/install.sh</span><span style="color:#79B8FF"> -sSf</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> bash</span></span></code></pre>
+<h3 id="バージョン確認">バージョン確認</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">cargo-component</span><span style="color:#79B8FF"> --version</span></span>
+<span class="line"><span style="color:#B392F0">wasm-tools</span><span style="color:#79B8FF"> --version</span></span>
+<span class="line"><span style="color:#B392F0">wasmtime</span><span style="color:#79B8FF"> --version</span></span></code></pre>
+<h2 id="wit-webassembly-interface-type">WIT (WebAssembly Interface Type)</h2>
+<p>WITはComponent Modelのインターフェース定義言語です。</p>
+<h3 id="基本構文">基本構文</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="wit"><code><span class="line"><span style="color:#6A737D">// calculator.wit</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> example</span><span style="color:#F97583">:</span><span style="color:#B392F0">calculator</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.1.0;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// インターフェース定義</span></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> operations</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">  // 関数シグネチャ</span></span>
+<span class="line"><span style="color:#B392F0">  add</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">a</span><span style="color:#F97583">:</span><span style="color:#B392F0"> s32</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#F97583">:</span><span style="color:#B392F0"> s32</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> s32</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">  subtract</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">a</span><span style="color:#F97583">:</span><span style="color:#B392F0"> s32</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#F97583">:</span><span style="color:#B392F0"> s32</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> s32</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">  multiply</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">a</span><span style="color:#F97583">:</span><span style="color:#B392F0"> s32</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#F97583">:</span><span style="color:#B392F0"> s32</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> s32</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">  divide</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">a</span><span style="color:#F97583">:</span><span style="color:#B392F0"> s32</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#F97583">:</span><span style="color:#B392F0"> s32</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> result</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">f64</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ワールド定義（コンポーネントの境界）</span></span>
+<span class="line"><span style="color:#F97583">world</span><span style="color:#B392F0"> calculator</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  export</span><span style="color:#79B8FF"> operations</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="型定義">型定義</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="wit"><code><span class="line"><span style="color:#6A737D">// types.wit</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> example</span><span style="color:#F97583">:</span><span style="color:#B392F0">types</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.1.0;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> common</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">  // レコード（構造体）</span></span>
+<span class="line"><span style="color:#F97583">  record</span><span style="color:#B392F0"> user</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    id</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    email</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    age</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u8</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // バリアント（列挙型）</span></span>
+<span class="line"><span style="color:#F97583">  variant</span><span style="color:#B392F0"> status</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    active</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    inactive</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    suspended</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">),</span><span style="color:#6A737D"> // 値を持つ</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // リスト</span></span>
+<span class="line"><span style="color:#F97583">  type</span><span style="color:#B392F0"> user-list</span><span style="color:#E1E4E8"> = </span><span style="color:#B392F0">list</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">user</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // オプション</span></span>
+<span class="line"><span style="color:#F97583">  type</span><span style="color:#B392F0"> optional-email</span><span style="color:#E1E4E8"> = </span><span style="color:#B392F0">option</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 結果型</span></span>
+<span class="line"><span style="color:#F97583">  type</span><span style="color:#B392F0"> user-result</span><span style="color:#E1E4E8"> = </span><span style="color:#B392F0">result</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">user</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 関数</span></span>
+<span class="line"><span style="color:#B392F0">  get-user</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> user-result</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">  list-users</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-></span><span style="color:#B392F0"> user-list</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">  update-status</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">status</span><span style="color:#F97583">:</span><span style="color:#B392F0"> status</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> result</span><span style="color:#E1E4E8">&#x3C;_, </span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="複雑な型">複雑な型</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="wit"><code><span class="line"><span style="color:#6A737D">// advanced.wit</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> example</span><span style="color:#F97583">:</span><span style="color:#B392F0">advanced</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.1.0;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> data-structures</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">  // ネストした構造</span></span>
+<span class="line"><span style="color:#F97583">  record</span><span style="color:#B392F0"> address</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    street</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    city</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    zip</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  record</span><span style="color:#B392F0"> person</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    address</span><span style="color:#F97583">:</span><span style="color:#B392F0"> address</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    contacts</span><span style="color:#F97583">:</span><span style="color:#B392F0"> list</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // タプル</span></span>
+<span class="line"><span style="color:#F97583">  type</span><span style="color:#B392F0"> coordinates</span><span style="color:#E1E4E8"> = </span><span style="color:#B392F0">tuple</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">f64</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">f64</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // フラグ（ビットフィールド）</span></span>
+<span class="line"><span style="color:#F97583">  flags</span><span style="color:#B392F0"> permissions</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    read</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    write</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    execute</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // リソース（状態を持つ型）</span></span>
+<span class="line"><span style="color:#F97583">  resource</span><span style="color:#B392F0"> file</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    constructor</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">path</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#B392F0">    read</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-></span><span style="color:#B392F0"> result</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">list</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">>, </span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#B392F0">    write</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">data</span><span style="color:#F97583">:</span><span style="color:#B392F0"> list</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">>) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> result</span><span style="color:#E1E4E8">&#x3C;_, </span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#B392F0">    close</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="rustでコンポーネント作成">Rustでコンポーネント作成</h2>
+<h3 id="プロジェクト作成">プロジェクト作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> component</span><span style="color:#9ECBFF"> new</span><span style="color:#9ECBFF"> hello-component</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> hello-component</span></span></code></pre>
+<h3 id="wit定義">WIT定義</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="wit"><code><span class="line"><span style="color:#6A737D">// wit/world.wit</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> example</span><span style="color:#F97583">:</span><span style="color:#B392F0">hello</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.1.0;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">world</span><span style="color:#B392F0"> hello</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  export</span><span style="color:#79B8FF"> greet</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">name</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="実装">実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// src/lib.rs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">cargo_component_bindings</span><span style="color:#F97583">::</span><span style="color:#B392F0">generate!</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> bindings</span><span style="color:#F97583">::</span><span style="color:#B392F0">Guest</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">struct</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">impl</span><span style="color:#B392F0"> Guest</span><span style="color:#F97583"> for</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> greet</span><span style="color:#E1E4E8">(name</span><span style="color:#F97583">:</span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        format!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Hello, {}!"</span><span style="color:#E1E4E8">, name)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">bindings</span><span style="color:#F97583">::</span><span style="color:#B392F0">export!</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Component</span><span style="color:#E1E4E8"> with_types_in bindings);</span></span></code></pre>
+<h3 id="ビルド">ビルド</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> component</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --release</span></span></code></pre>
+<p>生成されたコンポーネント: <code>target/wasm32-wasi/release/hello_component.wasm</code></p>
+<h2 id="コンポーネントの実行">コンポーネントの実行</h2>
+<h3 id="wasmtimeで実行">Wasmtimeで実行</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">wasmtime</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  target/wasm32-wasi/release/hello_component.wasm</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --invoke</span><span style="color:#9ECBFF"> greet</span><span style="color:#9ECBFF"> "World"</span></span></code></pre>
+<h3 id="プログラムから実行rust">プログラムから実行（Rust）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> wasmtime</span><span style="color:#F97583">::</span><span style="color:#B392F0">component</span><span style="color:#F97583">::*</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> wasmtime</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span><span style="color:#B392F0">Config</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Engine</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Store</span><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-></span><span style="color:#B392F0"> anyhow</span><span style="color:#F97583">::</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">&#x3C;()> {</span></span>
+<span class="line"><span style="color:#6A737D">    // エンジン設定</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> config </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Config</span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    config</span><span style="color:#F97583">.</span><span style="color:#B392F0">wasm_component_model</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> engine </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Engine</span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">config)</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // コンポーネント読み込み</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> component </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Component</span><span style="color:#F97583">::</span><span style="color:#B392F0">from_file</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#F97583">        &#x26;</span><span style="color:#E1E4E8">engine,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "hello_component.wasm"</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // リンカー設定</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> linker </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Linker</span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">engine);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ストア作成</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> store </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Store</span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">engine, ());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // インスタンス化</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> (instance, _) </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> linker</span><span style="color:#F97583">.</span><span style="color:#B392F0">instantiate</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> store, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">component)</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 関数取得</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> greet </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> instance</span><span style="color:#F97583">.</span><span style="color:#B392F0">get_typed_func</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;(</span><span style="color:#F97583">&#x26;</span><span style="color:#B392F0">str</span><span style="color:#E1E4E8">,), (</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">,)>(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> store, </span><span style="color:#9ECBFF">"greet"</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 実行</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> (result,) </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> greet</span><span style="color:#F97583">.</span><span style="color:#B392F0">call</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> store, (</span><span style="color:#9ECBFF">"Alice"</span><span style="color:#E1E4E8">,))</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">    println!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"{}"</span><span style="color:#E1E4E8">, result); </span><span style="color:#6A737D">// Hello, Alice!</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    Ok</span><span style="color:#E1E4E8">(())</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="コンポーネント合成">コンポーネント合成</h2>
+<h3 id="複数コンポーネントの組み合わせ">複数コンポーネントの組み合わせ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="wit"><code><span class="line"><span style="color:#6A737D">// wit/logger.wit</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> example</span><span style="color:#F97583">:</span><span style="color:#B392F0">logger</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.1.0;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> logging</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  enum</span><span style="color:#B392F0"> level</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    debug</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    info</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    warn</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    error</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  log</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">level</span><span style="color:#F97583">:</span><span style="color:#B392F0"> level</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">message</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">world</span><span style="color:#B392F0"> logger</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  export</span><span style="color:#79B8FF"> logging</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="wit"><code><span class="line"><span style="color:#6A737D">// wit/app.wit</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> example</span><span style="color:#F97583">:</span><span style="color:#B392F0">app</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.1.0;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> app-logic</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  use</span><span style="color:#B392F0"> example</span><span style="color:#E1E4E8">:</span><span style="color:#B392F0">logger</span><span style="color:#E1E4E8">/</span><span style="color:#B392F0">logging</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">{</span><span style="color:#B392F0">level</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  process</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">data</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> result</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">world</span><span style="color:#B392F0"> app</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  import</span><span style="color:#79B8FF"> example</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">logger</span><span style="color:#E1E4E8">/</span><span style="color:#79B8FF">logging</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  export</span><span style="color:#79B8FF"> app-logic</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="アプリケーション実装">アプリケーション実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// src/lib.rs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">cargo_component_bindings</span><span style="color:#F97583">::</span><span style="color:#B392F0">generate!</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> bindings</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span><span style="color:#B392F0">Guest</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">example</span><span style="color:#F97583">::</span><span style="color:#B392F0">logger</span><span style="color:#F97583">::</span><span style="color:#B392F0">logging</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{log, </span><span style="color:#B392F0">Level</span><span style="color:#E1E4E8">}};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">struct</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">impl</span><span style="color:#B392F0"> Guest</span><span style="color:#F97583"> for</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> process</span><span style="color:#E1E4E8">(data</span><span style="color:#F97583">:</span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#B392F0">        log</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Level</span><span style="color:#F97583">::</span><span style="color:#B392F0">Info</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">&#x26;</span><span style="color:#B392F0">format!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Processing: {}"</span><span style="color:#E1E4E8">, data));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> data</span><span style="color:#F97583">.</span><span style="color:#B392F0">is_empty</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#B392F0">            log</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Level</span><span style="color:#F97583">::</span><span style="color:#B392F0">Error</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"Empty data received"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#B392F0"> Err</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Data cannot be empty"</span><span style="color:#F97583">.</span><span style="color:#B392F0">to_string</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        let</span><span style="color:#E1E4E8"> result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> data</span><span style="color:#F97583">.</span><span style="color:#B392F0">to_uppercase</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#B392F0">        log</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Level</span><span style="color:#F97583">::</span><span style="color:#B392F0">Info</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">&#x26;</span><span style="color:#B392F0">format!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Result: {}"</span><span style="color:#E1E4E8">, result));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">        Ok</span><span style="color:#E1E4E8">(result)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">bindings</span><span style="color:#F97583">::</span><span style="color:#B392F0">export!</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Component</span><span style="color:#E1E4E8"> with_types_in bindings);</span></span></code></pre>
+<h2 id="wasi-preview-2">WASI Preview 2</h2>
+<p>Component ModelはWASI Preview 2と統合されています。</p>
+<h3 id="ファイルシステム">ファイルシステム</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="wit"><code><span class="line"><span style="color:#6A737D">// wit/file-ops.wit</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> example</span><span style="color:#F97583">:</span><span style="color:#B392F0">file</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.1.0;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">world</span><span style="color:#B392F0"> file-operations</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  import</span><span style="color:#79B8FF"> wasi</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">filesystem</span><span style="color:#E1E4E8">/</span><span style="color:#79B8FF">types</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.2.0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  import</span><span style="color:#79B8FF"> wasi</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">filesystem</span><span style="color:#E1E4E8">/</span><span style="color:#79B8FF">preopens</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.2.0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  export</span><span style="color:#79B8FF"> read-file</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">path</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> result</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#F97583">  export</span><span style="color:#79B8FF"> write-file</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">path</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">content</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> result</span><span style="color:#E1E4E8">&#x3C;_, </span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> std</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">fs;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">cargo_component_bindings</span><span style="color:#F97583">::</span><span style="color:#B392F0">generate!</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> bindings</span><span style="color:#F97583">::</span><span style="color:#B392F0">Guest</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">struct</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">impl</span><span style="color:#B392F0"> Guest</span><span style="color:#F97583"> for</span><span style="color:#B392F0"> Component</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> read_file</span><span style="color:#E1E4E8">(path</span><span style="color:#F97583">:</span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#B392F0">        fs</span><span style="color:#F97583">::</span><span style="color:#B392F0">read_to_string</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">path)</span></span>
+<span class="line"><span style="color:#F97583">            .</span><span style="color:#B392F0">map_err</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">|</span><span style="color:#E1E4E8">e</span><span style="color:#F97583">|</span><span style="color:#E1E4E8"> e</span><span style="color:#F97583">.</span><span style="color:#B392F0">to_string</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> write_file</span><span style="color:#E1E4E8">(path</span><span style="color:#F97583">:</span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8">, content</span><span style="color:#F97583">:</span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&#x3C;(), </span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#B392F0">        fs</span><span style="color:#F97583">::</span><span style="color:#B392F0">write</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">path, content)</span></span>
+<span class="line"><span style="color:#F97583">            .</span><span style="color:#B392F0">map_err</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">|</span><span style="color:#E1E4E8">e</span><span style="color:#F97583">|</span><span style="color:#E1E4E8"> e</span><span style="color:#F97583">.</span><span style="color:#B392F0">to_string</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">bindings</span><span style="color:#F97583">::</span><span style="color:#B392F0">export!</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Component</span><span style="color:#E1E4E8"> with_types_in bindings);</span></span></code></pre>
+<h3 id="http-クライアント">HTTP クライアント</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="wit"><code><span class="line"><span style="color:#6A737D">// wit/http.wit</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> example</span><span style="color:#F97583">:</span><span style="color:#B392F0">http</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.1.0;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">world</span><span style="color:#B392F0"> http-client</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  import</span><span style="color:#79B8FF"> wasi</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">http</span><span style="color:#E1E4E8">/</span><span style="color:#79B8FF">types</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.2.0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  import</span><span style="color:#79B8FF"> wasi</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">http</span><span style="color:#E1E4E8">/</span><span style="color:#79B8FF">outgoing-handler</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.2.0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  export</span><span style="color:#79B8FF"> fetch</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">url</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> result</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="javascriptとの統合">JavaScriptとの統合</h2>
+<h3 id="jcojavascript-component-tools">jco（JavaScript Component Tools）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -g</span><span style="color:#9ECBFF"> @bytecodealliance/jco</span></span></code></pre>
+<h3 id="コンポーネントをjsにトランスパイル">コンポーネントをJSにトランスパイル</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">jco</span><span style="color:#9ECBFF"> transpile</span><span style="color:#9ECBFF"> hello_component.wasm</span><span style="color:#79B8FF"> -o</span><span style="color:#9ECBFF"> dist</span></span></code></pre>
+<h3 id="nodejsから使用">Node.jsから使用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// index.js</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { greet } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './dist/hello_component.js'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> greet</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'JavaScript'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(result); </span><span style="color:#6A737D">// Hello, JavaScript!</span></span></code></pre>
+<h3 id="ブラウザで使用">ブラウザで使用</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="html"><code><span class="line"><span style="color:#E1E4E8">&#x3C;!</span><span style="color:#85E89D">DOCTYPE</span><span style="color:#B392F0"> html</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;</span><span style="color:#85E89D">html</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;</span><span style="color:#85E89D">head</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  &#x3C;</span><span style="color:#85E89D">script</span><span style="color:#B392F0"> type</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"module"</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">    import</span><span style="color:#E1E4E8"> { greet } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './dist/hello_component.js'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    document.</span><span style="color:#B392F0">getElementById</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'btn'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">addEventListener</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'click'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> name</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> document.</span><span style="color:#B392F0">getElementById</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'name'</span><span style="color:#E1E4E8">).value;</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> greet</span><span style="color:#E1E4E8">(name);</span></span>
+<span class="line"><span style="color:#E1E4E8">      document.</span><span style="color:#B392F0">getElementById</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'output'</span><span style="color:#E1E4E8">).textContent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> result;</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  &#x3C;/</span><span style="color:#85E89D">script</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;/</span><span style="color:#85E89D">head</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;</span><span style="color:#85E89D">body</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  &#x3C;</span><span style="color:#85E89D">input</span><span style="color:#B392F0"> id</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"name"</span><span style="color:#B392F0"> type</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"text"</span><span style="color:#B392F0"> placeholder</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"Enter name"</span><span style="color:#E1E4E8"> /></span></span>
+<span class="line"><span style="color:#E1E4E8">  &#x3C;</span><span style="color:#85E89D">button</span><span style="color:#B392F0"> id</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"btn"</span><span style="color:#E1E4E8">>Greet&#x3C;/</span><span style="color:#85E89D">button</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  &#x3C;</span><span style="color:#85E89D">p</span><span style="color:#B392F0"> id</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"output"</span><span style="color:#E1E4E8">>&#x3C;/</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;/</span><span style="color:#85E89D">body</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;/</span><span style="color:#85E89D">html</span><span style="color:#E1E4E8">></span></span></code></pre>
+<h2 id="実践例-プラグインシステム">実践例: プラグインシステム</h2>
+<h3 id="プラグインインターフェース">プラグインインターフェース</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="wit"><code><span class="line"><span style="color:#6A737D">// wit/plugin.wit</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> example</span><span style="color:#F97583">:</span><span style="color:#B392F0">plugin</span><span style="color:#F97583">@</span><span style="color:#79B8FF">0.1.0;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> plugin-api</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  record</span><span style="color:#B392F0"> config</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    version</span><span style="color:#F97583">:</span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    enabled</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  variant</span><span style="color:#B392F0"> event</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    startup</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    shutdown</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    custom</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // プラグインが実装すべきメソッド</span></span>
+<span class="line"><span style="color:#B392F0">  init</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">config</span><span style="color:#F97583">:</span><span style="color:#B392F0"> config</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> result</span><span style="color:#E1E4E8">&#x3C;_, </span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#B392F0">  handle-event</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">event</span><span style="color:#F97583">:</span><span style="color:#B392F0"> event</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> result</span><span style="color:#E1E4E8">&#x3C;_, </span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#B392F0">  get-info</span><span style="color:#F97583">:</span><span style="color:#F97583"> func</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-></span><span style="color:#B392F0"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">world</span><span style="color:#B392F0"> plugin</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  export</span><span style="color:#79B8FF"> plugin-api</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="プラグイン実装">プラグイン実装</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#B392F0">cargo_component_bindings</span><span style="color:#F97583">::</span><span style="color:#B392F0">generate!</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> bindings</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span><span style="color:#B392F0">Guest</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">exports</span><span style="color:#F97583">::</span><span style="color:#B392F0">example</span><span style="color:#F97583">::</span><span style="color:#B392F0">plugin</span><span style="color:#F97583">::</span><span style="color:#B392F0">plugin_api</span><span style="color:#F97583">::*</span><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">struct</span><span style="color:#B392F0"> MyPlugin</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    config</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Option</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Config</span><span style="color:#E1E4E8">>,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">impl</span><span style="color:#B392F0"> Guest</span><span style="color:#F97583"> for</span><span style="color:#B392F0"> MyPlugin</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> init</span><span style="color:#E1E4E8">(config</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Config</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&#x3C;(), </span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#B392F0">        println!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Initializing plugin: {}"</span><span style="color:#E1E4E8">, config</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">name);</span></span>
+<span class="line"><span style="color:#6A737D">        // 初期化処理</span></span>
+<span class="line"><span style="color:#B392F0">        Ok</span><span style="color:#E1E4E8">(())</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> handle_event</span><span style="color:#E1E4E8">(event</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Event</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&#x3C;(), </span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">        match</span><span style="color:#E1E4E8"> event {</span></span>
+<span class="line"><span style="color:#B392F0">            Event</span><span style="color:#F97583">::</span><span style="color:#B392F0">Startup</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">                println!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Plugin started"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#B392F0">                Ok</span><span style="color:#E1E4E8">(())</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#B392F0">            Event</span><span style="color:#F97583">::</span><span style="color:#B392F0">Shutdown</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">                println!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Plugin stopping"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#B392F0">                Ok</span><span style="color:#E1E4E8">(())</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#B392F0">            Event</span><span style="color:#F97583">::</span><span style="color:#B392F0">Custom</span><span style="color:#E1E4E8">(data) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">                println!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Custom event: {}"</span><span style="color:#E1E4E8">, data);</span></span>
+<span class="line"><span style="color:#B392F0">                Ok</span><span style="color:#E1E4E8">(())</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> get_info</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-></span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        "MyPlugin v1.0.0"</span><span style="color:#F97583">.</span><span style="color:#B392F0">to_string</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">bindings</span><span style="color:#F97583">::</span><span style="color:#B392F0">export!</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">MyPlugin</span><span style="color:#E1E4E8"> with_types_in bindings);</span></span></code></pre>
+<h3 id="ホストアプリケーション">ホストアプリケーション</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> wasmtime</span><span style="color:#F97583">::</span><span style="color:#B392F0">component</span><span style="color:#F97583">::*</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> wasmtime</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span><span style="color:#B392F0">Config</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Engine</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Store</span><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-></span><span style="color:#B392F0"> anyhow</span><span style="color:#F97583">::</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">&#x3C;()> {</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> config </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Config</span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    config</span><span style="color:#F97583">.</span><span style="color:#B392F0">wasm_component_model</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> engine </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Engine</span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">config)</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // プラグイン読み込み</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> component </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Component</span><span style="color:#F97583">::</span><span style="color:#B392F0">from_file</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">engine, </span><span style="color:#9ECBFF">"plugin.wasm"</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> linker </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Linker</span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">engine);</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> store </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Store</span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">engine, ());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> (instance, _) </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> linker</span><span style="color:#F97583">.</span><span style="color:#B392F0">instantiate</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> store, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">component)</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // プラグイン初期化</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> init </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> instance</span><span style="color:#F97583">.</span><span style="color:#B392F0">get_typed_func</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;(</span><span style="color:#B392F0">PluginConfig</span><span style="color:#E1E4E8">,), (</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">&#x3C;(), </span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">>,)>(</span></span>
+<span class="line"><span style="color:#F97583">        &#x26;mut</span><span style="color:#E1E4E8"> store, </span><span style="color:#9ECBFF">"init"</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> plugin_config </span><span style="color:#F97583">=</span><span style="color:#B392F0"> PluginConfig</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        name</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> "my-plugin"</span><span style="color:#F97583">.</span><span style="color:#B392F0">to_string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">        version</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> "1.0.0"</span><span style="color:#F97583">.</span><span style="color:#B392F0">to_string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">        enabled</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    init</span><span style="color:#F97583">.</span><span style="color:#B392F0">call</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> store, (plugin_config,))</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // イベント送信</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> handle_event </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> instance</span><span style="color:#F97583">.</span><span style="color:#B392F0">get_typed_func</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;(</span><span style="color:#B392F0">Event</span><span style="color:#E1E4E8">,), (</span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">&#x3C;(), </span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">>,)>(</span></span>
+<span class="line"><span style="color:#F97583">        &#x26;mut</span><span style="color:#E1E4E8"> store, </span><span style="color:#9ECBFF">"handle-event"</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    handle_event</span><span style="color:#F97583">.</span><span style="color:#B392F0">call</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> store, (</span><span style="color:#B392F0">Event</span><span style="color:#F97583">::</span><span style="color:#B392F0">Startup</span><span style="color:#E1E4E8">,))</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    Ok</span><span style="color:#E1E4E8">(())</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="デバッグとツール">デバッグとツール</h2>
+<h3 id="コンポーネント検査">コンポーネント検査</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># コンポーネント情報表示</span></span>
+<span class="line"><span style="color:#B392F0">wasm-tools</span><span style="color:#9ECBFF"> component</span><span style="color:#9ECBFF"> wit</span><span style="color:#9ECBFF"> hello_component.wasm</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># コンポーネント検証</span></span>
+<span class="line"><span style="color:#B392F0">wasm-tools</span><span style="color:#9ECBFF"> validate</span><span style="color:#9ECBFF"> hello_component.wasm</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Core WASMに変換</span></span>
+<span class="line"><span style="color:#B392F0">wasm-tools</span><span style="color:#9ECBFF"> component</span><span style="color:#9ECBFF"> embed</span><span style="color:#79B8FF"> --world</span><span style="color:#9ECBFF"> hello</span><span style="color:#9ECBFF"> wit/world.wit</span><span style="color:#9ECBFF"> module.wasm</span></span></code></pre>
+<h3 id="パフォーマンス測定">パフォーマンス測定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> std</span><span style="color:#F97583">::</span><span style="color:#B392F0">time</span><span style="color:#F97583">::</span><span style="color:#B392F0">Instant</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> start </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Instant</span><span style="color:#F97583">::</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> (result,) </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> greet</span><span style="color:#F97583">.</span><span style="color:#B392F0">call</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> store, (</span><span style="color:#9ECBFF">"Alice"</span><span style="color:#E1E4E8">,))</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> duration </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> start</span><span style="color:#F97583">.</span><span style="color:#B392F0">elapsed</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">println!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Execution time: {:?}"</span><span style="color:#E1E4E8">, duration);</span></span></code></pre>
+<h2 id="ベストプラクティス">ベストプラクティス</h2>
+<h3 id="1-エラーハンドリング">1. エラーハンドリング</h3>
+<p>WITでは<code>result</code>型を使用:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="wit"><code><span class="line"><span style="color:#E1E4E8">fetch-data: func(url: string) -> result&#x3C;list&#x3C;u8>, error-info>;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">record error-info {</span></span>
+<span class="line"><span style="color:#E1E4E8">  code: u32,</span></span>
+<span class="line"><span style="color:#E1E4E8">  message: string,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="2-バージョニング">2. バージョニング</h3>
+<p>パッケージにバージョンを明記:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="wit"><code><span class="line"><span style="color:#F97583">package</span><span style="color:#B392F0"> example</span><span style="color:#F97583">:</span><span style="color:#B392F0">mylib</span><span style="color:#F97583">@</span><span style="color:#79B8FF">1.2.3;</span></span></code></pre>
+<h3 id="3-ドキュメント">3. ドキュメント</h3>
+<p>WITにコメントを追加:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="wit"><code><span class="line"><span style="color:#6A737D">/// ユーザー情報を取得します</span></span>
+<span class="line"><span style="color:#6A737D">///</span></span>
+<span class="line"><span style="color:#6A737D">/// </span><span style="color:#79B8FF;font-weight:bold"># Parameters</span></span>
+<span class="line"><span style="color:#6A737D">/// </span><span style="color:#FFAB70">-</span><span style="color:#6A737D"> id: ユーザーID</span></span>
+<span class="line"><span style="color:#6A737D">///</span></span>
+<span class="line"><span style="color:#6A737D">/// </span><span style="color:#79B8FF;font-weight:bold"># Returns</span></span>
+<span class="line"><span style="color:#6A737D">/// ユーザー情報、または存在しない場合はエラー</span></span>
+<span class="line"><span style="color:#E1E4E8">get-user: func(id: u64) -> result&#x3C;user, string>;</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>WebAssembly Component Modelは、WebAssemblyを単なるバイナリフォーマットから、真のコンポーネント指向プラットフォームへと進化させます。</p>
+<p>主な利点:</p>
+<ul>
+<li><strong>言語非依存</strong> - 複数言語の自然な統合</li>
+<li><strong>型安全</strong> - コンパイル時の型チェック</li>
+<li><strong>再利用性</strong> - コンポーネントの組み合わせが容易</li>
+<li><strong>標準化</strong> - WASI統合によるポータビリティ</li>
+<li><strong>パフォーマンス</strong> - ネイティブに近い速度</li>
+</ul>
+<p>まだ開発中の技術ですが、将来のソフトウェア開発に大きな影響を与える可能性を秘めています。</p>
+<h2 id="参考リンク">参考リンク</h2>
+<ul>
+<li><a href="https://github.com/WebAssembly/component-model">Component Model 仕様</a></li>
+<li><a href="https://github.com/bytecodealliance/cargo-component">cargo-component</a></li>
+<li><a href="https://github.com/WebAssembly/component-model/blob/main/design/mvp/WIT.md">WIT仕様</a></li>
+<li><a href="https://github.com/WebAssembly/WASI/tree/main/preview2">WASI Preview 2</a></li>
+<li><a href="https://wasmtime.dev/">Wasmtime</a></li>
+<li><a href="https://github.com/bytecodealliance/jco">jco - JavaScript Component Tools</a></li>
+</ul>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

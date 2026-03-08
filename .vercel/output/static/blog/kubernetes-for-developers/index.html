@@ -1,0 +1,423 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/kubernetes-for-developers/"><!-- Primary Meta Tags --><title>開発者のためのKubernetes入門 — Pod/Service/Deploymentの基本</title><meta name="title" content="開発者のためのKubernetes入門 — Pod/Service/Deploymentの基本"><meta name="description" content="Kubernetesの基本概念からkubectlコマンド、Pod/Service/Deploymentの定義、Helmチャート、ローカル開発環境(kind/minikube)まで実践的に解説します。Kubernetes・k8s・Dockerに関する実践情報。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/kubernetes-for-developers/"><meta property="og:title" content="開発者のためのKubernetes入門 — Pod/Service/Deploymentの基本"><meta property="og:description" content="Kubernetesの基本概念からkubectlコマンド、Pod/Service/Deploymentの定義、Helmチャート、ローカル開発環境(kind/minikube)まで実践的に解説します。Kubernetes・k8s・Dockerに関する実践情報。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/kubernetes-for-developers/"><meta name="twitter:title" content="開発者のためのKubernetes入門 — Pod/Service/Deploymentの基本"><meta name="twitter:description" content="Kubernetesの基本概念からkubectlコマンド、Pod/Service/Deploymentの定義、Helmチャート、ローカル開発環境(kind/minikube)まで実践的に解説します。Kubernetes・k8s・Dockerに関する実践情報。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/kubernetes-for-developers/"},"headline":"開発者のためのKubernetes入門 — Pod/Service/Deploymentの基本","description":"Kubernetesの基本概念からkubectlコマンド、Pod/Service/Deploymentの定義、Helmチャート、ローカル開発環境(kind/minikube)まで実践的に解説します。Kubernetes・k8s・Dockerに関する実践情報。","datePublished":"2026-02-05T00:00:00.000Z","dateModified":"2026-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Kubernetes, k8s, Docker, DevOps, インフラ"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"開発者のためのKubernetes入門 — Pod/Service/Deploymentの基本"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-05T00:00:00.000Z"> Feb 4, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>開発者のためのKubernetes入門 — Pod/Service/Deploymentの基本</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Kubernetes" class="article-tag" data-astro-cid-bvzihdzo>
+#Kubernetes </a><a href="/blog/tag/k8s" class="article-tag" data-astro-cid-bvzihdzo>
+#k8s </a><a href="/blog/tag/Docker" class="article-tag" data-astro-cid-bvzihdzo>
+#Docker </a><a href="/blog/tag/DevOps" class="article-tag" data-astro-cid-bvzihdzo>
+#DevOps </a><a href="/blog/tag/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#インフラ </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Kubernetesは、コンテナオーケストレーションのデファクトスタンダードです。この記事では、開発者が知っておくべきKubernetesの基本を実践的に解説します。</p>
+<h2 id="kubernetesとは">Kubernetesとは</h2>
+<p>Kubernetesは、Dockerコンテナを大規模に管理するためのオープンソースプラットフォームです。略して「k8s」と呼ばれます（kとsの間に8文字あるため）。</p>
+<h3 id="kubernetesが解決する課題">Kubernetesが解決する課題</h3>
+<ul>
+<li><strong>スケーリング</strong>: トラフィックに応じて自動的にコンテナを増減</li>
+<li><strong>自己修復</strong>: 障害が発生したコンテナを自動的に再起動</li>
+<li><strong>ロードバランシング</strong>: 複数のコンテナに負荷を分散</li>
+<li><strong>デプロイ管理</strong>: ゼロダウンタイムでのアプリケーション更新</li>
+<li><strong>設定管理</strong>: 環境変数やシークレットの一元管理</li>
+</ul>
+<h2 id="ローカル開発環境のセットアップ">ローカル開発環境のセットアップ</h2>
+<p>まずは、ローカルマシンでKubernetesクラスタを動かしましょう。</p>
+<h3 id="kind-kubernetes-in-docker">kind (Kubernetes in Docker)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># kindのインストール (macOS)</span></span>
+<span class="line"><span style="color:#B392F0">brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> kind</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># クラスタの作成</span></span>
+<span class="line"><span style="color:#B392F0">kind</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> cluster</span><span style="color:#79B8FF"> --name</span><span style="color:#9ECBFF"> dev-cluster</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># クラスタの確認</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> cluster-info</span><span style="color:#79B8FF"> --context</span><span style="color:#9ECBFF"> kind-dev-cluster</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># クラスタの削除（不要になったら）</span></span>
+<span class="line"><span style="color:#B392F0">kind</span><span style="color:#9ECBFF"> delete</span><span style="color:#9ECBFF"> cluster</span><span style="color:#79B8FF"> --name</span><span style="color:#9ECBFF"> dev-cluster</span></span></code></pre>
+<h3 id="minikube">minikube</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># minikubeのインストール (macOS)</span></span>
+<span class="line"><span style="color:#B392F0">brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> minikube</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># クラスタの起動</span></span>
+<span class="line"><span style="color:#B392F0">minikube</span><span style="color:#9ECBFF"> start</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ダッシュボードの起動</span></span>
+<span class="line"><span style="color:#B392F0">minikube</span><span style="color:#9ECBFF"> dashboard</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># クラスタの停止</span></span>
+<span class="line"><span style="color:#B392F0">minikube</span><span style="color:#9ECBFF"> stop</span></span></code></pre>
+<h2 id="kubectlの基本コマンド">kubectlの基本コマンド</h2>
+<p>kubectlは、Kubernetesクラスタを操作するためのCLIツールです。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># クラスタ情報の確認</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> cluster-info</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ノード一覧</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> nodes</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># すべてのリソースを表示</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> all</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 特定のNamespaceのリソース</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> all</span><span style="color:#79B8FF"> -n</span><span style="color:#9ECBFF"> kube-system</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Pod一覧</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> pods</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Pod詳細</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> describe</span><span style="color:#9ECBFF"> pod</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">pod-nam</span><span style="color:#E1E4E8">e</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Podのログ確認</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> logs</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">pod-nam</span><span style="color:#E1E4E8">e</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Podに接続</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> exec</span><span style="color:#79B8FF"> -it</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">pod-nam</span><span style="color:#E1E4E8">e</span><span style="color:#F97583">></span><span style="color:#79B8FF"> --</span><span style="color:#9ECBFF"> /bin/sh</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># リソースの削除</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> delete</span><span style="color:#9ECBFF"> pod</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">pod-nam</span><span style="color:#E1E4E8">e</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># YAMLからリソースを作成</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> apply</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> deployment.yaml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># リソースの削除</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> delete</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> deployment.yaml</span></span></code></pre>
+<h2 id="podの基本">Podの基本</h2>
+<p>Podは、Kubernetesにおける最小のデプロイ単位です。1つ以上のコンテナを含みます。</p>
+<h3 id="シンプルなpod定義">シンプルなPod定義</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># pod.yaml</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Pod</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">nginx-pod</span></span>
+<span class="line"><span style="color:#85E89D">  labels</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    app</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">nginx</span></span>
+<span class="line"><span style="color:#85E89D">spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  containers</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">nginx</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">nginx:1.25</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">containerPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span></span>
+<span class="line"><span style="color:#85E89D">    env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ENVIRONMENT</span></span>
+<span class="line"><span style="color:#85E89D">      value</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"development"</span></span>
+<span class="line"><span style="color:#85E89D">    resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      requests</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"64Mi"</span></span>
+<span class="line"><span style="color:#85E89D">        cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"250m"</span></span>
+<span class="line"><span style="color:#85E89D">      limits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"128Mi"</span></span>
+<span class="line"><span style="color:#85E89D">        cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"500m"</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Podの作成</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> apply</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> pod.yaml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Podの確認</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> pods</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Podの詳細</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> describe</span><span style="color:#9ECBFF"> pod</span><span style="color:#9ECBFF"> nginx-pod</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Podのログ</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> logs</span><span style="color:#9ECBFF"> nginx-pod</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Podに接続</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> exec</span><span style="color:#79B8FF"> -it</span><span style="color:#9ECBFF"> nginx-pod</span><span style="color:#79B8FF"> --</span><span style="color:#9ECBFF"> /bin/bash</span></span></code></pre>
+<h3 id="マルチコンテナpod">マルチコンテナPod</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># multi-container-pod.yaml</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Pod</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">app-with-sidecar</span></span>
+<span class="line"><span style="color:#85E89D">spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  containers</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">  # メインアプリケーション</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">app</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp:1.0</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">containerPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">8080</span></span>
+<span class="line"><span style="color:#85E89D">    volumeMounts</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">shared-logs</span></span>
+<span class="line"><span style="color:#85E89D">      mountPath</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/var/log</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  # ログ収集用サイドカー</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">log-collector</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">fluent/fluent-bit:2.0</span></span>
+<span class="line"><span style="color:#85E89D">    volumeMounts</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">shared-logs</span></span>
+<span class="line"><span style="color:#85E89D">      mountPath</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/var/log</span></span>
+<span class="line"><span style="color:#85E89D">      readOnly</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">shared-logs</span></span>
+<span class="line"><span style="color:#85E89D">    emptyDir</span><span style="color:#E1E4E8">: {}</span></span></code></pre>
+<h2 id="deploymentによる管理">Deploymentによる管理</h2>
+<p>Podを直接作成するのではなく、Deploymentを使用することで、レプリケーションやローリングアップデートが可能になります。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># deployment.yaml</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">apps/v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Deployment</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">web-app</span></span>
+<span class="line"><span style="color:#85E89D">  labels</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    app</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">web</span></span>
+<span class="line"><span style="color:#85E89D">spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  replicas</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span><span style="color:#6A737D">  # 3つのPodを起動</span></span>
+<span class="line"><span style="color:#85E89D">  selector</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    matchLabels</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      app</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">web</span></span>
+<span class="line"><span style="color:#85E89D">  template</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      labels</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        app</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">web</span></span>
+<span class="line"><span style="color:#85E89D">    spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      containers</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">nginx</span></span>
+<span class="line"><span style="color:#85E89D">        image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">nginx:1.25</span></span>
+<span class="line"><span style="color:#85E89D">        ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">containerPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span></span>
+<span class="line"><span style="color:#85E89D">        livenessProbe</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          httpGet</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">            path</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/health</span></span>
+<span class="line"><span style="color:#85E89D">            port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span></span>
+<span class="line"><span style="color:#85E89D">          initialDelaySeconds</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10</span></span>
+<span class="line"><span style="color:#85E89D">          periodSeconds</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#85E89D">        readinessProbe</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          httpGet</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">            path</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/ready</span></span>
+<span class="line"><span style="color:#85E89D">            port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span></span>
+<span class="line"><span style="color:#85E89D">          initialDelaySeconds</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#85E89D">          periodSeconds</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Deploymentの作成</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> apply</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> deployment.yaml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Deploymentの確認</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> deployments</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Podの確認（3つ起動されているはず）</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> pods</span><span style="color:#79B8FF"> -l</span><span style="color:#9ECBFF"> app=web</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># スケーリング</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> scale</span><span style="color:#9ECBFF"> deployment</span><span style="color:#9ECBFF"> web-app</span><span style="color:#79B8FF"> --replicas=5</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ローリングアップデート</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> set</span><span style="color:#9ECBFF"> image</span><span style="color:#9ECBFF"> deployment/web-app</span><span style="color:#9ECBFF"> nginx=nginx:1.26</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># アップデートの確認</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> rollout</span><span style="color:#9ECBFF"> status</span><span style="color:#9ECBFF"> deployment/web-app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ロールバック</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> rollout</span><span style="color:#9ECBFF"> undo</span><span style="color:#9ECBFF"> deployment/web-app</span></span></code></pre>
+<h2 id="serviceによるネットワーク管理">Serviceによるネットワーク管理</h2>
+<p>Serviceは、Podへのネットワークアクセスを提供します。</p>
+<h3 id="clusterip-serviceクラスタ内部アクセス">ClusterIP Service（クラスタ内部アクセス）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># service-clusterip.yaml</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Service</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">web-service</span></span>
+<span class="line"><span style="color:#85E89D">spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ClusterIP</span><span style="color:#6A737D">  # デフォルト</span></span>
+<span class="line"><span style="color:#85E89D">  selector</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    app</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">web</span></span>
+<span class="line"><span style="color:#85E89D">  ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">protocol</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">TCP</span></span>
+<span class="line"><span style="color:#85E89D">    port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span><span style="color:#6A737D">        # Serviceのポート</span></span>
+<span class="line"><span style="color:#85E89D">    targetPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span><span style="color:#6A737D">  # Podのポート</span></span></code></pre>
+<h3 id="nodeport-service外部アクセス">NodePort Service（外部アクセス）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># service-nodeport.yaml</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Service</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">web-service-external</span></span>
+<span class="line"><span style="color:#85E89D">spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">NodePort</span></span>
+<span class="line"><span style="color:#85E89D">  selector</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    app</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">web</span></span>
+<span class="line"><span style="color:#85E89D">  ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">protocol</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">TCP</span></span>
+<span class="line"><span style="color:#85E89D">    port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span></span>
+<span class="line"><span style="color:#85E89D">    targetPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span></span>
+<span class="line"><span style="color:#85E89D">    nodePort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">30080</span><span style="color:#6A737D">  # 30000-32767の範囲</span></span></code></pre>
+<h3 id="loadbalancer-serviceクラウド環境">LoadBalancer Service（クラウド環境）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># service-loadbalancer.yaml</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Service</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">web-service-lb</span></span>
+<span class="line"><span style="color:#85E89D">spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">LoadBalancer</span></span>
+<span class="line"><span style="color:#85E89D">  selector</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    app</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">web</span></span>
+<span class="line"><span style="color:#85E89D">  ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">protocol</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">TCP</span></span>
+<span class="line"><span style="color:#85E89D">    port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span></span>
+<span class="line"><span style="color:#85E89D">    targetPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Serviceの作成</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> apply</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> service-clusterip.yaml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Serviceの確認</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> services</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Service詳細</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> describe</span><span style="color:#9ECBFF"> service</span><span style="color:#9ECBFF"> web-service</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Serviceへの接続確認（クラスタ内から）</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> test-pod</span><span style="color:#79B8FF"> --image=busybox</span><span style="color:#79B8FF"> -it</span><span style="color:#79B8FF"> --rm</span><span style="color:#79B8FF"> --</span><span style="color:#9ECBFF"> wget</span><span style="color:#79B8FF"> -qO-</span><span style="color:#9ECBFF"> http://web-service</span></span></code></pre>
+<h2 id="configmapとsecret">ConfigMapとSecret</h2>
+<p>アプリケーションの設定と機密情報を管理します。</p>
+<h3 id="configmap">ConfigMap</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># configmap.yaml</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ConfigMap</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">app-config</span></span>
+<span class="line"><span style="color:#85E89D">data</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  DATABASE_HOST</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"postgres.default.svc.cluster.local"</span></span>
+<span class="line"><span style="color:#85E89D">  DATABASE_PORT</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"5432"</span></span>
+<span class="line"><span style="color:#85E89D">  LOG_LEVEL</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"info"</span></span>
+<span class="line"><span style="color:#85E89D">  app.properties</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">    server.port=8080</span></span>
+<span class="line"><span style="color:#9ECBFF">    server.timeout=30s</span></span></code></pre>
+<h3 id="secret">Secret</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># secret.yaml</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Secret</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">app-secrets</span></span>
+<span class="line"><span style="color:#85E89D">type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Opaque</span></span>
+<span class="line"><span style="color:#85E89D">stringData</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  DATABASE_PASSWORD</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"supersecret"</span></span>
+<span class="line"><span style="color:#85E89D">  API_KEY</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"your-api-key-here"</span></span></code></pre>
+<h3 id="deployment-with-configmap--secret">Deployment with ConfigMap &#x26; Secret</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># deployment-with-config.yaml</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">apps/v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Deployment</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">app</span></span>
+<span class="line"><span style="color:#85E89D">spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  replicas</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span></span>
+<span class="line"><span style="color:#85E89D">  selector</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    matchLabels</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      app</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp</span></span>
+<span class="line"><span style="color:#85E89D">  template</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      labels</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        app</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp</span></span>
+<span class="line"><span style="color:#85E89D">    spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      containers</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">app</span></span>
+<span class="line"><span style="color:#85E89D">        image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp:1.0</span></span>
+<span class="line"><span style="color:#85E89D">        env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">        # ConfigMapから環境変数</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">DATABASE_HOST</span></span>
+<span class="line"><span style="color:#85E89D">          valueFrom</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">            configMapKeyRef</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">              name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">app-config</span></span>
+<span class="line"><span style="color:#85E89D">              key</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">DATABASE_HOST</span></span>
+<span class="line"><span style="color:#6A737D">        # Secretから環境変数</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">DATABASE_PASSWORD</span></span>
+<span class="line"><span style="color:#85E89D">          valueFrom</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">            secretKeyRef</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">              name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">app-secrets</span></span>
+<span class="line"><span style="color:#85E89D">              key</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">DATABASE_PASSWORD</span></span>
+<span class="line"><span style="color:#85E89D">        volumeMounts</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">        # ConfigMapをファイルとしてマウント</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">config-volume</span></span>
+<span class="line"><span style="color:#85E89D">          mountPath</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/etc/config</span></span>
+<span class="line"><span style="color:#85E89D">      volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">config-volume</span></span>
+<span class="line"><span style="color:#85E89D">        configMap</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">app-config</span></span></code></pre>
+<h2 id="helmによるパッケージ管理">Helmによるパッケージ管理</h2>
+<p>Helmは、Kubernetesのパッケージマネージャーです。複数のリソースをまとめて管理できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Helmのインストール (macOS)</span></span>
+<span class="line"><span style="color:#B392F0">brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> helm</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># リポジトリの追加</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> repo</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> bitnami</span><span style="color:#9ECBFF"> https://charts.bitnami.com/bitnami</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> repo</span><span style="color:#9ECBFF"> update</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># チャートの検索</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> search</span><span style="color:#9ECBFF"> repo</span><span style="color:#9ECBFF"> nginx</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># チャートのインストール</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> my-nginx</span><span style="color:#9ECBFF"> bitnami/nginx</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># インストール済みのリリース確認</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> list</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># リリースのアップグレード</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> upgrade</span><span style="color:#9ECBFF"> my-nginx</span><span style="color:#9ECBFF"> bitnami/nginx</span><span style="color:#79B8FF"> --set</span><span style="color:#9ECBFF"> replicaCount=</span><span style="color:#79B8FF">3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># リリースの削除</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> uninstall</span><span style="color:#9ECBFF"> my-nginx</span></span></code></pre>
+<h3 id="カスタムhelmチャート">カスタムHelmチャート</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 新しいチャートの作成</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ディレクトリ構造</span></span>
+<span class="line"><span style="color:#B392F0">myapp/</span></span>
+<span class="line"><span style="color:#B392F0">├──</span><span style="color:#9ECBFF"> Chart.yaml</span><span style="color:#6A737D">           # チャートのメタデータ</span></span>
+<span class="line"><span style="color:#B392F0">├──</span><span style="color:#9ECBFF"> values.yaml</span><span style="color:#6A737D">          # デフォルト値</span></span>
+<span class="line"><span style="color:#B392F0">├──</span><span style="color:#9ECBFF"> templates/</span><span style="color:#6A737D">           # Kubernetesマニフェストのテンプレート</span></span>
+<span class="line"><span style="color:#B392F0">│</span><span style="color:#9ECBFF">   ├──</span><span style="color:#9ECBFF"> deployment.yaml</span></span>
+<span class="line"><span style="color:#B392F0">│</span><span style="color:#9ECBFF">   ├──</span><span style="color:#9ECBFF"> service.yaml</span></span>
+<span class="line"><span style="color:#B392F0">│</span><span style="color:#9ECBFF">   └──</span><span style="color:#9ECBFF"> ingress.yaml</span></span>
+<span class="line"><span style="color:#B392F0">└──</span><span style="color:#9ECBFF"> charts/</span><span style="color:#6A737D">              # 依存チャート</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># values.yaml</span></span>
+<span class="line"><span style="color:#85E89D">replicaCount</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">image</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  repository</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myapp</span></span>
+<span class="line"><span style="color:#85E89D">  tag</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1.0.0"</span></span>
+<span class="line"><span style="color:#85E89D">  pullPolicy</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">IfNotPresent</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">service</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ClusterIP</span></span>
+<span class="line"><span style="color:#85E89D">  port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">80</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  limits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">100m</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">128Mi</span></span>
+<span class="line"><span style="color:#85E89D">  requests</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">100m</span></span>
+<span class="line"><span style="color:#85E89D">    memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">128Mi</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># チャートのインストール</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># カスタム値でインストール</span></span>
+<span class="line"><span style="color:#B392F0">helm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> myapp</span><span style="color:#9ECBFF"> ./myapp</span><span style="color:#79B8FF"> --set</span><span style="color:#9ECBFF"> replicaCount=</span><span style="color:#79B8FF">5</span></span></code></pre>
+<h2 id="実践的なワークフロー">実践的なワークフロー</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 1. ローカル開発環境の起動</span></span>
+<span class="line"><span style="color:#B392F0">kind</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> cluster</span><span style="color:#79B8FF"> --name</span><span style="color:#9ECBFF"> dev</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 2. イメージのビルド（Dockerfileから）</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> -t</span><span style="color:#9ECBFF"> myapp:dev</span><span style="color:#9ECBFF"> .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 3. kindにイメージをロード</span></span>
+<span class="line"><span style="color:#B392F0">kind</span><span style="color:#9ECBFF"> load</span><span style="color:#9ECBFF"> docker-image</span><span style="color:#9ECBFF"> myapp:dev</span><span style="color:#79B8FF"> --name</span><span style="color:#9ECBFF"> dev</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 4. マニフェストの適用</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> apply</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> k8s/</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 5. 動作確認</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> all</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> logs</span><span style="color:#9ECBFF"> deployment/myapp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 6. ポートフォワードで動作確認</span></span>
+<span class="line"><span style="color:#B392F0">kubectl</span><span style="color:#9ECBFF"> port-forward</span><span style="color:#9ECBFF"> service/myapp</span><span style="color:#9ECBFF"> 8080:80</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ブラウザで http://localhost:8080 にアクセス</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Kubernetesの基本を理解することで、モダンなクラウドネイティブアプリケーションの開発・運用が可能になります。</p>
+<p><strong>学習のポイント:</strong></p>
+<ul>
+<li>Podは最小単位だが、本番ではDeploymentを使う</li>
+<li>Serviceによってネットワークを抽象化</li>
+<li>ConfigMapとSecretで設定を外部化</li>
+<li>Helmで複雑な構成を管理</li>
+<li>ローカル環境（kind/minikube）で実験を繰り返す</li>
+</ul>
+<p>まずはローカル環境で手を動かし、基本的なリソースの作成・更新・削除を体験することが重要です。Kubernetesは学習曲線が急ですが、一度習得すればあらゆるクラウド環境で活用できる強力なスキルとなります。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

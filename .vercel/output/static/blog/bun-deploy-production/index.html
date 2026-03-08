@@ -1,0 +1,396 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/bun-deploy-production/"><!-- Primary Meta Tags --><title>Bunで本番環境にデプロイする方法 — Docker・Fly.io・Render対応</title><meta name="title" content="Bunで本番環境にデプロイする方法 — Docker・Fly.io・Render対応"><meta name="description" content="Bun 1.2+を本番環境にデプロイする完全ガイド。Dockerマルチステージビルド、Fly.io・Render・Railwayへのデプロイ手順、パフォーマンスチューニングまで実践的に解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/bun-deploy-production/"><meta property="og:title" content="Bunで本番環境にデプロイする方法 — Docker・Fly.io・Render対応"><meta property="og:description" content="Bun 1.2+を本番環境にデプロイする完全ガイド。Dockerマルチステージビルド、Fly.io・Render・Railwayへのデプロイ手順、パフォーマンスチューニングまで実践的に解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/bun-deploy-production/"><meta name="twitter:title" content="Bunで本番環境にデプロイする方法 — Docker・Fly.io・Render対応"><meta name="twitter:description" content="Bun 1.2+を本番環境にデプロイする完全ガイド。Dockerマルチステージビルド、Fly.io・Render・Railwayへのデプロイ手順、パフォーマンスチューニングまで実践的に解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/bun-deploy-production/"},"headline":"Bunで本番環境にデプロイする方法 — Docker・Fly.io・Render対応","description":"Bun 1.2+を本番環境にデプロイする完全ガイド。Dockerマルチステージビルド、Fly.io・Render・Railwayへのデプロイ手順、パフォーマンスチューニングまで実践的に解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。","datePublished":"2026-02-05T00:00:00.000Z","dateModified":"2026-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Bun, デプロイ, Docker, Fly.io, Render, 本番環境"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Bunで本番環境にデプロイする方法 — Docker・Fly.io・Render対応"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-05T00:00:00.000Z"> Feb 4, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Bunで本番環境にデプロイする方法 — Docker・Fly.io・Render対応</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Bun" class="article-tag" data-astro-cid-bvzihdzo>
+#Bun </a><a href="/blog/tag/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4" class="article-tag" data-astro-cid-bvzihdzo>
+#デプロイ </a><a href="/blog/tag/Docker" class="article-tag" data-astro-cid-bvzihdzo>
+#Docker </a><a href="/blog/tag/Fly.io" class="article-tag" data-astro-cid-bvzihdzo>
+#Fly.io </a><a href="/blog/tag/Render" class="article-tag" data-astro-cid-bvzihdzo>
+#Render </a><a href="/blog/tag/%E6%9C%AC%E7%95%AA%E7%92%B0%E5%A2%83" class="article-tag" data-astro-cid-bvzihdzo>
+#本番環境 </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="bunとは">Bunとは</h2>
+<p>Bunは、JavaScriptとTypeScriptのための超高速なオールインワンランタイムです。Node.js、npm、Webpack、Babelなどの役割を単一のツールで担い、圧倒的なパフォーマンスを実現しています。</p>
+<p>2026年現在、Bun 1.2がリリースされ、本番環境での採用事例も増加しています。この記事では、Bunアプリケーションを本番環境にデプロイする方法を解説します。</p>
+<h3 id="bunの主な特徴">Bunの主な特徴</h3>
+<ul>
+<li>Node.jsの約3倍高速な起動時間</li>
+<li>npm installの約20倍高速なパッケージインストール</li>
+<li>ネイティブTypeScriptサポート</li>
+<li>Web標準APIの完全実装</li>
+<li>ビルドインのテストランナー</li>
+</ul>
+<h2 id="本番環境への準備">本番環境への準備</h2>
+<h3 id="プロジェクト構造">プロジェクト構造</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>my-app/</span></span>
+<span class="line"><span>├── src/</span></span>
+<span class="line"><span>│   ├── index.ts</span></span>
+<span class="line"><span>│   └── routes/</span></span>
+<span class="line"><span>├── public/</span></span>
+<span class="line"><span>├── package.json</span></span>
+<span class="line"><span>├── tsconfig.json</span></span>
+<span class="line"><span>├── Dockerfile</span></span>
+<span class="line"><span>└── .dockerignore</span></span></code></pre>
+<h3 id="packagejsonの設定">package.jsonの設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"my-bun-app"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "version"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1.0.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"module"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "scripts"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "dev"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"bun --watch src/index.ts"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "start"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"bun src/index.ts"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "build"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"bun build src/index.ts --outdir ./dist --target bun"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "test"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"bun test"</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "dependencies"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "@hono/node-server"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"^1.0.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "hono"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"^4.0.0"</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "devDependencies"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "@types/bun"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"latest"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="サンプルアプリケーション">サンプルアプリケーション</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/index.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Hono } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { serve } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@hono/node-server'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> app</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Hono</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ message: </span><span style="color:#9ECBFF">'Hello from Bun!'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/health'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ status: </span><span style="color:#9ECBFF">'ok'</span><span style="color:#E1E4E8">, timestamp: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() });</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> port</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> parseInt</span><span style="color:#E1E4E8">(process.env.</span><span style="color:#79B8FF">PORT</span><span style="color:#F97583"> ||</span><span style="color:#9ECBFF"> '3000'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Server is running on port ${</span><span style="color:#E1E4E8">port</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">serve</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  fetch: app.fetch,</span></span>
+<span class="line"><span style="color:#E1E4E8">  port,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h2 id="dockerでのデプロイ">Dockerでのデプロイ</h2>
+<h3 id="dockerfileの作成">Dockerfileの作成</h3>
+<p>マルチステージビルドを使った最適化されたDockerfile:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#6A737D"># ベースイメージ</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> oven/bun:1.2-slim </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> base</span></span>
+<span class="line"><span style="color:#F97583">WORKDIR</span><span style="color:#E1E4E8"> /app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 依存関係のインストール</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> base </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> deps</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package.json bun.lockb ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> bun install --frozen-lockfile --production</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 開発用依存関係のインストール</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> base </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> dev-deps</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> package.json bun.lockb ./</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> bun install --frozen-lockfile</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ビルド</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> base </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> builder</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=dev-deps /app/node_modules ./node_modules</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> . .</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> bun run build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 本番環境</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> base </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> production</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> NODE_ENV=production</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 必要なファイルのみコピー</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=deps /app/node_modules ./node_modules</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/dist ./dist</span></span>
+<span class="line"><span style="color:#F97583">COPY</span><span style="color:#E1E4E8"> --from=builder /app/package.json ./</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 非rootユーザーで実行</span></span>
+<span class="line"><span style="color:#F97583">RUN</span><span style="color:#E1E4E8"> addgroup --system --gid 1001 bunjs &#x26;&#x26; \</span></span>
+<span class="line"><span style="color:#E1E4E8">    adduser --system --uid 1001 bunjs</span></span>
+<span class="line"><span style="color:#F97583">USER</span><span style="color:#E1E4E8"> bunjs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">EXPOSE</span><span style="color:#E1E4E8"> 3000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CMD</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"bun"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"run"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"start"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<h3 id="dockerignoreの設定">.dockerignoreの設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>node_modules</span></span>
+<span class="line"><span>npm-debug.log</span></span>
+<span class="line"><span>.git</span></span>
+<span class="line"><span>.gitignore</span></span>
+<span class="line"><span>.env</span></span>
+<span class="line"><span>.env.local</span></span>
+<span class="line"><span>dist</span></span>
+<span class="line"><span>build</span></span>
+<span class="line"><span>*.md</span></span>
+<span class="line"><span>.vscode</span></span>
+<span class="line"><span>.idea</span></span></code></pre>
+<h3 id="dockerイメージのビルドと実行">Dockerイメージのビルドと実行</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># イメージのビルド</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> -t</span><span style="color:#9ECBFF"> my-bun-app</span><span style="color:#9ECBFF"> .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ローカルで実行</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> 3000:3000</span><span style="color:#9ECBFF"> my-bun-app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 環境変数を指定して実行</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> 3000:3000</span><span style="color:#79B8FF"> -e</span><span style="color:#9ECBFF"> PORT=</span><span style="color:#79B8FF">3000</span><span style="color:#9ECBFF"> my-bun-app</span></span></code></pre>
+<h2 id="flyioへのデプロイ">Fly.ioへのデプロイ</h2>
+<p>Fly.ioは、グローバルにアプリケーションをデプロイできるプラットフォームです。</p>
+<h3 id="flyioのセットアップ">Fly.ioのセットアップ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Fly.io CLIのインストール</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -L</span><span style="color:#9ECBFF"> https://fly.io/install.sh</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> sh</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ログイン</span></span>
+<span class="line"><span style="color:#B392F0">fly</span><span style="color:#9ECBFF"> auth</span><span style="color:#9ECBFF"> login</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># アプリの作成</span></span>
+<span class="line"><span style="color:#B392F0">fly</span><span style="color:#9ECBFF"> launch</span></span></code></pre>
+<h3 id="flytomlの設定">fly.tomlの設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="toml"><code><span class="line"><span style="color:#E1E4E8">app = </span><span style="color:#9ECBFF">"my-bun-app"</span></span>
+<span class="line"><span style="color:#E1E4E8">primary_region = </span><span style="color:#9ECBFF">"nrt"</span><span style="color:#6A737D">  # 東京リージョン</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">[</span><span style="color:#B392F0">build</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">  dockerfile = </span><span style="color:#9ECBFF">"Dockerfile"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">[</span><span style="color:#B392F0">env</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">  PORT = </span><span style="color:#9ECBFF">"3000"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">[</span><span style="color:#B392F0">http_service</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">  internal_port = </span><span style="color:#79B8FF">3000</span></span>
+<span class="line"><span style="color:#E1E4E8">  force_https = </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">  auto_stop_machines = </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">  auto_start_machines = </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">  min_machines_running = </span><span style="color:#79B8FF">0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">[[</span><span style="color:#B392F0">vm</span><span style="color:#E1E4E8">]]</span></span>
+<span class="line"><span style="color:#E1E4E8">  cpu_kind = </span><span style="color:#9ECBFF">"shared"</span></span>
+<span class="line"><span style="color:#E1E4E8">  cpus = </span><span style="color:#79B8FF">1</span></span>
+<span class="line"><span style="color:#E1E4E8">  memory_mb = </span><span style="color:#79B8FF">256</span></span></code></pre>
+<h3 id="デプロイコマンド">デプロイコマンド</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># デプロイ</span></span>
+<span class="line"><span style="color:#B392F0">fly</span><span style="color:#9ECBFF"> deploy</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ログの確認</span></span>
+<span class="line"><span style="color:#B392F0">fly</span><span style="color:#9ECBFF"> logs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># アプリの状態確認</span></span>
+<span class="line"><span style="color:#B392F0">fly</span><span style="color:#9ECBFF"> status</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># スケーリング</span></span>
+<span class="line"><span style="color:#B392F0">fly</span><span style="color:#9ECBFF"> scale</span><span style="color:#9ECBFF"> count</span><span style="color:#79B8FF"> 2</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># シークレットの設定</span></span>
+<span class="line"><span style="color:#B392F0">fly</span><span style="color:#9ECBFF"> secrets</span><span style="color:#9ECBFF"> set</span><span style="color:#9ECBFF"> DATABASE_URL=postgresql://...</span></span></code></pre>
+<h2 id="renderへのデプロイ">Renderへのデプロイ</h2>
+<p>Renderは、Herokuの代替として人気のあるPaaSです。</p>
+<h3 id="renderyamlの作成">render.yamlの作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">web</span></span>
+<span class="line"><span style="color:#85E89D">    name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">my-bun-app</span></span>
+<span class="line"><span style="color:#85E89D">    env</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">docker</span></span>
+<span class="line"><span style="color:#85E89D">    dockerfilePath</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">./Dockerfile</span></span>
+<span class="line"><span style="color:#85E89D">    region</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">oregon</span></span>
+<span class="line"><span style="color:#85E89D">    plan</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">starter</span></span>
+<span class="line"><span style="color:#85E89D">    branch</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">main</span></span>
+<span class="line"><span style="color:#85E89D">    healthCheckPath</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/health</span></span>
+<span class="line"><span style="color:#85E89D">    envVars</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">key</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">PORT</span></span>
+<span class="line"><span style="color:#85E89D">        value</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3000</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">key</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">NODE_ENV</span></span>
+<span class="line"><span style="color:#85E89D">        value</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">production</span></span></code></pre>
+<h3 id="renderでの設定手順">Renderでの設定手順</h3>
+<ol>
+<li>Renderダッシュボードで「New Web Service」を選択</li>
+<li>GitHubリポジトリを接続</li>
+<li>以下を設定:
+<ul>
+<li>Environment: Docker</li>
+<li>Branch: main</li>
+<li>Dockerfile Path: ./Dockerfile</li>
+</ul>
+</li>
+<li>Deploy</li>
+</ol>
+<h3 id="renderの無料プランの注意点">Renderの無料プランの注意点</h3>
+<p>無料プランでは、15分間リクエストがないとスリープ状態になります。ウォームアップ用のヘルスチェックを設定することで対策できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ヘルスチェックエンドポイント</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/health'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    status: </span><span style="color:#9ECBFF">'ok'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    uptime: process.</span><span style="color:#B392F0">uptime</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    timestamp: Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h2 id="railwayへのデプロイ">Railwayへのデプロイ</h2>
+<p>Railwayは、シンプルで使いやすいデプロイプラットフォームです。</p>
+<h3 id="デプロイ手順">デプロイ手順</h3>
+<ol>
+<li><a href="https://railway.app">Railway</a>にサインアップ</li>
+<li>GitHubリポジトリを接続</li>
+<li>自動的にDockerfileを検出してデプロイ</li>
+</ol>
+<h3 id="railwayjsonの作成オプション">railway.jsonの作成（オプション）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "$schema"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://railway.app/railway.schema.json"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "build"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "builder"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"DOCKERFILE"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "dockerfilePath"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Dockerfile"</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "deploy"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "startCommand"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"bun run start"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "restartPolicyType"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ON_FAILURE"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "restartPolicyMaxRetries"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="環境変数の管理">環境変数の管理</h2>
+<h3 id="envファイル">.envファイル</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># .env</span></span>
+<span class="line"><span style="color:#E1E4E8">PORT</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">3000</span></span>
+<span class="line"><span style="color:#E1E4E8">NODE_ENV</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">production</span></span>
+<span class="line"><span style="color:#E1E4E8">DATABASE_URL</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">postgresql://user:pass@host:5432/db</span></span>
+<span class="line"><span style="color:#E1E4E8">REDIS_URL</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">redis://localhost:6379</span></span>
+<span class="line"><span style="color:#E1E4E8">API_KEY</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">your-secret-key</span></span></code></pre>
+<h3 id="bunでの環境変数の読み込み">Bunでの環境変数の読み込み</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/config.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> config</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  port: </span><span style="color:#B392F0">parseInt</span><span style="color:#E1E4E8">(process.env.</span><span style="color:#79B8FF">PORT</span><span style="color:#F97583"> ||</span><span style="color:#9ECBFF"> '3000'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  nodeEnv: process.env.</span><span style="color:#79B8FF">NODE_ENV</span><span style="color:#F97583"> ||</span><span style="color:#9ECBFF"> 'development'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  databaseUrl: process.env.</span><span style="color:#79B8FF">DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  redisUrl: process.env.</span><span style="color:#79B8FF">REDIS_URL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  apiKey: process.env.</span><span style="color:#79B8FF">API_KEY</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// バリデーション</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">config.databaseUrl) {</span></span>
+<span class="line"><span style="color:#F97583">  throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'DATABASE_URL is required'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="パフォーマンスチューニング">パフォーマンスチューニング</h2>
+<h3 id="1-メモリ最適化">1. メモリ最適化</h3>
+<p>Bunは自動的にメモリを最適化しますが、環境変数で調整可能です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> BUN_JSC_forceRAMSize=1073741824  # 1GB</span></span>
+<span class="line"><span style="color:#F97583">ENV</span><span style="color:#E1E4E8"> BUN_JSC_useJIT=1</span></span></code></pre>
+<h3 id="2-http2の有効化">2. HTTP/2の有効化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { serve } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'bun'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">serve</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  port: </span><span style="color:#79B8FF">3000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">  fetch</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">req</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Hello World!'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#6A737D">  // HTTP/2を有効化</span></span>
+<span class="line"><span style="color:#E1E4E8">  tls: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    cert: Bun.</span><span style="color:#B392F0">file</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'./cert.pem'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    key: Bun.</span><span style="color:#B392F0">file</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'./key.pem'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="3-静的ファイルの最適化">3. 静的ファイルの最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Hono } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { serveStatic } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono/bun'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> app</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Hono</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 静的ファイルの配信</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/static/*'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">serveStatic</span><span style="color:#E1E4E8">({ root: </span><span style="color:#9ECBFF">'./public'</span><span style="color:#E1E4E8"> }));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// キャッシュヘッダーの設定</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/static/*'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">next</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> next</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  c.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Cache-Control'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'public, max-age=31536000, immutable'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="4-データベース接続プール">4. データベース接続プール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Pool } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'pg'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> pool</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Pool</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  connectionString: process.env.</span><span style="color:#79B8FF">DATABASE_URL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  max: </span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D">// 最大接続数</span></span>
+<span class="line"><span style="color:#E1E4E8">  idleTimeoutMillis: </span><span style="color:#79B8FF">30000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  connectionTimeoutMillis: </span><span style="color:#79B8FF">2000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 接続の再利用</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> query</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">text</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">params</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">[]) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> client</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> pool.</span><span style="color:#B392F0">connect</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">(text, params);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">finally</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    client.</span><span style="color:#B392F0">release</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="モニタリングとロギング">モニタリングとロギング</h2>
+<h3 id="構造化ログ">構造化ログ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/logger.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { </span><span style="color:#F97583">type</span><span style="color:#E1E4E8"> Context } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> logger</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">c</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Context</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">message</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">meta</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> log</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    timestamp: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    level: </span><span style="color:#9ECBFF">'info'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    message,</span></span>
+<span class="line"><span style="color:#E1E4E8">    path: c.req.path,</span></span>
+<span class="line"><span style="color:#E1E4E8">    method: c.req.method,</span></span>
+<span class="line"><span style="color:#F97583">    ...</span><span style="color:#E1E4E8">meta,</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(log));</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="エラートラッキング">エラートラッキング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">onError</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    timestamp: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    level: </span><span style="color:#9ECBFF">'error'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    error: err.message,</span></span>
+<span class="line"><span style="color:#E1E4E8">    stack: err.stack,</span></span>
+<span class="line"><span style="color:#E1E4E8">    path: c.req.path,</span></span>
+<span class="line"><span style="color:#E1E4E8">    method: c.req.method,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Internal Server Error'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h2 id="cicdパイプライン">CI/CDパイプライン</h2>
+<h3 id="github-actionsの設定">GitHub Actionsの設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># .github/workflows/deploy.yml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Deploy</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  push</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">main</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  deploy</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">oven-sh/setup-bun@v1</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          bun-version</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1.2</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Install dependencies</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">bun install</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Run tests</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">bun test</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Build Docker image</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">docker build -t my-app .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Deploy to Fly.io</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">superfly/flyctl-actions@1.5</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          args</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">deploy</span></span>
+<span class="line"><span style="color:#85E89D">        env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          FLY_API_TOKEN</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.FLY_API_TOKEN }}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Bunは本番環境でも十分に使える成熟したランタイムになっています。特に以下の点で優れています。</p>
+<ul>
+<li>高速な起動時間とパフォーマンス</li>
+<li>シンプルなデプロイプロセス</li>
+<li>Node.jsとの互換性</li>
+<li>小さなDockerイメージサイズ</li>
+</ul>
+<p>まずは小規模なプロジェクトで試し、パフォーマンスとデプロイの簡単さを実感してみることをお勧めします。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

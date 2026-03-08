@@ -1,0 +1,545 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/caddy-reverse-proxy-guide/"><!-- Primary Meta Tags --><title>Caddy v2リバースプロキシ詳解ガイド</title><meta name="title" content="Caddy v2リバースプロキシ詳解ガイド"><meta name="description" content="Caddy v2を使ったリバースプロキシの実践的な設定方法。自動HTTPS、ロードバランシング、WebSocket対応、ヘッダー操作、キャッシュ戦略、セキュリティ設定を詳しく解説します。Caddy・リバースプロキシ・HTTPSに関する実践情報。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/caddy-reverse-proxy-guide/"><meta property="og:title" content="Caddy v2リバースプロキシ詳解ガイド"><meta property="og:description" content="Caddy v2を使ったリバースプロキシの実践的な設定方法。自動HTTPS、ロードバランシング、WebSocket対応、ヘッダー操作、キャッシュ戦略、セキュリティ設定を詳しく解説します。Caddy・リバースプロキシ・HTTPSに関する実践情報。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/caddy-reverse-proxy-guide/"><meta name="twitter:title" content="Caddy v2リバースプロキシ詳解ガイド"><meta name="twitter:description" content="Caddy v2を使ったリバースプロキシの実践的な設定方法。自動HTTPS、ロードバランシング、WebSocket対応、ヘッダー操作、キャッシュ戦略、セキュリティ設定を詳しく解説します。Caddy・リバースプロキシ・HTTPSに関する実践情報。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/caddy-reverse-proxy-guide/"},"headline":"Caddy v2リバースプロキシ詳解ガイド","description":"Caddy v2を使ったリバースプロキシの実践的な設定方法。自動HTTPS、ロードバランシング、WebSocket対応、ヘッダー操作、キャッシュ戦略、セキュリティ設定を詳しく解説します。Caddy・リバースプロキシ・HTTPSに関する実践情報。","datePublished":"2026-02-06T00:00:00.000Z","dateModified":"2026-02-06T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Caddy, リバースプロキシ, HTTPS, WebSocket, インフラ"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Caddy v2リバースプロキシ詳解ガイド"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-06T00:00:00.000Z"> Feb 5, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Caddy v2リバースプロキシ詳解ガイド</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Caddy" class="article-tag" data-astro-cid-bvzihdzo>
+#Caddy </a><a href="/blog/tag/%E3%83%AA%E3%83%90%E3%83%BC%E3%82%B9%E3%83%97%E3%83%AD%E3%82%AD%E3%82%B7" class="article-tag" data-astro-cid-bvzihdzo>
+#リバースプロキシ </a><a href="/blog/tag/HTTPS" class="article-tag" data-astro-cid-bvzihdzo>
+#HTTPS </a><a href="/blog/tag/WebSocket" class="article-tag" data-astro-cid-bvzihdzo>
+#WebSocket </a><a href="/blog/tag/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#インフラ </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>リバースプロキシは、モダンなWebアプリケーションのインフラにおいて不可欠なコンポーネントです。NginxやApacheが長年使われてきましたが、Caddyは自動HTTPS、シンプルな設定、モダンなアーキテクチャにより、急速に人気を集めています。</p>
+<p>この記事では、Caddy v2を使ったリバースプロキシの設定方法を、基本から応用まで詳しく解説します。</p>
+<h2 id="caddyの強み">Caddyの強み</h2>
+<h3 id="自動https">自動HTTPS</h3>
+<p>Caddyの最大の特徴は、Let’s Encryptを使った自動HTTPS取得・更新です。設定ファイルにドメイン名を書くだけで、証明書の取得、設定、自動更新がすべて自動化されます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>これだけで完全なHTTPS対応サイトが完成します。</p>
+<h3 id="シンプルな設定">シンプルな設定</h3>
+<p>Nginxと比較してみましょう。</p>
+<p><strong>Nginx</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="nginx"><code><span class="line"><span style="color:#F97583">server</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    listen </span><span style="color:#79B8FF">80</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    server_name </span><span style="color:#E1E4E8">example.com;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> 301</span><span style="color:#E1E4E8"> https://$server_name$request_uri;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">server</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    listen </span><span style="color:#79B8FF">443</span><span style="color:#E1E4E8"> ssl http2;</span></span>
+<span class="line"><span style="color:#F97583">    server_name </span><span style="color:#E1E4E8">example.com;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    ssl_certificate </span><span style="color:#E1E4E8">/etc/letsencrypt/live/example.com/fullchain.pem;</span></span>
+<span class="line"><span style="color:#F97583">    ssl_certificate_key </span><span style="color:#E1E4E8">/etc/letsencrypt/live/example.com/privkey.pem;</span></span>
+<span class="line"><span style="color:#F97583">    ssl_protocols </span><span style="color:#E1E4E8">TLSv1.2 TLSv1.3;</span></span>
+<span class="line"><span style="color:#F97583">    ssl_ciphers </span><span style="color:#E1E4E8">HIGH:!aNULL:!MD5;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    location</span><span style="color:#B392F0"> / </span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#F97583">        proxy_pass </span><span style="color:#E1E4E8">http://localhost:3000;</span></span>
+<span class="line"><span style="color:#F97583">        proxy_set_header </span><span style="color:#E1E4E8">Host $host;</span></span>
+<span class="line"><span style="color:#F97583">        proxy_set_header </span><span style="color:#E1E4E8">X-Real-IP $remote_addr;</span></span>
+<span class="line"><span style="color:#F97583">        proxy_set_header </span><span style="color:#E1E4E8">X-Forwarded-For $proxy_add_x_forwarded_for;</span></span>
+<span class="line"><span style="color:#F97583">        proxy_set_header </span><span style="color:#E1E4E8">X-Forwarded-Proto $scheme;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>Caddy</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>Caddyは必要な設定を自動的に行うため、設定ファイルが驚くほどシンプルになります。</p>
+<h2 id="基本設定">基本設定</h2>
+<h3 id="単一バックエンド">単一バックエンド</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    # 基本的なリバースプロキシ</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="複数ドメイン">複数ドメイン</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>api.example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:4000</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>admin.example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:5000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="パスベースルーティング">パスベースルーティング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    # /api へのリクエストはバックエンドAPI</span></span>
+<span class="line"><span>    reverse_proxy /api/* localhost:4000</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # /admin へのリクエストは管理画面</span></span>
+<span class="line"><span>    reverse_proxy /admin/* localhost:5000</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # その他はフロントエンド</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="ヘッダー操作">ヘッダー操作</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000 {</span></span>
+<span class="line"><span>        # カスタムヘッダーを追加</span></span>
+<span class="line"><span>        header_up X-Custom-Header "CustomValue"</span></span>
+<span class="line"><span>        header_up X-Request-ID {http.request.uuid}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        # Hostヘッダーを保持</span></span>
+<span class="line"><span>        header_up Host {host}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        # Real IPを転送</span></span>
+<span class="line"><span>        header_up X-Real-IP {remote_host}</span></span>
+<span class="line"><span>        header_up X-Forwarded-For {remote_host}</span></span>
+<span class="line"><span>        header_up X-Forwarded-Proto {scheme}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        # レスポンスヘッダーを削除</span></span>
+<span class="line"><span>        header_down -Server</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        # セキュリティヘッダーを追加</span></span>
+<span class="line"><span>        header_down X-Content-Type-Options "nosniff"</span></span>
+<span class="line"><span>        header_down X-Frame-Options "DENY"</span></span>
+<span class="line"><span>        header_down X-XSS-Protection "1; mode=block"</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="ロードバランシング">ロードバランシング</h2>
+<h3 id="ラウンドロビンデフォルト">ラウンドロビン（デフォルト）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000 localhost:3001 localhost:3002</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="ランダム選択">ランダム選択</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000 localhost:3001 localhost:3002 {</span></span>
+<span class="line"><span>        lb_policy random</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="最少接続数">最少接続数</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000 localhost:3001 localhost:3002 {</span></span>
+<span class="line"><span>        lb_policy least_conn</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="ipハッシュセッション維持">IPハッシュ（セッション維持）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000 localhost:3001 localhost:3002 {</span></span>
+<span class="line"><span>        lb_policy ip_hash</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="ヘルスチェック">ヘルスチェック</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000 localhost:3001 localhost:3002 {</span></span>
+<span class="line"><span>        # ヘルスチェック設定</span></span>
+<span class="line"><span>        health_uri /health</span></span>
+<span class="line"><span>        health_interval 10s</span></span>
+<span class="line"><span>        health_timeout 5s</span></span>
+<span class="line"><span>        health_status 200</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        # 失敗したバックエンドの再試行</span></span>
+<span class="line"><span>        lb_try_duration 5s</span></span>
+<span class="line"><span>        lb_try_interval 500ms</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        # パッシブヘルスチェック</span></span>
+<span class="line"><span>        fail_duration 30s</span></span>
+<span class="line"><span>        max_fails 3</span></span>
+<span class="line"><span>        unhealthy_status 500 502 503</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="重み付けロードバランシング">重み付けロードバランシング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy {</span></span>
+<span class="line"><span>        # サーバー1: 50%のトラフィック</span></span>
+<span class="line"><span>        to localhost:3000 {</span></span>
+<span class="line"><span>            weight 50</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>        # サーバー2: 30%のトラフィック</span></span>
+<span class="line"><span>        to localhost:3001 {</span></span>
+<span class="line"><span>            weight 30</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>        # サーバー3: 20%のトラフィック</span></span>
+<span class="line"><span>        to localhost:3002 {</span></span>
+<span class="line"><span>            weight 20</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        lb_policy weighted</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="websocket対応">WebSocket対応</h2>
+<h3 id="基本websocket">基本WebSocket</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy /ws localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>CaddyはWebSocketを自動的に検出し、適切に処理します。</p>
+<h3 id="websocket--http">WebSocket + HTTP</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    # WebSocketエンドポイント</span></span>
+<span class="line"><span>    reverse_proxy /ws localhost:3000</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # 通常のHTTPリクエスト</span></span>
+<span class="line"><span>    reverse_proxy localhost:8080</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="タイムアウト設定">タイムアウト設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy /ws localhost:3000 {</span></span>
+<span class="line"><span>        # WebSocketのタイムアウトを延長</span></span>
+<span class="line"><span>        transport http {</span></span>
+<span class="line"><span>            read_timeout 24h</span></span>
+<span class="line"><span>            write_timeout 24h</span></span>
+<span class="line"><span>            dial_timeout 10s</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="セキュリティ設定">セキュリティ設定</h2>
+<h3 id="基本認証">基本認証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    basicauth /admin/* {</span></span>
+<span class="line"><span>        # ユーザー名: admin, パスワード: password</span></span>
+<span class="line"><span>        admin $2a$14$Zkx19XLiW6VYouLHR5NmfOFU0z2GTNmpkT/5qqR7hx7wHnxJhJUFS</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>パスワードハッシュは以下のコマンドで生成します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">caddy</span><span style="color:#9ECBFF"> hash-password</span><span style="color:#79B8FF"> --plaintext</span><span style="color:#9ECBFF"> 'password'</span></span></code></pre>
+<h3 id="ip制限">IP制限</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    # 許可するIP</span></span>
+<span class="line"><span>    @allowed {</span></span>
+<span class="line"><span>        remote_ip 192.168.1.0/24 10.0.0.0/8</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # 許可されていないIPは403</span></span>
+<span class="line"><span>    respond @allowed 403</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    reverse_proxy @allowed localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="レート制限">レート制限</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    # rate_limit モジュール（プラグイン）</span></span>
+<span class="line"><span>    rate_limit {</span></span>
+<span class="line"><span>        zone dynamic {</span></span>
+<span class="line"><span>            key {remote_host}</span></span>
+<span class="line"><span>            events 100</span></span>
+<span class="line"><span>            window 1m</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="cors設定">CORS設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    @cors_preflight {</span></span>
+<span class="line"><span>        method OPTIONS</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    header {</span></span>
+<span class="line"><span>        Access-Control-Allow-Origin "https://frontend.example.com"</span></span>
+<span class="line"><span>        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"</span></span>
+<span class="line"><span>        Access-Control-Allow-Headers "Content-Type, Authorization"</span></span>
+<span class="line"><span>        Access-Control-Max-Age "3600"</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    respond @cors_preflight 204</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    reverse_proxy localhost:4000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="高度な設定">高度な設定</h2>
+<h3 id="abテスト">A/Bテスト</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    @version_a {</span></span>
+<span class="line"><span>        header Cookie *version=a*</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    @version_b {</span></span>
+<span class="line"><span>        header Cookie *version=b*</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    reverse_proxy @version_a localhost:3000</span></span>
+<span class="line"><span>    reverse_proxy @version_b localhost:3001</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # デフォルトはバージョンA</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="カナリアデプロイ">カナリアデプロイ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    @canary {</span></span>
+<span class="line"><span>        # 10%のトラフィックを新バージョンに</span></span>
+<span class="line"><span>        expression {rand()} &#x3C; 0.1</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    reverse_proxy @canary localhost:3001</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="ブルーグリーンデプロイ">ブルーグリーンデプロイ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    @blue {</span></span>
+<span class="line"><span>        header X-Deployment "blue"</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    @green {</span></span>
+<span class="line"><span>        header X-Deployment "green"</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    reverse_proxy @blue localhost:3000</span></span>
+<span class="line"><span>    reverse_proxy @green localhost:3001</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # デフォルトは現在アクティブな環境</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="ファイルアップロード">ファイルアップロード</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000 {</span></span>
+<span class="line"><span>        # 大きいファイルのアップロードを許可</span></span>
+<span class="line"><span>        request_buffers 16KB</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        # タイムアウトを延長</span></span>
+<span class="line"><span>        transport http {</span></span>
+<span class="line"><span>            read_timeout 5m</span></span>
+<span class="line"><span>            write_timeout 5m</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # 最大ボディサイズ</span></span>
+<span class="line"><span>    request_body {</span></span>
+<span class="line"><span>        max_size 100MB</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="静的ファイルとリバースプロキシの組み合わせ">静的ファイルとリバースプロキシの組み合わせ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    # 静的ファイルを直接配信</span></span>
+<span class="line"><span>    root * /var/www/html</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # /api へのリクエストはバックエンド</span></span>
+<span class="line"><span>    reverse_proxy /api/* localhost:4000</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # その他は静的ファイル、なければバックエンド</span></span>
+<span class="line"><span>    try_files {path} /index.html</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="キャッシュ">キャッシュ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000 {</span></span>
+<span class="line"><span>        # キャッシュヘッダーを設定</span></span>
+<span class="line"><span>        header_down Cache-Control "public, max-age=3600"</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # 静的アセットは長期キャッシュ</span></span>
+<span class="line"><span>    @static {</span></span>
+<span class="line"><span>        path *.js *.css *.png *.jpg *.svg</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    header @static Cache-Control "public, max-age=31536000, immutable"</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="gzip圧縮">gzip圧縮</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    # 自動圧縮（デフォルトで有効）</span></span>
+<span class="line"><span>    encode gzip zstd</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="http2-server-push">HTTP/2 Server Push</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # HTTP/2 Server Push</span></span>
+<span class="line"><span>    push /style.css</span></span>
+<span class="line"><span>    push /script.js</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="ログとモニタリング">ログとモニタリング</h2>
+<h3 id="アクセスログ">アクセスログ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    log {</span></span>
+<span class="line"><span>        output file /var/log/caddy/access.log</span></span>
+<span class="line"><span>        format json</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="構造化ログ">構造化ログ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>{</span></span>
+<span class="line"><span>    log {</span></span>
+<span class="line"><span>        format json</span></span>
+<span class="line"><span>        output file /var/log/caddy/caddy.log {</span></span>
+<span class="line"><span>            roll_size 100MB</span></span>
+<span class="line"><span>            roll_keep 10</span></span>
+<span class="line"><span>            roll_keep_days 90</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>example.com {</span></span>
+<span class="line"><span>    log {</span></span>
+<span class="line"><span>        output file /var/log/caddy/example.log</span></span>
+<span class="line"><span>        format filter {</span></span>
+<span class="line"><span>            wrap json</span></span>
+<span class="line"><span>            fields {</span></span>
+<span class="line"><span>                request>headers>Authorization delete</span></span>
+<span class="line"><span>                request>headers>Cookie delete</span></span>
+<span class="line"><span>            }</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="prometheusメトリクス">Prometheusメトリクス</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>{</span></span>
+<span class="line"><span>    servers {</span></span>
+<span class="line"><span>        metrics</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>:2019 {</span></span>
+<span class="line"><span>    metrics /metrics</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="実践的な設定例">実践的な設定例</h2>
+<h3 id="nextjsアプリケーション">Next.jsアプリケーション</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    # Next.jsの静的アセット</span></span>
+<span class="line"><span>    @static {</span></span>
+<span class="line"><span>        path /_next/static/*</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    header @static Cache-Control "public, max-age=31536000, immutable"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # Next.jsのAPIルート</span></span>
+<span class="line"><span>    reverse_proxy /api/* localhost:3000</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # その他のリクエスト</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000 {</span></span>
+<span class="line"><span>        header_up X-Forwarded-Host {host}</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    encode gzip</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="マイクロサービスアーキテクチャ">マイクロサービスアーキテクチャ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>example.com {</span></span>
+<span class="line"><span>    # 認証サービス</span></span>
+<span class="line"><span>    reverse_proxy /auth/* localhost:4001</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # ユーザーサービス</span></span>
+<span class="line"><span>    reverse_proxy /users/* localhost:4002</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # 商品サービス</span></span>
+<span class="line"><span>    reverse_proxy /products/* localhost:4003</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # 注文サービス</span></span>
+<span class="line"><span>    reverse_proxy /orders/* localhost:4004</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # フロントエンド</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="docker環境">Docker環境</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>{</span></span>
+<span class="line"><span>    email admin@example.com</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>app.example.com {</span></span>
+<span class="line"><span>    reverse_proxy app:3000</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>api.example.com {</span></span>
+<span class="line"><span>    reverse_proxy api:4000</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>db.example.com {</span></span>
+<span class="line"><span>    reverse_proxy db:5432</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>docker-compose.yml:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.8'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">services</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  caddy</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">caddy:2-alpine</span></span>
+<span class="line"><span style="color:#85E89D">    ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"80:80"</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">"443:443"</span></span>
+<span class="line"><span style="color:#85E89D">    volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">./Caddyfile:/etc/caddy/Caddyfile</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">caddy_data:/data</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">caddy_config:/config</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">web</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  app</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    build</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">./app</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">web</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  api</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    build</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">./api</span></span>
+<span class="line"><span style="color:#85E89D">    networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">web</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">volumes</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  caddy_data</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  caddy_config</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">networks</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  web</span><span style="color:#E1E4E8">:</span></span></code></pre>
+<h2 id="デバッグとトラブルシューティング">デバッグとトラブルシューティング</h2>
+<h3 id="デバッグモード">デバッグモード</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 設定ファイルの検証</span></span>
+<span class="line"><span style="color:#B392F0">caddy</span><span style="color:#9ECBFF"> validate</span><span style="color:#79B8FF"> --config</span><span style="color:#9ECBFF"> Caddyfile</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># デバッグログを有効にして起動</span></span>
+<span class="line"><span style="color:#B392F0">caddy</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> --config</span><span style="color:#9ECBFF"> Caddyfile</span><span style="color:#79B8FF"> --debug</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 設定をJSON形式で表示</span></span>
+<span class="line"><span style="color:#B392F0">caddy</span><span style="color:#9ECBFF"> adapt</span><span style="color:#79B8FF"> --config</span><span style="color:#9ECBFF"> Caddyfile</span><span style="color:#79B8FF"> --pretty</span></span></code></pre>
+<h3 id="接続テスト">接続テスト</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># HTTPSが正しく設定されているか確認</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -I</span><span style="color:#9ECBFF"> https://example.com</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># WebSocketのテスト</span></span>
+<span class="line"><span style="color:#B392F0">websocat</span><span style="color:#9ECBFF"> wss://example.com/ws</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ヘッダーの確認</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -I</span><span style="color:#9ECBFF"> https://example.com</span><span style="color:#79B8FF"> -H</span><span style="color:#9ECBFF"> "X-Custom-Header: test"</span></span></code></pre>
+<h3 id="パフォーマンス最適化">パフォーマンス最適化</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>{</span></span>
+<span class="line"><span>    # グローバル設定</span></span>
+<span class="line"><span>    servers {</span></span>
+<span class="line"><span>        protocol {</span></span>
+<span class="line"><span>            # HTTP/3を有効化</span></span>
+<span class="line"><span>            experimental_http3</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        # タイムアウト設定</span></span>
+<span class="line"><span>        timeouts {</span></span>
+<span class="line"><span>            read_body 10s</span></span>
+<span class="line"><span>            read_header 10s</span></span>
+<span class="line"><span>            write 30s</span></span>
+<span class="line"><span>            idle 2m</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        # 最大ヘッダーサイズ</span></span>
+<span class="line"><span>        max_header_size 16KB</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>example.com {</span></span>
+<span class="line"><span>    reverse_proxy localhost:3000 {</span></span>
+<span class="line"><span>        # コネクションプール</span></span>
+<span class="line"><span>        transport http {</span></span>
+<span class="line"><span>            max_conns_per_host 100</span></span>
+<span class="line"><span>            keep_alive 90s</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Caddy v2を使えば、以下のような機能を簡単に実装できます。</p>
+<ul>
+<li><strong>自動HTTPS</strong>: 証明書の取得・更新が完全自動</li>
+<li><strong>ロードバランシング</strong>: ラウンドロビン、最少接続、IPハッシュ</li>
+<li><strong>WebSocket</strong>: 自動検出と適切な処理</li>
+<li><strong>セキュリティ</strong>: 基本認証、IP制限、CORS</li>
+<li><strong>高度なルーティング</strong>: A/Bテスト、カナリアデプロイ</li>
+<li><strong>監視</strong>: 構造化ログ、Prometheusメトリクス</li>
+</ul>
+<p>シンプルな設定ファイル、自動HTTPS、モダンなアーキテクチャにより、Caddyは次世代のリバースプロキシとして最適な選択肢です。NginxやApacheからの移行も容易で、すぐに本番環境で使い始められます。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

@@ -1,0 +1,789 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/hono-cloudflare-guide/"><!-- Primary Meta Tags --><title>Hono + Cloudflare Workers実践ガイド — エッジで動く超高速API</title><meta name="title" content="Hono + Cloudflare Workers実践ガイド — エッジで動く超高速API"><meta name="description" content="HonoとCloudflare Workersで構築する実践的なWebアプリケーション。D1/KV/R2連携、認証、ミドルウェア、デプロイまで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/hono-cloudflare-guide/"><meta property="og:title" content="Hono + Cloudflare Workers実践ガイド — エッジで動く超高速API"><meta property="og:description" content="HonoとCloudflare Workersで構築する実践的なWebアプリケーション。D1/KV/R2連携、認証、ミドルウェア、デプロイまで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/hono-cloudflare-guide/"><meta name="twitter:title" content="Hono + Cloudflare Workers実践ガイド — エッジで動く超高速API"><meta name="twitter:description" content="HonoとCloudflare Workersで構築する実践的なWebアプリケーション。D1/KV/R2連携、認証、ミドルウェア、デプロイまで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/hono-cloudflare-guide/"},"headline":"Hono + Cloudflare Workers実践ガイド — エッジで動く超高速API","description":"HonoとCloudflare Workersで構築する実践的なWebアプリケーション。D1/KV/R2連携、認証、ミドルウェア、デプロイまで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。","datePublished":"2026-02-05T08:00:00.000Z","dateModified":"2026-02-05T08:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Hono, Cloudflare Workers, D1, KV, Edge Computing, TypeScript"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Hono + Cloudflare Workers実践ガイド — エッジで動く超高速API"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-05T08:00:00.000Z"> Feb 5, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Hono + Cloudflare Workers実践ガイド — エッジで動く超高速API</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Hono" class="article-tag" data-astro-cid-bvzihdzo>
+#Hono </a><a href="/blog/tag/Cloudflare%20Workers" class="article-tag" data-astro-cid-bvzihdzo>
+#Cloudflare Workers </a><a href="/blog/tag/D1" class="article-tag" data-astro-cid-bvzihdzo>
+#D1 </a><a href="/blog/tag/KV" class="article-tag" data-astro-cid-bvzihdzo>
+#KV </a><a href="/blog/tag/Edge%20Computing" class="article-tag" data-astro-cid-bvzihdzo>
+#Edge Computing </a><a href="/blog/tag/TypeScript" class="article-tag" data-astro-cid-bvzihdzo>
+#TypeScript </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="hono--cloudflare-workersとは">Hono + Cloudflare Workersとは</h2>
+<p>Honoは超軽量・超高速なTypeScript Webフレームワークで、Cloudflare Workersでのパフォーマンスは圧倒的です。</p>
+<h3 id="なぜhono--cloudflare-workersなのか">なぜHono + Cloudflare Workersなのか</h3>
+<ul>
+<li><strong>超高速</strong>: エッジで処理、レイテンシ10ms以下</li>
+<li><strong>スケーラブル</strong>: 自動スケーリング、設定不要</li>
+<li><strong>低コスト</strong>: 無料枠で月間10万リクエスト</li>
+<li><strong>型安全</strong>: TypeScriptファーストで完全な型推論</li>
+<li><strong>グローバル</strong>: 世界200拠点以上で配信</li>
+</ul>
+<p>2026年現在、エッジコンピューティングの最有力スタックの一つです。</p>
+<h2 id="プロジェクトセットアップ">プロジェクトセットアップ</h2>
+<h3 id="新規プロジェクト作成">新規プロジェクト作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> hono@latest</span><span style="color:#9ECBFF"> my-edge-app</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> my-edge-app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># テンプレート選択で "cloudflare-workers" を選ぶ</span></span></code></pre>
+<h3 id="手動セットアップ">手動セットアップ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">mkdir</span><span style="color:#9ECBFF"> my-edge-app</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> my-edge-app</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> init</span><span style="color:#79B8FF"> -y</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> hono</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -D</span><span style="color:#9ECBFF"> wrangler</span></span></code></pre>
+<p><code>wrangler.toml</code>を作成:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="toml"><code><span class="line"><span style="color:#E1E4E8">name = </span><span style="color:#9ECBFF">"my-edge-app"</span></span>
+<span class="line"><span style="color:#E1E4E8">main = </span><span style="color:#9ECBFF">"src/index.ts"</span></span>
+<span class="line"><span style="color:#E1E4E8">compatibility_date = </span><span style="color:#9ECBFF">"2026-02-05"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">[</span><span style="color:#B392F0">observability</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">enabled = </span><span style="color:#79B8FF">true</span></span></code></pre>
+<h3 id="typescript設定">TypeScript設定</h3>
+<p><code>tsconfig.json</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "compilerOptions"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "target"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ES2021"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "module"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ESNext"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "lib"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"ES2021"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">    "moduleResolution"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"bundler"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "types"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"@cloudflare/workers-types"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">    "jsx"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"react-jsx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "jsxImportSource"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"hono/jsx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "strict"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "skipLibCheck"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>インストール:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -D</span><span style="color:#9ECBFF"> @cloudflare/workers-types</span></span></code></pre>
+<h2 id="基本的なapi作成">基本的なAPI作成</h2>
+<h3 id="hello-world">Hello World</h3>
+<p><code>src/index.ts</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Hono } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> app</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Hono</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    message: </span><span style="color:#9ECBFF">'Hello from Cloudflare Workers!'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    timestamp: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    location: c.req.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'cf-ray'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> app</span></span></code></pre>
+<h3 id="ローカル開発">ローカル開発</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> dev</span></span>
+<span class="line"><span style="color:#6A737D"># または</span></span>
+<span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> wrangler</span><span style="color:#9ECBFF"> dev</span></span></code></pre>
+<p><a href="http://localhost:8787">http://localhost:8787</a> でアクセス可能。</p>
+<h3 id="デプロイ">デプロイ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> wrangler</span><span style="color:#9ECBFF"> deploy</span></span></code></pre>
+<p>デプロイ後、<code>https://my-edge-app.workers.dev</code>でアクセスできます。</p>
+<h2 id="cloudflare-d1sqlite連携">Cloudflare D1（SQLite）連携</h2>
+<h3 id="d1データベース作成">D1データベース作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> wrangler</span><span style="color:#9ECBFF"> d1</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> my-database</span></span></code></pre>
+<p><code>wrangler.toml</code>に追加:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="toml"><code><span class="line"><span style="color:#E1E4E8">[[</span><span style="color:#B392F0">d1_databases</span><span style="color:#E1E4E8">]]</span></span>
+<span class="line"><span style="color:#E1E4E8">binding = </span><span style="color:#9ECBFF">"DB"</span></span>
+<span class="line"><span style="color:#E1E4E8">database_name = </span><span style="color:#9ECBFF">"my-database"</span></span>
+<span class="line"><span style="color:#E1E4E8">database_id = </span><span style="color:#9ECBFF">"xxx-xxx-xxx"</span><span style="color:#6A737D">  # 出力されたID</span></span></code></pre>
+<h3 id="テーブル作成">テーブル作成</h3>
+<p><code>schema.sql</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> users</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">INTEGER</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8"> AUTOINCREMENT,</span></span>
+<span class="line"><span style="color:#F97583">  name</span><span style="color:#F97583"> TEXT</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  email </span><span style="color:#F97583">TEXT</span><span style="color:#F97583"> UNIQUE</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  created_at </span><span style="color:#F97583">DATETIME</span><span style="color:#F97583"> DEFAULT</span><span style="color:#E1E4E8"> CURRENT_TIMESTAMP</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> TABLE</span><span style="color:#B392F0"> posts</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  id </span><span style="color:#F97583">INTEGER</span><span style="color:#F97583"> PRIMARY KEY</span><span style="color:#E1E4E8"> AUTOINCREMENT,</span></span>
+<span class="line"><span style="color:#E1E4E8">  user_id </span><span style="color:#F97583">INTEGER</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  title </span><span style="color:#F97583">TEXT</span><span style="color:#F97583"> NOT NULL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  content </span><span style="color:#F97583">TEXT</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  created_at </span><span style="color:#F97583">DATETIME</span><span style="color:#F97583"> DEFAULT</span><span style="color:#E1E4E8"> CURRENT_TIMESTAMP,</span></span>
+<span class="line"><span style="color:#F97583">  FOREIGN KEY</span><span style="color:#E1E4E8"> (user_id) </span><span style="color:#F97583">REFERENCES</span><span style="color:#E1E4E8"> users(id)</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">CREATE</span><span style="color:#F97583"> INDEX</span><span style="color:#B392F0"> idx_posts_user_id</span><span style="color:#F97583"> ON</span><span style="color:#E1E4E8"> posts(user_id);</span></span></code></pre>
+<p>実行:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> wrangler</span><span style="color:#9ECBFF"> d1</span><span style="color:#9ECBFF"> execute</span><span style="color:#9ECBFF"> my-database</span><span style="color:#79B8FF"> --file=./schema.sql</span></span></code></pre>
+<h3 id="hono--d1実装">Hono + D1実装</h3>
+<p>型定義:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Hono } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Bindings</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  DB</span><span style="color:#F97583">:</span><span style="color:#B392F0"> D1Database</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> app</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Hono</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">Bindings</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Bindings</span><span style="color:#E1E4E8"> }>()</span></span></code></pre>
+<p>CRUD操作:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// ユーザー一覧取得</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/users'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">results</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'SELECT id, name, email, created_at FROM users ORDER BY created_at DESC'</span></span>
+<span class="line"><span style="color:#E1E4E8">  ).</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(results)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザー詳細取得</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/users/:id'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> id</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">param</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'id'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'SELECT * FROM users WHERE id = ?'</span></span>
+<span class="line"><span style="color:#E1E4E8">  ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(id).</span><span style="color:#B392F0">first</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">user) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'User not found'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(user)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザー作成</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/users'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">name</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">email</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">      'INSERT INTO users (name, email) VALUES (?, ?)'</span></span>
+<span class="line"><span style="color:#E1E4E8">    ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(name, email).</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      id: result.meta.last_row_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">      name,</span></span>
+<span class="line"><span style="color:#E1E4E8">      email</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, </span><span style="color:#79B8FF">201</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Email already exists'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">400</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザー更新</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/users/:id'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> id</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">param</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'id'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">name</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">email</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'UPDATE users SET name = ?, email = ? WHERE id = ?'</span></span>
+<span class="line"><span style="color:#E1E4E8">  ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(name, email, id).</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (result.meta.changes </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'User not found'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザー削除</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/users/:id'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> id</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">param</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'id'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'DELETE FROM users WHERE id = ?'</span></span>
+<span class="line"><span style="color:#E1E4E8">  ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(id).</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (result.meta.changes </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'User not found'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h3 id="トランザクション">トランザクション</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/posts'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">user_id</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">title</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">content</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // トランザクション</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> results</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">batch</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">    c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'SELECT id FROM users WHERE id = ?'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(user_id),</span></span>
+<span class="line"><span style="color:#E1E4E8">    c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">      'INSERT INTO posts (user_id, title, content) VALUES (?, ?, ?)'</span></span>
+<span class="line"><span style="color:#E1E4E8">    ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(user_id, title, content)</span></span>
+<span class="line"><span style="color:#E1E4E8">  ])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">results[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].results.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'User not found'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: results[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">].meta.last_row_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    title,</span></span>
+<span class="line"><span style="color:#E1E4E8">    content</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, </span><span style="color:#79B8FF">201</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h3 id="join-クエリ">JOIN クエリ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/posts'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">results</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">    SELECT</span></span>
+<span class="line"><span style="color:#9ECBFF">      posts.id,</span></span>
+<span class="line"><span style="color:#9ECBFF">      posts.title,</span></span>
+<span class="line"><span style="color:#9ECBFF">      posts.content,</span></span>
+<span class="line"><span style="color:#9ECBFF">      posts.created_at,</span></span>
+<span class="line"><span style="color:#9ECBFF">      users.name as author_name,</span></span>
+<span class="line"><span style="color:#9ECBFF">      users.email as author_email</span></span>
+<span class="line"><span style="color:#9ECBFF">    FROM posts</span></span>
+<span class="line"><span style="color:#9ECBFF">    JOIN users ON posts.user_id = users.id</span></span>
+<span class="line"><span style="color:#9ECBFF">    ORDER BY posts.created_at DESC</span></span>
+<span class="line"><span style="color:#9ECBFF">  `</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(results)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h2 id="cloudflare-kvkey-value-store連携">Cloudflare KV（Key-Value Store）連携</h2>
+<h3 id="kv-namespace作成">KV Namespace作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> wrangler</span><span style="color:#9ECBFF"> kv:namespace</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> CACHE</span></span>
+<span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> wrangler</span><span style="color:#9ECBFF"> kv:namespace</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> CACHE</span><span style="color:#79B8FF"> --preview</span></span></code></pre>
+<p><code>wrangler.toml</code>に追加:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="toml"><code><span class="line"><span style="color:#E1E4E8">[[</span><span style="color:#B392F0">kv_namespaces</span><span style="color:#E1E4E8">]]</span></span>
+<span class="line"><span style="color:#E1E4E8">binding = </span><span style="color:#9ECBFF">"CACHE"</span></span>
+<span class="line"><span style="color:#E1E4E8">id = </span><span style="color:#9ECBFF">"xxx"</span></span>
+<span class="line"><span style="color:#E1E4E8">preview_id = </span><span style="color:#9ECBFF">"yyy"</span></span></code></pre>
+<h3 id="hono--kv実装">Hono + KV実装</h3>
+<p>型定義:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Bindings</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  DB</span><span style="color:#F97583">:</span><span style="color:#B392F0"> D1Database</span></span>
+<span class="line"><span style="color:#FFAB70">  CACHE</span><span style="color:#F97583">:</span><span style="color:#B392F0"> KVNamespace</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> app</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Hono</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">Bindings</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Bindings</span><span style="color:#E1E4E8"> }>()</span></span></code></pre>
+<p>基本操作:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// キャッシュ取得</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/cache/:key'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">param</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'key'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> value</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">value) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Not found'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ key, value })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// キャッシュ保存</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/cache'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">key</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">value</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">ttl</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(key, value, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    expirationTtl: ttl </span><span style="color:#F97583">||</span><span style="color:#79B8FF"> 3600</span><span style="color:#6A737D">  // 1時間</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// キャッシュ削除</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/cache/:key'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">param</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'key'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h3 id="キャッシュパターン">キャッシュパターン</h3>
+<p>Cache-Aside:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/users/:id'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> id</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">param</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'id'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cacheKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `user:${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // キャッシュチェック</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cached</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(cacheKey, </span><span style="color:#9ECBFF">'json'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (cached) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ </span><span style="color:#F97583">...</span><span style="color:#E1E4E8">cached, cached: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // DB から取得</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'SELECT * FROM users WHERE id = ?'</span></span>
+<span class="line"><span style="color:#E1E4E8">  ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(id).</span><span style="color:#B392F0">first</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">user) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Not found'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // キャッシュに保存（1時間）</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(cacheKey, </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(user), {</span></span>
+<span class="line"><span style="color:#E1E4E8">    expirationTtl: </span><span style="color:#79B8FF">3600</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ </span><span style="color:#F97583">...</span><span style="color:#E1E4E8">user, cached: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<p>Write-Through:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/users/:id'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> id</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">param</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'id'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">name</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">email</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // DB更新</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'UPDATE users SET name = ?, email = ? WHERE id = ?'</span></span>
+<span class="line"><span style="color:#E1E4E8">  ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(name, email, id).</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (result.meta.changes </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Not found'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // キャッシュ削除（または更新）</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`user:${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h3 id="セッション管理">セッション管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { v4 </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> uuidv4 } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'uuid'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/sessions'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">user_id</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sessionId</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> uuidv4</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sessionData</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    created_at: </span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // セッション保存（24時間）</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    `session:${</span><span style="color:#E1E4E8">sessionId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(sessionData),</span></span>
+<span class="line"><span style="color:#E1E4E8">    { expirationTtl: </span><span style="color:#79B8FF">86400</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ session_id: sessionId })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// セッション検証ミドルウェア</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/protected/*'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">next</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sessionId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-session-id'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">sessionId) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Unauthorized'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">401</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> session</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`session:${</span><span style="color:#E1E4E8">sessionId</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'json'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">session) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Session expired'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">401</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  c.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'session'</span><span style="color:#E1E4E8">, session)</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h2 id="cloudflare-r2object-storage連携">Cloudflare R2（Object Storage）連携</h2>
+<h3 id="r2-bucket作成">R2 Bucket作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> wrangler</span><span style="color:#9ECBFF"> r2</span><span style="color:#9ECBFF"> bucket</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> my-bucket</span></span></code></pre>
+<p><code>wrangler.toml</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="toml"><code><span class="line"><span style="color:#E1E4E8">[[</span><span style="color:#B392F0">r2_buckets</span><span style="color:#E1E4E8">]]</span></span>
+<span class="line"><span style="color:#E1E4E8">binding = </span><span style="color:#9ECBFF">"BUCKET"</span></span>
+<span class="line"><span style="color:#E1E4E8">bucket_name = </span><span style="color:#9ECBFF">"my-bucket"</span></span></code></pre>
+<h3 id="hono--r2実装">Hono + R2実装</h3>
+<p>型定義:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Bindings</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  DB</span><span style="color:#F97583">:</span><span style="color:#B392F0"> D1Database</span></span>
+<span class="line"><span style="color:#FFAB70">  CACHE</span><span style="color:#F97583">:</span><span style="color:#B392F0"> KVNamespace</span></span>
+<span class="line"><span style="color:#FFAB70">  BUCKET</span><span style="color:#F97583">:</span><span style="color:#B392F0"> R2Bucket</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>ファイルアップロード:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/upload'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> formData</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">formData</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> file</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> formData.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'file'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#B392F0"> File</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">file) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'No file provided'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">400</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `uploads/${</span><span style="color:#E1E4E8">Date</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">now</span><span style="color:#9ECBFF">()</span><span style="color:#9ECBFF">}-${</span><span style="color:#E1E4E8">file</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">BUCKET</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(key, file.</span><span style="color:#B392F0">stream</span><span style="color:#E1E4E8">(), {</span></span>
+<span class="line"><span style="color:#E1E4E8">    httpMetadata: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      contentType: file.type</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    key,</span></span>
+<span class="line"><span style="color:#E1E4E8">    url: </span><span style="color:#9ECBFF">`https://pub-xxx.r2.dev/${</span><span style="color:#E1E4E8">key</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<p>ファイル取得:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/files/:key'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">param</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'key'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> object</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">BUCKET</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">object) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Not found'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Response</span><span style="color:#E1E4E8">(object.body, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">      'Content-Type'</span><span style="color:#E1E4E8">: object.httpMetadata?.contentType </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'application/octet-stream'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      'Cache-Control'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'public, max-age=3600'</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<p>ファイル一覧:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/files'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> prefix</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'prefix'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> ''</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> limit</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> Number</span><span style="color:#E1E4E8">(c.req.</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'limit'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> '100'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> list</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">BUCKET</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">list</span><span style="color:#E1E4E8">({ prefix, limit })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    objects: list.objects.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">obj</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">      key: obj.key,</span></span>
+<span class="line"><span style="color:#E1E4E8">      size: obj.size,</span></span>
+<span class="line"><span style="color:#E1E4E8">      uploaded: obj.uploaded</span></span>
+<span class="line"><span style="color:#E1E4E8">    })),</span></span>
+<span class="line"><span style="color:#E1E4E8">    truncated: list.truncated</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<p>ファイル削除:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/files/:key'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">param</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'key'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">BUCKET</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ success: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h2 id="認証実装">認証実装</h2>
+<h3 id="jwt認証">JWT認証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { jwt, sign } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono/jwt'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> JWT_SECRET</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'your-secret-key'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ログイン</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/login'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">email</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">password</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'SELECT * FROM users WHERE email = ?'</span></span>
+<span class="line"><span style="color:#E1E4E8">  ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(email).</span><span style="color:#B392F0">first</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">user </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> user.password </span><span style="color:#F97583">!==</span><span style="color:#E1E4E8"> password) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Invalid credentials'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">401</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> token</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> sign</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#E1E4E8">      sub: user.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">      email: user.email,</span></span>
+<span class="line"><span style="color:#E1E4E8">      exp: Math.</span><span style="color:#B392F0">floor</span><span style="color:#E1E4E8">(Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 24</span><span style="color:#6A737D">  // 24時間</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    JWT_SECRET</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ token })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 保護されたルート</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/protected/*'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">jwt</span><span style="color:#E1E4E8">({ secret: </span><span style="color:#79B8FF">JWT_SECRET</span><span style="color:#E1E4E8"> }))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/protected/profile'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> payload</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'jwtPayload'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'SELECT id, name, email FROM users WHERE id = ?'</span></span>
+<span class="line"><span style="color:#E1E4E8">  ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(payload.sub).</span><span style="color:#B392F0">first</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(user)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h3 id="ベーシック認証">ベーシック認証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { basicAuth } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono/basic-auth'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/admin/*'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">basicAuth</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  username: </span><span style="color:#9ECBFF">'admin'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  password: </span><span style="color:#9ECBFF">'secret'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  realm: </span><span style="color:#9ECBFF">'Admin Area'</span></span>
+<span class="line"><span style="color:#E1E4E8">}))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/admin/dashboard'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ message: </span><span style="color:#9ECBFF">'Welcome to admin dashboard'</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h3 id="api-key認証">API Key認証</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/*'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">next</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> apiKey</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'x-api-key'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">apiKey) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'API key required'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">401</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> valid</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`apikey:${</span><span style="color:#E1E4E8">apiKey</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">valid) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Invalid API key'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">401</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h2 id="ミドルウェア">ミドルウェア</h2>
+<h3 id="cors設定">CORS設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cors } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono/cors'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// シンプル</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/*'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">cors</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// カスタム</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/*'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">cors</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  origin: [</span><span style="color:#9ECBFF">'https://example.com'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'https://app.example.com'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  allowMethods: [</span><span style="color:#9ECBFF">'GET'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'POST'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'PUT'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'DELETE'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  allowHeaders: [</span><span style="color:#9ECBFF">'Content-Type'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'Authorization'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  credentials: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  maxAge: </span><span style="color:#79B8FF">3600</span></span>
+<span class="line"><span style="color:#E1E4E8">}))</span></span></code></pre>
+<h3 id="レート制限">レート制限</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/*'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">next</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> ip</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'cf-connecting-ip'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'unknown'</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> key</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `ratelimit:${</span><span style="color:#E1E4E8">ip</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> count</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (count </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#B392F0"> Number</span><span style="color:#E1E4E8">(count) </span><span style="color:#F97583">>=</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Rate limit exceeded'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">429</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(key, </span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Number</span><span style="color:#E1E4E8">(count </span><span style="color:#F97583">||</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">), {</span></span>
+<span class="line"><span style="color:#E1E4E8">    expirationTtl: </span><span style="color:#79B8FF">60</span><span style="color:#6A737D">  // 1分</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h3 id="ロギング">ロギング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { logger } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono/logger'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'*'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">logger</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// カスタムロガー</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'*'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">next</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> start</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> next</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> duration</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> start</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    method: c.req.method,</span></span>
+<span class="line"><span style="color:#E1E4E8">    path: c.req.path,</span></span>
+<span class="line"><span style="color:#E1E4E8">    status: c.res.status,</span></span>
+<span class="line"><span style="color:#E1E4E8">    duration,</span></span>
+<span class="line"><span style="color:#E1E4E8">    ip: c.req.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'cf-connecting-ip'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    country: c.req.</span><span style="color:#B392F0">header</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'cf-ipcountry'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h3 id="エラーハンドリング">エラーハンドリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">onError</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(err)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (err </span><span style="color:#F97583">instanceof</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      error: err.message,</span></span>
+<span class="line"><span style="color:#E1E4E8">      stack: process.env.</span><span style="color:#79B8FF">NODE_ENV</span><span style="color:#F97583"> ===</span><span style="color:#9ECBFF"> 'development'</span><span style="color:#F97583"> ?</span><span style="color:#E1E4E8"> err.stack </span><span style="color:#F97583">:</span><span style="color:#79B8FF"> undefined</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, </span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Internal server error'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">notFound</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Not found'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h2 id="バリデーション">バリデーション</h2>
+<h3 id="zod統合">Zod統合</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { zValidator } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@hono/zod-validator'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { z } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'zod'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> UserSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  email: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">email</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  age: z.</span><span style="color:#B392F0">number</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">150</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">optional</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/users'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">zValidator</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'json'</span><span style="color:#E1E4E8">, UserSchema), </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">valid</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'json'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'INSERT INTO users (name, email) VALUES (?, ?)'</span></span>
+<span class="line"><span style="color:#E1E4E8">  ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(user.name, user.email).</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: result.meta.last_row_id,</span></span>
+<span class="line"><span style="color:#F97583">    ...</span><span style="color:#E1E4E8">user</span></span>
+<span class="line"><span style="color:#E1E4E8">  }, </span><span style="color:#79B8FF">201</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h3 id="クエリパラメータバリデーション">クエリパラメータバリデーション</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> SearchSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  q: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  page: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">regex</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">^</span><span style="color:#79B8FF">\d</span><span style="color:#F97583">+$</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">transform</span><span style="color:#E1E4E8">(Number).</span><span style="color:#B392F0">default</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'1'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  limit: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">regex</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">^</span><span style="color:#79B8FF">\d</span><span style="color:#F97583">+$</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">transform</span><span style="color:#E1E4E8">(Number).</span><span style="color:#B392F0">default</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'10'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/search'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">zValidator</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'query'</span><span style="color:#E1E4E8">, SearchSchema), </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">q</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">page</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">limit</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">valid</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'query'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> offset</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (page </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> limit</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">results</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">    SELECT * FROM posts</span></span>
+<span class="line"><span style="color:#9ECBFF">    WHERE title LIKE ? OR content LIKE ?</span></span>
+<span class="line"><span style="color:#9ECBFF">    LIMIT ? OFFSET ?</span></span>
+<span class="line"><span style="color:#9ECBFF">  `</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`%${</span><span style="color:#E1E4E8">q</span><span style="color:#9ECBFF">}%`</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">`%${</span><span style="color:#E1E4E8">q</span><span style="color:#9ECBFF">}%`</span><span style="color:#E1E4E8">, limit, offset).</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(results)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<h2 id="実践例-ブログapi">実践例: ブログAPI</h2>
+<p>完全な実装例:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Hono } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { cors } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono/cors'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { logger } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono/logger'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { jwt, sign } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'hono/jwt'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { zValidator } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@hono/zod-validator'</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { z } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'zod'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">type</span><span style="color:#B392F0"> Bindings</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  DB</span><span style="color:#F97583">:</span><span style="color:#B392F0"> D1Database</span></span>
+<span class="line"><span style="color:#FFAB70">  CACHE</span><span style="color:#F97583">:</span><span style="color:#B392F0"> KVNamespace</span></span>
+<span class="line"><span style="color:#FFAB70">  BUCKET</span><span style="color:#F97583">:</span><span style="color:#B392F0"> R2Bucket</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> app</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Hono</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">Bindings</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Bindings</span><span style="color:#E1E4E8"> }>()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ミドルウェア</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'*'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">logger</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'*'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">cors</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> JWT_SECRET</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'your-secret-key'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// スキーマ</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> RegisterSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  email: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">email</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  password: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">8</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> LoginSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  email: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">email</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  password: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> PostSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  title: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">200</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  content: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  published: z.</span><span style="color:#B392F0">boolean</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 認証</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/register'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">zValidator</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'json'</span><span style="color:#E1E4E8">, RegisterSchema), </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">name</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">email</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">password</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">valid</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'json'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'INSERT INTO users (name, email, password) VALUES (?, ?, ?)'</span></span>
+<span class="line"><span style="color:#E1E4E8">  ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(name, email, password).</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ id: result.meta.last_row_id }, </span><span style="color:#79B8FF">201</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/login'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">zValidator</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'json'</span><span style="color:#E1E4E8">, LoginSchema), </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">email</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">password</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">valid</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'json'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'SELECT * FROM users WHERE email = ? AND password = ?'</span></span>
+<span class="line"><span style="color:#E1E4E8">  ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(email, password).</span><span style="color:#B392F0">first</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">user) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Invalid credentials'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">401</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> token</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> sign</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    { sub: user.id, exp: Math.</span><span style="color:#B392F0">floor</span><span style="color:#E1E4E8">(Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 86400</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">    JWT_SECRET</span></span>
+<span class="line"><span style="color:#E1E4E8">  )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ token })</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 公開API</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/posts'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cacheKey</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'posts:public'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // キャッシュチェック</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> cached</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(cacheKey, </span><span style="color:#9ECBFF">'json'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (cached) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(cached)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">results</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">    SELECT</span></span>
+<span class="line"><span style="color:#9ECBFF">      posts.id,</span></span>
+<span class="line"><span style="color:#9ECBFF">      posts.title,</span></span>
+<span class="line"><span style="color:#9ECBFF">      posts.content,</span></span>
+<span class="line"><span style="color:#9ECBFF">      posts.created_at,</span></span>
+<span class="line"><span style="color:#9ECBFF">      users.name as author</span></span>
+<span class="line"><span style="color:#9ECBFF">    FROM posts</span></span>
+<span class="line"><span style="color:#9ECBFF">    JOIN users ON posts.user_id = users.id</span></span>
+<span class="line"><span style="color:#9ECBFF">    WHERE posts.published = 1</span></span>
+<span class="line"><span style="color:#9ECBFF">    ORDER BY posts.created_at DESC</span></span>
+<span class="line"><span style="color:#9ECBFF">  `</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // キャッシュ保存（5分）</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">put</span><span style="color:#E1E4E8">(cacheKey, </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(results), {</span></span>
+<span class="line"><span style="color:#E1E4E8">    expirationTtl: </span><span style="color:#79B8FF">300</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(results)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/posts/:id'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> id</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">param</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'id'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> post</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span></span>
+<span class="line"><span style="color:#9ECBFF">    SELECT</span></span>
+<span class="line"><span style="color:#9ECBFF">      posts.*,</span></span>
+<span class="line"><span style="color:#9ECBFF">      users.name as author</span></span>
+<span class="line"><span style="color:#9ECBFF">    FROM posts</span></span>
+<span class="line"><span style="color:#9ECBFF">    JOIN users ON posts.user_id = users.id</span></span>
+<span class="line"><span style="color:#9ECBFF">    WHERE posts.id = ? AND posts.published = 1</span></span>
+<span class="line"><span style="color:#9ECBFF">  `</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(id).</span><span style="color:#B392F0">first</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">post) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ error: </span><span style="color:#9ECBFF">'Not found'</span><span style="color:#E1E4E8"> }, </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">(post)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 保護されたAPI</span></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">use</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/posts'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">jwt</span><span style="color:#E1E4E8">({ secret: </span><span style="color:#79B8FF">JWT_SECRET</span><span style="color:#E1E4E8"> }))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app.</span><span style="color:#B392F0">post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'/api/posts'</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">zValidator</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'json'</span><span style="color:#E1E4E8">, PostSchema), </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">c</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> payload</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'jwtPayload'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">title</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">content</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">published</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> c.req.</span><span style="color:#B392F0">valid</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'json'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">DB</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">prepare</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    'INSERT INTO posts (user_id, title, content, published) VALUES (?, ?, ?, ?)'</span></span>
+<span class="line"><span style="color:#E1E4E8">  ).</span><span style="color:#B392F0">bind</span><span style="color:#E1E4E8">(payload.sub, title, content, published </span><span style="color:#F97583">?</span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> :</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">run</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // キャッシュクリア</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> c.env.</span><span style="color:#79B8FF">CACHE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">delete</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'posts:public'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> c.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">({ id: result.meta.last_row_id }, </span><span style="color:#79B8FF">201</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> app</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Hono + Cloudflare Workersは2026年現在、最もコスパの高いWebアプリケーションスタックの一つです。</p>
+<h3 id="メリット">メリット</h3>
+<ul>
+<li><strong>超高速</strong>: エッジでのレスポンスタイム10ms以下</li>
+<li><strong>スケーラブル</strong>: 自動スケーリング、設定不要</li>
+<li><strong>低コスト</strong>: 無料枠で十分な規模をカバー</li>
+<li><strong>開発体験</strong>: TypeScript完全対応、型安全</li>
+<li><strong>グローバル</strong>: 世界中で低レイテンシ</li>
+</ul>
+<h3 id="ユースケース">ユースケース</h3>
+<ul>
+<li>REST API / GraphQL API</li>
+<li>認証サーバー</li>
+<li>リバースプロキシ</li>
+<li>画像リサイズ・最適化</li>
+<li>エッジSSR</li>
+<li>Webhookハンドラー</li>
+</ul>
+<p>無料枠内で本番運用できるため、個人開発からスタートアップまで幅広く使えます。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

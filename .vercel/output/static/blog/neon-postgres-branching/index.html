@@ -1,0 +1,572 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/neon-postgres-branching/"><!-- Primary Meta Tags --><title>Neonのブランチ機能でPostgreSQLデータベースを管理</title><meta name="title" content="Neonのブランチ機能でPostgreSQLデータベースを管理"><meta name="description" content="NeonのPostgreSQLブランチ機能を使って、開発環境を効率的に管理する方法を解説します。Gitのようなワークフローでデータベーススキーマとデータをバージョン管理し、安全にテストできます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/neon-postgres-branching/"><meta property="og:title" content="Neonのブランチ機能でPostgreSQLデータベースを管理"><meta property="og:description" content="NeonのPostgreSQLブランチ機能を使って、開発環境を効率的に管理する方法を解説します。Gitのようなワークフローでデータベーススキーマとデータをバージョン管理し、安全にテストできます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/neon-postgres-branching/"><meta name="twitter:title" content="Neonのブランチ機能でPostgreSQLデータベースを管理"><meta name="twitter:description" content="NeonのPostgreSQLブランチ機能を使って、開発環境を効率的に管理する方法を解説します。Gitのようなワークフローでデータベーススキーマとデータをバージョン管理し、安全にテストできます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/neon-postgres-branching/"},"headline":"Neonのブランチ機能でPostgreSQLデータベースを管理","description":"NeonのPostgreSQLブランチ機能を使って、開発環境を効率的に管理する方法を解説します。Gitのようなワークフローでデータベーススキーマとデータをバージョン管理し、安全にテストできます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。","datePublished":"2025-02-05T00:00:00.000Z","dateModified":"2025-02-05T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"インフラ, データベース, バックエンド"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Neonのブランチ機能でPostgreSQLデータベースを管理"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2025-02-05T00:00:00.000Z"> Feb 4, 2025 </time>  </div> <h1 data-astro-cid-bvzihdzo>Neonのブランチ機能でPostgreSQLデータベースを管理</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" class="article-tag" data-astro-cid-bvzihdzo>
+#インフラ </a><a href="/blog/tag/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%99%E3%83%BC%E3%82%B9" class="article-tag" data-astro-cid-bvzihdzo>
+#データベース </a><a href="/blog/tag/%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89" class="article-tag" data-astro-cid-bvzihdzo>
+#バックエンド </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="neonとは">Neonとは</h2>
+<p>Neon（<a href="https://neon.tech%EF%BC%89%E3%81%AF%E3%80%81%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%83%AC%E3%82%B9PostgreSQL%E3%83%87%E3%83%BC%E3%82%BF%E3%83%99%E3%83%BC%E3%82%B9%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%A7%E3%81%99%E3%80%82%E5%BE%93%E6%9D%A5%E3%81%AEPostgreSQL%E3%83%9B%E3%82%B9%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%A8%E7%95%B0%E3%81%AA%E3%82%8A%E3%80%81%E4%BB%A5%E4%B8%8B%E3%81%AE%E7%89%B9%E5%BE%B4%E3%81%8C%E3%81%82%E3%82%8A%E3%81%BE%E3%81%99">https://neon.tech）は、サーバーレスPostgreSQLデータベースサービスです。従来のPostgreSQLホスティングサービスと異なり、以下の特徴があります</a>:</p>
+<ul>
+<li><strong>サーバーレス</strong>: 使用量に応じた自動スケーリング</li>
+<li><strong>従量課金</strong>: アイドル時はコストゼロ</li>
+<li><strong>高速プロビジョニング</strong>: 数秒でデータベース作成</li>
+<li><strong>ブランチ機能</strong>: Gitのようにデータベースをブランチ化</li>
+<li><strong>ポイントインタイムリカバリ</strong>: 過去の任意の時点に復元可能</li>
+</ul>
+<p>特に注目すべきは<strong>ブランチ機能</strong>です。開発、ステージング、本番環境を簡単に分離でき、データベースマイグレーションのテストが安全に行えます。</p>
+<h2 id="neonの基本セットアップ">Neonの基本セットアップ</h2>
+<h3 id="アカウント作成とプロジェクト初期化">アカウント作成とプロジェクト初期化</h3>
+<ol>
+<li>Neon（<a href="https://neon.tech%EF%BC%89%E3%81%AB%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9">https://neon.tech）にアクセス</a></li>
+<li>GitHubアカウントでサインアップ</li>
+<li>新しいプロジェクトを作成</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Neon CLIのインストール</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -g</span><span style="color:#9ECBFF"> neonctl</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 認証</span></span>
+<span class="line"><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> auth</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># プロジェクト一覧</span></span>
+<span class="line"><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> projects</span><span style="color:#9ECBFF"> list</span></span></code></pre>
+<h3 id="最初のデータベース接続">最初のデータベース接続</h3>
+<p>Neonのダッシュボードから接続文字列を取得:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>postgresql://user:password@ep-xxx.region.aws.neon.tech/dbname</span></span></code></pre>
+<p>Node.jsでの接続例:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Pool } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'pg'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> pool</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Pool</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  connectionString: process.env.</span><span style="color:#79B8FF">DATABASE_URL</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  ssl: { rejectUnauthorized: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> testConnection</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> client</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> pool.</span><span style="color:#B392F0">connect</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'SELECT NOW()'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Connected:'</span><span style="color:#E1E4E8">, result.rows[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">finally</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    client.</span><span style="color:#B392F0">release</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">testConnection</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h2 id="ブランチ機能の基本">ブランチ機能の基本</h2>
+<h3 id="ブランチの作成">ブランチの作成</h3>
+<p>Gitのブランチのように、データベースのスナップショットを作成できます:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># メインブランチから新しいブランチを作成</span></span>
+<span class="line"><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> branches</span><span style="color:#9ECBFF"> create</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> dev</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --project-id</span><span style="color:#9ECBFF"> your-project-id</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 特定のブランチから派生させる</span></span>
+<span class="line"><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> branches</span><span style="color:#9ECBFF"> create</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> feature-user-auth</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --parent</span><span style="color:#9ECBFF"> dev</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --project-id</span><span style="color:#9ECBFF"> your-project-id</span></span></code></pre>
+<p>Web UIからも作成可能:</p>
+<ol>
+<li>Neonダッシュボードを開く</li>
+<li>「Branches」タブをクリック</li>
+<li>「Create Branch」ボタンをクリック</li>
+<li>ブランチ名と親ブランチを指定</li>
+</ol>
+<h3 id="ブランチ一覧の確認">ブランチ一覧の確認</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># すべてのブランチを表示</span></span>
+<span class="line"><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> branches</span><span style="color:#9ECBFF"> list</span><span style="color:#79B8FF"> --project-id</span><span style="color:#9ECBFF"> your-project-id</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 詳細情報を表示</span></span>
+<span class="line"><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> branches</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> dev</span><span style="color:#79B8FF"> --project-id</span><span style="color:#9ECBFF"> your-project-id</span></span></code></pre>
+<h3 id="ブランチの削除">ブランチの削除</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> branches</span><span style="color:#9ECBFF"> delete</span><span style="color:#9ECBFF"> feature-user-auth</span><span style="color:#79B8FF"> --project-id</span><span style="color:#9ECBFF"> your-project-id</span></span></code></pre>
+<h2 id="実践的なブランチ戦略">実践的なブランチ戦略</h2>
+<h3 id="開発ワークフローの例">開発ワークフローの例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>main (本番)</span></span>
+<span class="line"><span>  ├── staging (ステージング)</span></span>
+<span class="line"><span>  └── dev (開発)</span></span>
+<span class="line"><span>       ├── feature-1 (機能ブランチ1)</span></span>
+<span class="line"><span>       └── feature-2 (機能ブランチ2)</span></span></code></pre>
+<p>このような構造を作成するスクリプト:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// setup-branches.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { exec } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'child_process'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { promisify } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'util'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> execAsync</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> promisify</span><span style="color:#E1E4E8">(exec);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createBranch</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">name</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">parent</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> 'main'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> cmd</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `neonctl branches create --name ${</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">} --parent ${</span><span style="color:#E1E4E8">parent</span><span style="color:#9ECBFF">} --project-id ${</span><span style="color:#E1E4E8">process</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">env</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">NEON_PROJECT_ID</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">stdout</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> execAsync</span><span style="color:#E1E4E8">(cmd);</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`✓ Created branch: ${</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> stdout;</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`✗ Failed to create ${</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">}:`</span><span style="color:#E1E4E8">, error.message);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> setupBranches</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Setting up branch structure...</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> createBranch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'staging'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'main'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> createBranch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'dev'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'main'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> createBranch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'feature-user-profiles'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'dev'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> createBranch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'feature-notifications'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'dev'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">✓ Branch structure created successfully!'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">setupBranches</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h2 id="データベースマイグレーションとブランチ">データベースマイグレーションとブランチ</h2>
+<h3 id="drizzle-ormとの統合">Drizzle ORMとの統合</h3>
+<p>Drizzle ORMを使ったマイグレーション管理:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// drizzle.config.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#F97583"> type</span><span style="color:#E1E4E8"> { Config } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'drizzle-kit'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  schema: </span><span style="color:#9ECBFF">'./src/db/schema.ts'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  out: </span><span style="color:#9ECBFF">'./drizzle'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  driver: </span><span style="color:#9ECBFF">'pg'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  dbCredentials: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    connectionString: process.env.</span><span style="color:#79B8FF">DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">} </span><span style="color:#F97583">satisfies</span><span style="color:#B392F0"> Config</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<p>スキーマ定義:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// src/db/schema.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { pgTable, serial, text, timestamp, boolean } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'drizzle-orm/pg-core'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> users</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> pgTable</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'users'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id: </span><span style="color:#B392F0">serial</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'id'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">primaryKey</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  email: </span><span style="color:#B392F0">text</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'email'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">notNull</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">unique</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: </span><span style="color:#B392F0">text</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'name'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">notNull</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  createdAt: </span><span style="color:#B392F0">timestamp</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'created_at'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">defaultNow</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  updatedAt: </span><span style="color:#B392F0">timestamp</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'updated_at'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">defaultNow</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> posts</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> pgTable</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'posts'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  id: </span><span style="color:#B392F0">serial</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'id'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">primaryKey</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  title: </span><span style="color:#B392F0">text</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'title'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">notNull</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  content: </span><span style="color:#B392F0">text</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'content'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">notNull</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  published: </span><span style="color:#B392F0">boolean</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'published'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">default</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  authorId: </span><span style="color:#B392F0">serial</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'author_id'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">references</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> users.id),</span></span>
+<span class="line"><span style="color:#E1E4E8">  createdAt: </span><span style="color:#B392F0">timestamp</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'created_at'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">defaultNow</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  updatedAt: </span><span style="color:#B392F0">timestamp</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'updated_at'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">defaultNow</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<p>マイグレーションスクリプト:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// scripts/migrate.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { drizzle } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'drizzle-orm/postgres-js'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { migrate } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'drizzle-orm/postgres-js/migrator'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> postgres </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'postgres'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> runMigration</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> connectionString</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> process.env.</span><span style="color:#79B8FF">DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Running migrations on: ${</span><span style="color:#E1E4E8">connectionString</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">split</span><span style="color:#9ECBFF">(</span><span style="color:#9ECBFF">'@'</span><span style="color:#9ECBFF">)[</span><span style="color:#79B8FF">1</span><span style="color:#9ECBFF">]</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sql</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> postgres</span><span style="color:#E1E4E8">(connectionString, { max: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> drizzle</span><span style="color:#E1E4E8">(sql);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#B392F0"> migrate</span><span style="color:#E1E4E8">(db, { migrationsFolder: </span><span style="color:#9ECBFF">'./drizzle'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'✓ Migrations completed successfully!'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'✗ Migration failed:'</span><span style="color:#E1E4E8">, error);</span></span>
+<span class="line"><span style="color:#E1E4E8">    process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">finally</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> sql.</span><span style="color:#B392F0">end</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">runMigration</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h3 id="ブランチごとのマイグレーション">ブランチごとのマイグレーション</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 開発ブランチでマイグレーションをテスト</span></span>
+<span class="line"><span style="color:#E1E4E8">DATABASE_URL</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$(</span><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> connection-string</span><span style="color:#9ECBFF"> dev</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> migrate</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 問題なければステージングに適用</span></span>
+<span class="line"><span style="color:#E1E4E8">DATABASE_URL</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$(</span><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> connection-string</span><span style="color:#9ECBFF"> staging</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> migrate</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 最終的に本番に適用</span></span>
+<span class="line"><span style="color:#E1E4E8">DATABASE_URL</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$(</span><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> connection-string</span><span style="color:#9ECBFF"> main</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> migrate</span></span></code></pre>
+<p>自動化スクリプト:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// scripts/safe-migrate.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { exec } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'child_process'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { promisify } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'util'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> execAsync</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> promisify</span><span style="color:#E1E4E8">(exec);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getConnectionString</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">branch</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">stdout</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> execAsync</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    `neonctl connection-string ${</span><span style="color:#E1E4E8">branch</span><span style="color:#9ECBFF">} --project-id ${</span><span style="color:#E1E4E8">process</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">env</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">NEON_PROJECT_ID</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> stdout.</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> safeMigrate</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">branch</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">📦 Migrating branch: ${</span><span style="color:#E1E4E8">branch</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ブランチの接続文字列を取得</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> dbUrl</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getConnectionString</span><span style="color:#E1E4E8">(branch);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // マイグレーション実行</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#B392F0"> execAsync</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`DATABASE_URL="${</span><span style="color:#E1E4E8">dbUrl</span><span style="color:#9ECBFF">}" npm run migrate`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`✓ Successfully migrated ${</span><span style="color:#E1E4E8">branch</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`✗ Migration failed on ${</span><span style="color:#E1E4E8">branch</span><span style="color:#9ECBFF">}:`</span><span style="color:#E1E4E8">, error.message);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> branches</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'dev'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'staging'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'main'</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> branch</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> branches) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> success</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> safeMigrate</span><span style="color:#E1E4E8">(branch);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">success) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">❌ Migration pipeline stopped due to error'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 次のブランチに進む前に確認を求める</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (branch </span><span style="color:#F97583">!==</span><span style="color:#9ECBFF"> 'main'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Ready to migrate ${</span><span style="color:#E1E4E8">branches</span><span style="color:#9ECBFF">[</span><span style="color:#E1E4E8">branches</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">indexOf</span><span style="color:#9ECBFF">(</span><span style="color:#E1E4E8">branch</span><span style="color:#9ECBFF">) </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#9ECBFF">]</span><span style="color:#9ECBFF">}?`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Press Ctrl+C to cancel, or wait 5 seconds to continue...'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#F97583"> new</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">resolve</span><span style="color:#F97583"> =></span><span style="color:#B392F0"> setTimeout</span><span style="color:#E1E4E8">(resolve, </span><span style="color:#79B8FF">5000</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">✓ All migrations completed successfully!'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">main</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h2 id="テストデータの管理">テストデータの管理</h2>
+<h3 id="ブランチにシードデータを投入">ブランチにシードデータを投入</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// scripts/seed.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { drizzle } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'drizzle-orm/postgres-js'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> postgres </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'postgres'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { users, posts } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '../src/db/schema'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> seed</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> sql</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> postgres</span><span style="color:#E1E4E8">(process.env.</span><span style="color:#79B8FF">DATABASE_URL</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> db</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> drizzle</span><span style="color:#E1E4E8">(sql);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'🌱 Seeding database...'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ユーザーを作成</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">user1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">user2</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">insert</span><span style="color:#E1E4E8">(users).</span><span style="color:#B392F0">values</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        email: </span><span style="color:#9ECBFF">'alice@example.com'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: </span><span style="color:#9ECBFF">'Alice'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        email: </span><span style="color:#9ECBFF">'bob@example.com'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: </span><span style="color:#9ECBFF">'Bob'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]).</span><span style="color:#B392F0">returning</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'✓ Created users'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 投稿を作成</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> db.</span><span style="color:#B392F0">insert</span><span style="color:#E1E4E8">(posts).</span><span style="color:#B392F0">values</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        title: </span><span style="color:#9ECBFF">'First Post'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: </span><span style="color:#9ECBFF">'Hello, World!'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        published: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        authorId: user1.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        title: </span><span style="color:#9ECBFF">'Draft Post'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: </span><span style="color:#9ECBFF">'Work in progress...'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        published: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        authorId: user2.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#E1E4E8">        title: </span><span style="color:#9ECBFF">'Another Post'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: </span><span style="color:#9ECBFF">'More content here'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        published: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        authorId: user1.id,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'✓ Created posts'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'✓ Seeding completed successfully!'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'✗ Seeding failed:'</span><span style="color:#E1E4E8">, error);</span></span>
+<span class="line"><span style="color:#E1E4E8">    process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">finally</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> sql.</span><span style="color:#B392F0">end</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">seed</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<p>ブランチごとに異なるシードデータ:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// scripts/seed-by-branch.ts</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> seedData</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  dev: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    users: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      { email: </span><span style="color:#9ECBFF">'dev1@test.com'</span><span style="color:#E1E4E8">, name: </span><span style="color:#9ECBFF">'Dev User 1'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { email: </span><span style="color:#9ECBFF">'dev2@test.com'</span><span style="color:#E1E4E8">, name: </span><span style="color:#9ECBFF">'Dev User 2'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#6A737D">    // 大量のテストデータ</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  staging: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    users: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      { email: </span><span style="color:#9ECBFF">'staging@test.com'</span><span style="color:#E1E4E8">, name: </span><span style="color:#9ECBFF">'Staging User'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#6A737D">    // 本番に近いデータ</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">  main: {</span></span>
+<span class="line"><span style="color:#6A737D">    // 本番データ（通常はシードしない）</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> seedByBranch</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">branch</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> seedData[branch];</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">data) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`No seed data for branch: ${</span><span style="color:#E1E4E8">branch</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // データ投入処理</span></span>
+<span class="line"><span style="color:#6A737D">  // ...</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="環境変数の管理">環境変数の管理</h2>
+<h3 id="envファイルの分離">.envファイルの分離</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># .env.dev</span></span>
+<span class="line"><span style="color:#E1E4E8">DATABASE_URL</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">postgresql://user:pass@ep-dev.neon.tech/db</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># .env.staging</span></span>
+<span class="line"><span style="color:#E1E4E8">DATABASE_URL</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">postgresql://user:pass@ep-staging.neon.tech/db</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># .env.production</span></span>
+<span class="line"><span style="color:#E1E4E8">DATABASE_URL</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">postgresql://user:pass@ep-main.neon.tech/db</span></span></code></pre>
+<p>環境切り替えスクリプト:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// scripts/switch-env.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> fs </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'fs'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> env</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> process.argv[</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> 'dev'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> envFile</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `.env.${</span><span style="color:#E1E4E8">env</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">fs.</span><span style="color:#B392F0">existsSync</span><span style="color:#E1E4E8">(envFile)) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Environment file not found: ${</span><span style="color:#E1E4E8">envFile</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">fs.</span><span style="color:#B392F0">copyFileSync</span><span style="color:#E1E4E8">(envFile, </span><span style="color:#9ECBFF">'.env'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`✓ Switched to ${</span><span style="color:#E1E4E8">env</span><span style="color:#9ECBFF">} environment`</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<p>使用方法:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 開発環境に切り替え</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/switch-env.js</span><span style="color:#9ECBFF"> dev</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># アプリケーション起動</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> dev</span></span></code></pre>
+<h2 id="ブランチのリセットとロールバック">ブランチのリセットとロールバック</h2>
+<h3 id="特定の時点に復元">特定の時点に復元</h3>
+<p>Neonはポイントインタイムリカバリ（PITR）をサポートしています:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 1時間前の状態に復元</span></span>
+<span class="line"><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> branches</span><span style="color:#9ECBFF"> restore</span><span style="color:#9ECBFF"> dev</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --timestamp</span><span style="color:#9ECBFF"> "2025-02-05 10:00:00"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --project-id</span><span style="color:#9ECBFF"> your-project-id</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 別の名前で復元</span></span>
+<span class="line"><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> branches</span><span style="color:#9ECBFF"> create</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> dev-backup</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --parent</span><span style="color:#9ECBFF"> dev</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --timestamp</span><span style="color:#9ECBFF"> "2025-02-05 10:00:00"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --project-id</span><span style="color:#9ECBFF"> your-project-id</span></span></code></pre>
+<h3 id="データのコピー">データのコピー</h3>
+<p>あるブランチから別のブランチにデータをコピー:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># pg_dumpとpg_restoreを使用</span></span>
+<span class="line"><span style="color:#B392F0">pg_dump</span><span style="color:#E1E4E8"> $SOURCE_DATABASE_URL </span><span style="color:#F97583">></span><span style="color:#9ECBFF"> dump.sql</span></span>
+<span class="line"><span style="color:#B392F0">psql</span><span style="color:#E1E4E8"> $TARGET_DATABASE_URL </span><span style="color:#F97583">&#x3C;</span><span style="color:#9ECBFF"> dump.sql</span></span></code></pre>
+<p>自動化スクリプト:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// scripts/copy-branch-data.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { exec } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'child_process'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { promisify } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'util'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> execAsync</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> promisify</span><span style="color:#E1E4E8">(exec);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> copyBranchData</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">from</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">to</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Copying data from ${</span><span style="color:#E1E4E8">from</span><span style="color:#9ECBFF">} to ${</span><span style="color:#E1E4E8">to</span><span style="color:#9ECBFF">}...`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> sourceUrl</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getConnectionString</span><span style="color:#E1E4E8">(from);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> targetUrl</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getConnectionString</span><span style="color:#E1E4E8">(to);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ダンプ</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#B392F0"> execAsync</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`pg_dump "${</span><span style="color:#E1E4E8">sourceUrl</span><span style="color:#9ECBFF">}" > /tmp/branch-dump.sql`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'✓ Dump created'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // リストア</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#B392F0"> execAsync</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`psql "${</span><span style="color:#E1E4E8">targetUrl</span><span style="color:#9ECBFF">}" &#x3C; /tmp/branch-dump.sql`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'✓ Data restored'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // クリーンアップ</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#B392F0"> execAsync</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'rm /tmp/branch-dump.sql'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'✓ Copy completed successfully!'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (error) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'✗ Copy failed:'</span><span style="color:#E1E4E8">, error.message);</span></span>
+<span class="line"><span style="color:#E1E4E8">    process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> getConnectionString</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">branch</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">stdout</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> execAsync</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    `neonctl connection-string ${</span><span style="color:#E1E4E8">branch</span><span style="color:#9ECBFF">} --project-id ${</span><span style="color:#E1E4E8">process</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">env</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">NEON_PROJECT_ID</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> stdout.</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例: node copy-branch-data.js main dev</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">from</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">to</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> process.argv.</span><span style="color:#B392F0">slice</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#B392F0">copyBranchData</span><span style="color:#E1E4E8">(from, to);</span></span></code></pre>
+<h2 id="cicdとの統合">CI/CDとの統合</h2>
+<h3 id="github-actionsでのマイグレーション">GitHub Actionsでのマイグレーション</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># .github/workflows/migrate.yml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Database Migration</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  push</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">main</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">staging</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">dev</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  migrate</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Setup Node.js</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v3</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          node-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'20'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Install dependencies</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">npm ci</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Determine branch</span></span>
+<span class="line"><span style="color:#85E89D">        id</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">branch</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">          BRANCH_NAME=${GITHUB_REF#refs/heads/}</span></span>
+<span class="line"><span style="color:#9ECBFF">          echo "name=$BRANCH_NAME" >> $GITHUB_OUTPUT</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Get Neon database URL</span></span>
+<span class="line"><span style="color:#85E89D">        env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          NEON_API_KEY</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.NEON_API_KEY }}</span></span>
+<span class="line"><span style="color:#85E89D">          NEON_PROJECT_ID</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.NEON_PROJECT_ID }}</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">          npm install -g neonctl</span></span>
+<span class="line"><span style="color:#9ECBFF">          DB_URL=$(neonctl connection-string ${{ steps.branch.outputs.name }} --project-id $NEON_PROJECT_ID)</span></span>
+<span class="line"><span style="color:#9ECBFF">          echo "DATABASE_URL=$DB_URL" >> $GITHUB_ENV</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Run migrations</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">npm run migrate</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Run seeds (dev/staging only)</span></span>
+<span class="line"><span style="color:#85E89D">        if</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">steps.branch.outputs.name != 'main'</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">npm run seed</span></span></code></pre>
+<h3 id="プレビュー環境の自動作成">プレビュー環境の自動作成</h3>
+<p>Pull Requestごとに一時的なブランチを作成:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># .github/workflows/preview.yml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Preview Environment</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  pull_request</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    types</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">opened</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">synchronize</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  create-preview</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Create preview branch</span></span>
+<span class="line"><span style="color:#85E89D">        env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          NEON_API_KEY</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.NEON_API_KEY }}</span></span>
+<span class="line"><span style="color:#85E89D">          NEON_PROJECT_ID</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.NEON_PROJECT_ID }}</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">          npm install -g neonctl</span></span>
+<span class="line"><span style="color:#9ECBFF">          BRANCH_NAME="pr-${{ github.event.pull_request.number }}"</span></span>
+<span class="line"><span style="color:#9ECBFF">          neonctl branches create \</span></span>
+<span class="line"><span style="color:#9ECBFF">            --name $BRANCH_NAME \</span></span>
+<span class="line"><span style="color:#9ECBFF">            --parent dev \</span></span>
+<span class="line"><span style="color:#9ECBFF">            --project-id $NEON_PROJECT_ID</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          DB_URL=$(neonctl connection-string $BRANCH_NAME --project-id $NEON_PROJECT_ID)</span></span>
+<span class="line"><span style="color:#9ECBFF">          echo "Preview DB: $DB_URL"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Comment PR</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/github-script@v6</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          script</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">            github.rest.issues.createComment({</span></span>
+<span class="line"><span style="color:#9ECBFF">              issue_number: context.issue.number,</span></span>
+<span class="line"><span style="color:#9ECBFF">              owner: context.repo.owner,</span></span>
+<span class="line"><span style="color:#9ECBFF">              repo: context.repo.repo,</span></span>
+<span class="line"><span style="color:#9ECBFF">              body: '✓ Preview database created: `pr-${{ github.event.pull_request.number }}`'</span></span>
+<span class="line"><span style="color:#9ECBFF">            })</span></span></code></pre>
+<h2 id="パフォーマンスとコスト最適化">パフォーマンスとコスト最適化</h2>
+<h3 id="自動スケーリング設定">自動スケーリング設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 最小・最大コンピュートユニットを設定</span></span>
+<span class="line"><span style="color:#B392F0">neonctl</span><span style="color:#9ECBFF"> branches</span><span style="color:#9ECBFF"> update</span><span style="color:#9ECBFF"> dev</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --compute-min</span><span style="color:#79B8FF"> 0.25</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --compute-max</span><span style="color:#79B8FF"> 2</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --project-id</span><span style="color:#9ECBFF"> your-project-id</span></span></code></pre>
+<h3 id="不要なブランチの自動削除">不要なブランチの自動削除</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// scripts/cleanup-old-branches.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { exec } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'child_process'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { promisify } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'util'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> execAsync</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> promisify</span><span style="color:#E1E4E8">(exec);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> cleanupOldBranches</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">stdout</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> execAsync</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    `neonctl branches list --project-id ${</span><span style="color:#E1E4E8">process</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">env</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">NEON_PROJECT_ID</span><span style="color:#9ECBFF">} --output json`</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> branches</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(stdout);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> now</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> maxAge</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 7</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 24</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">; </span><span style="color:#6A737D">// 7日</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> branch</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> branches) {</span></span>
+<span class="line"><span style="color:#6A737D">    // メインブランチは除外</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> ([</span><span style="color:#9ECBFF">'main'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'staging'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'dev'</span><span style="color:#E1E4E8">].</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(branch.name)) {</span></span>
+<span class="line"><span style="color:#F97583">      continue</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> age</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(branch.created_at).</span><span style="color:#B392F0">getTime</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (age </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> maxAge) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Deleting old branch: ${</span><span style="color:#E1E4E8">branch</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#B392F0"> execAsync</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">        `neonctl branches delete ${</span><span style="color:#E1E4E8">branch</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">} --project-id ${</span><span style="color:#E1E4E8">process</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">env</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">NEON_PROJECT_ID</span><span style="color:#9ECBFF">}`</span></span>
+<span class="line"><span style="color:#E1E4E8">      );</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">cleanupOldBranches</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>Neonのブランチ機能を活用することで、以下のメリットが得られます:</p>
+<ul>
+<li><strong>安全なマイグレーション</strong>: 本番に影響を与えずにスキーマ変更をテスト</li>
+<li><strong>環境分離</strong>: 開発、ステージング、本番を明確に分離</li>
+<li><strong>高速プロビジョニング</strong>: 数秒で新しい環境を作成</li>
+<li><strong>柔軟なロールバック</strong>: 任意の時点に復元可能</li>
+<li><strong>コスト効率</strong>: 使用した分だけの課金</li>
+</ul>
+<p>Gitのようなワークフローでデータベースを管理できるため、開発チームの生産性が大幅に向上します。ぜひNeonを試してみてください。</p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

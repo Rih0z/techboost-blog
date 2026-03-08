@@ -1,0 +1,1160 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/rust-ebpf-aya-guide/"><!-- Primary Meta Tags --><title>Rust + eBPF + Aya フレームワーク完全入門ガイド【2026年版】</title><meta name="title" content="Rust + eBPF + Aya フレームワーク完全入門ガイド【2026年版】"><meta name="description" content="RustでeBPFプログラムを書くためのAyaフレームワーク完全入門。環境構築からXDPパケットカウンター、eBPF Maps、ネットワーク監視ツールの実装まで実践的に解説。Rust中級エンジニア向け。具体的なコード例とともに詳しく紹介します。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/rust-ebpf-aya-guide/"><meta property="og:title" content="Rust + eBPF + Aya フレームワーク完全入門ガイド【2026年版】"><meta property="og:description" content="RustでeBPFプログラムを書くためのAyaフレームワーク完全入門。環境構築からXDPパケットカウンター、eBPF Maps、ネットワーク監視ツールの実装まで実践的に解説。Rust中級エンジニア向け。具体的なコード例とともに詳しく紹介します。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/rust-ebpf-aya-guide/"><meta name="twitter:title" content="Rust + eBPF + Aya フレームワーク完全入門ガイド【2026年版】"><meta name="twitter:description" content="RustでeBPFプログラムを書くためのAyaフレームワーク完全入門。環境構築からXDPパケットカウンター、eBPF Maps、ネットワーク監視ツールの実装まで実践的に解説。Rust中級エンジニア向け。具体的なコード例とともに詳しく紹介します。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/rust-ebpf-aya-guide/"},"headline":"Rust + eBPF + Aya フレームワーク完全入門ガイド【2026年版】","description":"RustでeBPFプログラムを書くためのAyaフレームワーク完全入門。環境構築からXDPパケットカウンター、eBPF Maps、ネットワーク監視ツールの実装まで実践的に解説。Rust中級エンジニア向け。具体的なコード例とともに詳しく紹介します。","datePublished":"2026-02-20T00:00:00.000Z","dateModified":"2026-02-20T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Rust, eBPF, Aya, Linux, ネットワーク, システムプログラミング"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Rust + eBPF + Aya フレームワーク完全入門ガイド【2026年版】"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-20T00:00:00.000Z"> Feb 19, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Rust + eBPF + Aya フレームワーク完全入門ガイド【2026年版】</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Rust" class="article-tag" data-astro-cid-bvzihdzo>
+#Rust </a><a href="/blog/tag/eBPF" class="article-tag" data-astro-cid-bvzihdzo>
+#eBPF </a><a href="/blog/tag/Aya" class="article-tag" data-astro-cid-bvzihdzo>
+#Aya </a><a href="/blog/tag/Linux" class="article-tag" data-astro-cid-bvzihdzo>
+#Linux </a><a href="/blog/tag/%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF" class="article-tag" data-astro-cid-bvzihdzo>
+#ネットワーク </a><a href="/blog/tag/%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="article-tag" data-astro-cid-bvzihdzo>
+#システムプログラミング </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="はじめに">はじめに</h2>
+<p>2026年現在、eBPF（extended Berkeley Packet Filter）はLinuxカーネルプログラミングの主役に躍り出た。Cloudflare、Facebook（Meta）、Google、Netflixといった大手が本番環境で大規模採用し、Kubernetes/クラウドネイティブスタックの根幹を支えている。そしてその世界に「Rust」という新しいプレイヤーが力強く登場した。</p>
+<p>従来のeBPFプログラムはC言語で書くのが当たり前だった。しかし、Rustの安全性とAyaフレームワークの登場により、メモリバグを型システムで防ぎながらeBPFを書くことが現実となった。</p>
+<p>本記事では、Rustの基礎知識はあるがeBPFは初めてというエンジニアに向けて、Ayaフレームワークを用いたeBPF開発を基礎から実践まで徹底的に解説する。XDPパケットカウンターの実装からネットワーク監視ツールの構築まで、動作するコードとともに学んでいく。</p>
+<hr>
+<h2 id="1-ebpfとは何か">1. eBPFとは何か</h2>
+<h3 id="11-ebpfの本質">1.1 eBPFの本質</h3>
+<p>eBPF（extended Berkeley Packet Filter）は、Linuxカーネル内でユーザーが定義したプログラムを<strong>安全に</strong>実行するための仮想マシン機構だ。「カーネルモジュールを書かずにカーネルの挙動を変更できる」と言えば、その革命性が伝わるだろう。</p>
+<p>eBPFプログラムは以下の特徴を持つ。</p>
+<ul>
+<li><strong>カーネル空間で動作</strong>：ユーザー空間とカーネル空間の境界を越えるオーバーヘッドがない</li>
+<li><strong>安全性が保証されている</strong>：ロード前にVerifierがプログラムの安全性を検証する</li>
+<li><strong>JITコンパイル</strong>：カーネル内でネイティブマシンコードにコンパイルされ高速動作</li>
+<li><strong>イベント駆動</strong>：ネットワークパケット受信、システムコール、kprobe等のイベントにアタッチ</li>
+</ul>
+<h3 id="12-ebpfの歴史bpfからebpfへ">1.2 eBPFの歴史：BPFからeBPFへ</h3>
+<p>1992年にBSD Packet Filterとして誕生したBPFは、当初はネットワークパケットフィルタリング専用の64ビット仮想マシンだった。2014年、Linuxカーネル3.18でeBPFとして拡張され、汎用プログラミング基盤へと進化した。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>BPF (1992)        → パケットフィルタのみ</span></span>
+<span class="line"><span>eBPF (Linux 3.18) → 汎用カーネル内プログラミング</span></span>
+<span class="line"><span>eBPF (Linux 5.x+) → CO-RE、BTF、リングバッファ、全機能揃う</span></span></code></pre>
+<h3 id="13-ebpfの主要ユースケース">1.3 eBPFの主要ユースケース</h3>
+<p><strong>ネットワーク処理（XDP/TC）</strong></p>
+<p>XDP（eXpress Data Path）はNICドライバレベルで動作し、カーネルのネットワークスタックに入る前にパケットを処理できる。DDoS防御、ロードバランサ（Facebookの「Katran」）、高性能ファイアウォールに活用されている。</p>
+<p><strong>オブザーバビリティ（kprobe/tracepoint）</strong></p>
+<p>システムコールやカーネル関数の引数・戻り値をリアルタイムに観測できる。Pixie、Datadog Agent、Ciliumなどが採用している。</p>
+<p><strong>セキュリティ（LSM/seccomp）</strong></p>
+<p>プロセスの挙動を監視し、不審な動作をリアルタイムで遮断できる。Falco、TetragonなどのセキュリティツールがeBPFを活用している。</p>
+<h3 id="14-ebpfプログラムの構成">1.4 eBPFプログラムの構成</h3>
+<p>eBPFプログラムは2つの部分から成る。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>部分</th><th>動作環境</th><th>役割</th></tr></thead><tbody><tr><td>eBPFプログラム（カーネル側）</td><td>Linuxカーネル</td><td>イベントをフック、データ収集</td></tr><tr><td>ユーザー空間プログラム</td><td>ユーザー空間</td><td>eBPFをロード、データを受信・表示</td></tr></tbody></table>
+<p>この2つはeBPF Mapsと呼ばれるデータ構造を通じてデータをやり取りする。</p>
+<hr>
+<h2 id="2-なぜrustでebpfを書くのか">2. なぜRustでeBPFを書くのか</h2>
+<h3 id="21-従来のc言語ebpf開発の課題">2.1 従来のC言語eBPF開発の課題</h3>
+<p>従来のeBPF開発はCで行われてきたが、以下の課題があった。</p>
+<p><strong>メモリ安全性の欠如</strong></p>
+<p>Verifierはプログラムの安全性を検証するが、すべてのバグを検出できるわけではない。Cのポインタ操作ミスはVerifierをすり抜けることがある。また、eBPFのVerifierはユーザー空間のCコードのバグを検出しない。</p>
+<p><strong>ツールチェーンの複雑さ</strong></p>
+<p>libbpf + clang/LLVM のセットアップは複雑で、Linuxカーネルのヘッダに依存する。CO-REへの移行で改善されたが、依然として敷居が高い。</p>
+<p><strong>型安全性の欠如</strong></p>
+<p>Cでは型チェックが弱く、カーネル空間とユーザー空間で共有するデータ構造の整合性を手動で管理しなければならない。</p>
+<h3 id="22-rustの優位性">2.2 Rustの優位性</h3>
+<p><strong>コンパイル時メモリ安全性</strong></p>
+<p>Rustの所有権システムとボローチェッカーは、コンパイル時にメモリ安全性を保証する。ダングリングポインタ、バッファオーバーフロー、データ競合をコンパイル段階で検出する。</p>
+<p><strong>型システムによるカーネル/ユーザー空間の整合性</strong></p>
+<p>同一のRustの型定義をカーネル側・ユーザー空間側の両方で共有できる。<code>#[repr(C)]</code> アトリビュートで両サイドのメモリレイアウトを保証する。</p>
+<p><strong>モダンなツールチェーン（cargo）</strong></p>
+<p><code>cargo</code>で依存関係を管理でき、<code>cargo generate</code>でプロジェクトテンプレートを展開できる。C言語のヘッダ依存から解放される。</p>
+<p><strong>パフォーマンス</strong></p>
+<p>RustはC言語と同等のパフォーマンスを実現する。ゼロコスト抽象化により、安全性のための実行時オーバーヘッドがほとんど発生しない。</p>
+<hr>
+<h2 id="3-ayaフレームワークの概要">3. Ayaフレームワークの概要</h2>
+<h3 id="31-ayaとは">3.1 Ayaとは</h3>
+<p>Aya（読み：アヤ）は、RustネイティブのeBPFフレームワークだ。<code>libbpf-rs</code>（libcバインディング）とは異なり、Ayaは<strong>libbpfもlibcも不要</strong>なピュアRust実装として設計されている。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>                  ┌─────────────────────┐</span></span>
+<span class="line"><span>                  │   aya-bpf (カーネル側)  │</span></span>
+<span class="line"><span>                  │   ─────────────────   │</span></span>
+<span class="line"><span>                  │   XDP / TC / kprobe   │</span></span>
+<span class="line"><span>                  │   BPF Map マクロ      │</span></span>
+<span class="line"><span>                  └──────────┬──────────┘</span></span>
+<span class="line"><span>                             │ eBPF Maps</span></span>
+<span class="line"><span>                  ┌──────────▼──────────┐</span></span>
+<span class="line"><span>                  │   aya (ユーザー空間側)  │</span></span>
+<span class="line"><span>                  │   ─────────────────   │</span></span>
+<span class="line"><span>                  │   プログラムロード      │</span></span>
+<span class="line"><span>                  │   Map 読み書き         │</span></span>
+<span class="line"><span>                  │   perf/ring buffer    │</span></span>
+<span class="line"><span>                  └─────────────────────┘</span></span></code></pre>
+<h3 id="32-ayaの主要コンポーネント">3.2 Ayaの主要コンポーネント</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>クレート</th><th>役割</th></tr></thead><tbody><tr><td><code>aya</code></td><td>ユーザー空間のメインライブラリ</td></tr><tr><td><code>aya-bpf</code></td><td>カーネル側eBPFプログラム用ライブラリ</td></tr><tr><td><code>aya-log</code></td><td>eBPFプログラム内でのログ出力</td></tr><tr><td><code>aya-log-ebpf</code></td><td>カーネル側ログ出力マクロ</td></tr><tr><td><code>aya-obj</code></td><td>eBPFオブジェクトファイルのパーサー</td></tr></tbody></table>
+<h3 id="33-ayaとlibbpf-rsとの比較">3.3 AyaとlibBPF-rsとの比較</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>項目</th><th>Aya</th><th>libbpf-rs</th></tr></thead><tbody><tr><td>libbpf依存</td><td>なし</td><td>あり（C FFI）</td></tr><tr><td>libc依存</td><td>なし</td><td>あり</td></tr><tr><td>純Rust実装</td><td>はい</td><td>部分的</td></tr><tr><td>成熟度</td><td>活発な開発中</td><td>安定</td></tr><tr><td>CO-REサポート</td><td>あり</td><td>あり</td></tr><tr><td>async対応</td><td>tokio/async対応</td><td>限定的</td></tr></tbody></table>
+<p>AyaはGitHub Starsが急増しており、2026年現在はRustでeBPFを書く場合のデファクトスタンダードになりつつある。</p>
+<hr>
+<h2 id="4-環境構築">4. 環境構築</h2>
+<h3 id="41-必要なシステム要件">4.1 必要なシステム要件</h3>
+<ul>
+<li><strong>OS</strong>: Linux（カーネル 5.8以上推奨。Ubuntu 22.04/24.04、Fedora 39+、Arch等）</li>
+<li><strong>Rust</strong>: 1.79以上（stable）</li>
+<li><strong>LLVM</strong>: 14以上（bpf-linker が必要）</li>
+</ul>
+<p>macOSやWindowsではeBPFプログラムは実行できない。開発・テストにはLinux環境が必須だ。WSL2（Windows Subsystem for Linux 2）でも動作する。</p>
+<h3 id="42-rustのインストールと設定">4.2 Rustのインストールと設定</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Rustのインストール（未インストールの場合）</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> --proto</span><span style="color:#9ECBFF"> '=https'</span><span style="color:#79B8FF"> --tlsv1.2</span><span style="color:#79B8FF"> -sSf</span><span style="color:#9ECBFF"> https://sh.rustup.rs</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> sh</span></span>
+<span class="line"><span style="color:#79B8FF">source</span><span style="color:#E1E4E8"> $HOME</span><span style="color:#9ECBFF">/.cargo/env</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># BPFターゲットの追加（eBPFプログラムのコンパイルに必須）</span></span>
+<span class="line"><span style="color:#B392F0">rustup</span><span style="color:#9ECBFF"> target</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> bpfel-unknown-none</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># nightly toolchainの追加（bpf-linkerのビルドに必要な場合がある）</span></span>
+<span class="line"><span style="color:#B392F0">rustup</span><span style="color:#9ECBFF"> toolchain</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> nightly</span></span>
+<span class="line"><span style="color:#B392F0">rustup</span><span style="color:#9ECBFF"> component</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> rust-src</span><span style="color:#79B8FF"> --toolchain</span><span style="color:#9ECBFF"> nightly</span></span></code></pre>
+<h3 id="43-bpf-linkerのインストール">4.3 bpf-linkerのインストール</h3>
+<p><code>bpf-linker</code>はRustコードをeBPF bytecodeにリンクするためのツールだ。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># LLVMが既にある場合</span></span>
+<span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> bpf-linker</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># LLVMが無い場合（内蔵LLVMを使用）</span></span>
+<span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> bpf-linker</span><span style="color:#79B8FF"> --no-default-features</span><span style="color:#79B8FF"> --features</span><span style="color:#9ECBFF"> system-llvm</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># インストール確認</span></span>
+<span class="line"><span style="color:#B392F0">bpf-linker</span><span style="color:#79B8FF"> --version</span></span></code></pre>
+<p>Ubuntu/Debianの場合、先にLLVMをインストールしておくと安定する。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Ubuntu 22.04/24.04</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> apt-get</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> llvm-14</span><span style="color:#9ECBFF"> clang-14</span><span style="color:#9ECBFF"> libelf-dev</span></span></code></pre>
+<h3 id="44-cargo-generateとaya-cliのインストール">4.4 cargo-generateとaya-cliのインストール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># cargo-generate：プロジェクトテンプレート生成ツール</span></span>
+<span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> cargo-generate</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># cargo-bpf（オプション：Ayaテンプレートが別途あるため必須ではない）</span></span>
+<span class="line"><span style="color:#6A737D"># Ayaではcargo-generateを使うのが主流</span></span></code></pre>
+<h3 id="45-ayaプロジェクトの生成">4.5 Ayaプロジェクトの生成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Ayaのテンプレートからプロジェクトを生成</span></span>
+<span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> generate</span><span style="color:#79B8FF"> --git</span><span style="color:#9ECBFF"> https://github.com/aya-rs/aya-template</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># プロンプトが出る</span></span>
+<span class="line"><span style="color:#6A737D"># Project Name: my-ebpf-app</span></span>
+<span class="line"><span style="color:#6A737D"># Which eBPF program type do you want to create? → xdp を選択</span></span></code></pre>
+<p>これにより以下の構造のプロジェクトが生成される。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>my-ebpf-app/</span></span>
+<span class="line"><span>├── Cargo.toml                  # ワークスペース設定</span></span>
+<span class="line"><span>├── my-ebpf-app/               # ユーザー空間プログラム</span></span>
+<span class="line"><span>│   ├── Cargo.toml</span></span>
+<span class="line"><span>│   └── src/</span></span>
+<span class="line"><span>│       └── main.rs</span></span>
+<span class="line"><span>├── my-ebpf-app-ebpf/          # カーネル側eBPFプログラム</span></span>
+<span class="line"><span>│   ├── Cargo.toml</span></span>
+<span class="line"><span>│   └── src/</span></span>
+<span class="line"><span>│       └── main.rs</span></span>
+<span class="line"><span>└── my-ebpf-app-common/        # 共有データ構造</span></span>
+<span class="line"><span>    ├── Cargo.toml</span></span>
+<span class="line"><span>    └── src/</span></span>
+<span class="line"><span>        └── lib.rs</span></span></code></pre>
+<p>この3クレート構成がAyaの基本パターンだ。共通のデータ型を<code>-common</code>クレートに置くことで、カーネル/ユーザー空間間の型整合性を保つ。</p>
+<hr>
+<h2 id="5-ハローワールド最初のebpfプログラムxdpパケットカウンター">5. ハローワールド：最初のeBPFプログラム（XDPパケットカウンター）</h2>
+<h3 id="51-xdpとは">5.1 XDPとは</h3>
+<p>XDP（eXpress Data Path）は、NICドライバのレベルでパケットを処理するeBPFフックポイントだ。カーネルのネットワークスタック（TCP/IPスタック等）よりも前に実行されるため、非常に高速なパケット処理が可能だ。</p>
+<p>XDPプログラムの戻り値は以下のいずれかになる。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>戻り値</th><th>意味</th></tr></thead><tbody><tr><td><code>XDP_PASS</code></td><td>パケットをカーネルのネットワークスタックに渡す</td></tr><tr><td><code>XDP_DROP</code></td><td>パケットを破棄する（DDoS防御等）</td></tr><tr><td><code>XDP_TX</code></td><td>パケットを受信したNICから送り返す</td></tr><tr><td><code>XDP_REDIRECT</code></td><td>別のNICやCPUにリダイレクト</td></tr><tr><td><code>XDP_ABORTED</code></td><td>エラー、パケットを破棄</td></tr></tbody></table>
+<h3 id="52-共有データ構造-common-クレート">5.2 共有データ構造（-common クレート）</h3>
+<p>まず、カーネル/ユーザー空間で共有するデータ型を定義する。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// my-ebpf-app-common/src/lib.rs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">#![no_std]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// カーネル空間でもユーザー空間でも使う共通型</span></span>
+<span class="line"><span style="color:#6A737D">// no_stdにする必要がある（カーネル側はstdが使えない）</span></span></code></pre>
+<p>シンプルなパケットカウンターでは共通型は不要だが、後でPacketInfoを追加する。</p>
+<h3 id="53-カーネル側ebpfプログラム">5.3 カーネル側eBPFプログラム</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// my-ebpf-app-ebpf/src/main.rs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">#![no_std]</span></span>
+<span class="line"><span style="color:#E1E4E8">#![no_main]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> aya_bpf</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#B392F0">    bindings</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">xdp_action,</span></span>
+<span class="line"><span style="color:#B392F0">    macros</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{map, xdp},</span></span>
+<span class="line"><span style="color:#B392F0">    maps</span><span style="color:#F97583">::</span><span style="color:#B392F0">HashMap</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    programs</span><span style="color:#F97583">::</span><span style="color:#B392F0">XdpContext</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> aya_log_ebpf</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">info;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// eBPF Mapの定義</span></span>
+<span class="line"><span style="color:#6A737D">// キー: u32（プロトコル番号）、値: u64（パケット数）</span></span>
+<span class="line"><span style="color:#E1E4E8">#[map(name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "PACKET_COUNT"</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">static</span><span style="color:#F97583"> mut</span><span style="color:#79B8FF"> PACKET_COUNT</span><span style="color:#F97583">:</span><span style="color:#B392F0"> HashMap</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">u32</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">u64</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=</span></span>
+<span class="line"><span style="color:#B392F0">    HashMap</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">u32</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">u64</span><span style="color:#E1E4E8">></span><span style="color:#F97583">::</span><span style="color:#B392F0">with_max_entries</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">256</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// XDPフックポイントのアトリビュート</span></span>
+<span class="line"><span style="color:#6A737D">// "xdp_packet_counter" はプログラム名（ロード時に使用）</span></span>
+<span class="line"><span style="color:#E1E4E8">#[xdp(name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "xdp_packet_counter"</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> fn</span><span style="color:#B392F0"> xdp_packet_counter</span><span style="color:#E1E4E8">(ctx</span><span style="color:#F97583">:</span><span style="color:#B392F0"> XdpContext</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    match</span><span style="color:#B392F0"> try_xdp_packet_counter</span><span style="color:#E1E4E8">(ctx) {</span></span>
+<span class="line"><span style="color:#B392F0">        Ok</span><span style="color:#E1E4E8">(ret) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ret,</span></span>
+<span class="line"><span style="color:#B392F0">        Err</span><span style="color:#E1E4E8">(_) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> xdp_action</span><span style="color:#F97583">::</span><span style="color:#79B8FF">XDP_ABORTED</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> try_xdp_packet_counter</span><span style="color:#E1E4E8">(ctx</span><span style="color:#F97583">:</span><span style="color:#B392F0"> XdpContext</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">u32</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">u64</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#6A737D">    // パケットデータへのポインタを取得</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> data_start </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ctx</span><span style="color:#F97583">.</span><span style="color:#B392F0">data</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#B392F0"> usize</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> data_end </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ctx</span><span style="color:#F97583">.</span><span style="color:#B392F0">data_end</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#B392F0"> usize</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Ethernet ヘッダのサイズチェック（必須！Verifierが要求する）</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> eth_size </span><span style="color:#F97583">=</span><span style="color:#B392F0"> core</span><span style="color:#F97583">::</span><span style="color:#B392F0">mem</span><span style="color:#F97583">::</span><span style="color:#B392F0">size_of</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">EthHdr</span><span style="color:#E1E4E8">>();</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> data_start </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> eth_size </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> data_end {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#B392F0"> Ok</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">xdp_action</span><span style="color:#F97583">::</span><span style="color:#79B8FF">XDP_PASS</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Ethernet ヘッダの読み取り</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> eth_hdr </span><span style="color:#F97583">=</span><span style="color:#F97583"> unsafe</span><span style="color:#E1E4E8"> { </span><span style="color:#F97583">&#x26;*</span><span style="color:#E1E4E8">(data_start </span><span style="color:#F97583">as</span><span style="color:#F97583"> *const</span><span style="color:#79B8FF"> EthHdr</span><span style="color:#E1E4E8">) };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Ethertype を取得（ネットワークバイトオーダー → ホストバイトオーダー）</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> ether_type </span><span style="color:#F97583">=</span><span style="color:#B392F0"> u16</span><span style="color:#F97583">::</span><span style="color:#B392F0">from_be</span><span style="color:#E1E4E8">(eth_hdr</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">ether_type);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // プロトコル番号をキーとしてカウントをインクリメント</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> key </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ether_type </span><span style="color:#F97583">as</span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    unsafe</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        let</span><span style="color:#E1E4E8"> count </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> PACKET_COUNT</span><span style="color:#F97583">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">key)</span><span style="color:#F97583">.</span><span style="color:#B392F0">copied</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">.</span><span style="color:#B392F0">unwrap_or</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#79B8FF">        PACKET_COUNT</span><span style="color:#F97583">.</span><span style="color:#B392F0">insert</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">key, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">(count </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">), </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">.</span><span style="color:#B392F0">ok</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // パケットをカーネルのネットワークスタックへ渡す</span></span>
+<span class="line"><span style="color:#B392F0">    Ok</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">xdp_action</span><span style="color:#F97583">::</span><span style="color:#79B8FF">XDP_PASS</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Ethernetヘッダ構造体の定義</span></span>
+<span class="line"><span style="color:#6A737D">// #[repr(C)] でC言語と同じメモリレイアウトを保証する</span></span>
+<span class="line"><span style="color:#E1E4E8">#[repr(</span><span style="color:#B392F0">C</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">struct</span><span style="color:#B392F0"> EthHdr</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    dst_mac</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> [</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">; </span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">    src_mac</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> [</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">; </span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">    ether_type</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u16</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// パニック時のハンドラ（no_std環境では必須）</span></span>
+<span class="line"><span style="color:#E1E4E8">#[panic_handler]</span></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> panic</span><span style="color:#E1E4E8">(_info</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">core</span><span style="color:#F97583">::</span><span style="color:#B392F0">panic</span><span style="color:#F97583">::</span><span style="color:#B392F0">PanicInfo</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#F97583"> !</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    unsafe</span><span style="color:#E1E4E8"> { </span><span style="color:#B392F0">core</span><span style="color:#F97583">::</span><span style="color:#B392F0">hint</span><span style="color:#F97583">::</span><span style="color:#B392F0">unreachable_unchecked</span><span style="color:#E1E4E8">() }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="54-ユーザー空間プログラム">5.4 ユーザー空間プログラム</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// my-ebpf-app/src/main.rs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> anyhow</span><span style="color:#F97583">::</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> aya</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">    include_bytes_aligned,</span></span>
+<span class="line"><span style="color:#B392F0">    maps</span><span style="color:#F97583">::</span><span style="color:#B392F0">HashMap</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    programs</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span><span style="color:#B392F0">Xdp</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">XdpFlags</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#B392F0">    Bpf</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> aya_log</span><span style="color:#F97583">::</span><span style="color:#B392F0">BpfLogger</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> clap</span><span style="color:#F97583">::</span><span style="color:#B392F0">Parser</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> log</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{info, warn};</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> std</span><span style="color:#F97583">::</span><span style="color:#B392F0">net</span><span style="color:#F97583">::</span><span style="color:#B392F0">Ipv4Addr</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> tokio</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">signal;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">/// XDPパケットカウンター</span></span>
+<span class="line"><span style="color:#E1E4E8">#[derive(</span><span style="color:#B392F0">Debug</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Parser</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">struct</span><span style="color:#B392F0"> Opt</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    /// 監視するネットワークインターフェース名（例: eth0, lo）</span></span>
+<span class="line"><span style="color:#E1E4E8">    #[clap(short, long, default_value </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "eth0"</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#E1E4E8">    iface</span><span style="color:#F97583">:</span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">#[tokio</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">main]</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> fn</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-></span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&#x3C;(), anyhow</span><span style="color:#F97583">::</span><span style="color:#B392F0">Error</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> opt </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Opt</span><span style="color:#F97583">::</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // ロギングの初期化</span></span>
+<span class="line"><span style="color:#B392F0">    env_logger</span><span style="color:#F97583">::</span><span style="color:#B392F0">init</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // eBPFオブジェクトファイルをバイナリとして埋め込む</span></span>
+<span class="line"><span style="color:#6A737D">    // ビルド時にmy-ebpf-app-ebpfクレートのバイトコードがここに埋め込まれる</span></span>
+<span class="line"><span style="color:#E1E4E8">    #[cfg(debug_assertions)]</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> bpf </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Bpf</span><span style="color:#F97583">::</span><span style="color:#B392F0">load</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">include_bytes_aligned!</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">        "../../target/bpfel-unknown-none/debug/my-ebpf-app"</span></span>
+<span class="line"><span style="color:#E1E4E8">    ))</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    #[cfg(not(debug_assertions))]</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> bpf </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Bpf</span><span style="color:#F97583">::</span><span style="color:#B392F0">load</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">include_bytes_aligned!</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">        "../../target/bpfel-unknown-none/release/my-ebpf-app"</span></span>
+<span class="line"><span style="color:#E1E4E8">    ))</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // eBPFプログラムのログをユーザー空間で受信する設定</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#F97583"> let</span><span style="color:#B392F0"> Err</span><span style="color:#E1E4E8">(e) </span><span style="color:#F97583">=</span><span style="color:#B392F0"> BpfLogger</span><span style="color:#F97583">::</span><span style="color:#B392F0">init</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> bpf) {</span></span>
+<span class="line"><span style="color:#B392F0">        warn!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"failed to initialize eBPF logger: {}"</span><span style="color:#E1E4E8">, e);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // XDPプログラムをロードしてネットワークインターフェースにアタッチ</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> program</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;mut</span><span style="color:#B392F0"> Xdp</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> bpf</span></span>
+<span class="line"><span style="color:#F97583">        .</span><span style="color:#B392F0">program_mut</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"xdp_packet_counter"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        .</span><span style="color:#B392F0">unwrap</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">        .</span><span style="color:#B392F0">try_into</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    program</span><span style="color:#F97583">.</span><span style="color:#B392F0">load</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    program</span><span style="color:#F97583">.</span><span style="color:#B392F0">attach</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">opt</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">iface, </span><span style="color:#B392F0">XdpFlags</span><span style="color:#F97583">::</span><span style="color:#B392F0">default</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#F97583">        .</span><span style="color:#B392F0">context</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">format!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"failed to attach XDP to {}"</span><span style="color:#E1E4E8">, opt</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">iface))</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    info!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"XDP program loaded. Monitoring interface: {}"</span><span style="color:#E1E4E8">, opt</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">iface);</span></span>
+<span class="line"><span style="color:#B392F0">    info!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Press Ctrl+C to stop..."</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // メインループ：1秒ごとにカウントを表示</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> packet_count_map</span><span style="color:#F97583">:</span><span style="color:#B392F0"> HashMap</span><span style="color:#E1E4E8">&#x3C;_, </span><span style="color:#B392F0">u32</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">u64</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=</span></span>
+<span class="line"><span style="color:#B392F0">        HashMap</span><span style="color:#F97583">::</span><span style="color:#B392F0">try_from</span><span style="color:#E1E4E8">(bpf</span><span style="color:#F97583">.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"PACKET_COUNT"</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">.</span><span style="color:#B392F0">unwrap</span><span style="color:#E1E4E8">())</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    loop</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        tokio</span><span style="color:#F97583">::</span><span style="color:#B392F0">select!</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">            _ </span><span style="color:#F97583">=</span><span style="color:#B392F0"> signal</span><span style="color:#F97583">::</span><span style="color:#B392F0">ctrl_c</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">                info!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Received Ctrl+C, exiting..."</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">                break</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">            _ </span><span style="color:#F97583">=</span><span style="color:#B392F0"> tokio</span><span style="color:#F97583">::</span><span style="color:#B392F0">time</span><span style="color:#F97583">::</span><span style="color:#B392F0">sleep</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">tokio</span><span style="color:#F97583">::</span><span style="color:#B392F0">time</span><span style="color:#F97583">::</span><span style="color:#B392F0">Duration</span><span style="color:#F97583">::</span><span style="color:#B392F0">from_secs</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">                // Ethertypeとパケット数を表示</span></span>
+<span class="line"><span style="color:#F97583">                for</span><span style="color:#E1E4E8"> item </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> packet_count_map</span><span style="color:#F97583">.</span><span style="color:#B392F0">iter</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">                    if</span><span style="color:#F97583"> let</span><span style="color:#B392F0"> Ok</span><span style="color:#E1E4E8">((key, count)) </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> item {</span></span>
+<span class="line"><span style="color:#F97583">                        let</span><span style="color:#E1E4E8"> proto </span><span style="color:#F97583">=</span><span style="color:#F97583"> match</span><span style="color:#E1E4E8"> key {</span></span>
+<span class="line"><span style="color:#79B8FF">                            0x0800</span><span style="color:#F97583"> =></span><span style="color:#9ECBFF"> "IPv4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                            0x0806</span><span style="color:#F97583"> =></span><span style="color:#9ECBFF"> "ARP"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                            0x86DD</span><span style="color:#F97583"> =></span><span style="color:#9ECBFF"> "IPv6"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                            0x8100</span><span style="color:#F97583"> =></span><span style="color:#9ECBFF"> "VLAN"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                            _ </span><span style="color:#F97583">=></span><span style="color:#9ECBFF"> "Other"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                        };</span></span>
+<span class="line"><span style="color:#B392F0">                        info!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Protocol: {} (0x{:04X}) → {} packets"</span><span style="color:#E1E4E8">, proto, key, count);</span></span>
+<span class="line"><span style="color:#E1E4E8">                    }</span></span>
+<span class="line"><span style="color:#E1E4E8">                }</span></span>
+<span class="line"><span style="color:#B392F0">                info!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"---"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    Ok</span><span style="color:#E1E4E8">(())</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="55-ビルドと実行">5.5 ビルドと実行</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># カーネル側eBPFプログラムをビルド</span></span>
+<span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --package</span><span style="color:#9ECBFF"> my-ebpf-app-ebpf</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --target</span><span style="color:#9ECBFF"> bpfel-unknown-none</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -Z</span><span style="color:#9ECBFF"> build-std=core</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># ユーザー空間プログラムをビルド</span></span>
+<span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --package</span><span style="color:#9ECBFF"> my-ebpf-app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># root権限で実行（eBPFのロードにはCAP_BPF権限が必要）</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> ./target/debug/my-ebpf-app</span><span style="color:#79B8FF"> --iface</span><span style="color:#9ECBFF"> lo</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 別ターミナルでトラフィックを発生させる</span></span>
+<span class="line"><span style="color:#B392F0">ping</span><span style="color:#79B8FF"> -c</span><span style="color:#79B8FF"> 5</span><span style="color:#79B8FF"> 127.0.0.1</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#9ECBFF"> http://localhost:8080</span></span></code></pre>
+<p>実行すると以下のような出力が得られる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[INFO] XDP program loaded. Monitoring interface: lo</span></span>
+<span class="line"><span>[INFO] Press Ctrl+C to stop...</span></span>
+<span class="line"><span>[INFO] Protocol: IPv4 (0x0800) → 42 packets</span></span>
+<span class="line"><span>[INFO] Protocol: ARP (0x0806) → 3 packets</span></span>
+<span class="line"><span>[INFO] ---</span></span>
+<span class="line"><span>[INFO] Protocol: IPv4 (0x0800) → 87 packets</span></span>
+<span class="line"><span>[INFO] Protocol: ARP (0x0806) → 3 packets</span></span>
+<span class="line"><span>[INFO] ---</span></span></code></pre>
+<hr>
+<h2 id="6-ebpf-mapsの使い方">6. eBPF Mapsの使い方</h2>
+<h3 id="61-ebpf-mapsとは">6.1 eBPF Mapsとは</h3>
+<p>eBPF Mapsはカーネル空間とユーザー空間の間でデータを共有するためのデータ構造だ。複数のCPUコア間でも共有でき、アトミックな操作が可能だ。</p>
+<h3 id="62-主要なmap型">6.2 主要なMap型</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Map型</th><th>用途</th><th>Ayaでの型</th></tr></thead><tbody><tr><td><code>BPF_MAP_TYPE_HASH</code></td><td>キー/バリューストア</td><td><code>HashMap&#x3C;K, V></code></td></tr><tr><td><code>BPF_MAP_TYPE_ARRAY</code></td><td>固定長配列</td><td><code>Array&#x3C;V></code></td></tr><tr><td><code>BPF_MAP_TYPE_PERF_EVENT_ARRAY</code></td><td>カーネル→ユーザーへのイベント通知</td><td><code>PerfEventArray</code></td></tr><tr><td><code>BPF_MAP_TYPE_RING_BUF</code></td><td>リングバッファ（Linux 5.8+）</td><td><code>RingBuf</code></td></tr><tr><td><code>BPF_MAP_TYPE_LRU_HASH</code></td><td>LRUキャッシュ付きハッシュマップ</td><td><code>LruHashMap&#x3C;K, V></code></td></tr><tr><td><code>BPF_MAP_TYPE_PERCPU_HASH</code></td><td>CPU毎のハッシュマップ（高速）</td><td><code>PerCpuHashMap&#x3C;K, V></code></td></tr></tbody></table>
+<h3 id="63-hashmapの詳細な使い方">6.3 HashMapの詳細な使い方</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// カーネル側（eBPFプログラム）での定義と使用</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> aya_bpf</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#B392F0">    macros</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">map,</span></span>
+<span class="line"><span style="color:#B392F0">    maps</span><span style="color:#F97583">::</span><span style="color:#B392F0">HashMap</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 最大1024エントリのHashMap</span></span>
+<span class="line"><span style="color:#E1E4E8">#[map(name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "CONNECTION_TABLE"</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">static</span><span style="color:#F97583"> mut</span><span style="color:#79B8FF"> CONNECTION_TABLE</span><span style="color:#F97583">:</span><span style="color:#B392F0"> HashMap</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">ConnectionKey</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">ConnectionStats</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=</span></span>
+<span class="line"><span style="color:#B392F0">    HashMap</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">ConnectionKey</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">ConnectionStats</span><span style="color:#E1E4E8">></span><span style="color:#F97583">::</span><span style="color:#B392F0">with_max_entries</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1024</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 共通クレートで定義する型（#[repr(C)]必須）</span></span>
+<span class="line"><span style="color:#E1E4E8">#[repr(</span><span style="color:#B392F0">C</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#E1E4E8">#[derive(</span><span style="color:#B392F0">Clone</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Copy</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> ConnectionKey</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> src_ip</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> dst_ip</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> src_port</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u16</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> dst_port</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u16</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> protocol</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u8</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> _pad</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> [</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">; </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">],  </span><span style="color:#6A737D">// アライメント調整</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">#[repr(</span><span style="color:#B392F0">C</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#E1E4E8">#[derive(</span><span style="color:#B392F0">Clone</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Copy</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Default</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> ConnectionStats</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> packets</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> bytes</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> last_seen</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// eBPFプログラム内でのMap操作</span></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> update_connection</span><span style="color:#E1E4E8">(key</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">ConnectionKey</span><span style="color:#E1E4E8">, packet_size</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    unsafe</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        let</span><span style="color:#E1E4E8"> stats </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> CONNECTION_TABLE</span><span style="color:#F97583">.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(key)</span><span style="color:#F97583">.</span><span style="color:#B392F0">copied</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">.</span><span style="color:#B392F0">unwrap_or_default</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">        let</span><span style="color:#E1E4E8"> new_stats </span><span style="color:#F97583">=</span><span style="color:#B392F0"> ConnectionStats</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">            packets</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> stats</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">packets </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            bytes</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> stats</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">bytes </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> packet_size,</span></span>
+<span class="line"><span style="color:#E1E4E8">            last_seen</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bpf_ktime_get_ns</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">        };</span></span>
+<span class="line"><span style="color:#6A737D">        // flags=0: 既存エントリの更新も許可</span></span>
+<span class="line"><span style="color:#79B8FF">        CONNECTION_TABLE</span><span style="color:#F97583">.</span><span style="color:#B392F0">insert</span><span style="color:#E1E4E8">(key, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">new_stats, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">.</span><span style="color:#B392F0">ok</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="64-perfeventarrayを使ったリアルタイムイベント通知">6.4 PerfEventArrayを使ったリアルタイムイベント通知</h3>
+<p>PerfEventArrayを使うと、カーネル側からユーザー空間へリアルタイムでイベントを送れる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// カーネル側</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> aya_bpf</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#B392F0">    macros</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">map,</span></span>
+<span class="line"><span style="color:#B392F0">    maps</span><span style="color:#F97583">::</span><span style="color:#B392F0">PerfEventArray</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">#[map(name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "EVENTS"</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">static</span><span style="color:#F97583"> mut</span><span style="color:#79B8FF"> EVENTS</span><span style="color:#F97583">:</span><span style="color:#B392F0"> PerfEventArray</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">PacketEvent</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=</span></span>
+<span class="line"><span style="color:#B392F0">    PerfEventArray</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">PacketEvent</span><span style="color:#E1E4E8">></span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">#[repr(</span><span style="color:#B392F0">C</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> PacketEvent</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> src_ip</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> dst_ip</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> src_port</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u16</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> dst_port</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u16</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> packet_size</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> timestamp</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> send_event</span><span style="color:#E1E4E8">(ctx</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">XdpContext</span><span style="color:#E1E4E8">, event</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">PacketEvent</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    unsafe</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // CPUごとのPerfイベントとして送信</span></span>
+<span class="line"><span style="color:#79B8FF">        EVENTS</span><span style="color:#F97583">.</span><span style="color:#B392F0">output</span><span style="color:#E1E4E8">(ctx, event, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// ユーザー空間側</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> aya</span><span style="color:#F97583">::</span><span style="color:#B392F0">maps</span><span style="color:#F97583">::</span><span style="color:#B392F0">perf</span><span style="color:#F97583">::</span><span style="color:#B392F0">AsyncPerfEventArray</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> bytes</span><span style="color:#F97583">::</span><span style="color:#B392F0">BytesMut</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> perf_array </span><span style="color:#F97583">=</span><span style="color:#B392F0"> AsyncPerfEventArray</span><span style="color:#F97583">::</span><span style="color:#B392F0">try_from</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    bpf</span><span style="color:#F97583">.</span><span style="color:#B392F0">map_mut</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"EVENTS"</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">.</span><span style="color:#B392F0">unwrap</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 各CPUのイベントを受信</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> cpu_id </span><span style="color:#F97583">in</span><span style="color:#B392F0"> online_cpus</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">?</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> buf </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> perf_array</span><span style="color:#F97583">.</span><span style="color:#B392F0">open</span><span style="color:#E1E4E8">(cpu_id, </span><span style="color:#B392F0">None</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    tokio</span><span style="color:#F97583">::</span><span style="color:#B392F0">spawn</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#F97583"> move</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> buffers </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">0</span><span style="color:#F97583">..</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">            .</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">|</span><span style="color:#E1E4E8">_</span><span style="color:#F97583">|</span><span style="color:#B392F0"> BytesMut</span><span style="color:#F97583">::</span><span style="color:#B392F0">with_capacity</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">4096</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#F97583">            .</span><span style="color:#B392F0">collect</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Vec</span><span style="color:#E1E4E8">&#x3C;_>>();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        loop</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">            let</span><span style="color:#E1E4E8"> events </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> buf</span><span style="color:#F97583">.</span><span style="color:#B392F0">read_events</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> buffers)</span><span style="color:#F97583">.await.</span><span style="color:#B392F0">unwrap</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">            for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583">..</span><span style="color:#E1E4E8">events</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">read {</span></span>
+<span class="line"><span style="color:#F97583">                let</span><span style="color:#E1E4E8"> buf </span><span style="color:#F97583">=</span><span style="color:#F97583"> &#x26;</span><span style="color:#E1E4E8">buffers[i];</span></span>
+<span class="line"><span style="color:#6A737D">                // PacketEventとして解釈</span></span>
+<span class="line"><span style="color:#F97583">                let</span><span style="color:#E1E4E8"> event </span><span style="color:#F97583">=</span><span style="color:#F97583"> unsafe</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">                    &#x26;*</span><span style="color:#E1E4E8">(buf</span><span style="color:#F97583">.</span><span style="color:#B392F0">as_ptr</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#F97583"> *const</span><span style="color:#79B8FF"> PacketEvent</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                };</span></span>
+<span class="line"><span style="color:#B392F0">                println!</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">                    "Packet: {:?} -> {:?} size={}"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">                    Ipv4Addr</span><span style="color:#F97583">::</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(event</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">src_ip),</span></span>
+<span class="line"><span style="color:#B392F0">                    Ipv4Addr</span><span style="color:#F97583">::</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(event</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">dst_ip),</span></span>
+<span class="line"><span style="color:#E1E4E8">                    event</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">packet_size</span></span>
+<span class="line"><span style="color:#E1E4E8">                );</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="65-ringbufperfeventarrayの後継linux-58">6.5 RingBuf：PerfEventArrayの後継（Linux 5.8+）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// カーネル側でRingBufを使う</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> aya_bpf</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span><span style="color:#B392F0">macros</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">map, </span><span style="color:#B392F0">maps</span><span style="color:#F97583">::</span><span style="color:#B392F0">RingBuf</span><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">#[map(name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "RING_EVENTS"</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">static</span><span style="color:#F97583"> mut</span><span style="color:#79B8FF"> RING_EVENTS</span><span style="color:#F97583">:</span><span style="color:#B392F0"> RingBuf</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> RingBuf</span><span style="color:#F97583">::</span><span style="color:#B392F0">with_byte_size</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">4096</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1024</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> send_ring_event</span><span style="color:#E1E4E8">(event</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">PacketEvent</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    unsafe</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#F97583"> let</span><span style="color:#B392F0"> Some</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">mut</span><span style="color:#E1E4E8"> entry) </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> RING_EVENTS</span><span style="color:#F97583">.</span><span style="color:#B392F0">reserve</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">PacketEvent</span><span style="color:#E1E4E8">>(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">            *</span><span style="color:#E1E4E8">entry </span><span style="color:#F97583">=</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8">event;</span></span>
+<span class="line"><span style="color:#E1E4E8">            entry</span><span style="color:#F97583">.</span><span style="color:#B392F0">submit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>RingBufはPerfEventArrayと比べてメモリ効率が高く、イベントのドロップが発生しにくい。Linux 5.8以上では積極的にRingBufを採用することを推奨する。</p>
+<hr>
+<h2 id="7-実践例ネットワーク監視ツールの実装">7. 実践例：ネットワーク監視ツールの実装</h2>
+<h3 id="71-実装の全体設計">7.1 実装の全体設計</h3>
+<p>ここでは、TCPコネクションをリアルタイムに監視し、送受信バイト数とコネクション数を表示するツールを実装する。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>eBPFプログラム（カーネル側）</span></span>
+<span class="line"><span>├── kprobe: tcp_v4_connect → 新規TCP接続を検出</span></span>
+<span class="line"><span>├── kretprobe: tcp_v4_connect → 接続完了を記録</span></span>
+<span class="line"><span>├── kprobe: tcp_sendmsg → 送信バイト数を記録</span></span>
+<span class="line"><span>├── kprobe: tcp_cleanup_rbuf → 受信バイト数を記録</span></span>
+<span class="line"><span>└── kprobe: tcp_close → コネクション終了を記録</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ユーザー空間プログラム</span></span>
+<span class="line"><span>├── eBPFプログラムのロード</span></span>
+<span class="line"><span>├── PerfEventArrayでイベントを受信</span></span>
+<span class="line"><span>└── ターミナルにリアルタイム表示</span></span></code></pre>
+<h3 id="72-共通データ型の定義">7.2 共通データ型の定義</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// network-monitor-common/src/lib.rs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">#![no_std]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">/// TCPイベント種別</span></span>
+<span class="line"><span style="color:#E1E4E8">#[repr(</span><span style="color:#B392F0">u32</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#E1E4E8">#[derive(</span><span style="color:#B392F0">Clone</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Copy</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Debug</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">PartialEq</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> enum</span><span style="color:#B392F0"> TcpEventType</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    Connect</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    Send</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    Recv</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 3</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    Close</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 4</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">/// TCPイベント（カーネルからユーザー空間へ送信するデータ）</span></span>
+<span class="line"><span style="color:#E1E4E8">#[repr(</span><span style="color:#B392F0">C</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#E1E4E8">#[derive(</span><span style="color:#B392F0">Clone</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Copy</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> TcpEvent</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> event_type</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TcpEventType</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> pid</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> src_addr</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8">,       </span><span style="color:#6A737D">// IPv4アドレス（ネットワークバイトオーダー）</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> dst_addr</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> src_port</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u16</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> dst_port</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u16</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> bytes</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">,          </span><span style="color:#6A737D">// Send/Recvイベントのデータ量</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> timestamp</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">,      </span><span style="color:#6A737D">// nanoseconds since boot</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> comm</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> [</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">; </span><span style="color:#79B8FF">16</span><span style="color:#E1E4E8">],      </span><span style="color:#6A737D">// プロセス名</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="73-カーネル側ebpfプログラム">7.3 カーネル側eBPFプログラム</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// network-monitor-ebpf/src/main.rs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">#![no_std]</span></span>
+<span class="line"><span style="color:#E1E4E8">#![no_main]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> aya_bpf</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#B392F0">    helpers</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{bpf_get_current_comm, bpf_get_current_pid_tgid, bpf_ktime_get_ns},</span></span>
+<span class="line"><span style="color:#B392F0">    macros</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{kprobe, map},</span></span>
+<span class="line"><span style="color:#B392F0">    maps</span><span style="color:#F97583">::</span><span style="color:#B392F0">PerfEventArray</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    programs</span><span style="color:#F97583">::</span><span style="color:#B392F0">ProbeContext</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    BpfContext</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> network_monitor_common</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span><span style="color:#B392F0">TcpEvent</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">TcpEventType</span><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">/// eBPFイベント送信用のPerfEventArray</span></span>
+<span class="line"><span style="color:#E1E4E8">#[map(name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "TCP_EVENTS"</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">static</span><span style="color:#F97583"> mut</span><span style="color:#79B8FF"> TCP_EVENTS</span><span style="color:#F97583">:</span><span style="color:#B392F0"> PerfEventArray</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">TcpEvent</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=</span></span>
+<span class="line"><span style="color:#B392F0">    PerfEventArray</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">TcpEvent</span><span style="color:#E1E4E8">></span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">/// tcp_v4_connect kprobe: 新規TCP接続の開始を検出</span></span>
+<span class="line"><span style="color:#E1E4E8">#[kprobe(name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "kprobe_tcp_v4_connect"</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> fn</span><span style="color:#B392F0"> kprobe_tcp_v4_connect</span><span style="color:#E1E4E8">(ctx</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ProbeContext</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    match</span><span style="color:#B392F0"> try_kprobe_tcp_v4_connect</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">ctx) {</span></span>
+<span class="line"><span style="color:#B392F0">        Ok</span><span style="color:#E1E4E8">(ret) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ret,</span></span>
+<span class="line"><span style="color:#B392F0">        Err</span><span style="color:#E1E4E8">(_) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> try_kprobe_tcp_v4_connect</span><span style="color:#E1E4E8">(ctx</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">ProbeContext</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">u32</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">i64</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#6A737D">    // プロセスIDとスレッドグループIDを取得</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> pid_tgid </span><span style="color:#F97583">=</span><span style="color:#B392F0"> bpf_get_current_pid_tgid</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> pid </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (pid_tgid </span><span style="color:#F97583">>></span><span style="color:#79B8FF"> 32</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // プロセス名を取得（最大15文字 + null終端）</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> comm </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">0</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">; </span><span style="color:#79B8FF">16</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#B392F0">    bpf_get_current_comm</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> comm);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // sock構造体からアドレス情報を取得</span></span>
+<span class="line"><span style="color:#6A737D">    // sock * は第1引数として渡される</span></span>
+<span class="line"><span style="color:#6A737D">    // 注意: カーネルの内部構造体へのアクセスには注意が必要</span></span>
+<span class="line"><span style="color:#6A737D">    // 実際の実装ではBTF（BPF Type Format）を使った安全なアクセスが推奨</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> sock_ptr</span><span style="color:#F97583">:</span><span style="color:#F97583"> *const</span><span style="color:#B392F0"> u8</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> ctx</span><span style="color:#F97583">.</span><span style="color:#B392F0">arg</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">.</span><span style="color:#B392F0">ok_or</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#B392F0">i64</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // イベントを送信</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> event </span><span style="color:#F97583">=</span><span style="color:#B392F0"> TcpEvent</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        event_type</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TcpEventType</span><span style="color:#F97583">::</span><span style="color:#B392F0">Connect</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        pid,</span></span>
+<span class="line"><span style="color:#E1E4E8">        src_addr</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D">// kretprobeで補完</span></span>
+<span class="line"><span style="color:#E1E4E8">        dst_addr</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        src_port</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        dst_port</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        bytes</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        timestamp</span><span style="color:#F97583">:</span><span style="color:#F97583"> unsafe</span><span style="color:#E1E4E8"> { </span><span style="color:#B392F0">bpf_ktime_get_ns</span><span style="color:#E1E4E8">() },</span></span>
+<span class="line"><span style="color:#E1E4E8">        comm,</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    unsafe</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">        TCP_EVENTS</span><span style="color:#F97583">.</span><span style="color:#B392F0">output</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">event, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    Ok</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">/// tcp_sendmsg kprobe: TCP送信を検出</span></span>
+<span class="line"><span style="color:#E1E4E8">#[kprobe(name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "kprobe_tcp_sendmsg"</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> fn</span><span style="color:#B392F0"> kprobe_tcp_sendmsg</span><span style="color:#E1E4E8">(ctx</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ProbeContext</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    match</span><span style="color:#B392F0"> try_kprobe_tcp_sendmsg</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">ctx) {</span></span>
+<span class="line"><span style="color:#B392F0">        Ok</span><span style="color:#E1E4E8">(ret) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ret,</span></span>
+<span class="line"><span style="color:#B392F0">        Err</span><span style="color:#E1E4E8">(_) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> try_kprobe_tcp_sendmsg</span><span style="color:#E1E4E8">(ctx</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">ProbeContext</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">u32</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">i64</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> pid_tgid </span><span style="color:#F97583">=</span><span style="color:#B392F0"> bpf_get_current_pid_tgid</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> pid </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (pid_tgid </span><span style="color:#F97583">>></span><span style="color:#79B8FF"> 32</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // size_t size (第3引数) = 送信バイト数</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> size</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> ctx</span><span style="color:#F97583">.</span><span style="color:#B392F0">arg</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">.</span><span style="color:#B392F0">ok_or</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#B392F0">i64</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> comm </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">0</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">; </span><span style="color:#79B8FF">16</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#B392F0">    bpf_get_current_comm</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> comm);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> event </span><span style="color:#F97583">=</span><span style="color:#B392F0"> TcpEvent</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        event_type</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TcpEventType</span><span style="color:#F97583">::</span><span style="color:#B392F0">Send</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        pid,</span></span>
+<span class="line"><span style="color:#E1E4E8">        src_addr</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        dst_addr</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        src_port</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        dst_port</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        bytes</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> size,</span></span>
+<span class="line"><span style="color:#E1E4E8">        timestamp</span><span style="color:#F97583">:</span><span style="color:#F97583"> unsafe</span><span style="color:#E1E4E8"> { </span><span style="color:#B392F0">bpf_ktime_get_ns</span><span style="color:#E1E4E8">() },</span></span>
+<span class="line"><span style="color:#E1E4E8">        comm,</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    unsafe</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">        TCP_EVENTS</span><span style="color:#F97583">.</span><span style="color:#B392F0">output</span><span style="color:#E1E4E8">(ctx, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">event, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    Ok</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">#[panic_handler]</span></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> panic</span><span style="color:#E1E4E8">(_info</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">core</span><span style="color:#F97583">::</span><span style="color:#B392F0">panic</span><span style="color:#F97583">::</span><span style="color:#B392F0">PanicInfo</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#F97583"> !</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    unsafe</span><span style="color:#E1E4E8"> { </span><span style="color:#B392F0">core</span><span style="color:#F97583">::</span><span style="color:#B392F0">hint</span><span style="color:#F97583">::</span><span style="color:#B392F0">unreachable_unchecked</span><span style="color:#E1E4E8">() }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="74-ユーザー空間プログラム完全版">7.4 ユーザー空間プログラム（完全版）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// network-monitor/src/main.rs</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> anyhow</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span><span style="color:#B392F0">Context</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Result</span><span style="color:#E1E4E8">};</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> aya</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#E1E4E8">    include_bytes_aligned,</span></span>
+<span class="line"><span style="color:#B392F0">    maps</span><span style="color:#F97583">::</span><span style="color:#B392F0">perf</span><span style="color:#F97583">::</span><span style="color:#B392F0">AsyncPerfEventArray</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    programs</span><span style="color:#F97583">::</span><span style="color:#B392F0">KProbe</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    util</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">online_cpus,</span></span>
+<span class="line"><span style="color:#B392F0">    Bpf</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> aya_log</span><span style="color:#F97583">::</span><span style="color:#B392F0">BpfLogger</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> bytes</span><span style="color:#F97583">::</span><span style="color:#B392F0">BytesMut</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> log</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">info;</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> network_monitor_common</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span><span style="color:#B392F0">TcpEvent</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">TcpEventType</span><span style="color:#E1E4E8">};</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> std</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#B392F0">    collections</span><span style="color:#F97583">::</span><span style="color:#B392F0">HashMap</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    net</span><span style="color:#F97583">::</span><span style="color:#B392F0">Ipv4Addr</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    sync</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{</span><span style="color:#B392F0">Arc</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Mutex</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> tokio</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">signal;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">/// プロセスごとの統計情報</span></span>
+<span class="line"><span style="color:#E1E4E8">#[derive(</span><span style="color:#B392F0">Default</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Debug</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">struct</span><span style="color:#B392F0"> ProcessStats</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    connections</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    bytes_sent</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    bytes_recv</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">#[tokio</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">main]</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> fn</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-></span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&#x3C;()> {</span></span>
+<span class="line"><span style="color:#B392F0">    env_logger</span><span style="color:#F97583">::</span><span style="color:#B392F0">builder</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">        .</span><span style="color:#B392F0">filter_level</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">log</span><span style="color:#F97583">::</span><span style="color:#B392F0">LevelFilter</span><span style="color:#F97583">::</span><span style="color:#B392F0">Info</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        .</span><span style="color:#B392F0">init</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // eBPFオブジェクトのロード</span></span>
+<span class="line"><span style="color:#E1E4E8">    #[cfg(debug_assertions)]</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> bpf </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Bpf</span><span style="color:#F97583">::</span><span style="color:#B392F0">load</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">include_bytes_aligned!</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">        "../../target/bpfel-unknown-none/debug/network-monitor"</span></span>
+<span class="line"><span style="color:#E1E4E8">    ))</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    #[cfg(not(debug_assertions))]</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> bpf </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Bpf</span><span style="color:#F97583">::</span><span style="color:#B392F0">load</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">include_bytes_aligned!</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">        "../../target/bpfel-unknown-none/release/network-monitor"</span></span>
+<span class="line"><span style="color:#E1E4E8">    ))</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#F97583"> let</span><span style="color:#B392F0"> Err</span><span style="color:#E1E4E8">(e) </span><span style="color:#F97583">=</span><span style="color:#B392F0"> BpfLogger</span><span style="color:#F97583">::</span><span style="color:#B392F0">init</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> bpf) {</span></span>
+<span class="line"><span style="color:#B392F0">        log</span><span style="color:#F97583">::</span><span style="color:#B392F0">warn!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"eBPF logger init failed: {}"</span><span style="color:#E1E4E8">, e);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // kprobeをアタッチ</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> probes </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">        (</span><span style="color:#9ECBFF">"kprobe_tcp_v4_connect"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"tcp_v4_connect"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">        (</span><span style="color:#9ECBFF">"kprobe_tcp_sendmsg"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"tcp_sendmsg"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    ];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (prog_name, fn_name) </span><span style="color:#F97583">in</span><span style="color:#F97583"> &#x26;</span><span style="color:#E1E4E8">probes {</span></span>
+<span class="line"><span style="color:#F97583">        let</span><span style="color:#E1E4E8"> program</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;mut</span><span style="color:#B392F0"> KProbe</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> bpf</span></span>
+<span class="line"><span style="color:#F97583">            .</span><span style="color:#B392F0">program_mut</span><span style="color:#E1E4E8">(prog_name)</span></span>
+<span class="line"><span style="color:#F97583">            .</span><span style="color:#B392F0">context</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">format!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"program {} not found"</span><span style="color:#E1E4E8">, prog_name))</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#F97583">            .</span><span style="color:#B392F0">try_into</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">        program</span><span style="color:#F97583">.</span><span style="color:#B392F0">load</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">        program</span><span style="color:#F97583">.</span><span style="color:#B392F0">attach</span><span style="color:#E1E4E8">(fn_name, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">            .</span><span style="color:#B392F0">context</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">format!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"failed to attach to {}"</span><span style="color:#E1E4E8">, fn_name))</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">        info!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Attached kprobe to {}"</span><span style="color:#E1E4E8">, fn_name);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 統計情報をスレッド間で共有</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> stats</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Arc</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Mutex</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">HashMap</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">u32</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">ProcessStats</span><span style="color:#E1E4E8">>>> </span><span style="color:#F97583">=</span></span>
+<span class="line"><span style="color:#B392F0">        Arc</span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">Mutex</span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">HashMap</span><span style="color:#F97583">::</span><span style="color:#B392F0">new</span><span style="color:#E1E4E8">()));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // PerfEventArrayのセットアップ</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> perf_array </span><span style="color:#F97583">=</span><span style="color:#B392F0"> AsyncPerfEventArray</span><span style="color:#F97583">::</span><span style="color:#B392F0">try_from</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        bpf</span><span style="color:#F97583">.</span><span style="color:#B392F0">map_mut</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"TCP_EVENTS"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">            .</span><span style="color:#B392F0">context</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"TCP_EVENTS map not found"</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">?</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 各CPUのイベントを並列で処理</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> cpus </span><span style="color:#F97583">=</span><span style="color:#B392F0"> online_cpus</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> cpu_id </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> cpus {</span></span>
+<span class="line"><span style="color:#F97583">        let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> buf </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> perf_array</span><span style="color:#F97583">.</span><span style="color:#B392F0">open</span><span style="color:#E1E4E8">(cpu_id, </span><span style="color:#B392F0">None</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">?</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">        let</span><span style="color:#E1E4E8"> stats_clone </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Arc</span><span style="color:#F97583">::</span><span style="color:#B392F0">clone</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">stats);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">        tokio</span><span style="color:#F97583">::</span><span style="color:#B392F0">spawn</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#F97583"> move</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">            let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> buffers </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">0</span><span style="color:#F97583">..</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">                .</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">|</span><span style="color:#E1E4E8">_</span><span style="color:#F97583">|</span><span style="color:#B392F0"> BytesMut</span><span style="color:#F97583">::</span><span style="color:#B392F0">with_capacity</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">4096</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#F97583">                .</span><span style="color:#B392F0">collect</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Vec</span><span style="color:#E1E4E8">&#x3C;_>>();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">            loop</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">                let</span><span style="color:#E1E4E8"> events </span><span style="color:#F97583">=</span><span style="color:#F97583"> match</span><span style="color:#E1E4E8"> buf</span><span style="color:#F97583">.</span><span style="color:#B392F0">read_events</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;mut</span><span style="color:#E1E4E8"> buffers)</span><span style="color:#F97583">.await</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">                    Ok</span><span style="color:#E1E4E8">(e) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> e,</span></span>
+<span class="line"><span style="color:#B392F0">                    Err</span><span style="color:#E1E4E8">(e) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">                        log</span><span style="color:#F97583">::</span><span style="color:#B392F0">error!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Error reading events: {}"</span><span style="color:#E1E4E8">, e);</span></span>
+<span class="line"><span style="color:#F97583">                        break</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">                    }</span></span>
+<span class="line"><span style="color:#E1E4E8">                };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">                for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583">..</span><span style="color:#E1E4E8">events</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">read {</span></span>
+<span class="line"><span style="color:#F97583">                    let</span><span style="color:#E1E4E8"> buf </span><span style="color:#F97583">=</span><span style="color:#F97583"> &#x26;</span><span style="color:#E1E4E8">buffers[i];</span></span>
+<span class="line"><span style="color:#F97583">                    if</span><span style="color:#E1E4E8"> buf</span><span style="color:#F97583">.</span><span style="color:#B392F0">len</span><span style="color:#E1E4E8">() &#x3C; </span><span style="color:#B392F0">core</span><span style="color:#F97583">::</span><span style="color:#B392F0">mem</span><span style="color:#F97583">::</span><span style="color:#B392F0">size_of</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">TcpEvent</span><span style="color:#E1E4E8">>() {</span></span>
+<span class="line"><span style="color:#F97583">                        continue</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">                    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                    // バイト列をTcpEventとして解釈</span></span>
+<span class="line"><span style="color:#F97583">                    let</span><span style="color:#E1E4E8"> event </span><span style="color:#F97583">=</span><span style="color:#F97583"> unsafe</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">                        &#x26;*</span><span style="color:#E1E4E8">(buf</span><span style="color:#F97583">.</span><span style="color:#B392F0">as_ptr</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#F97583"> *const</span><span style="color:#79B8FF"> TcpEvent</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">                    process_event</span><span style="color:#E1E4E8">(event, </span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">stats_clone);</span></span>
+<span class="line"><span style="color:#E1E4E8">                }</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Ctrl+Cで終了するまでループ</span></span>
+<span class="line"><span style="color:#B392F0">    info!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Monitoring TCP connections... Press Ctrl+C to stop."</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> stats_for_display </span><span style="color:#F97583">=</span><span style="color:#B392F0"> Arc</span><span style="color:#F97583">::</span><span style="color:#B392F0">clone</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">stats);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    loop</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        tokio</span><span style="color:#F97583">::</span><span style="color:#B392F0">select!</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">            _ </span><span style="color:#F97583">=</span><span style="color:#B392F0"> signal</span><span style="color:#F97583">::</span><span style="color:#B392F0">ctrl_c</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">                info!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Exiting..."</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">                break</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">            _ </span><span style="color:#F97583">=</span><span style="color:#B392F0"> tokio</span><span style="color:#F97583">::</span><span style="color:#B392F0">time</span><span style="color:#F97583">::</span><span style="color:#B392F0">sleep</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">tokio</span><span style="color:#F97583">::</span><span style="color:#B392F0">time</span><span style="color:#F97583">::</span><span style="color:#B392F0">Duration</span><span style="color:#F97583">::</span><span style="color:#B392F0">from_secs</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">                display_stats</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">stats_for_display);</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    Ok</span><span style="color:#E1E4E8">(())</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> process_event</span><span style="color:#E1E4E8">(event</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">TcpEvent</span><span style="color:#E1E4E8">, stats</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">Arc</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Mutex</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">HashMap</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">u32</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">ProcessStats</span><span style="color:#E1E4E8">>>>) {</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> stats </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> stats</span><span style="color:#F97583">.</span><span style="color:#B392F0">lock</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">.</span><span style="color:#B392F0">unwrap</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> entry </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> stats</span><span style="color:#F97583">.</span><span style="color:#B392F0">entry</span><span style="color:#E1E4E8">(event</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">pid)</span><span style="color:#F97583">.</span><span style="color:#B392F0">or_default</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    match</span><span style="color:#E1E4E8"> event</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">event_type {</span></span>
+<span class="line"><span style="color:#B392F0">        TcpEventType</span><span style="color:#F97583">::</span><span style="color:#B392F0">Connect</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> entry</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">connections </span><span style="color:#F97583">+=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">        TcpEventType</span><span style="color:#F97583">::</span><span style="color:#B392F0">Send</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> entry</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">bytes_sent </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> event</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">bytes,</span></span>
+<span class="line"><span style="color:#B392F0">        TcpEventType</span><span style="color:#F97583">::</span><span style="color:#B392F0">Recv</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> entry</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">bytes_recv </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> event</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">bytes,</span></span>
+<span class="line"><span style="color:#B392F0">        TcpEventType</span><span style="color:#F97583">::</span><span style="color:#B392F0">Close</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> {}</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> display_stats</span><span style="color:#E1E4E8">(stats</span><span style="color:#F97583">:</span><span style="color:#F97583"> &#x26;</span><span style="color:#B392F0">Arc</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">Mutex</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">HashMap</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">u32</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">ProcessStats</span><span style="color:#E1E4E8">>>>) {</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> stats </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> stats</span><span style="color:#F97583">.</span><span style="color:#B392F0">lock</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">.</span><span style="color:#B392F0">unwrap</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> stats</span><span style="color:#F97583">.</span><span style="color:#B392F0">is_empty</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    println!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">{:&#x3C;10} {:>12} {:>14} {:>14}"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"PID"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"Connections"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"Bytes Sent"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"Bytes Recv"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#B392F0">    println!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"{:-&#x3C;55}"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">""</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#F97583"> mut</span><span style="color:#E1E4E8"> entries</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Vec</span><span style="color:#E1E4E8">&#x3C;_> </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> stats</span><span style="color:#F97583">.</span><span style="color:#B392F0">iter</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">.</span><span style="color:#B392F0">collect</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    entries</span><span style="color:#F97583">.</span><span style="color:#B392F0">sort_by_key</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">|</span><span style="color:#E1E4E8">(_, s)</span><span style="color:#F97583">|</span><span style="color:#F97583"> -</span><span style="color:#E1E4E8">(s</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">bytes_sent </span><span style="color:#F97583">as</span><span style="color:#B392F0"> i64</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (pid, s) </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> entries</span><span style="color:#F97583">.</span><span style="color:#B392F0">iter</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">.</span><span style="color:#B392F0">take</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#B392F0">        println!</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">            "{:&#x3C;10} {:>12} {:>14} {:>14}"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            pid,</span></span>
+<span class="line"><span style="color:#E1E4E8">            s</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">connections,</span></span>
+<span class="line"><span style="color:#B392F0">            format_bytes</span><span style="color:#E1E4E8">(s</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">bytes_sent),</span></span>
+<span class="line"><span style="color:#B392F0">            format_bytes</span><span style="color:#E1E4E8">(s</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">bytes_recv),</span></span>
+<span class="line"><span style="color:#E1E4E8">        );</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> format_bytes</span><span style="color:#E1E4E8">(bytes</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u64</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> bytes </span><span style="color:#F97583">>=</span><span style="color:#79B8FF"> 1024</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1024</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        format!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"{:.1} MB"</span><span style="color:#E1E4E8">, bytes </span><span style="color:#F97583">as</span><span style="color:#B392F0"> f64</span><span style="color:#F97583"> /</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">1024.0</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1024.0</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> bytes </span><span style="color:#F97583">>=</span><span style="color:#79B8FF"> 1024</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        format!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"{:.1} KB"</span><span style="color:#E1E4E8">, bytes </span><span style="color:#F97583">as</span><span style="color:#B392F0"> f64</span><span style="color:#F97583"> /</span><span style="color:#79B8FF"> 1024.0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        format!</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"{} B"</span><span style="color:#E1E4E8">, bytes)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="8-デバッグとトラブルシューティング">8. デバッグとトラブルシューティング</h2>
+<h3 id="81-ebpfプログラムのデバッグ基本方針">8.1 eBPFプログラムのデバッグ基本方針</h3>
+<p>eBPFのデバッグは通常のプログラムと比べて独特の難しさがある。カーネル空間で動作するため、デバッガを直接アタッチできない。以下の方法を組み合わせる。</p>
+<h3 id="82-aya-logによるカーネル側ログ出力">8.2 aya-logによるカーネル側ログ出力</h3>
+<p><code>aya-log</code>を使うと、カーネル側からログを出力してユーザー空間で受信できる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// Cargo.toml (eBPF側)</span></span>
+<span class="line"><span style="color:#6A737D">// [dependencies]</span></span>
+<span class="line"><span style="color:#6A737D">// aya-log-ebpf = "0.1"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// カーネル側コード</span></span>
+<span class="line"><span style="color:#F97583">use</span><span style="color:#B392F0"> aya_log_ebpf</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">{debug, error, info, warn};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">#[xdp(name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "xdp_debug"</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> fn</span><span style="color:#B392F0"> xdp_debug</span><span style="color:#E1E4E8">(ctx</span><span style="color:#F97583">:</span><span style="color:#B392F0"> XdpContext</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-></span><span style="color:#B392F0"> u32</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> data_end </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ctx</span><span style="color:#F97583">.</span><span style="color:#B392F0">data_end</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> data_start </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ctx</span><span style="color:#F97583">.</span><span style="color:#B392F0">data</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // デバッグログを出力（ユーザー空間のログとして受信される）</span></span>
+<span class="line"><span style="color:#B392F0">    info!</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">ctx, </span><span style="color:#9ECBFF">"Received packet: {} bytes"</span><span style="color:#E1E4E8">, data_end </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> data_start);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> data_end </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> data_start </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 1500</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        warn!</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&#x26;</span><span style="color:#E1E4E8">ctx, </span><span style="color:#9ECBFF">"Jumbo frame detected: {} bytes"</span><span style="color:#E1E4E8">, data_end </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> data_start);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    xdp_action</span><span style="color:#F97583">::</span><span style="color:#79B8FF">XDP_PASS</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="83-よくあるエラーとその解決方法">8.3 よくあるエラーとその解決方法</h3>
+<p><strong>エラー: <code>EPERM (Operation not permitted)</code></strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># eBPFのロードにはroot権限が必要</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> ./my-ebpf-app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># または CAP_BPF + CAP_NET_ADMIN を付与</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> setcap</span><span style="color:#9ECBFF"> cap_bpf,cap_net_admin+eip</span><span style="color:#9ECBFF"> ./my-ebpf-app</span></span></code></pre>
+<p><strong>エラー: <code>verifier log: invalid memory access</code></strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#6A737D">// 原因: バウンダリチェックなしにパケットデータにアクセスしている</span></span>
+<span class="line"><span style="color:#6A737D">// 修正前（Verifierに拒否される）</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> eth_hdr </span><span style="color:#F97583">=</span><span style="color:#F97583"> unsafe</span><span style="color:#E1E4E8"> { </span><span style="color:#F97583">&#x26;*</span><span style="color:#E1E4E8">(ctx</span><span style="color:#F97583">.</span><span style="color:#B392F0">data</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#F97583"> *const</span><span style="color:#79B8FF"> EthHdr</span><span style="color:#E1E4E8">) };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 修正後（バウンダリチェックを先に行う）</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> data_start </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ctx</span><span style="color:#F97583">.</span><span style="color:#B392F0">data</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#B392F0"> usize</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> data_end </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ctx</span><span style="color:#F97583">.</span><span style="color:#B392F0">data_end</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#B392F0"> usize</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> data_start </span><span style="color:#F97583">+</span><span style="color:#B392F0"> core</span><span style="color:#F97583">::</span><span style="color:#B392F0">mem</span><span style="color:#F97583">::</span><span style="color:#B392F0">size_of</span><span style="color:#F97583">::</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">EthHdr</span><span style="color:#E1E4E8">>() > data_end {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> Ok</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">xdp_action</span><span style="color:#F97583">::</span><span style="color:#79B8FF">XDP_PASS</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> eth_hdr </span><span style="color:#F97583">=</span><span style="color:#F97583"> unsafe</span><span style="color:#E1E4E8"> { </span><span style="color:#F97583">&#x26;*</span><span style="color:#E1E4E8">(data_start </span><span style="color:#F97583">as</span><span style="color:#F97583"> *const</span><span style="color:#79B8FF"> EthHdr</span><span style="color:#E1E4E8">) };</span></span></code></pre>
+<p><strong>エラー: <code>bpf_linker</code> not found</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># bpf-linkerをインストール</span></span>
+<span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> bpf-linker</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># パスを確認</span></span>
+<span class="line"><span style="color:#79B8FF">which</span><span style="color:#9ECBFF"> bpf-linker</span></span>
+<span class="line"><span style="color:#6A737D"># → $HOME/.cargo/bin/bpf-linker</span></span></code></pre>
+<p><strong>エラー: カーネルバージョンが古い</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># カーネルバージョン確認</span></span>
+<span class="line"><span style="color:#B392F0">uname</span><span style="color:#79B8FF"> -r</span></span>
+<span class="line"><span style="color:#6A737D"># 5.8未満の場合はRingBufが使えない</span></span>
+<span class="line"><span style="color:#6A737D"># 5.3未満の場合はeBPF機能が大幅に制限される</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Ubuntu 22.04はカーネル5.15、Ubuntu 24.04はカーネル6.8なので問題なし</span></span></code></pre>
+<h3 id="84-bpftool-でのデバッグ">8.4 bpftool でのデバッグ</h3>
+<p><code>bpftool</code>はカーネルにロードされたeBPFプログラムやMapを確認できる便利ツールだ。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># ロード済みのeBPFプログラム一覧</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> bpftool</span><span style="color:#9ECBFF"> prog</span><span style="color:#9ECBFF"> list</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 特定のプログラムのbytecodeを逆アセンブル</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> bpftool</span><span style="color:#9ECBFF"> prog</span><span style="color:#9ECBFF"> dump</span><span style="color:#9ECBFF"> xlated</span><span style="color:#9ECBFF"> id</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">prog_i</span><span style="color:#E1E4E8">d</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># eBPF Mapの一覧</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> bpftool</span><span style="color:#9ECBFF"> map</span><span style="color:#9ECBFF"> list</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Mapの内容を確認</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> bpftool</span><span style="color:#9ECBFF"> map</span><span style="color:#9ECBFF"> dump</span><span style="color:#9ECBFF"> id</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">map_i</span><span style="color:#E1E4E8">d</span><span style="color:#F97583">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># eBPFプログラムの統計情報</span></span>
+<span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> bpftool</span><span style="color:#9ECBFF"> prog</span><span style="color:#9ECBFF"> show</span><span style="color:#9ECBFF"> id</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">prog_i</span><span style="color:#E1E4E8">d</span><span style="color:#F97583">></span></span></code></pre>
+<h3 id="85-カーネルログの確認">8.5 カーネルログの確認</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># カーネルのeBPF Verifierログを確認</span></span>
+<span class="line"><span style="color:#B392F0">dmesg</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> grep</span><span style="color:#79B8FF"> -i</span><span style="color:#9ECBFF"> bpf</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> tail</span><span style="color:#79B8FF"> -20</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># より詳細なログ（カーネル5.2以降）</span></span>
+<span class="line"><span style="color:#B392F0">cat</span><span style="color:#9ECBFF"> /sys/kernel/debug/tracing/trace_pipe</span></span></code></pre>
+<hr>
+<h2 id="9-まとめと参考リンク">9. まとめと参考リンク</h2>
+<h3 id="91-本記事のまとめ">9.1 本記事のまとめ</h3>
+<p>本記事では、Rust + eBPF + Ayaフレームワークの組み合わせについて、以下の内容を解説した。</p>
+<ul>
+<li>
+<p><strong>eBPFの基礎</strong>: カーネル内でコードを安全に実行するための仮想マシン機構。XDP、kprobe、tracepoint等のフックポイントを通じてイベントを処理できる。</p>
+</li>
+<li>
+<p><strong>なぜRustか</strong>: Cと同等のパフォーマンスを維持しながら、コンパイル時のメモリ安全性保証と型システムによる整合性チェックが得られる。カーネル/ユーザー空間で共通の型定義を再利用できる。</p>
+</li>
+<li>
+<p><strong>Ayaフレームワーク</strong>: libbpf・libc非依存のピュアRust実装。<code>cargo</code>によるモダンなビルド体験と、<code>aya-log</code>によるデバッグ支援が特徴。</p>
+</li>
+<li>
+<p><strong>XDPパケットカウンター</strong>: 最もシンプルなeBPFプログラムの実装例。Verifierのバウンダリチェック要件、eBPF Map操作、ユーザー空間でのデータ受信を学べる。</p>
+</li>
+<li>
+<p><strong>eBPF Maps</strong>: HashMap、PerfEventArray、RingBufなど用途に応じたMap型の選択方法。</p>
+</li>
+<li>
+<p><strong>実践例</strong>: kprobeを使ったTCP接続監視ツールの実装。PidごとのバイトカウントをPerfEventArrayでリアルタイムに受信・集計する。</p>
+</li>
+</ul>
+<h3 id="92-次のステップ">9.2 次のステップ</h3>
+<p>eBPF/Ayaをさらに深く学ぶためのロードマップを示す。</p>
+<ol>
+<li><strong>TC（Traffic Control）プログラム</strong>: XDPより柔軟な処理が可能。egress（送信方向）のパケットも制御できる。</li>
+<li><strong>LSM（Linux Security Module）フック</strong>: <code>aya_bpf::programs::LsmContext</code>でセキュリティポリシーをeBPFで実装する。</li>
+<li><strong>CO-RE（Compile Once, Run Everywhere）</strong>: BTFを活用して、異なるカーネルバージョンでも動作するポータブルなeBPFプログラムを書く。</li>
+<li><strong>Cilium/eBPF Go</strong>: Rustだけでなく、Go言語向けのeBPFライブラリとの比較・連携。</li>
+<li><strong>本番環境でのeBPF</strong>: 権限管理（CAP_BPF）、性能チューニング、カーネルバージョン互換性の管理。</li>
+</ol>
+<h3 id="93-参考リンク">9.3 参考リンク</h3>
+<p><strong>公式リソース</strong></p>
+<ul>
+<li><a href="https://github.com/aya-rs/aya">Aya GitHub リポジトリ</a>：ソースコード・サンプル・ドキュメント</li>
+<li><a href="https://aya-rs.dev/book/">Aya Book（公式ドキュメント）</a>：最も信頼できる入門ガイド</li>
+<li><a href="https://www.kernel.org/doc/html/latest/bpf/">kernel.org: BPF Documentation</a>：カーネル公式のeBPF仕様</li>
+</ul>
+<p><strong>学習リソース</strong></p>
+<ul>
+<li><a href="https://ebpf.io/">eBPF.io</a>：eBPFの概念・ユースケース・ツール一覧</li>
+<li><a href="https://github.com/iovisor/bcc">BCC Tools</a>：Python/Lua/C で書かれたeBPFツール集（参照実装として有用）</li>
+<li><a href="https://github.com/cilium/ebpf">Cilium eBPF Library</a>：Go言語の成熟したeBPFライブラリ（アーキテクチャ参考に）</li>
+</ul>
+<p><strong>深掘りリソース</strong></p>
+<ul>
+<li>Brendan Gregg「BPF Performance Tools」（書籍）：eBPFパフォーマンス分析の決定版</li>
+<li><a href="https://github.com/torvalds/linux/tree/master/samples/bpf">Linux カーネルのeBPFサンプル</a>：カーネル内蔵サンプルコード</li>
+</ul>
+<hr>
+<h2 id="開発を加速するツールリソース">開発を加速するツール・リソース</h2>
+<h3 id="claude-code開発プロンプト完全パックbooth">Claude Code開発プロンプト完全パック（BOOTH）</h3>
+<p>eBPFやRustの開発で、コード生成・レビュー・デバッグに特化したAIプロンプトセットをBOOTHで販売している。</p>
+<p><strong>「Claude Code開発プロンプト完全パック（¥1,480）」</strong></p>
+<ul>
+<li>Rustコード生成・リファクタリングプロンプト</li>
+<li>eBPFデバッグ支援プロンプト</li>
+<li>システムプログラミング向けセキュリティレビュープロンプト</li>
+<li>テスト駆動開発（TDD）補助プロンプト</li>
+</ul>
+<p><a href="https://ezark.booth.pm/">BOOTH ストアで購入する</a></p>
+<h3 id="devtoolbox--開発者向けオールインワンツール">DevToolBox — 開発者向けオールインワンツール</h3>
+<p>Rustの開発中によく使う以下のツールをブラウザ上で即座に利用できる。インストール不要。</p>
+<p><strong><a href="https://usedevtools.com">DevToolBox（usedevtools.com）</a></strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>ツール</th><th>eBPF/Rust開発での用途</th></tr></thead><tbody><tr><td><strong>JSON Formatter</strong></td><td>eBPFイベントのJSON出力を整形</td></tr><tr><td><strong>Hex Converter</strong></td><td>パケットデータの16進数変換</td></tr><tr><td><strong>Regex Tester</strong></td><td>ログ解析の正規表現検証</td></tr><tr><td><strong>JWT Decoder</strong></td><td>認証トークンのデバッグ</td></tr><tr><td><strong>Unix Timestamp</strong></td><td>bpf_ktime_get_ns()の変換</td></tr><tr><td><strong>Bit Calculator</strong></td><td>フラグ・マスク値の計算</td></tr></tbody></table>
+<h3 id="note-での技術発信">note での技術発信</h3>
+<p>Rustシステムプログラミング・eBPF・クラウドネイティブ技術に関する深掘り記事を定期的に公開している。</p>
+<p><a href="https://note.com/">noteプロフィールをフォローする</a>で最新記事の通知を受け取れる。特に以下のトピックで継続的に発信している。</p>
+<ul>
+<li>Rust + WebAssembly の実践</li>
+<li>eBPFによるKubernetes可観測性</li>
+<li>システムプログラミングのパフォーマンスチューニング</li>
+<li>Linuxカーネル内部構造の解説</li>
+</ul>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->  <aside class="affiliate-cta" aria-label="おすすめレンタルサーバー" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>サーバー選びで迷ったら — 国内トップシェアを比較しよう</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+XServer for WordPress 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+さくらのレンタルサーバ 詳細を見る
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+XServerVPS 詳細を見る
+</a> </div> </aside>    </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>

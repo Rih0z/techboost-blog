@@ -1,0 +1,855 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-bvzihdzo> <head><!-- Google Search Console Verification --><meta name="google-site-verification" content="Ntf0EGJE51FJQEx-dcs8S-5gTly840lvvyHBbIiVLI0"><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="TechBoost" href="https://techboostblog.com/rss.xml"><meta name="generator" content="Astro v5.17.3"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://techboostblog.com/blog/nodejs-async-patterns/"><!-- Primary Meta Tags --><title>Node.js非同期処理完全ガイド — Promise・async/await・イベントループを完全理解</title><meta name="title" content="Node.js非同期処理完全ガイド — Promise・async/await・イベントループを完全理解"><meta name="description" content="JavaScriptの非同期処理を基礎から徹底解説。コールバック地獄からPromise・async/await・並列処理パターンまで。イベントループの仕組み・エラーハンドリング・並行制御・ストリーム処理・Worker Threadsまで実践コード付き。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://techboostblog.com/blog/nodejs-async-patterns/"><meta property="og:title" content="Node.js非同期処理完全ガイド — Promise・async/await・イベントループを完全理解"><meta property="og:description" content="JavaScriptの非同期処理を基礎から徹底解説。コールバック地獄からPromise・async/await・並列処理パターンまで。イベントループの仕組み・エラーハンドリング・並行制御・ストリーム処理・Worker Threadsまで実践コード付き。"><meta property="og:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="TechBoost"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@Ezark_ct"><meta name="twitter:creator" content="@Ezark_ct"><meta name="twitter:url" content="https://techboostblog.com/blog/nodejs-async-patterns/"><meta name="twitter:title" content="Node.js非同期処理完全ガイド — Promise・async/await・イベントループを完全理解"><meta name="twitter:description" content="JavaScriptの非同期処理を基礎から徹底解説。コールバック地獄からPromise・async/await・並列処理パターンまで。イベントループの仕組み・エラーハンドリング・並行制御・ストリーム処理・Worker Threadsまで実践コード付き。"><meta name="twitter:image" content="https://techboostblog.com/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-HGCVQ13PYZ"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-HGCVQ13PYZ");</script><!-- Google AdSense --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3306648647011539" crossorigin="anonymous"></script><script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://techboostblog.com/blog/nodejs-async-patterns/"},"headline":"Node.js非同期処理完全ガイド — Promise・async/await・イベントループを完全理解","description":"JavaScriptの非同期処理を基礎から徹底解説。コールバック地獄からPromise・async/await・並列処理パターンまで。イベントループの仕組み・エラーハンドリング・並行制御・ストリーム処理・Worker Threadsまで実践コード付き。","datePublished":"2026-02-20T00:00:00.000Z","dateModified":"2026-02-20T00:00:00.000Z","author":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"publisher":{"@type":"Organization","name":"TechBoost","url":"https://techboostblog.com"},"inLanguage":"ja","keywords":"Node.js, JavaScript, TypeScript, 非同期処理, Promise"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://techboostblog.com/"},{"@type":"ListItem","position":2,"name":"記事一覧","item":"https://techboostblog.com/blog/"},{"@type":"ListItem","position":3,"name":"Node.js非同期処理完全ガイド — Promise・async/await・イベントループを完全理解"}]}]</script><link rel="stylesheet" href="/_astro/about.D7oLd8Ay.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.article-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.75rem}.article-tag[data-astro-cid-bvzihdzo]{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--gray-light));color:rgb(var(--gray));font-size:.75rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}.article-tag[data-astro-cid-bvzihdzo]:hover{background:rgb(var(--accent));color:#fff}.affiliate-cta[data-astro-cid-bvzihdzo]{margin-top:3rem;padding:1.5rem;border-radius:12px;background:linear-gradient(135deg,rgb(var(--accent) / .08),rgb(var(--accent) / .03));border:1px solid rgb(var(--accent) / .2)}.affiliate-cta-title[data-astro-cid-bvzihdzo]{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:rgb(var(--black))}.affiliate-cta-desc[data-astro-cid-bvzihdzo]{font-size:.875rem;color:rgb(var(--gray));margin-bottom:1rem;line-height:1.6}.affiliate-cta-links[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.5rem}.affiliate-cta-btn[data-astro-cid-bvzihdzo]{display:inline-block;padding:.5rem 1.25rem;border-radius:6px;background:rgb(var(--accent));color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:opacity .15s}.affiliate-cta-btn[data-astro-cid-bvzihdzo]:hover{opacity:.85}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary{background:transparent;border:1px solid rgb(var(--accent));color:rgb(var(--accent))}.affiliate-cta-btn[data-astro-cid-bvzihdzo].secondary:hover{background:rgb(var(--accent) / .08)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>TechBoost</a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/blog" data-astro-cid-3ef6ksr2>Articles</a> <a href="/blog/tags" data-astro-cid-3ef6ksr2>Tags</a> <a href="/about" data-astro-cid-3ef6ksr2>About</a> </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo>  </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-02-20T00:00:00.000Z"> Feb 19, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Node.js非同期処理完全ガイド — Promise・async/await・イベントループを完全理解</h1> <div class="article-tags" data-astro-cid-bvzihdzo> <a href="/blog/tag/Node.js" class="article-tag" data-astro-cid-bvzihdzo>
+#Node.js </a><a href="/blog/tag/JavaScript" class="article-tag" data-astro-cid-bvzihdzo>
+#JavaScript </a><a href="/blog/tag/TypeScript" class="article-tag" data-astro-cid-bvzihdzo>
+#TypeScript </a><a href="/blog/tag/%E9%9D%9E%E5%90%8C%E6%9C%9F%E5%87%A6%E7%90%86" class="article-tag" data-astro-cid-bvzihdzo>
+#非同期処理 </a><a href="/blog/tag/Promise" class="article-tag" data-astro-cid-bvzihdzo>
+#Promise </a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Node.jsアプリケーションの性能と信頼性は、非同期処理の理解度に直結します。コールバック地獄に悩んだ経験、<code>Promise.all</code> と <code>Promise.allSettled</code> の違いを説明できない経験、<code>async/await</code> を使っているのに直列実行になってしまった経験——これらはすべて、非同期処理の基礎が固まっていないことに起因します。本記事では、JavaScriptのシングルスレッドモデルから始め、実践的な並行制御パターン・エラーハンドリング・ストリーム処理・Worker Threadsまで、体系的に解説します。</p>
+<hr>
+<h2 id="1-javascriptのシングルスレッドとイベントループ">1. JavaScriptのシングルスレッドとイベントループ</h2>
+<p>JavaScriptはシングルスレッドで動作します。これは「同時に1つのことしか実行できない」ことを意味しますが、Node.jsが大量の並行I/Oを処理できるのはイベントループのおかげです。</p>
+<h3 id="コールスタックタスクキューマイクロタスクキュー">コールスタック・タスクキュー・マイクロタスクキュー</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// イベントループの動作を観察する</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'1: スクリプト開始'</span><span style="color:#E1E4E8">);            </span><span style="color:#6A737D">// コールスタック（同期）</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">setTimeout</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'4: setTimeout（マクロタスク）'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">resolve</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'3: Promise.then（マイクロタスク）'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'2: スクリプト終了'</span><span style="color:#E1E4E8">);             </span><span style="color:#6A737D">// コールスタック（同期）</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 出力順:</span></span>
+<span class="line"><span style="color:#6A737D">// 1: スクリプト開始</span></span>
+<span class="line"><span style="color:#6A737D">// 2: スクリプト終了</span></span>
+<span class="line"><span style="color:#6A737D">// 3: Promise.then（マイクロタスク）</span></span>
+<span class="line"><span style="color:#6A737D">// 4: setTimeout（マクロタスク）</span></span></code></pre>
+<p>イベントループの処理順序は以下の通りです。</p>
+<ol>
+<li><strong>コールスタック</strong> — 同期コードをすべて実行</li>
+<li><strong>マイクロタスクキュー</strong> — <code>Promise.then</code>・<code>queueMicrotask</code>・<code>MutationObserver</code> を全件処理</li>
+<li><strong>マクロタスクキュー</strong> — <code>setTimeout</code>・<code>setInterval</code>・I/Oコールバックを1件処理</li>
+<li>2に戻る</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// より複雑な例：ネストしたPromiseとsetTimeout</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'A'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">setTimeout</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'D'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#79B8FF">  Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">resolve</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'E'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#E1E4E8">}, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">resolve</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'B'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">resolve</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'C'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 出力: A → B → C → D → E</span></span>
+<span class="line"><span style="color:#6A737D">// 解説: D のsetTimeoutが実行された後、その中のPromise.thenがマイクロタスクに積まれ、</span></span>
+<span class="line"><span style="color:#6A737D">//       Eはマクロタスクの次のイテレーションより前に処理される</span></span></code></pre>
+<h3 id="なぜnodejsはシングルスレッドで高速なのか">なぜNode.jsはシングルスレッドで高速なのか</h3>
+<p>Node.jsのI/O操作（ファイル読み書き・ネットワーク通信・DB問い合わせ）はlibuvが管理するスレッドプールに委譲されます。Node.jsのJavaScriptスレッドは「I/Oの結果を待つ間に別の処理をする」ため、スレッドをブロックせずに数万の並行接続を処理できます。</p>
+<hr>
+<h2 id="2-コールバック関数とコールバック地獄">2. コールバック関数とコールバック地獄</h2>
+<p>Node.jsの初期APIはエラーファーストコールバックを採用しています。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> fs</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'fs'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// エラーファーストコールバック規約: (error, result) => void</span></span>
+<span class="line"><span style="color:#E1E4E8">fs.</span><span style="color:#B392F0">readFile</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'config.json'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'utf8'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (err) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'読み込み失敗:'</span><span style="color:#E1E4E8">, err.message);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'設定:'</span><span style="color:#E1E4E8">, data);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="コールバック地獄callback-hell">コールバック地獄（Callback Hell）</h3>
+<p>ネストが深くなると可読性と保守性が激しく低下します。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// コールバック地獄の典型例</span></span>
+<span class="line"><span style="color:#E1E4E8">fs.</span><span style="color:#B392F0">readFile</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'user.json'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'utf8'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">userData</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (err) </span><span style="color:#F97583">return</span><span style="color:#B392F0"> handleError</span><span style="color:#E1E4E8">(err);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(userData);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  fs.</span><span style="color:#B392F0">readFile</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`orders/${</span><span style="color:#E1E4E8">user</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}.json`</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'utf8'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">orderData</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (err) </span><span style="color:#F97583">return</span><span style="color:#B392F0"> handleError</span><span style="color:#E1E4E8">(err);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> orders</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(orderData);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    db.</span><span style="color:#B392F0">query</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'SELECT * FROM products WHERE id = ?'</span><span style="color:#E1E4E8">, [orders[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].productId], (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">products</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (err) </span><span style="color:#F97583">return</span><span style="color:#B392F0"> handleError</span><span style="color:#E1E4E8">(err);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">      sendEmail</span><span style="color:#E1E4E8">(user.email, products[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">], (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">result</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (err) </span><span style="color:#F97583">return</span><span style="color:#B392F0"> handleError</span><span style="color:#E1E4E8">(err);</span></span>
+<span class="line"><span style="color:#6A737D">        // ネストがどんどん深くなる...</span></span>
+<span class="line"><span style="color:#E1E4E8">        console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'完了'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<p>このコードの問題点は、エラーハンドリングの重複・デバッグの困難さ・テストの書きにくさです。Promiseがこれを解決します。</p>
+<hr>
+<h2 id="3-promiseの基本">3. Promiseの基本</h2>
+<p>Promiseは「将来完了する（または失敗する）非同期操作」を表すオブジェクトです。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Promiseの3つの状態</span></span>
+<span class="line"><span style="color:#6A737D">// pending（保留中）→ fulfilled（成功）または rejected（失敗）</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> fetchUser</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;{ </span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> }> </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> new</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">resolve</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">reject</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 非同期処理をシミュレート</span></span>
+<span class="line"><span style="color:#B392F0">    setTimeout</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (id </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#B392F0">        resolve</span><span style="color:#E1E4E8">({ id, name: </span><span style="color:#9ECBFF">`ユーザー${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8"> });  </span><span style="color:#6A737D">// 成功</span></span>
+<span class="line"><span style="color:#E1E4E8">      } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">        reject</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'IDは正の整数である必要があります'</span><span style="color:#E1E4E8">));  </span><span style="color:#6A737D">// 失敗</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// then / catch / finally</span></span>
+<span class="line"><span style="color:#B392F0">fetchUser</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'取得成功:'</span><span style="color:#E1E4E8">, user.name);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> user.id;  </span><span style="color:#6A737D">// 次のthenに渡す値</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'ユーザーID:'</span><span style="color:#E1E4E8">, id);</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">catch</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'エラー:'</span><span style="color:#E1E4E8">, err.message);</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">finally</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'処理完了（成功・失敗どちらでも実行）'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span></code></pre>
+<h3 id="promise-chaining-でコールバック地獄を解消">Promise chaining でコールバック地獄を解消</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { promises </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> fs } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'fs'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// コールバック地獄をPromise chainに変換</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> processOrder</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">  fs.</span><span style="color:#B392F0">readFile</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'user.json'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'utf8'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(data) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">email</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> })</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> fs.</span><span style="color:#B392F0">readFile</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`orders/${</span><span style="color:#E1E4E8">user</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}.json`</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'utf8'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">o</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({ user, orders: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(o) })))</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">(({ </span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">orders</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> sendEmailPromise</span><span style="color:#E1E4E8">(user.email, orders[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]))</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">result</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'メール送信完了:'</span><span style="color:#E1E4E8">, result);</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">catch</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // チェーン全体のエラーを1箇所でキャッチ</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'処理失敗:'</span><span style="color:#E1E4E8">, err.message);</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span></code></pre>
+<hr>
+<h2 id="4-promiseの組み合わせメソッド">4. Promiseの組み合わせメソッド</h2>
+<p>複数の非同期処理を組み合わせるための4つのメソッドを使い分けることが重要です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> delay</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">ms</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">label</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#F97583">  new</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">>((</span><span style="color:#FFAB70">resolve</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> setTimeout</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#B392F0"> resolve</span><span style="color:#E1E4E8">(label), ms));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> failAfter</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">ms</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">label</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#F97583">  new</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">>((</span><span style="color:#FFAB70">_</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">reject</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> setTimeout</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#B392F0"> reject</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(label)), ms));</span></span></code></pre>
+<h3 id="promiseall--全件成功を待つ">Promise.all — 全件成功を待つ</h3>
+<p>1件でも失敗すると即座にrejectします。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 全APIを並列で呼び出し、全件成功したら進む</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">users</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">products</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">orders</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#B392F0">  fetchUsers</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#B392F0">  fetchProducts</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#B392F0">  fetchOrders</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">]);</span></span>
+<span class="line"><span style="color:#6A737D">// いずれか1つが失敗 → catchに飛ぶ</span></span></code></pre>
+<h3 id="promiseallsettled--全件完了を待つ失敗を許容">Promise.allSettled — 全件完了を待つ（失敗を許容）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> results</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">allSettled</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#B392F0">  delay</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'API-A'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#B392F0">  failAfter</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">200</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'API-B失敗'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#B392F0">  delay</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">150</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'API-C'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">results.</span><span style="color:#B392F0">forEach</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">result</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">index</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (result.status </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'fulfilled'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`API-${</span><span style="color:#E1E4E8">index</span><span style="color:#9ECBFF">}: 成功 →`</span><span style="color:#E1E4E8">, result.value);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`API-${</span><span style="color:#E1E4E8">index</span><span style="color:#9ECBFF">}: 失敗 →`</span><span style="color:#E1E4E8">, result.reason.message);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"><span style="color:#6A737D">// 出力:</span></span>
+<span class="line"><span style="color:#6A737D">// API-0: 成功 → API-A</span></span>
+<span class="line"><span style="color:#6A737D">// API-1: 失敗 → API-B失敗</span></span>
+<span class="line"><span style="color:#6A737D">// API-2: 成功 → API-C</span></span></code></pre>
+<h3 id="promiserace--最初に完了したものを返す">Promise.race — 最初に完了したものを返す</h3>
+<p>タイムアウト実装に活用できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> withTimeout</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> &#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">>(</span><span style="color:#FFAB70">promise</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">>, </span><span style="color:#FFAB70">ms</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> timeout</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">never</span><span style="color:#E1E4E8">>((</span><span style="color:#FFAB70">_</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">reject</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#B392F0">    setTimeout</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#B392F0"> reject</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`タイムアウト: ${</span><span style="color:#E1E4E8">ms</span><span style="color:#9ECBFF">}ms`</span><span style="color:#E1E4E8">)), ms)</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">race</span><span style="color:#E1E4E8">([promise, timeout]);</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> withTimeout</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">fetchHeavyData</span><span style="color:#E1E4E8">(), </span><span style="color:#79B8FF">3000</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'取得完了:'</span><span style="color:#E1E4E8">, data);</span></span>
+<span class="line"><span style="color:#E1E4E8">} </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (err) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(err.message); </span><span style="color:#6A737D">// タイムアウト: 3000ms</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="promiseany--最初に成功したものを返す">Promise.any — 最初に成功したものを返す</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 複数のCDNから最速のレスポンスを採用</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> fastestCdn</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">any</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#B392F0">  fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://cdn1.example.com/asset.js'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#B392F0">  fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://cdn2.example.com/asset.js'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#B392F0">  fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://cdn3.example.com/asset.js'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">]);</span></span>
+<span class="line"><span style="color:#6A737D">// すべて失敗した場合のみ AggregateError がthrowされる</span></span></code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>メソッド</th><th>成功条件</th><th>失敗条件</th><th>ユースケース</th></tr></thead><tbody><tr><td><code>Promise.all</code></td><td>全件成功</td><td>1件でも失敗</td><td>依存関係のある並列取得</td></tr><tr><td><code>Promise.allSettled</code></td><td>全件完了</td><td>なし</td><td>バルク処理・集計</td></tr><tr><td><code>Promise.race</code></td><td>最初の完了</td><td>最初が失敗</td><td>タイムアウト・ヘルスチェック</td></tr><tr><td><code>Promise.any</code></td><td>最初の成功</td><td>全件失敗</td><td>フォールバック・冗長化</td></tr></tbody></table>
+<hr>
+<h2 id="5-asyncawaitの基本と落とし穴">5. async/awaitの基本と落とし穴</h2>
+<p><code>async/await</code> はPromiseを同期的なコードのように書けるシンタックスシュガーです。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Promiseチェーン版</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> getUserOrders</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#B392F0">  fetchUser</span><span style="color:#E1E4E8">(userId)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">user</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> fetchOrders</span><span style="color:#E1E4E8">(user.id))</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">orders</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({ userId, orders }));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// async/await版（同等）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> getUserOrdersAsync</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchUser</span><span style="color:#E1E4E8">(userId);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> orders</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchOrders</span><span style="color:#E1E4E8">(user.id);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { userId, orders };</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h3 id="落とし穴1-意図せず直列実行になる">落とし穴1: 意図せず直列実行になる</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 悪い例: awaitを並べると直列実行（合計600ms）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> bad</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> users</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchUsers</span><span style="color:#E1E4E8">();    </span><span style="color:#6A737D">// 200ms</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> products</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchProducts</span><span style="color:#E1E4E8">();  </span><span style="color:#6A737D">// 200ms</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> orders</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchOrders</span><span style="color:#E1E4E8">();  </span><span style="color:#6A737D">// 200ms</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { users, products, orders };</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 良い例: Promise.allで並列実行（合計200ms）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> good</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">users</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">products</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">orders</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#B392F0">    fetchUsers</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#B392F0">    fetchProducts</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#B392F0">    fetchOrders</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  ]);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { users, products, orders };</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h3 id="落とし穴2-foreachはawaitを待たない">落とし穴2: forEachはawaitを待たない</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 悪い例: forEach内のawaitは機能しない</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> processItems</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">ids</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">[]) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  ids.</span><span style="color:#B392F0">forEach</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#B392F0"> processItem</span><span style="color:#E1E4E8">(id);  </span><span style="color:#6A737D">// awaitが効いていない</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'完了？'</span><span style="color:#E1E4E8">);  </span><span style="color:#6A737D">// 処理が終わる前に実行される</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 良い例1: for...ofで直列実行</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> processItemsSerial</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">ids</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">[]) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> id</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> ids) {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#B392F0"> processItem</span><span style="color:#E1E4E8">(id);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'完了'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 良い例2: Promise.allで並列実行</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> processItemsParallel</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">ids</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">[]) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">(ids.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> processItem</span><span style="color:#E1E4E8">(id)));</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'完了'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h3 id="落とし穴3-async関数はpromiseを返す">落とし穴3: async関数はPromiseを返す</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// async関数の戻り値は常にPromise</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> getValue</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> ()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">number</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> 42</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 同期的に使おうとするとundefinedになる</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> getValue</span><span style="color:#E1E4E8">();  </span><span style="color:#6A737D">// Promise&#x3C;number>、42ではない</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(result);        </span><span style="color:#6A737D">// Promise { 42 }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 正しい使い方</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> result2</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> getValue</span><span style="color:#E1E4E8">();  </span><span style="color:#6A737D">// 42</span></span></code></pre>
+<hr>
+<h2 id="6-エラーハンドリングのベストプラクティス">6. エラーハンドリングのベストプラクティス</h2>
+<h3 id="trycatch-の適切な粒度">try/catch の適切な粒度</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 悪い例: エラー原因が特定できない</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> processAll</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchUser</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> orders</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchOrders</span><span style="color:#E1E4E8">(user.id);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> invoice</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> generateInvoice</span><span style="color:#E1E4E8">(orders);</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#B392F0"> sendEmail</span><span style="color:#E1E4E8">(user.email, invoice);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (err) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'何かが失敗した:'</span><span style="color:#E1E4E8">, err);  </span><span style="color:#6A737D">// どのステップか不明</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 良い例: エラー原因を特定できる構造</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> processAllSafe</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> user</span><span style="color:#F97583">:</span><span style="color:#B392F0"> User</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    user </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchUser</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (err) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`ユーザー取得失敗: ${</span><span style="color:#E1E4E8">err</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">message</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> orders</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Order</span><span style="color:#E1E4E8">[];</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    orders </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchOrders</span><span style="color:#E1E4E8">(user.id);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (err) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`注文取得失敗 (userId=${</span><span style="color:#E1E4E8">user</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}): ${</span><span style="color:#E1E4E8">err</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">message</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // ...</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h3 id="カスタムエラークラスで型安全なエラーハンドリング">カスタムエラークラスで型安全なエラーハンドリング</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> AppError</span><span style="color:#F97583"> extends</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    message</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    public</span><span style="color:#F97583"> readonly</span><span style="color:#FFAB70"> code</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    public</span><span style="color:#F97583"> readonly</span><span style="color:#FFAB70"> statusCode</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 500</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  ) {</span></span>
+<span class="line"><span style="color:#79B8FF">    super</span><span style="color:#E1E4E8">(message);</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'AppError'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> NotFoundError</span><span style="color:#F97583"> extends</span><span style="color:#B392F0"> AppError</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">resource</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">    super</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">resource</span><span style="color:#9ECBFF">} が見つかりません: ${</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'NOT_FOUND'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'NotFoundError'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> ValidationError</span><span style="color:#F97583"> extends</span><span style="color:#B392F0"> AppError</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">field</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">message</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">    super</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`バリデーションエラー [${</span><span style="color:#E1E4E8">field</span><span style="color:#9ECBFF">}]: ${</span><span style="color:#E1E4E8">message</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'VALIDATION_ERROR'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">400</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.name </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'ValidationError'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// エラーの種類に応じた処理</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> handleRequest</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (id </span><span style="color:#F97583">&#x3C;=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> ValidationError</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'id'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'正の整数である必要があります'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> user</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchUser</span><span style="color:#E1E4E8">(id);</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">user) </span><span style="color:#F97583">throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> NotFoundError</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'User'</span><span style="color:#E1E4E8">, id);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> user;</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (err) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (err </span><span style="color:#F97583">instanceof</span><span style="color:#B392F0"> NotFoundError</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> { error: err.message, statusCode: </span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (err </span><span style="color:#F97583">instanceof</span><span style="color:#B392F0"> ValidationError</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> { error: err.message, statusCode: </span><span style="color:#79B8FF">400</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#E1E4E8"> err;  </span><span style="color:#6A737D">// 想定外のエラーは再throw</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h3 id="グローバルな未処理promiseエラーのキャッチ">グローバルな未処理Promiseエラーのキャッチ</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// Node.js プロセスレベルでのエラーキャッチ</span></span>
+<span class="line"><span style="color:#E1E4E8">process.</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'unhandledRejection'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">reason</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">promise</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'未処理のPromise拒否:'</span><span style="color:#E1E4E8">, reason);</span></span>
+<span class="line"><span style="color:#6A737D">  // プロダクションでは適切なロギング・監視ツールに送信</span></span>
+<span class="line"><span style="color:#6A737D">  // Sentry.captureException(reason);</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);  </span><span style="color:#6A737D">// クリーンにシャットダウン</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">process.</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'uncaughtException'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'未捕捉の例外:'</span><span style="color:#E1E4E8">, err);</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<hr>
+<h2 id="7-並列処理パターン">7. 並列処理パターン</h2>
+<h3 id="並行数を制限した処理concurrency-limiter">並行数を制限した処理（Concurrency Limiter）</h3>
+<p><code>Promise.all</code> で大量のタスクを一度に実行するとサーバーに過負荷をかけます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// 並行数を制限する汎用関数</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> pLimit</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">>(</span></span>
+<span class="line"><span style="color:#FFAB70">  tasks</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> (() </span><span style="color:#F97583">=></span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">>)[],</span></span>
+<span class="line"><span style="color:#FFAB70">  concurrency</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">[]> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> results</span><span style="color:#F97583">:</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> index </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> worker</span><span style="color:#F97583"> =</span><span style="color:#F97583"> async</span><span style="color:#E1E4E8"> ()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    while</span><span style="color:#E1E4E8"> (index </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> tasks.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> currentIndex</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> index</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">      results[currentIndex] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> tasks[currentIndex]();</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // concurrency数のワーカーを並列起動</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    Array.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">({ length: Math.</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(concurrency, tasks.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">) }, worker),</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> results;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例: 100件のAPIリクエストを最大5並列で実行</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> userIds</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Array.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">({ length: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8"> }, (</span><span style="color:#FFAB70">_</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">i</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> tasks</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> userIds.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#B392F0"> fetchUser</span><span style="color:#E1E4E8">(id));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> users</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> pLimit</span><span style="color:#E1E4E8">(tasks, </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">users</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">length</span><span style="color:#9ECBFF">}件のユーザーを取得完了`</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="バッチ処理パターン">バッチ処理パターン</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// N件ずつに分割して処理</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> processBatch</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">R</span><span style="color:#E1E4E8">>(</span></span>
+<span class="line"><span style="color:#FFAB70">  items</span><span style="color:#F97583">:</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">[],</span></span>
+<span class="line"><span style="color:#FFAB70">  batchSize</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">  processor</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">batch</span><span style="color:#F97583">:</span><span style="color:#B392F0"> T</span><span style="color:#E1E4E8">[]) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">R</span><span style="color:#E1E4E8">[]>,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">R</span><span style="color:#E1E4E8">[]> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> results</span><span style="color:#F97583">:</span><span style="color:#B392F0"> R</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> items.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> batchSize) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> batch</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> items.</span><span style="color:#B392F0">slice</span><span style="color:#E1E4E8">(i, i </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> batchSize);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> batchResults</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> processor</span><span style="color:#E1E4E8">(batch);</span></span>
+<span class="line"><span style="color:#E1E4E8">    results.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">batchResults);</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`バッチ ${</span><span style="color:#E1E4E8">Math</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">ceil</span><span style="color:#9ECBFF">((</span><span style="color:#E1E4E8">i</span><span style="color:#F97583"> +</span><span style="color:#79B8FF"> 1</span><span style="color:#9ECBFF">) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> batchSize</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">} 完了`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> results;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> allUsers</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> processBatch</span><span style="color:#E1E4E8">(userIds, </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">batch</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">(batch.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">id</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> fetchUser</span><span style="color:#E1E4E8">(id)));</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="リトライパターン指数バックオフ">リトライパターン（指数バックオフ）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> withRetry</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">>(</span></span>
+<span class="line"><span style="color:#B392F0">  fn</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">>,</span></span>
+<span class="line"><span style="color:#FFAB70">  options</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    maxAttempts</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    baseDelayMs</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    maxDelayMs</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">    shouldRetry</span><span style="color:#F97583">?:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">err</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {},</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">T</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    maxAttempts</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 3</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    baseDelayMs</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 300</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    maxDelayMs</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 10000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    shouldRetry</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> options;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> lastError</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> attempt </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">; attempt </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> maxAttempts; attempt</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fn</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (err) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      lastError </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> err;</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (attempt </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> maxAttempts </span><span style="color:#F97583">||</span><span style="color:#F97583"> !</span><span style="color:#B392F0">shouldRetry</span><span style="color:#E1E4E8">(err)) </span><span style="color:#F97583">break</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> delay</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">min</span><span style="color:#E1E4E8">(baseDelayMs </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 2</span><span style="color:#F97583"> **</span><span style="color:#E1E4E8"> (attempt </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">), maxDelayMs);</span></span>
+<span class="line"><span style="color:#E1E4E8">      console.</span><span style="color:#B392F0">warn</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`試行 ${</span><span style="color:#E1E4E8">attempt</span><span style="color:#9ECBFF">}/${</span><span style="color:#E1E4E8">maxAttempts</span><span style="color:#9ECBFF">} 失敗。${</span><span style="color:#E1E4E8">delay</span><span style="color:#9ECBFF">}ms後にリトライ...`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#F97583"> new</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">resolve</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> setTimeout</span><span style="color:#E1E4E8">(resolve, delay));</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  throw</span><span style="color:#E1E4E8"> lastError;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> withRetry</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  () </span><span style="color:#F97583">=></span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://api.example.com/data'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">r</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> r.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">()),</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    maxAttempts: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    baseDelayMs: </span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    shouldRetry</span><span style="color:#E1E4E8">: (</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> err </span><span style="color:#F97583">instanceof</span><span style="color:#B392F0"> NetworkError</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<hr>
+<h2 id="8-abortcontroller-でのキャンセル処理">8. AbortController でのキャンセル処理</h2>
+<p><code>AbortController</code> はfetch・ストリーム・カスタム非同期処理のキャンセルを統一的に扱えます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// fetchのキャンセル</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> controller</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> AbortController</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">signal</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> controller;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 5秒後に自動キャンセル</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> timeoutId</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> setTimeout</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> controller.</span><span style="color:#B392F0">abort</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'タイムアウト'</span><span style="color:#E1E4E8">)), </span><span style="color:#79B8FF">5000</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'https://api.example.com/large-data'</span><span style="color:#E1E4E8">, { signal });</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#B392F0">  clearTimeout</span><span style="color:#E1E4E8">(timeoutId);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> data;</span></span>
+<span class="line"><span style="color:#E1E4E8">} </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (err) {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (err.name </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'AbortError'</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'リクエストがキャンセルされました'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#E1E4E8"> err;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="カスタム非同期処理でabortsignalを使う">カスタム非同期処理でAbortSignalを使う</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// AbortSignalに対応した非同期処理</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> processWithCancellation</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  items</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">[],</span></span>
+<span class="line"><span style="color:#FFAB70">  signal</span><span style="color:#F97583">:</span><span style="color:#B392F0"> AbortSignal</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">number</span><span style="color:#E1E4E8">[]> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> results</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> item</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> items) {</span></span>
+<span class="line"><span style="color:#6A737D">    // キャンセルチェック</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (signal.aborted) {</span></span>
+<span class="line"><span style="color:#F97583">      throw</span><span style="color:#E1E4E8"> signal.reason </span><span style="color:#F97583">??</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'処理がキャンセルされました'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> heavyProcess</span><span style="color:#E1E4E8">(item);</span></span>
+<span class="line"><span style="color:#E1E4E8">    results.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(result);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> results;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// AbortSignal.timeout を使うとさらにシンプル（Node.js 17.3+）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> signal</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> AbortSignal.</span><span style="color:#B392F0">timeout</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">3000</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> results</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> processWithCancellation</span><span style="color:#E1E4E8">([</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">4</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">], signal);</span></span></code></pre>
+<hr>
+<h2 id="9-ストリーム処理">9. ストリーム処理</h2>
+<p>大きなデータをメモリに一度に読み込まず、チャンク単位で処理するのがストリームです。</p>
+<h3 id="readablewritabletransform-ストリーム">Readable・Writable・Transform ストリーム</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Readable, Writable, Transform, pipeline } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'stream'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { promisify } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'util'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createReadStream, createWriteStream } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'fs'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createGzip } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'zlib'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> pipelineAsync</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> promisify</span><span style="color:#E1E4E8">(pipeline);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 大きなファイルをgzip圧縮してコピー（メモリ効率良好）</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#B392F0"> pipelineAsync</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#B392F0">  createReadStream</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'huge-file.txt'</span><span style="color:#E1E4E8">),       </span><span style="color:#6A737D">// Readable</span></span>
+<span class="line"><span style="color:#B392F0">  createGzip</span><span style="color:#E1E4E8">(),                             </span><span style="color:#6A737D">// Transform（圧縮）</span></span>
+<span class="line"><span style="color:#B392F0">  createWriteStream</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'huge-file.txt.gz'</span><span style="color:#E1E4E8">),   </span><span style="color:#6A737D">// Writable</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'圧縮完了'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="カスタムtransformストリーム">カスタムTransformストリーム</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Transform, TransformCallback } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'stream'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// CSVの各行をJSONオブジェクトに変換するTransform</span></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> CsvToJson</span><span style="color:#F97583"> extends</span><span style="color:#B392F0"> Transform</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> headers</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> buffer</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#79B8FF">    super</span><span style="color:#E1E4E8">({ objectMode: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  _transform</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">chunk</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Buffer</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">_encoding</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">callback</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TransformCallback</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.buffer </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> chunk.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> lines</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.buffer.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.buffer </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> lines.</span><span style="color:#B392F0">pop</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">??</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">;  </span><span style="color:#6A737D">// 未完の行はバッファに残す</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> line</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> lines) {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (line.</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">continue</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> values</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> line.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">','</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">v</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> v.</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.headers.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ===</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#79B8FF">        this</span><span style="color:#E1E4E8">.headers </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> values;  </span><span style="color:#6A737D">// 1行目はヘッダー</span></span>
+<span class="line"><span style="color:#E1E4E8">      } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> record</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {};</span></span>
+<span class="line"><span style="color:#79B8FF">        this</span><span style="color:#E1E4E8">.headers.</span><span style="color:#B392F0">forEach</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">header</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">i</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">          record[header] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> values[i] </span><span style="color:#F97583">??</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">        });</span></span>
+<span class="line"><span style="color:#79B8FF">        this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(record);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    callback</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  _flush</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">callback</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TransformCallback</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.buffer.</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">()) {</span></span>
+<span class="line"><span style="color:#6A737D">      // 最後の行を処理</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> values</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.buffer.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">','</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">v</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> v.</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> record</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {};</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.headers.</span><span style="color:#B392F0">forEach</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">header</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">i</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        record[header] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> values[i] </span><span style="color:#F97583">??</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(record);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#B392F0">    callback</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> csvToJson</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> CsvToJson</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#B392F0">createReadStream</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'data.csv'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">pipe</span><span style="color:#E1E4E8">(csvToJson)</span></span>
+<span class="line"><span style="color:#E1E4E8">  .</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'data'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">record</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'行データ:'</span><span style="color:#E1E4E8">, record);</span></span>
+<span class="line"><span style="color:#6A737D">    // { name: '田中太郎', age: '30', city: '東京' }</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span></code></pre>
+<h3 id="async-iteratorでストリームを扱うnodejs-12">async iteratorでストリームを扱う（Node.js 12+）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { createReadStream } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'fs'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#79B8FF"> *</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> readline </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'readline'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> countLines</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">filePath</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">number</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> fileStream</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createReadStream</span><span style="color:#E1E4E8">(filePath);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> rl</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> readline.</span><span style="color:#B392F0">createInterface</span><span style="color:#E1E4E8">({ input: fileStream });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> count </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> _line</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> rl) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    count</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> count;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> lines</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> countLines</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'huge-log.txt'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`総行数: ${</span><span style="color:#E1E4E8">lines</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<hr>
+<h2 id="10-worker-threads-で重い処理をオフロード">10. Worker Threads で重い処理をオフロード</h2>
+<p>CPU集約的な処理（画像変換・暗号計算・大量データ集計）はイベントループをブロックします。Worker Threadsを使えばNode.jsのシングルスレッド制約を回避できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// worker.ts — ワーカースレッドのコード</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { workerData, parentPort } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'worker_threads'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> heavyComputation</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">n</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">  // フィボナッチ数列（意図的に重い実装）</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (n </span><span style="color:#F97583">&#x3C;=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> n;</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#B392F0"> heavyComputation</span><span style="color:#E1E4E8">(n </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">+</span><span style="color:#B392F0"> heavyComputation</span><span style="color:#E1E4E8">(n </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> heavyComputation</span><span style="color:#E1E4E8">(workerData.n);</span></span>
+<span class="line"><span style="color:#E1E4E8">parentPort?.</span><span style="color:#B392F0">postMessage</span><span style="color:#E1E4E8">({ result });</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// main.ts — メインスレッドのコード</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Worker } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'worker_threads'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> path </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'path'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> runWorker</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">n</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">number</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#F97583"> new</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">resolve</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">reject</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> worker</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Worker</span><span style="color:#E1E4E8">(path.</span><span style="color:#B392F0">join</span><span style="color:#E1E4E8">(__dirname, </span><span style="color:#9ECBFF">'worker.js'</span><span style="color:#E1E4E8">), {</span></span>
+<span class="line"><span style="color:#E1E4E8">      workerData: { n },</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    worker.</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'message'</span><span style="color:#E1E4E8">, ({ </span><span style="color:#FFAB70">result</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> resolve</span><span style="color:#E1E4E8">(result));</span></span>
+<span class="line"><span style="color:#E1E4E8">    worker.</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'error'</span><span style="color:#E1E4E8">, reject);</span></span>
+<span class="line"><span style="color:#E1E4E8">    worker.</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'exit'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">code</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (code </span><span style="color:#F97583">!==</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">reject</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Worker終了コード: ${</span><span style="color:#E1E4E8">code</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ワーカーを並列実行</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">time</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'並列計算'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">fib40</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">fib41</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">fib42</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#B392F0">  runWorker</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">40</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#B392F0">  runWorker</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">41</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#B392F0">  runWorker</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">42</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">]);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">timeEnd</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'並列計算'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`fib(40)=${</span><span style="color:#E1E4E8">fib40</span><span style="color:#9ECBFF">}, fib(41)=${</span><span style="color:#E1E4E8">fib41</span><span style="color:#9ECBFF">}, fib(42)=${</span><span style="color:#E1E4E8">fib42</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<h3 id="worker-poolパターン">Worker Poolパターン</h3>
+<p>毎回ワーカーを生成するのはオーバーヘッドがあります。プールを使い回すことで効率化できます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Worker } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'worker_threads'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> WorkerPool</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> workers</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Worker</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> queue</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Array</span><span style="color:#E1E4E8">&#x3C;{</span></span>
+<span class="line"><span style="color:#FFAB70">    data</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">    resolve</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">value</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">    reject</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">reason</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }> </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> idleWorkers</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Worker</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  constructor</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">private</span><span style="color:#FFAB70"> workerPath</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">size</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> size; i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> worker</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Worker</span><span style="color:#E1E4E8">(workerPath);</span></span>
+<span class="line"><span style="color:#E1E4E8">      worker.</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'message'</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">result</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> task</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.queue.</span><span style="color:#B392F0">shift</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (task) {</span></span>
+<span class="line"><span style="color:#E1E4E8">          worker.</span><span style="color:#B392F0">postMessage</span><span style="color:#E1E4E8">(task.data);</span></span>
+<span class="line"><span style="color:#E1E4E8">          task.</span><span style="color:#B392F0">resolve</span><span style="color:#E1E4E8">(result);</span></span>
+<span class="line"><span style="color:#E1E4E8">        } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">          this</span><span style="color:#E1E4E8">.idleWorkers.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(worker);</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#79B8FF">      this</span><span style="color:#E1E4E8">.idleWorkers.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(worker);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  run</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">data</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">unknown</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> new</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">resolve</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">reject</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> worker</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.idleWorkers.</span><span style="color:#B392F0">pop</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (worker) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        worker.</span><span style="color:#B392F0">once</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'message'</span><span style="color:#E1E4E8">, resolve);</span></span>
+<span class="line"><span style="color:#E1E4E8">        worker.</span><span style="color:#B392F0">once</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'error'</span><span style="color:#E1E4E8">, reject);</span></span>
+<span class="line"><span style="color:#E1E4E8">        worker.</span><span style="color:#B392F0">postMessage</span><span style="color:#E1E4E8">(data);</span></span>
+<span class="line"><span style="color:#E1E4E8">      } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">        this</span><span style="color:#E1E4E8">.queue.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">({ data, resolve, reject });</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> terminate</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">all</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.workers.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">w</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> w.</span><span style="color:#B392F0">terminate</span><span style="color:#E1E4E8">()));</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="11-タイマーの優先順位">11. タイマーの優先順位</h2>
+<p>Node.jsのタイマーAPIは複数あり、それぞれ実行タイミングが異なります。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">// 実行順序を確認する</span></span>
+<span class="line"><span style="color:#B392F0">setImmediate</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'5: setImmediate（チェックフェーズ）'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">setTimeout</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'4: setTimeout 0ms（タイマーフェーズ）'</span><span style="color:#E1E4E8">), </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">Promise</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">resolve</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'2: Promise.then（マイクロタスク）'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">process.</span><span style="color:#B392F0">nextTick</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'1: process.nextTick（最優先マイクロタスク）'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">queueMicrotask</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'3: queueMicrotask（マイクロタスク）'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'0: 同期コード'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 出力:</span></span>
+<span class="line"><span style="color:#6A737D">// 0: 同期コード</span></span>
+<span class="line"><span style="color:#6A737D">// 1: process.nextTick（最優先マイクロタスク）</span></span>
+<span class="line"><span style="color:#6A737D">// 2: Promise.then（マイクロタスク）</span></span>
+<span class="line"><span style="color:#6A737D">// 3: queueMicrotask（マイクロタスク）</span></span>
+<span class="line"><span style="color:#6A737D">// 4: setTimeout 0ms（タイマーフェーズ）</span></span>
+<span class="line"><span style="color:#6A737D">// 5: setImmediate（チェックフェーズ）</span></span></code></pre>
+<h3 id="各タイマーの適切な使い分け">各タイマーの適切な使い分け</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// setTimeout: 最小待機時間後に実行（精度は保証されない）</span></span>
+<span class="line"><span style="color:#B392F0">setTimeout</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'500ms後以降に実行'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}, </span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// setInterval: 定期実行（ドリフトが発生しやすい）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> intervalId</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> setInterval</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'1秒ごとに実行'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}, </span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">// 停止</span></span>
+<span class="line"><span style="color:#B392F0">clearInterval</span><span style="color:#E1E4E8">(intervalId);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// setImmediate: I/Oコールバックの直後に実行（I/O処理後の後処理に最適）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> fs</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'fs'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">fs.</span><span style="color:#B392F0">readFile</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'file.txt'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">  setTimeout</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'setTimeout'</span><span style="color:#E1E4E8">));   </span><span style="color:#6A737D">// 次のイベントループ</span></span>
+<span class="line"><span style="color:#B392F0">  setImmediate</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'setImmediate'</span><span style="color:#E1E4E8">)); </span><span style="color:#6A737D">// このI/Oフェーズの直後</span></span>
+<span class="line"><span style="color:#6A737D">  // setImmediateが先に実行される</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// process.nextTick: 現在のオペレーション完了直後（マイクロタスクより優先）</span></span>
+<span class="line"><span style="color:#6A737D">// 使いすぎるとイベントループが飢餓状態になるので注意</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#B392F0"> emitAsync</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">emitter</span><span style="color:#F97583">:</span><span style="color:#B392F0"> EventEmitter</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">event</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">data</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> unknown</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.</span><span style="color:#B392F0">nextTick</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> emitter.</span><span style="color:#B392F0">emit</span><span style="color:#E1E4E8">(event, data));</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<h3 id="精度の高い定期実行ドリフト補正">精度の高い定期実行（ドリフト補正）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// setIntervalはドリフトが蓄積される</span></span>
+<span class="line"><span style="color:#6A737D">// 代わりに再帰setTimeoutで補正する</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> accurateInterval</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">fn</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">ms</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> expected </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> ms;</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> timeoutId</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NodeJS</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">Timeout</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#B392F0"> step</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> drift</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> expected;</span></span>
+<span class="line"><span style="color:#B392F0">    fn</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">    expected </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> ms;</span></span>
+<span class="line"><span style="color:#E1E4E8">    timeoutId </span><span style="color:#F97583">=</span><span style="color:#B392F0"> setTimeout</span><span style="color:#E1E4E8">(step, Math.</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, ms </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> drift));</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  timeoutId </span><span style="color:#F97583">=</span><span style="color:#B392F0"> setTimeout</span><span style="color:#E1E4E8">(step, ms);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#B392F0"> clearTimeout</span><span style="color:#E1E4E8">(timeoutId);  </span><span style="color:#6A737D">// キャンセル関数を返す</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用例: ドリフトを補正しながら毎秒実行</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> stop</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> accurateInterval</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">toISOString</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"><span style="color:#E1E4E8">}, </span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 10秒後に停止</span></span>
+<span class="line"><span style="color:#B392F0">setTimeout</span><span style="color:#E1E4E8">(stop, </span><span style="color:#79B8FF">10000</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<hr>
+<h2 id="まとめ-非同期処理の選択指針">まとめ: 非同期処理の選択指針</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>シナリオ</th><th>推奨パターン</th></tr></thead><tbody><tr><td>単一の非同期処理</td><td><code>async/await</code> + <code>try/catch</code></td></tr><tr><td>複数の独立した並列処理</td><td><code>Promise.all</code></td></tr><tr><td>失敗を許容する並列処理</td><td><code>Promise.allSettled</code></td></tr><tr><td>最速レスポンスが欲しい</td><td><code>Promise.race</code> / <code>Promise.any</code></td></tr><tr><td>大量データの逐次処理</td><td><code>for...of</code> + <code>await</code></td></tr><tr><td>大量データの並列処理（負荷制限あり）</td><td><code>pLimit</code> + <code>Promise.all</code></td></tr><tr><td>大容量ファイル処理</td><td>Stream + <code>pipeline</code></td></tr><tr><td>CPU集約型処理</td><td>Worker Threads</td></tr><tr><td>キャンセル可能な処理</td><td><code>AbortController</code></td></tr><tr><td>定期実行</td><td>再帰 <code>setTimeout</code>（ドリフト補正）</td></tr></tbody></table>
+<p>JavaScriptの非同期処理は「シングルスレッドのイベントループ」という土台の上に、Promise・async/await・ストリーム・Worker Threadsが積み重なっています。イベントループの仕組みを理解した上でこれらのAPIを使い分けることで、パフォーマンスが高く、バグが少なく、テストしやすいNode.jsアプリケーションを構築できます。</p>
+<hr>
+<p><em>本記事のコードサンプルはNode.js 18以上・TypeScript 5以上を対象としています。</em></p>  <!-- Related Articles (内部リンクSEO) -->  <!-- BOOTH Product CTA -->  <!-- Affiliate CTA (タグ連動型) -->     <aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境" data-astro-cid-bvzihdzo> <p class="affiliate-cta-title" data-astro-cid-bvzihdzo>エンジニアのスキルアップと環境構築を支援</p> <p class="affiliate-cta-desc" data-astro-cid-bvzihdzo>キャリアアップを目指すなら転職エージェント活用、開発環境を整えるなら高速レンタルサーバーがおすすめ。チートシートも無料公開中。</p> <div class="affiliate-cta-links" data-astro-cid-bvzihdzo> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn" data-astro-cid-bvzihdzo>
+PR: エンジニア転職相談
+</a> <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+PR: XServer 詳細を見る
+</a> <a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary" data-astro-cid-bvzihdzo>
+BOOTHショップ
+</a> </div> </aside> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <nav class="footer-nav" aria-label="フッターナビゲーション" data-astro-cid-sz7xmlte> <a href="/privacy" data-astro-cid-sz7xmlte>プライバシーポリシー</a> <a href="/terms" data-astro-cid-sz7xmlte>利用規約</a> <a href="/about" data-astro-cid-sz7xmlte>このブログについて</a> <a href="/contact" data-astro-cid-sz7xmlte>お問い合わせ</a> </nav> <p class="copyright" data-astro-cid-sz7xmlte>
+&copy; 2025-2026 イザークコンサルティング株式会社. All rights reserved.
+</p> </footer>  </body></html>
