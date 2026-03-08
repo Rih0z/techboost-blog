@@ -1,6 +1,6 @@
 ---
 title: "ベクトルデータベース比較ガイド2026"
-description: "主要ベクトルデータベースの徹底比較。"
+description: "Pinecone・Weaviate・Milvus・Qdrant・ChromaDBの5大ベクトルデータベースを性能・スケーラビリティ・コスト・RAG適性で徹底比較。セマンティック検索や埋め込みベクトル管理に最適なDBの選び方を2026年最新情報で解説します。"
 pubDate: "2026-02-06"
 tags: ["ベクトルDB", "AI", "RAG", "埋め込み", "検索"]
 heroImage: '../../assets/thumbnails/vector-database-comparison.jpg'

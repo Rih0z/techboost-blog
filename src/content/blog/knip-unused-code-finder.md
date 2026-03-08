@@ -1,6 +1,6 @@
 ---
 title: "Knipで未使用コード・依存関係を検出 - TypeScriptプロジェクトの最適化ツール"
-description: "Knipを使ってTypeScript/JavaScriptプロジェクトの未使用コード、未使用依存関係、到達不可能なコードを検出する方法を徹底解説。"
+description: "Knipを使ったTypeScript/JavaScriptプロジェクトの未使用コード・未使用依存関係・デッドコード検出方法を解説。CI統合やバンドルサイズ削減の実践例も紹介。"
 pubDate: "2025-02-05"
 tags: ['TypeScript', 'フロントエンド']
 heroImage: '../../assets/thumbnails/knip-unused-code-finder.jpg'

@@ -1,6 +1,6 @@
 ---
 title: 'Web Worker実践ガイド - ブラウザで並列処理を実現する'
-description: 'Web Workerの基本から実践まで徹底解説。'
+description: 'Web Workerを使ったブラウザ並列処理の実装方法を基礎から解説。Dedicated Worker・Shared Worker・Service Workerの違いやパフォーマンス改善の実例も紹介。'
 pubDate: '2026-02-05'
 tags: ['プログラミング', '開発ツール']
 heroImage: '../../assets/thumbnails/web-worker-guide.jpg'

@@ -223,6 +223,99 @@ A. Vultrの$2.50/月プラン（時間課金）がおすすめです。使わな
 
 ---
 
+## VPS初期設定の完全ガイド
+
+VPSを契約したら、まず**セキュリティと基本設定**を整えましょう。ここでは実務で使える設定手順を解説します。
+
+### SSH鍵認証の設定
+
+パスワード認証は総当たり攻撃のリスクがあるため、**SSH鍵認証**に切り替えるのが必須です。
+
+```bash
+# Ed25519鍵ペアを生成（RSAより安全・高速）
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# 公開鍵をVPSに転送
+ssh-copy-id -i ~/.ssh/id_ed25519.pub deploy@<VPS_IP>
+```
+
+`~/.ssh/config`にホスト情報を書いておけば、`ssh my-vps`だけで接続できるようになります。
+
+### fail2banで不正アクセスを自動ブロック
+
+SSHへのブルートフォース攻撃を自動検知・遮断する**fail2ban**は、VPS運用の必須ツールです。
+
+```bash
+# インストール & 有効化
+sudo apt install -y fail2ban
+sudo systemctl enable --now fail2ban
+```
+
+`/etc/fail2ban/jail.local`で`maxretry`（失敗回数上限）、`bantime`（BAN時間）、`findtime`（カウント期間）を設定します。本番環境では`maxretry=3`、`bantime=86400`（24時間）が推奨です。`sudo fail2ban-client status sshd`でBANされたIPを確認できます。
+
+---
+
+## Docker on VPS：コンテナ運用のベストプラクティス
+
+VPSでDockerを使えば、**複数のアプリケーションを安全に隔離**しながら運用できます。`curl -fsSL https://get.docker.com | sh`でインストールし、`sudo usermod -aG docker deploy`で一般ユーザーに権限を付与します。
+
+本番運用ではDocker Composeで**Traefik（リバースプロキシ）+ アプリ + DB**の3層構成を組むのが定番です。
+
+**Docker VPS運用のコツ**:
+- **リバースプロキシにTraefik**を使うと、SSL証明書の自動取得・更新が楽
+- `restart: always` で障害時に自動復旧
+- DBデータは**named volume**で永続化（バインドマウントより安全）
+- `docker system prune -af` を定期実行してディスク節約
+
+---
+
+## VPSコスト最適化Tips
+
+VPSの月額を抑えるには、不要サービスの停止とSwap追加でメモリを節約し、**プランのアップグレードを遅らせる**のが基本です。
+
+### コスト削減チェックリスト
+
+| 施策 | 効果 | 難易度 |
+|------|------|--------|
+| Swap追加でプラン据え置き | 月額¥400〜節約 | 低 |
+| 不要サービス停止 | メモリ200MB〜節約 | 低 |
+| 時間課金VPSで開発環境運用 | 使わない時間分節約 | 中 |
+| 静的ファイルをCDN配信 | 転送量削減 | 中 |
+| 年払い・長期契約割引 | 10〜30%オフ | 低 |
+
+---
+
+## WordPress + VPSの最適構成
+
+共有レンタルサーバーでは物足りないが、クラウドは高すぎる。そんな場合に**VPS + WordPress**は最適解です。
+
+### VPSでWordPressを動かす構成
+
+VPSでは**LEMP構成（Linux + Nginx + MySQL + PHP）**が定番です。`apt install nginx mysql-server php-fpm php-mysql`でインストールし、Nginxのバーチャルホストで`try_files`と`fastcgi_pass`を設定します。
+
+**VPS WordPress運用のメリット**:
+- **PHP/MySQL設定を自由に最適化**できる
+- Nginx + FastCGIキャッシュで**共有サーバーの数倍高速**
+- 同一VPSで**WordPress + APIサーバー**を同居可能
+- **wp-cli**でコマンドラインからWordPressを管理
+
+---
+
+## セキュリティベストプラクティス
+
+VPSは自由度が高い反面、**セキュリティは自己責任**です。最低限以下を実施しましょう。
+
+### セキュリティチェックリスト
+
+- [ ] SSH鍵認証に切替済み（パスワード認証無効化）
+- [ ] root直接ログイン禁止
+- [ ] fail2ban導入済み
+- [ ] ufwファイアウォール有効化（必要ポートのみ許可）
+- [ ] `unattended-upgrades`で自動セキュリティアップデート設定済み
+- [ ] 定期的なバックアップ設定（週次以上）
+
+---
+
 ## まとめ
 
 | 優先項目 | おすすめVPS |

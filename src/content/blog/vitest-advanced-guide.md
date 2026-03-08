@@ -1,6 +1,6 @@
 ---
 title: "Vitest高度なテスト技法ガイド - モック、スナップショット、カバレッジ活用術"
-description: "ViteベースのテストフレームワークVitestの高度な使い方を徹底解説。"
+description: "Vitestの高度なモック技法・スナップショットテスト・カバレッジ設定・並列実行・カスタムマッチャーまで、実践的なテスト技法をコード例付きで徹底解説します。"
 pubDate: "2025-02-06"
 tags: ['テスト', 'ビルドツール', 'フロントエンド', '開発ツール', '開発効率化']
 heroImage: '../../assets/thumbnails/vitest-advanced-guide.jpg'

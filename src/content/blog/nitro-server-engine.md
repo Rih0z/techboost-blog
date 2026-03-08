@@ -1,6 +1,6 @@
 ---
 title: "Nitro完全ガイド — Nuxt/H3ベースのユニバーサルサーバーエンジンでどこでも動くAPI構築"
-description: "あらゆるプラットフォームで動作するユニバーサルサーバーエンジンNitroの完全ガイド。"
+description: "Nuxt 3のサーバーエンジンNitroの基本からAPI構築・キャッシュ・ストレージ・マルチプラットフォームデプロイまで、実践コード付きで徹底解説します。"
 pubDate: "2025-02-06"
 tags: ["Nitro", "Nuxt", "H3", "Server", "API"]
 heroImage: '../../assets/thumbnails/nitro-server-engine.jpg'

@@ -1,6 +1,6 @@
 ---
 title: 'エンジニアのためのiDeCo・新NISA活用ガイド2026：節税しながら資産形成する方法'
-description: 'フリーランス・会社員エンジニア向けにiDeCoと新NISAの活用法を解説。'
+description: '高収入エンジニア向けにiDeCoと新NISAの節税効果・掛金上限・おすすめ商品を解説。フリーランスと会社員それぞれの最適な資産形成戦略がわかります。'
 pubDate: '2026-03-05'
 tags: ['フリーランス', '確定申告', '副業', '税金', 'キャリア']
 heroImage: '../../assets/thumbnails/engineer-ideco-nisa-guide-2026.jpg'
