@@ -268,98 +268,28 @@ terraform {
     dynamodb_table = "terraform-locks"  # ロック用
   }
 }
-
-# State用S3バケットの作成（初回のみ手動 or 別Terraformで管理）
-resource "aws_s3_bucket" "terraform_state" {
-  bucket = "my-company-terraform-state"
-
-  lifecycle {
-    prevent_destroy = true  # 誤削除防止
-  }
-}
-
-resource "aws_s3_bucket_versioning" "terraform_state" {
-  bucket = aws_s3_bucket.terraform_state.id
-  versioning_configuration {
-    status = "Enabled"  # 過去のStateを復元可能に
-  }
-}
-
-# State lockingのためのDynamoDBテーブル
-resource "aws_dynamodb_table" "terraform_locks" {
-  name         = "terraform-locks"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "LockID"
-
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-}
 ```
+
+S3バケットにはバージョニングを有効化し、DynamoDBテーブルでState lockingを実現します。これにより、複数人が同時に`terraform apply`を実行しても競合を防げます。
 
 ### State分割の戦略
 
-大規模プロジェクトでは、Stateを分割して管理します。
+大規模プロジェクトでは、変更頻度に応じてStateを分割します。
 
-```
-infra/
-├── global/           # IAM, Route53など（変更頻度: 低）
-│   ├── main.tf
-│   └── terraform.tfvars
-├── network/          # VPC, Subnet, NAT（変更頻度: 低）
-│   ├── main.tf
-│   └── terraform.tfvars
-├── database/         # RDS, ElastiCache（変更頻度: 中）
-│   ├── main.tf
-│   └── terraform.tfvars
-└── application/      # ECS, ALB, Auto Scaling（変更頻度: 高）
-    ├── main.tf
-    └── terraform.tfvars
-```
+| ディレクトリ | 管理対象 | 変更頻度 |
+|------------|---------|---------|
+| `global/` | IAM, Route53 | 低 |
+| `network/` | VPC, Subnet, NAT | 低 |
+| `database/` | RDS, ElastiCache | 中 |
+| `application/` | ECS, ALB, Auto Scaling | 高 |
 
-State間でデータを参照するには `terraform_remote_state` または `data source` を使います。
-
-```hcl
-# application/main.tf からnetworkのStateを参照
-data "terraform_remote_state" "network" {
-  backend = "s3"
-  config = {
-    bucket = "my-company-terraform-state"
-    key    = "network/terraform.tfstate"
-    region = "ap-northeast-1"
-  }
-}
-
-# VPC IDやサブネットIDを取得
-locals {
-  vpc_id             = data.terraform_remote_state.network.outputs.vpc_id
-  private_subnet_ids = data.terraform_remote_state.network.outputs.private_subnet_ids
-}
-```
+State間でデータを参照するには `terraform_remote_state` を使い、VPC IDやサブネットIDなどを取得します。
 
 ## モジュール構造の設計パターン
 
 再利用可能なモジュールの設計は、Terraformプロジェクトの保守性を大きく左右します。
 
-### モジュールのディレクトリ構成
-
-```
-modules/
-├── ecs-service/
-│   ├── main.tf        # リソース定義
-│   ├── variables.tf   # 入力変数
-│   ├── outputs.tf     # 出力値
-│   └── README.md      # 使い方
-├── rds/
-│   ├── main.tf
-│   ├── variables.tf
-│   └── outputs.tf
-└── alb/
-    ├── main.tf
-    ├── variables.tf
-    └── outputs.tf
-```
+各モジュールは `main.tf` / `variables.tf` / `outputs.tf` の3ファイル構成が基本です。
 
 ### モジュールの呼び出し例
 
@@ -391,72 +321,9 @@ module "api_service" {
 
 ## CI/CDパイプラインとの統合
 
-GitHub ActionsでTerraformのplan/applyを自動化する実践的な構成です。
+GitHub ActionsでTerraformのplan/applyを自動化するのが本番運用の前提です。PR作成時に `terraform plan` を実行して差分を確認し、mainマージ時のみ `terraform apply` を自動実行する構成が安全です。
 
-### PRでplan、マージでapply
-
-```yaml
-# .github/workflows/terraform.yml
-name: Terraform CI/CD
-
-on:
-  pull_request:
-    paths: ['infra/**']
-  push:
-    branches: [main]
-    paths: ['infra/**']
-
-permissions:
-  id-token: write    # OIDC認証用
-  contents: read
-  pull-requests: write  # PRコメント用
-
-jobs:
-  terraform:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: infra
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ap-northeast-1
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.8
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Format Check
-        run: terraform fmt -check -recursive
-
-      - name: Terraform Validate
-        run: terraform validate
-
-      # PRの場合: planのみ実行してコメントに結果を表示
-      - name: Terraform Plan
-        if: github.event_name == 'pull_request'
-        id: plan
-        run: terraform plan -no-color -out=tfplan
-        continue-on-error: true
-
-      # mainマージ時: applyを実行
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-          terraform plan -out=tfplan
-          terraform apply -auto-approve tfplan
-```
-
-**ポイント**: PRではplanの結果をコメントに表示し、mainマージ時のみapplyを実行する構成が安全です。OIDC認証を使えばAWSアクセスキーの管理も不要になります。
+OIDC認証を使えばAWSアクセスキーのシークレット管理が不要になり、セキュリティも向上します。
 
 ## まとめ：Terraform導入の3ステップ
 

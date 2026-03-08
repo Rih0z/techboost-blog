@@ -264,52 +264,7 @@ AIツールを効果的に活用する方法は[Claude Code完全ガイド2026](
 
 ### useLocalStorage — 型安全なローカルストレージ
 
-```typescript
-function useLocalStorage<T>(key: string, initialValue: T) {
-  const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') return initialValue;
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? (JSON.parse(item) as T) : initialValue;
-    } catch {
-      return initialValue;
-    }
-  });
-
-  const setValue = useCallback(
-    (value: T | ((val: T) => T)) => {
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    },
-    [key, storedValue]
-  );
-
-  return [storedValue, setValue] as const;
-}
-
-// 使用例
-function SettingsPage() {
-  const [theme, setTheme] = useLocalStorage<'light' | 'dark'>('theme', 'light');
-  const [fontSize, setFontSize] = useLocalStorage<number>('fontSize', 14);
-
-  return (
-    <div>
-      <button onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}>
-        テーマ切替: {theme}
-      </button>
-      <input
-        type="range"
-        min={12}
-        max={24}
-        value={fontSize}
-        onChange={(e) => setFontSize(Number(e.target.value))}
-      />
-    </div>
-  );
-}
-```
+`useState` のインターフェースでLocalStorageを操作するフックです。ジェネリクスで型を指定でき、SSR環境（`typeof window === 'undefined'`）にも対応します。値の変更時に自動的にLocalStorageへ保存され、初期値はLocalStorageの既存値があればそちらを使います。
 
 ---
 
@@ -318,87 +273,44 @@ function SettingsPage() {
 React 19でもError Boundaryはクラスコンポーネントが必要ですが、TypeScriptで型安全に実装できます。
 
 ```typescript
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
-  fallback: React.ReactNode | ((error: Error, reset: () => void) => React.ReactNode);
-  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
-}
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode | ((error: Error) => React.ReactNode) },
+  { hasError: boolean; error: Error | null }
+> {
+  state = { hasError: false, error: null as Error | null };
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-  error: Error | null;
-}
-
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+  static getDerivedStateFromError(error: Error) {
     return { hasError: true, error };
   }
-
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    this.props.onError?.(error, errorInfo);
-  }
-
-  resetError = () => {
-    this.setState({ hasError: false, error: null });
-  };
 
   render() {
     if (this.state.hasError && this.state.error) {
       const { fallback } = this.props;
-      if (typeof fallback === 'function') {
-        return fallback(this.state.error, this.resetError);
-      }
-      return fallback;
+      return typeof fallback === 'function' ? fallback(this.state.error) : fallback;
     }
     return this.props.children;
   }
-}
-
-// 使用例
-function App() {
-  return (
-    <ErrorBoundary
-      fallback={(error, reset) => (
-        <div role="alert">
-          <h2>エラーが発生しました</h2>
-          <p>{error.message}</p>
-          <button onClick={reset}>再試行</button>
-        </div>
-      )}
-    >
-      <UserDashboard />
-    </ErrorBoundary>
-  );
 }
 ```
 
 ---
 
-## ベストプラクティス8：パフォーマンス最適化の実践
+## ベストプラクティス8：useTransitionによるUI応答性の改善
 
-### useTransitionによるUI応答性の改善
+React 19の `useTransition` を使うと、重い状態更新をバックグラウンドで実行し、UIの応答性を維持できます。
 
 ```typescript
-// ✅ React 19のuseTransitionで重い更新をバックグラウンドに
 function FilterableList({ items }: { items: Item[] }) {
   const [query, setQuery] = useState('');
   const [isPending, startTransition] = useTransition();
   const [filteredItems, setFilteredItems] = useState(items);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setQuery(value); // 即座に入力欄を更新
-
+    setQuery(e.target.value); // 即座に入力欄を更新
     startTransition(() => {
-      const filtered = items.filter(item =>
-        item.name.toLowerCase().includes(value.toLowerCase())
-      );
-      setFilteredItems(filtered);
+      setFilteredItems(items.filter(item =>
+        item.name.toLowerCase().includes(e.target.value.toLowerCase())
+      ));
     });
   };
 
@@ -406,11 +318,7 @@ function FilterableList({ items }: { items: Item[] }) {
     <div>
       <input value={query} onChange={handleSearch} placeholder="検索..." />
       {isPending && <span>フィルタリング中...</span>}
-      <ul>
-        {filteredItems.map(item => (
-          <li key={item.id}>{item.name}</li>
-        ))}
-      </ul>
+      <ul>{filteredItems.map(item => <li key={item.id}>{item.name}</li>)}</ul>
     </div>
   );
 }

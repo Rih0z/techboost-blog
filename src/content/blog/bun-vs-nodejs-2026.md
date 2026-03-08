@@ -246,49 +246,20 @@ const port = process.env.PORT ?? 3000; // そのまま動く
 curl -fsSL https://bun.sh/install | bash
 
 # 2. 既存プロジェクトで bun install を実行
-cd your-project
-bun install
-# → bun.lockb が生成される（package-lock.json と共存可能）
+bun install  # → bun.lockb が生成される
 
 # 3. スクリプト実行を確認
-bun run dev
-bun run build
-bun run test
-
-# 4. CI/CDのキャッシュ設定を更新
-# GitHub Actions の場合:
-# - uses: oven-sh/setup-bun@v2
-#   with:
-#     bun-version: latest
+bun run dev && bun run build && bun run test
 ```
 
 **Phase 1 チェック項目:**
 
-- [ ] `bun install` が正常に完了する
-- [ ] `bun run dev` でローカルサーバーが起動する
-- [ ] `bun run build` が正常に完了する
-- [ ] `bun run test` で全テストがパスする
-- [ ] CI/CDパイプラインが動作する
+- [ ] `bun install` / `bun run dev` / `bun run build` / `bun run test` が正常動作
+- [ ] CI/CDパイプラインが動作する（`oven-sh/setup-bun@v2` を追加）
 
 ### Phase 2: ランタイム移行
 
-```bash
-# 1. エントリーポイントの動作確認
-bun run src/index.ts  # TypeScript直接実行
-
-# 2. 不要になるパッケージを確認・削除
-# - dotenv → Bunは.envを自動読み込み
-# - ts-node / tsx → Bunはネイティブ実行
-# - node-fetch → Bunにはfetchが組み込み
-# - nodemon → bun --watch で代替
-```
-
-**Phase 2 チェック項目:**
-
-- [ ] アプリケーションがBunランタイムで起動する
-- [ ] APIエンドポイントが正常にレスポンスを返す
-- [ ] 外部サービス（DB、Redis等）との接続が正常
-- [ ] メモリ使用量が異常に増えていない
+`bun run src/index.ts` でアプリケーション全体をBunランタイムで実行し、API・DB接続・メモリ使用量を確認します。dotenv・ts-node・node-fetch・nodemonなどBunに組み込まれた機能と重複するパッケージは削除できます。
 
 ## 詳細パフォーマンスベンチマーク
 

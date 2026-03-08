@@ -263,42 +263,10 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 CMD ["node", "dist/server.js"]
 ```
 
-```typescript
-// src/health.ts — ヘルスチェックエンドポイントの実装
-import { Router } from 'express';
+ヘルスチェックエンドポイントは2つ用意します。
 
-const healthRouter = Router();
-
-// Liveness: プロセスが生きているか
-healthRouter.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-// Readiness: リクエストを受け付ける準備ができているか
-healthRouter.get('/ready', async (req, res) => {
-  try {
-    // DB接続チェック
-    await db.raw('SELECT 1');
-    // Redis接続チェック
-    await redis.ping();
-
-    res.status(200).json({
-      status: 'ready',
-      checks: {
-        database: 'ok',
-        cache: 'ok',
-      },
-    });
-  } catch (error) {
-    res.status(503).json({
-      status: 'not ready',
-      error: error instanceof Error ? error.message : 'Unknown error',
-    });
-  }
-});
-
-export default healthRouter;
-```
+- **`/health`（Liveness）**: プロセスの生存確認。常に200を返す
+- **`/ready`（Readiness）**: DB・Redis等の接続確認。依存サービスが使えない場合は503を返す
 
 Kubernetesでは3種類のProbeを使い分けます。
 
@@ -312,54 +280,15 @@ Kubernetesでは3種類のProbeを使い分けます。
 
 コンテナのリソース制限は、安定した本番運用に不可欠です。
 
-### Kubernetesのリソース設定ガイド
-
-```yaml
-# リソース設定の考え方
-spec:
-  containers:
-  - name: web-app
-    resources:
-      # requests: スケジューリング時に確保するリソース量
-      requests:
-        memory: "256Mi"    # 通常時のメモリ使用量
-        cpu: "250m"        # 0.25 vCPU
-      # limits: 使用可能な上限
-      limits:
-        memory: "512Mi"    # これを超えるとOOMKill
-        cpu: "500m"        # これを超えるとスロットリング
-```
+Kubernetesでは `requests`（確保量）と `limits`（上限）の2つを設定します。`limits` のmemoryを超えるとOOMKillされ、CPUを超えるとスロットリングが発生します。
 
 ### アプリケーション種別ごとの推奨値
 
-```yaml
-# APIサーバー（Node.js/Express）
-resources:
-  requests:
-    memory: "256Mi"
-    cpu: "250m"
-  limits:
-    memory: "512Mi"
-    cpu: "1000m"
-
-# バッチ処理（データ変換・集計）
-resources:
-  requests:
-    memory: "512Mi"
-    cpu: "500m"
-  limits:
-    memory: "2Gi"
-    cpu: "2000m"
-
-# フロントエンド（Next.js SSR）
-resources:
-  requests:
-    memory: "512Mi"
-    cpu: "500m"
-  limits:
-    memory: "1Gi"
-    cpu: "1000m"
-```
+| 用途 | requests (memory/cpu) | limits (memory/cpu) |
+|------|----------------------|---------------------|
+| APIサーバー | 256Mi / 250m | 512Mi / 1000m |
+| バッチ処理 | 512Mi / 500m | 2Gi / 2000m |
+| フロントエンド（SSR） | 512Mi / 500m | 1Gi / 1000m |
 
 Namespaceレベルで `ResourceQuota`（全体上限）と `LimitRange`（デフォルト値）を設定すると、リソース設定漏れを防止できます。
 
@@ -367,48 +296,14 @@ Namespaceレベルで `ResourceQuota`（全体上限）と `LimitRange`（デフ
 
 本番Kubernetes環境には、**Prometheus + Grafana**の組み合わせが定番です。
 
-### 監視スタックの構成
+### 監視の実装手順
 
-```
-アプリケーション → /metrics エンドポイント公開
-    ↓
-Prometheus（メトリクス収集、15秒間隔）
-    ↓
-Grafana（ダッシュボード表示）
-    ↓
-AlertManager（閾値超過時にSlack/PagerDuty通知）
-```
+1. アプリケーションで `/metrics` エンドポイントを公開（`prom-client` ライブラリ使用）
+2. Prometheusでメトリクスを15秒間隔で収集
+3. Grafanaでダッシュボードを構築
+4. AlertManagerで閾値超過時にSlack通知
 
-### アプリケーションメトリクスの公開（Node.js）
-
-```typescript
-// src/metrics.ts — prom-clientでメトリクス公開
-import { collectDefaultMetrics, Counter, Histogram, Registry } from 'prom-client';
-
-const register = new Registry();
-collectDefaultMetrics({ register });
-
-const httpRequests = new Counter({
-  name: 'http_requests_total',
-  help: 'HTTPリクエスト総数',
-  labelNames: ['method', 'path', 'status'],
-  registers: [register],
-});
-
-const httpDuration = new Histogram({
-  name: 'http_request_duration_seconds',
-  help: 'HTTPリクエスト処理時間',
-  labelNames: ['method', 'path'],
-  buckets: [0.01, 0.05, 0.1, 0.5, 1, 5],
-  registers: [register],
-});
-
-// /metrics エンドポイントで公開
-export async function metricsHandler(req: Request, res: Response) {
-  res.set('Content-Type', register.contentType);
-  res.end(await register.metrics());
-}
-```
+Node.jsの場合、`prom-client` でHTTPリクエスト数・レスポンスタイム・エラー率などのメトリクスを簡単に公開できます。
 
 ## まとめ：Docker/Kubernetesの習得ロードマップ
 

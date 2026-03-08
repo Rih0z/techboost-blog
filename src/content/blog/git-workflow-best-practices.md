@@ -267,237 +267,58 @@ mainブランチへの直接pushを防ぎ、コード品質を保つためのブ
 
 ### GitHubでの設定手順
 
-```
-Settings → Branches → Add branch protection rule
+**推奨設定（Settings → Branches → Add branch protection rule）:**
 
-推奨設定:
-  Branch name pattern: main
-
-  ✅ Require a pull request before merging
-    ✅ Require approvals: 1（小規模チーム）/ 2（大規模チーム）
-    ✅ Dismiss stale pull request approvals when new commits are pushed
-    ✅ Require review from Code Owners
-
-  ✅ Require status checks to pass before merging
-    ✅ Require branches to be up to date before merging
-    必須チェック: CI / lint / test
-
-  ✅ Require conversation resolution before merging
-
-  ✅ Require signed commits（セキュリティ重視の場合）
-
-  ✅ Do not allow bypassing the above settings
-```
+| 設定項目 | 推奨値 |
+|---------|-------|
+| Require pull request | ON（承認数: 1〜2） |
+| Dismiss stale approvals | ON |
+| Require status checks | ON（CI/lint/test） |
+| Require conversation resolution | ON |
+| Do not allow bypassing | ON |
 
 ### CODEOWNERSファイルの設定
 
-特定のディレクトリやファイルに対して、必ずレビューすべき担当者を指定できます。
+特定のディレクトリに対して、必ずレビューすべき担当者を指定できます。
 
 ```
 # .github/CODEOWNERS
-
-# フロントエンド全般
 /src/components/    @frontend-team
-/src/pages/         @frontend-team
-
-# バックエンドAPI
 /src/api/           @backend-team
-/src/services/      @backend-team
-
-# インフラ・CI/CD（変更は必ずSREチームが確認）
 /infra/             @sre-team
 /.github/workflows/ @sre-team
-/Dockerfile         @sre-team
-
-# セキュリティ関連（セキュリティチームの承認必須）
-/src/auth/          @security-team
-/src/middleware/     @security-team
-
-# パッケージ変更（リードエンジニアが確認）
 package.json        @tech-lead
-package-lock.json   @tech-lead
 ```
 
 ## PRテンプレートの実践パターン
 
 プロジェクトの種類に応じたPRテンプレートを用意しましょう。
 
-### 機能追加用テンプレート
+### 実践的なPRテンプレート
 
 ```markdown
 <!-- .github/pull_request_template.md -->
 ## 概要
-<!-- このPRで何を実現するか、1-2文で説明 -->
-
-## 関連Issue
-<!-- closes #123 -->
+<!-- 何を・なぜ変更したか -->
 
 ## 変更内容
-<!-- 具体的な変更点をリストアップ -->
--
--
-
-## スクリーンショット / 動作確認
-<!-- UI変更がある場合はBefore/Afterを添付 -->
-
-| Before | After |
-|--------|-------|
-|        |       |
+- [ ] 変更点1
+- [ ] 変更点2
 
 ## テスト方法
-<!-- レビュアーが動作確認するための手順 -->
-1.
-2.
+<!-- レビュアーが確認する手順 -->
 
 ## チェックリスト
 - [ ] テストを追加・更新した
-- [ ] 既存のテストがすべてパスする
-- [ ] ドキュメント（README等）を更新した
-- [ ] 破壊的変更はない（ある場合はマイグレーション手順を記載）
-- [ ] アクセシビリティを考慮した
-- [ ] パフォーマンスへの影響を確認した
-
-## レビュアーへの補足
-<!-- 特に注意して見てほしいポイント -->
+- [ ] 既存テストがパスする
+- [ ] 破壊的変更はない
 ```
 
-### バグ修正用テンプレート
+## コミットメッセージの自動チェック
 
-```markdown
-<!-- .github/PULL_REQUEST_TEMPLATE/bugfix.md -->
-## バグの概要
-<!-- どのような問題が発生していたか -->
+`commitlint` + `husky` を導入すると、Conventional Commitsに準拠しないメッセージを自動的に拒否できます。`npx husky init` でGit Hookを設定し、`commit-msg` フックで `commitlint` を実行、`pre-commit` フックで `lint-staged` を実行する構成が一般的です。
 
-## 原因
-<!-- バグの根本原因 -->
-
-## 修正内容
-<!-- どのように修正したか -->
-
-## 再現手順（修正前）
-1.
-2.
-
-## 動作確認（修正後）
-1.
-2.
-
-## 影響範囲
-<!-- この修正が他の機能に影響する可能性があるか -->
-
-## チェックリスト
-- [ ] 再現テストを追加した
-- [ ] 関連する既存テストを確認した
-- [ ] 回帰テストがパスする
-```
-
-## コミットメッセージの高度な規約
-
-### 日本語チームでのConventional Commits
-
-日本語でコミットメッセージを書く場合のルールです。
-
-```bash
-# 英語typeヘッダー + 日本語説明
-git commit -m "feat(auth): Google OAuthログイン機能を追加"
-git commit -m "fix(api): 決済APIのnullレスポンスハンドリングを修正"
-git commit -m "perf(list): ユーザー一覧の仮想スクロール対応"
-
-# 本文を含むコミット
-git commit -m "feat(search): 全文検索機能を追加
-
-Elasticsearchを導入し、記事の全文検索に対応。
-日本語形態素解析（kuromoji）を使用。
-
-Refs: #456"
-```
-
-### commitlintによる自動チェック
-
-```bash
-# commitlintのインストール
-npm install -D @commitlint/cli @commitlint/config-conventional
-
-# 設定ファイル
-# commitlint.config.js
-module.exports = {
-  extends: ['@commitlint/config-conventional'],
-  rules: {
-    'type-enum': [
-      2,
-      'always',
-      ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'chore', 'ci', 'revert'],
-    ],
-    'subject-max-length': [2, 'always', 72],
-    'body-max-line-length': [2, 'always', 100],
-  },
-};
-
-# huskyでgit hookに設定
-npm install -D husky
-npx husky init
-echo 'npx commitlint --edit $1' > .husky/commit-msg
-```
-
-### CHANGELOG自動生成
-
-```bash
-# standard-versionによるCHANGELOG自動生成
-npm install -D standard-version
-
-# package.jsonにスクリプト追加
-# "scripts": {
-#   "release": "standard-version",
-#   "release:minor": "standard-version --release-as minor",
-#   "release:major": "standard-version --release-as major"
-# }
-
-# 実行するとコミット履歴からCHANGELOGが自動生成される
-npm run release
-```
-
-生成されるCHANGELOGの例:
-
-```markdown
-# Changelog
-
-## [1.2.0] (2026-03-07)
-
-### Features
-* **auth**: Google OAuthログイン機能を追加 (abc1234)
-* **search**: 全文検索機能を追加 (def5678)
-
-### Bug Fixes
-* **api**: 決済APIのnullレスポンスハンドリングを修正 (ghi9012)
-* **ui**: モバイル表示時のレイアウト崩れを修正 (jkl3456)
-
-### Performance
-* **list**: ユーザー一覧の仮想スクロール対応 (mno7890)
-```
-
-## Git Hooks活用ガイド
-
-コミット前やプッシュ前に自動チェックを実行し、品質を担保します。
-
-```bash
-# huskyによるGit Hooks設定
-
-# pre-commit: コミット前にlint + format
-echo 'npx lint-staged' > .husky/pre-commit
-
-# lint-staged設定（package.json）
-# "lint-staged": {
-#   "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
-#   "*.{css,scss}": ["prettier --write"],
-#   "*.md": ["prettier --write"]
-# }
-
-# pre-push: プッシュ前にテスト実行
-echo 'npm test' > .husky/pre-push
-
-# commit-msg: コミットメッセージの形式チェック
-echo 'npx commitlint --edit $1' > .husky/commit-msg
-```
+`standard-version` を追加すれば、コミット履歴からCHANGELOGも自動生成できます。
 
 ## まとめ
 

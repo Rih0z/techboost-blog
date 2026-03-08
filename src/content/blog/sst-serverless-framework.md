@@ -255,172 +255,58 @@ export default {
 
 ### マルチステージデプロイ
 
-```typescript
-// sst.config.ts — ステージ別の設定
-export default {
-  config() {
-    return {
-      name: "my-app",
-      region: "ap-northeast-1",
-    };
-  },
-  stacks(app) {
-    // ステージに応じた設定
-    const isProd = app.stage === "production";
-
-    app.setDefaultFunctionProps({
-      runtime: "nodejs20.x",
-      memorySize: isProd ? 1024 : 256,
-      timeout: isProd ? 30 : 10,
-      environment: {
-        STAGE: app.stage,
-      },
-    });
-
-    app.stack(MyStack);
-  },
-} satisfies SSTConfig;
-```
+SSTはステージ（環境）の切り替えが簡単です。
 
 ```bash
-# デプロイの流れ
-# 1. 開発環境（個人用）
+# 開発環境（個人用）
 npx sst dev --stage dev-tanaka
 
-# 2. ステージング環境
+# ステージング環境
 npx sst deploy --stage staging
 
-# 3. 本番環境（CI/CDから実行）
+# 本番環境（CI/CDから実行）
 npx sst deploy --stage production
 ```
 
+ステージごとにメモリやタイムアウトを変更するには、`app.stage` で条件分岐します。
+
 ### GitHub Actionsによる自動デプロイ
 
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy SST
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm ci
-      - name: Deploy Production
-        run: npx sst deploy --stage production
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-```
+GitHub Actionsのワークフローで `npx sst deploy --stage production` を実行するだけで本番デプロイが完了します。AWSクレデンシャルはSecretsに格納し、mainブランチへのpush時のみデプロイが走るように設定します。
 
 ## モニタリングとログ設計
 
 サーバーレスアプリケーションでは、Lambda単位での監視が重要です。構造化ログを導入することで、CloudWatch Logs Insightsでの検索・分析が容易になります。
 
-### Lambda関数のログ構造化
-
-```typescript
-// packages/functions/src/lib/logger.ts
-type LogLevel = "info" | "warn" | "error";
-
-export function log(entry: { level: LogLevel; message: string; [key: string]: unknown }) {
-  console.log(JSON.stringify({ timestamp: new Date().toISOString(), ...entry }));
-}
-
-// 使用例
-export async function handler(event: APIGatewayProxyEvent) {
-  const start = Date.now();
-  const requestId = event.requestContext.requestId;
-
-  try {
-    const result = await processRequest(event);
-    log({ level: "info", message: "Request completed", requestId, duration: Date.now() - start });
-    return { statusCode: 200, body: JSON.stringify(result) };
-  } catch (error) {
-    log({ level: "error", message: "Request failed", requestId, error: String(error) });
-    return { statusCode: 500, body: JSON.stringify({ error: "Internal Server Error" }) };
-  }
-}
-```
-
 **モニタリングのポイント:**
+- `console.log(JSON.stringify({...}))` で構造化ログを出力し、CloudWatch Logs Insightsで分析
 - CloudWatch Alarmsで Lambda エラー率を監視（5分間で5回以上 → Slack通知）
 - X-Rayトレーシングを有効化してレイテンシのボトルネックを可視化
-- CloudWatch Logs InsightsでJSON構造化ログをクエリ分析
 
 ## コスト最適化の実践
 
 サーバーレスは「使った分だけ課金」ですが、設定を誤ると予想外のコストが発生します。
 
-### Lambda関数のコスト最適化
-
-```typescript
-// ✅ メモリとタイムアウトの適切な設定
-const api = new Api(stack, "Api", {
-  defaults: {
-    function: {
-      // メモリはパフォーマンステストで最適値を見つける
-      // AWS Lambda Power Tuning ツールの利用を推奨
-      memorySize: 512,     // デフォルト128MBは遅すぎることが多い
-      timeout: 10,          // 必要最小限に設定
-      architecture: "arm64", // ARM（Graviton2）はx86より約20%安い
-    },
-  },
-});
-```
-
-### DynamoDBのコスト最適化
-
-```typescript
-const table = new Table(stack, "Users", {
-  fields: {
-    id: "string",
-    email: "string",
-  },
-  primaryIndex: { partitionKey: "id" },
-  globalIndexes: {
-    emailIndex: { partitionKey: "email" },
-  },
-  // オンデマンドモード: トラフィックが予測不能な場合
-  cdk: {
-    table: {
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      // TTLで古いデータを自動削除（ストレージコスト削減）
-      timeToLiveAttribute: "expiresAt",
-    },
-  },
-});
-```
+**Lambda関数のコスト最適化ポイント:**
+- `architecture: "arm64"` でGraviton2を使用（x86より約20%安い）
+- メモリはパフォーマンステストで最適値を見つける（デフォルト128MBは遅い）
+- タイムアウトは必要最小限に設定
 
 ### コスト見積もりの目安
 
 ```
 月間100万リクエスト、平均実行時間200ms、メモリ512MBの場合:
 
-Lambda:
-  リクエスト料金:  100万 × $0.20/100万 = $0.20
-  コンピュート:    100万 × 0.2秒 × 512MB = 100,000 GB秒
-                  100,000 × $0.0000166667 = $1.67
-  Lambda合計:     約$1.87/月（約¥280）
-
-API Gateway:
-  100万リクエスト × $1.00/100万 = $1.00/月（約¥150）
-
-DynamoDB (オンデマンド):
-  書き込み: 50万 × $1.25/100万 = $0.625
-  読み取り: 100万 × $0.25/100万 = $0.25
-  DynamoDB合計:   約$0.88/月（約¥132）
+Lambda:     約$1.87/月（約¥280）
+API Gateway: 約$1.00/月（約¥150）
+DynamoDB:   約$0.88/月（約¥132）
 
 月額合計: 約$3.75（約¥560）
 → 同等のEC2構成（t3.small）: 約$18/月（約¥2,700）
 → サーバーレスで約80%のコスト削減
 ```
+
+DynamoDBはオンデマンドモード + TTLで古いデータを自動削除することで、ストレージコストも削減できます。
 
 ## まとめ
 
