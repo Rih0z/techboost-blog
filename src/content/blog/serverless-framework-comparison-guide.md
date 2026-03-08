@@ -1,6 +1,6 @@
 ---
 title: 'サーバーレスフレームワーク完全比較2026'
-description: 'SST・Serverless Framework・AWS SAM・Architect・Pulumiの5大サーバーレスFWを機能・学習コスト・AWS統合度で徹底比較。用途別の選び方も解説。'
+description: 'SST・Serverless Framework・AWS SAM・Architect・Pulumiの5大サーバーレスフレームワークを機能・学習コスト・AWS統合度・IaC対応で徹底比較。プロジェクト規模やチーム構成に応じた最適な選び方も解説します。'
 pubDate: '2026-02-05'
 tags: ['サーバーレス', 'AWS', 'IaC', 'クラウド']
 heroImage: '../../assets/thumbnails/serverless-framework-comparison-guide.jpg'

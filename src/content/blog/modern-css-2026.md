@@ -1,6 +1,6 @@
 ---
 title: '2026年のモダンCSS完全ガイド - コンテナクエリ、Subgrid、ネストの実践'
-description: 'コンテナクエリ、Subgrid、CSSネスト、@layer、light-dark()など2026年に使えるモダンCSS機能を実践コード付きで徹底解説。Sass不要の新時代CSS開発を学べます。'
+description: 'コンテナクエリ・Subgrid・CSSネスト・@layer・light-dark()など2026年に使えるモダンCSS新機能を実践コード付きで徹底解説。SassやJavaScriptなしで実現できるレスポンシブデザインとテーマ切替の最新手法を紹介します。'
 pubDate: '2026-02-05'
 tags: ['CSS', 'Docker', 'インフラ', 'フロントエンド']
 heroImage: '../../assets/thumbnails/modern-css-2026.jpg'
