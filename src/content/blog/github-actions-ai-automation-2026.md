@@ -274,11 +274,7 @@ AI APIキーを安全にGitHub Actionsで使うための設定方法です。
 | Environment secrets | 本番/ステージング別のキー | Settings > Environments |
 | Organization secrets | 組織共通のキー | Org Settings > Secrets |
 
-### セキュリティ上の注意点
-
-- **Forkからのプルリクエスト**ではsecretsにアクセスできません（セキュリティ上の制限）
-- APIキーのローテーションを四半期ごとに実施する
-- `GITHUB_TOKEN`の権限は最小限に設定する（`permissions`で明示）
+**注意**: Forkからのプルリクエストではsecretsにアクセスできません。APIキーのローテーションを四半期ごとに実施し、`GITHUB_TOKEN`の権限は`permissions`で最小限に設定しましょう。
 
 ---
 
@@ -309,28 +305,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Get diff and review
+      - name: AI Review
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          DIFF=$(git diff origin/${{ github.base_ref }}...HEAD -- '*.ts' '*.tsx' | head -300)
-          # Claude APIでレビューを実行
+          # Claude APIでコードレビューを実行
 ```
 
-### 呼び出し側のワークフロー
+### 呼び出し側
 
 ```yaml
-# 各リポジトリの .github/workflows/review.yml
-name: AI Review
-on:
-  pull_request:
-    types: [opened, synchronize]
-
 jobs:
   ai-review:
     uses: your-org/shared-workflows/.github/workflows/reusable-ai-review.yml@main
-    with:
-      model: 'claude-sonnet-4-6'
     secrets:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 ```

@@ -278,49 +278,9 @@ export function createUser(overrides: Partial<User> = {}): User {
     ...overrides,
   }
 }
-
-// テスト内での使用
-describe('UserService', () => {
-  it('管理者ユーザーは全権限を持つ', () => {
-    const admin = createUser({ role: 'admin' })
-    expect(hasFullAccess(admin)).toBe(true)
-  })
-
-  it('ゲストユーザーは読み取り専用', () => {
-    const guest = createUser({ role: 'guest' })
-    expect(hasFullAccess(guest)).toBe(false)
-  })
-})
 ```
 
-### Vitestのtest.extend
-
-Playwrightのようなフィクスチャ注入がVitestでも使えます。
-
-```typescript
-import { test as base } from 'vitest'
-
-interface Fixtures {
-  db: MockDatabase
-  authUser: User
-}
-
-const test = base.extend<Fixtures>({
-  db: async ({}, use) => {
-    const db = await MockDatabase.create()
-    await use(db)
-    await db.cleanup()
-  },
-  authUser: async ({ db }, use) => {
-    const user = await db.createUser({ role: 'admin' })
-    await use(user)
-  },
-})
-
-test('認証済みユーザーでデータを取得', async ({ db, authUser }) => {
-  const result = await db.query(authUser, 'SELECT * FROM orders')
-  expect(result).toHaveLength(0)
-})
+テスト内では `createUser({ role: 'admin' })` のように、必要なフィールドだけ上書きして使います。テストの意図が明確になり、不要なデータ定義の重複を排除できます。
 ```
 
 ---
@@ -333,7 +293,6 @@ test('認証済みユーザーでデータを取得', async ({ db, authUser }) =
 import { describe, it, expect, bench } from 'vitest'
 
 describe('Performance', () => {
-  // ベンチマークテスト（vitest bench で実行）
   bench('配列ソート: 10,000要素', () => {
     const arr = Array.from({ length: 10000 }, () => Math.random())
     arr.sort((a, b) => a - b)

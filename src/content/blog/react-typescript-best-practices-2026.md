@@ -311,41 +311,6 @@ function SettingsPage() {
 }
 ```
 
-### useDebounce — 入力値のデバウンス
-
-```typescript
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(handler);
-  }, [value, delay]);
-
-  return debouncedValue;
-}
-
-// 使用例: 検索入力のデバウンス
-function SearchPage() {
-  const [query, setQuery] = useState('');
-  const debouncedQuery = useDebounce(query, 300);
-  const { data: results } = useFetch<SearchResult[]>(
-    `/api/search?q=${debouncedQuery}`
-  );
-
-  return (
-    <div>
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="検索..."
-      />
-      {results?.map(r => <div key={r.id}>{r.title}</div>)}
-    </div>
-  );
-}
-```
-
 ---
 
 ## ベストプラクティス7：Error Boundaryの型安全な実装
@@ -376,8 +341,6 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     this.props.onError?.(error, errorInfo);
-    // エラー監視サービスに送信
-    console.error('ErrorBoundary caught:', error, errorInfo);
   }
 
   resetError = () => {
@@ -407,10 +370,6 @@ function App() {
           <button onClick={reset}>再試行</button>
         </div>
       )}
-      onError={(error) => {
-        // Sentry等へエラーを送信
-        // Sentry.captureException(error);
-      }}
     >
       <UserDashboard />
     </ErrorBoundary>
@@ -421,81 +380,6 @@ function App() {
 ---
 
 ## ベストプラクティス8：パフォーマンス最適化の実践
-
-### React.lazyとSuspenseによるコード分割
-
-```typescript
-// ✅ ルートレベルのコード分割
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Settings = lazy(() => import('./pages/Settings'));
-const Analytics = lazy(() => import('./pages/Analytics'));
-
-function App() {
-  return (
-    <Suspense fallback={<LoadingSpinner />}>
-      <Routes>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/analytics" element={<Analytics />} />
-      </Routes>
-    </Suspense>
-  );
-}
-
-// ✅ コンポーネントレベルのコード分割（重いモーダルなど）
-const HeavyEditor = lazy(() => import('./components/HeavyEditor'));
-
-function EditorPage() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div>
-      <button onClick={() => setIsOpen(true)}>エディタを開く</button>
-      {isOpen && (
-        <Suspense fallback={<div>読み込み中...</div>}>
-          <HeavyEditor onClose={() => setIsOpen(false)} />
-        </Suspense>
-      )}
-    </div>
-  );
-}
-```
-
-### リスト描画の最適化
-
-```typescript
-// ✅ 仮想スクロールで大量データを効率的に描画
-// react-window を使用した例
-import { FixedSizeList } from 'react-window';
-
-interface VirtualListProps {
-  items: User[];
-  onSelect: (user: User) => void;
-}
-
-function VirtualUserList({ items, onSelect }: VirtualListProps) {
-  const Row = useCallback(
-    ({ index, style }: { index: number; style: React.CSSProperties }) => (
-      <div style={style} onClick={() => onSelect(items[index])}>
-        <span>{items[index].name}</span>
-        <span>{items[index].email}</span>
-      </div>
-    ),
-    [items, onSelect]
-  );
-
-  return (
-    <FixedSizeList
-      height={600}
-      width="100%"
-      itemCount={items.length}
-      itemSize={50}
-    >
-      {Row}
-    </FixedSizeList>
-  );
-}
-```
 
 ### useTransitionによるUI応答性の改善
 
@@ -511,7 +395,6 @@ function FilterableList({ items }: { items: Item[] }) {
     setQuery(value); // 即座に入力欄を更新
 
     startTransition(() => {
-      // フィルタリングはバックグラウンドで実行（UIがブロックされない）
       const filtered = items.filter(item =>
         item.name.toLowerCase().includes(value.toLowerCase())
       );

@@ -300,44 +300,13 @@ healthRouter.get('/ready', async (req, res) => {
 export default healthRouter;
 ```
 
-### Kubernetesのヘルスチェック（詳細設定）
+Kubernetesでは3種類のProbeを使い分けます。
 
-```yaml
-# deployment.yaml — 3種類のProbe設定
-spec:
-  containers:
-  - name: web-app
-    image: your-registry/web-app:v1.2.3
-    ports:
-    - containerPort: 3000
-
-    # startupProbe: 起動完了を確認（初回のみ）
-    startupProbe:
-      httpGet:
-        path: /health
-        port: 3000
-      initialDelaySeconds: 5
-      periodSeconds: 5
-      failureThreshold: 30  # 最大150秒（5秒×30回）待機
-
-    # livenessProbe: プロセスが生きているか
-    livenessProbe:
-      httpGet:
-        path: /health
-        port: 3000
-      periodSeconds: 10
-      timeoutSeconds: 3
-      failureThreshold: 3  # 3回失敗でコンテナ再起動
-
-    # readinessProbe: トラフィックを受ける準備ができているか
-    readinessProbe:
-      httpGet:
-        path: /ready
-        port: 3000
-      periodSeconds: 5
-      timeoutSeconds: 3
-      failureThreshold: 3  # 3回失敗でServiceから切り離し
-```
+| Probe | 目的 | 失敗時の動作 |
+|-------|------|------------|
+| startupProbe | 起動完了の確認 | 起動待ち（他のProbe開始を遅延） |
+| livenessProbe | プロセス生存確認 | コンテナ再起動 |
+| readinessProbe | トラフィック受付可否 | Serviceから切り離し |
 
 ## リソース制限の設計
 
@@ -392,137 +361,49 @@ resources:
     cpu: "1000m"
 ```
 
-### LimitRangeとResourceQuota
-
-```yaml
-# namespace全体のリソース制限
-apiVersion: v1
-kind: ResourceQuota
-metadata:
-  name: production-quota
-  namespace: production
-spec:
-  hard:
-    requests.cpu: "8"         # namespace全体でCPU 8コアまで
-    requests.memory: "16Gi"
-    limits.cpu: "16"
-    limits.memory: "32Gi"
-    pods: "50"                # Pod数の上限
-
----
-# デフォルトのリソース制限（設定漏れ防止）
-apiVersion: v1
-kind: LimitRange
-metadata:
-  name: default-limits
-  namespace: production
-spec:
-  limits:
-  - default:          # limitsのデフォルト
-      memory: "512Mi"
-      cpu: "500m"
-    defaultRequest:   # requestsのデフォルト
-      memory: "256Mi"
-      cpu: "250m"
-    type: Container
-```
+Namespaceレベルで `ResourceQuota`（全体上限）と `LimitRange`（デフォルト値）を設定すると、リソース設定漏れを防止できます。
 
 ## 監視環境の構築
 
-### Prometheus + Grafanaの導入
+本番Kubernetes環境には、**Prometheus + Grafana**の組み合わせが定番です。
 
-```yaml
-# prometheus-config.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: prometheus-config
-data:
-  prometheus.yml: |
-    global:
-      scrape_interval: 15s
-    scrape_configs:
-      - job_name: 'kubernetes-pods'
-        kubernetes_sd_configs:
-          - role: pod
-        relabel_configs:
-          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-            action: keep
-            regex: true
+### 監視スタックの構成
 
----
-# Grafanaのデプロイ
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: grafana
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: grafana
-  template:
-    metadata:
-      labels:
-        app: grafana
-    spec:
-      containers:
-      - name: grafana
-        image: grafana/grafana:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: GF_SECURITY_ADMIN_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: grafana-secrets
-              key: admin-password
-        volumeMounts:
-        - name: grafana-storage
-          mountPath: /var/lib/grafana
-      volumes:
-      - name: grafana-storage
-        persistentVolumeClaim:
-          claimName: grafana-pvc
+```
+アプリケーション → /metrics エンドポイント公開
+    ↓
+Prometheus（メトリクス収集、15秒間隔）
+    ↓
+Grafana（ダッシュボード表示）
+    ↓
+AlertManager（閾値超過時にSlack/PagerDuty通知）
 ```
 
-### アプリケーションメトリクスの公開
+### アプリケーションメトリクスの公開（Node.js）
 
 ```typescript
-// src/metrics.ts — Prometheusメトリクスの公開
+// src/metrics.ts — prom-clientでメトリクス公開
 import { collectDefaultMetrics, Counter, Histogram, Registry } from 'prom-client';
 
 const register = new Registry();
 collectDefaultMetrics({ register });
 
-// HTTPリクエストのカウンター
-const httpRequestsTotal = new Counter({
+const httpRequests = new Counter({
   name: 'http_requests_total',
-  help: 'HTTPリクエストの総数',
+  help: 'HTTPリクエスト総数',
   labelNames: ['method', 'path', 'status'],
   registers: [register],
 });
 
-// レスポンスタイムのヒストグラム
-const httpRequestDuration = new Histogram({
+const httpDuration = new Histogram({
   name: 'http_request_duration_seconds',
-  help: 'HTTPリクエストの処理時間（秒）',
+  help: 'HTTPリクエスト処理時間',
   labelNames: ['method', 'path'],
   buckets: [0.01, 0.05, 0.1, 0.5, 1, 5],
   registers: [register],
 });
 
-// Expressミドルウェア
-export function metricsMiddleware(req: Request, res: Response, next: NextFunction) {
-  const end = httpRequestDuration.startTimer({ method: req.method, path: req.route?.path || req.path });
-  res.on('finish', () => {
-    httpRequestsTotal.inc({ method: req.method, path: req.route?.path || req.path, status: res.statusCode });
-    end();
-  });
-  next();
-}
-
-// /metrics エンドポイント
+// /metrics エンドポイントで公開
 export async function metricsHandler(req: Request, res: Response) {
   res.set('Content-Type', register.contentType);
   res.end(await register.metrics());

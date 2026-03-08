@@ -208,47 +208,33 @@ npm test -- --coverage # カバレッジ計測
 
 ## 高度なモックパターン
 
-テストの品質を高めるには、適切なモック戦略が不可欠です。ここでは実務で頻繁に使うパターンを紹介します。
+実務で頻繁に使うモックパターンを紹介します。
 
 ### モジュール全体のモック
 
 ```typescript
-// src/services/userService.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getUserProfile } from './userService';
 
 // モジュール全体をモック
 vi.mock('./api/client', () => ({
-  apiClient: {
-    get: vi.fn(),
-    post: vi.fn(),
-  },
+  apiClient: { get: vi.fn(), post: vi.fn() },
 }));
-
-// モックされたモジュールをインポート
 import { apiClient } from './api/client';
 
 describe('getUserProfile', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => vi.clearAllMocks());
 
   it('APIレスポンスを整形して返す', async () => {
     vi.mocked(apiClient.get).mockResolvedValue({
       data: { id: 1, name: '田中太郎', role: 'admin' },
     });
-
     const profile = await getUserProfile(1);
-    expect(profile).toEqual({
-      id: 1,
-      displayName: '田中太郎',
-      isAdmin: true,
-    });
+    expect(profile).toEqual({ id: 1, displayName: '田中太郎', isAdmin: true });
   });
 
   it('API失敗時にnullを返す', async () => {
     vi.mocked(apiClient.get).mockRejectedValue(new Error('Network Error'));
-
     const profile = await getUserProfile(1);
     expect(profile).toBeNull();
   });
@@ -284,11 +270,6 @@ jobs:
       - run: npm ci
       - run: npm test -- --reporter=verbose
       - run: npm test -- --coverage
-      - name: カバレッジレポートをアップロード
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage/
 ```
 
 ### pre-commitフックでテストを実行

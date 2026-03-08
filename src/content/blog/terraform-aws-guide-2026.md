@@ -361,51 +361,10 @@ modules/
     └── outputs.tf
 ```
 
-### 再利用可能なモジュールの例
+### モジュールの呼び出し例
 
 ```hcl
-# modules/ecs-service/variables.tf
-variable "project" {
-  description = "プロジェクト名"
-  type        = string
-}
-
-variable "environment" {
-  description = "環境名（production, staging, development）"
-  type        = string
-  validation {
-    condition     = contains(["production", "staging", "development"], var.environment)
-    error_message = "環境名はproduction, staging, developmentのいずれかを指定してください"
-  }
-}
-
-variable "cpu" {
-  description = "タスクのCPUユニット"
-  type        = number
-  default     = 256
-}
-
-variable "memory" {
-  description = "タスクのメモリ（MiB）"
-  type        = number
-  default     = 512
-}
-
-variable "desired_count" {
-  description = "タスクの希望数"
-  type        = number
-  default     = 2
-}
-
-variable "health_check_path" {
-  description = "ヘルスチェックのパス"
-  type        = string
-  default     = "/health"
-}
-```
-
-```hcl
-# モジュールの呼び出し（環境ごとに変数を変えるだけ）
+# 環境ごとに変数を変えるだけで同一構成を複製
 # environments/production/main.tf
 module "api_service" {
   source = "../../modules/ecs-service"
@@ -422,12 +381,11 @@ module "api_service" {
 module "api_service" {
   source = "../../modules/ecs-service"
 
-  project           = "my-app"
-  environment       = "staging"
-  cpu               = 256
-  memory            = 512
-  desired_count     = 1
-  health_check_path = "/api/health"
+  project       = "my-app"
+  environment   = "staging"
+  cpu           = 256
+  memory        = 512
+  desired_count = 1
 }
 ```
 
@@ -490,23 +448,6 @@ jobs:
         run: terraform plan -no-color -out=tfplan
         continue-on-error: true
 
-      - name: Post Plan to PR
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const output = `#### Terraform Plan 📖
-            \`\`\`
-            ${{ steps.plan.outputs.stdout }}
-            \`\`\`
-            *PR #${{ github.event.pull_request.number }}*`;
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
-
       # mainマージ時: applyを実行
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -515,31 +456,7 @@ jobs:
           terraform apply -auto-approve tfplan
 ```
 
-### セキュリティのベストプラクティス
-
-```hcl
-# OIDC認証でAWSアクセスキーを不要にする
-# IAMロールの信頼ポリシー
-data "aws_iam_policy_document" "github_actions_trust" {
-  statement {
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-    principals {
-      type        = "Federated"
-      identifiers = [aws_iam_openid_connect_provider.github.arn]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "token.actions.githubusercontent.com:aud"
-      values   = ["sts.amazonaws.com"]
-    }
-    condition {
-      test     = "StringLike"
-      variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:your-org/your-repo:*"]
-    }
-  }
-}
-```
+**ポイント**: PRではplanの結果をコメントに表示し、mainマージ時のみapplyを実行する構成が安全です。OIDC認証を使えばAWSアクセスキーの管理も不要になります。
 
 ## まとめ：Terraform導入の3ステップ
 

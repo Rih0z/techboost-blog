@@ -299,11 +299,8 @@ npx sst deploy --stage production
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy SST
-
 on:
   push:
-    branches: [main]
-  pull_request:
     branches: [main]
 
 jobs:
@@ -311,72 +308,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-
       - run: npm ci
-
-      # PRの場合はステージング環境にデプロイ
-      - name: Deploy Staging
-        if: github.event_name == 'pull_request'
-        run: npx sst deploy --stage staging
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      # mainマージ時は本番環境にデプロイ
       - name: Deploy Production
-        if: github.ref == 'refs/heads/main'
         run: npx sst deploy --stage production
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 ```
 
-## モニタリングとアラート設定
+## モニタリングとログ設計
 
-サーバーレスアプリケーションは従来のサーバーと異なり、Lambda単位での監視が重要です。
-
-### CloudWatch Alarmsの設定
-
-```typescript
-// stacks/MonitoringStack.ts
-import { Function, Topic } from "sst/constructs";
-import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
-import * as actions from "aws-cdk-lib/aws-cloudwatch-actions";
-
-export function MonitoringStack({ stack }: StackContext) {
-  // アラート通知用SNSトピック
-  const alertTopic = new Topic(stack, "AlertTopic", {
-    subscribers: {
-      slack: "packages/functions/src/alert-to-slack.handler",
-    },
-  });
-
-  // Lambda エラー率のアラーム
-  const errorAlarm = new cloudwatch.Alarm(stack, "LambdaErrorAlarm", {
-    metric: new cloudwatch.Metric({
-      namespace: "AWS/Lambda",
-      metricName: "Errors",
-      dimensionsMap: {
-        FunctionName: "my-app-production-api",
-      },
-      statistic: "Sum",
-      period: cdk.Duration.minutes(5),
-    }),
-    threshold: 5,           // 5分間で5回以上エラー
-    evaluationPeriods: 1,
-    alarmDescription: "Lambda関数のエラー率が閾値を超えました",
-  });
-
-  errorAlarm.addAlarmAction(
-    new actions.SnsAction(alertTopic.cdk.topic)
-  );
-}
-```
+サーバーレスアプリケーションでは、Lambda単位での監視が重要です。構造化ログを導入することで、CloudWatch Logs Insightsでの検索・分析が容易になります。
 
 ### Lambda関数のログ構造化
 
@@ -384,19 +329,8 @@ export function MonitoringStack({ stack }: StackContext) {
 // packages/functions/src/lib/logger.ts
 type LogLevel = "info" | "warn" | "error";
 
-interface LogEntry {
-  level: LogLevel;
-  message: string;
-  requestId?: string;
-  duration?: number;
-  [key: string]: unknown;
-}
-
-export function log(entry: LogEntry) {
-  console.log(JSON.stringify({
-    timestamp: new Date().toISOString(),
-    ...entry,
-  }));
+export function log(entry: { level: LogLevel; message: string; [key: string]: unknown }) {
+  console.log(JSON.stringify({ timestamp: new Date().toISOString(), ...entry }));
 }
 
 // 使用例
@@ -404,29 +338,21 @@ export async function handler(event: APIGatewayProxyEvent) {
   const start = Date.now();
   const requestId = event.requestContext.requestId;
 
-  log({ level: "info", message: "Request received", requestId, path: event.path });
-
   try {
     const result = await processRequest(event);
-    log({
-      level: "info",
-      message: "Request completed",
-      requestId,
-      duration: Date.now() - start,
-    });
+    log({ level: "info", message: "Request completed", requestId, duration: Date.now() - start });
     return { statusCode: 200, body: JSON.stringify(result) };
   } catch (error) {
-    log({
-      level: "error",
-      message: "Request failed",
-      requestId,
-      error: error instanceof Error ? error.message : "Unknown error",
-      duration: Date.now() - start,
-    });
+    log({ level: "error", message: "Request failed", requestId, error: String(error) });
     return { statusCode: 500, body: JSON.stringify({ error: "Internal Server Error" }) };
   }
 }
 ```
+
+**モニタリングのポイント:**
+- CloudWatch Alarmsで Lambda エラー率を監視（5分間で5回以上 → Slack通知）
+- X-Rayトレーシングを有効化してレイテンシのボトルネックを可視化
+- CloudWatch Logs InsightsでJSON構造化ログをクエリ分析
 
 ## コスト最適化の実践
 

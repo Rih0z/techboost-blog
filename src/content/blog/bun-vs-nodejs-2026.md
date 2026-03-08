@@ -276,53 +276,19 @@ bun run test
 # 1. エントリーポイントの動作確認
 bun run src/index.ts  # TypeScript直接実行
 
-# 2. Node.js固有APIの使用箇所を確認
-# 以下のパッケージが不要になる可能性あり:
+# 2. 不要になるパッケージを確認・削除
 # - dotenv → Bunは.envを自動読み込み
 # - ts-node / tsx → Bunはネイティブ実行
 # - node-fetch → Bunにはfetchが組み込み
-
-# 3. ネイティブアドオンの互換性確認
-bun pm ls | grep -i native  # ネイティブモジュールの一覧
+# - nodemon → bun --watch で代替
 ```
 
 **Phase 2 チェック項目:**
 
 - [ ] アプリケーションがBunランタイムで起動する
 - [ ] APIエンドポイントが正常にレスポンスを返す
-- [ ] WebSocketやストリーム処理が動作する
 - [ ] 外部サービス（DB、Redis等）との接続が正常
 - [ ] メモリ使用量が異常に増えていない
-
-### Phase 3: 本番デプロイ
-
-```dockerfile
-# 本番用 Dockerfile
-FROM oven/bun:1-alpine AS builder
-WORKDIR /app
-COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile
-COPY . .
-RUN bun run build
-
-FROM oven/bun:1-alpine AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./
-USER bun
-EXPOSE 3000
-CMD ["bun", "run", "dist/index.js"]
-```
-
-**Phase 3 チェック項目:**
-
-- [ ] Dockerイメージがビルドできる
-- [ ] ステージング環境で問題なく動作する
-- [ ] 負荷テストでパフォーマンスが向上している
-- [ ] ロールバック手順を用意している
-- [ ] モニタリング・アラートが正常に動作する
 
 ## 詳細パフォーマンスベンチマーク
 
@@ -336,13 +302,11 @@ Express (Node.js) vs Hono (Bun) — JSON APIレスポンス
 Express + Node.js 22:
   Requests/sec:  42,000
   Latency avg:   2.3ms
-  Latency p99:   8.1ms
   Memory:        85MB
 
 Hono + Bun 1.2:
   Requests/sec:  158,000
   Latency avg:   0.6ms
-  Latency p99:   2.4ms
   Memory:        52MB
 
 ※ MacBook Pro M3, wrk -t4 -c100 -d30s
@@ -353,43 +317,12 @@ Hono + Bun 1.2:
 ```
 プロジェクト規模: 350テスト（ユニット+統合）
 
-Jest + Node.js:
-  初回実行:    18.2秒
-  ウォッチ再実行: 4.5秒
-
-Vitest + Node.js:
-  初回実行:    8.7秒
-  ウォッチ再実行: 1.8秒
-
-bun:test + Bun:
-  初回実行:    3.1秒
-  ウォッチ再実行: 0.8秒
-```
-
-### ビルド時間の比較
-
-```
-Next.js 15 プロジェクト（200ページ）
-
-npm + Node.js:
-  install:  45秒
-  build:    62秒
-  合計:     107秒
-
-bun + Node.js:
-  install:  6秒
-  build:    62秒（ビルドはNext.js側のため同等）
-  合計:     68秒
-
-bun + Bun:
-  install:  6秒
-  build:    48秒（Bunの最適化が効くケース）
-  合計:     54秒
+Jest + Node.js:     初回 18.2秒 / 再実行 4.5秒
+Vitest + Node.js:   初回 8.7秒  / 再実行 1.8秒
+bun:test + Bun:     初回 3.1秒  / 再実行 0.8秒
 ```
 
 ## エコシステム互換性の詳細
-
-2026年時点でのBunにおける主要フレームワーク・ライブラリの互換性状況をまとめます。
 
 ### 完全互換（問題なく動作）
 
@@ -399,27 +332,16 @@ bun + Bun:
 | ORM | Drizzle ORM, Prisma | Prismaはv5.8以降で安定 |
 | バリデーション | Zod, Valibot | 完全動作 |
 | ユーティリティ | Lodash, date-fns, nanoid | 完全動作 |
-| HTTP | Axios, ky | 組み込みfetchも利用可 |
-| テスト | bun:test, Vitest | Jest互換APIあり |
 
-### 一部制限あり
+### 一部制限あり・非互換
 
-| カテゴリ | ライブラリ | 制限事項 |
-|---------|-----------|---------|
-| フレームワーク | Fastify | プラグインの一部が未対応 |
-| DB | Knex.js | ネイティブドライバの互換性に注意 |
-| 認証 | Passport.js | セッション管理で一部問題 |
-| WebSocket | Socket.io | Bunの組み込みWSを推奨 |
-
-### 非互換（代替推奨）
-
-| Node.jsライブラリ | Bun代替 | 理由 |
-|------------------|---------|------|
-| dotenv | 不要（組み込み） | Bunは.envを自動読み込み |
-| ts-node / tsx | 不要（ネイティブ） | BunはTS直接実行 |
-| node-fetch | 不要（組み込み） | Web標準fetchが利用可 |
-| nodemon | `bun --watch` | 組み込みウォッチモード |
-| concurrently | `bun run --filter` | ワークスペース対応 |
+| ライブラリ | 状態 | 対応策 |
+|-----------|------|-------|
+| Fastify | 一部制限 | プラグインの互換性を個別確認 |
+| Socket.io | 一部制限 | Bunの組み込みWSを推奨 |
+| dotenv | 不要 | Bunは.envを自動読み込み |
+| ts-node / tsx | 不要 | BunはTS直接実行 |
+| nodemon | 不要 | `bun --watch` で代替 |
 
 ## まとめ
 
