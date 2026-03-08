@@ -273,6 +273,58 @@ Deno.test("ゼロ除算でエラーになる", async () => {
 deno test
 ```
 
+## デプロイ先の選択肢
+
+Deno 2.0アプリケーションを本番環境にデプロイする方法をまとめます。
+
+### Deno Deploy（公式）
+
+Denoチームが運営するエッジコンピューティングプラットフォームです。GitHubリポジトリと連携するだけで自動デプロイできます。
+
+```bash
+# Deno Deploy CLIでデプロイ
+deno install -Arf jsr:@deno/deployctl
+
+# プロジェクトをデプロイ
+deployctl deploy --project=my-api src/main.ts
+```
+
+**特徴**: 無料枠あり（10万リクエスト/日）、エッジ配信、KVストレージ内蔵
+
+### Docker / スタンドアロンバイナリ
+
+Dockerを使えば任意のクラウドサービスにデプロイ可能です。また `deno compile` で単一実行ファイルにコンパイルし、Dockerなしで直接実行することもできます。
+
+```bash
+# スタンドアロンバイナリの生成
+deno compile --allow-net --allow-read --target x86_64-unknown-linux-gnu --output my-api src/main.ts
+
+# 生成されたバイナリを直接実行
+./my-api
+```
+
+## Node.js エコシステムとの比較
+
+Deno 2.0とNode.jsのエコシステムを比較して、プロジェクトに適した選択をしましょう。
+
+| 比較項目 | Deno 2.0 | Node.js |
+|---------|----------|---------|
+| TypeScript対応 | ネイティブ（設定不要） | tsc / ts-node / tsx が必要 |
+| パッケージ管理 | URL / npm: / jsr:（node_modules不要） | npm / yarn / pnpm |
+| セキュリティ | パーミッション制（明示的許可） | 制限なし（全アクセス可能） |
+| テスト | 標準搭載（`deno test`） | Jest / Vitest 等を別途導入 |
+| フォーマッター | 標準搭載（`deno fmt`） | Prettier を別途導入 |
+| リンター | 標準搭載（`deno lint`） | ESLint を別途導入 |
+| バンドラー | 非搭載（esbuild等を利用） | Webpack / Vite 等 |
+| エコシステム規模 | npm互換 + JSR | npm（200万+パッケージ） |
+| 企業採用実績 | 成長中 | 非常に多い |
+
+### どちらを選ぶべきか
+
+**Denoが向いているケース**: 新規APIサーバー、CLIツール、セキュリティ重視のプロジェクト、TypeScriptを設定不要で使いたい場合
+
+**Node.jsが向いているケース**: 既存プロジェクトの保守、Next.js/Nuxt.js利用、チームがNode.jsに習熟している場合
+
 ## まとめ
 
 Deno 2.0は「Node.jsの代替」から「Node.jsと共存するより良い選択肢」へと進化しました。

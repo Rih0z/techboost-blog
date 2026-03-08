@@ -283,6 +283,51 @@ def check_env_vars(required_vars, env_file=".env"):
 check_env_vars(["DATABASE_URL", "API_KEY", "SECRET_KEY"])
 ```
 
+## エラーハンドリングのパターン
+
+自動化スクリプトを本番運用する際は、適切なエラーハンドリングが不可欠です。
+
+### リトライ付きHTTPリクエスト
+
+Web情報収集やAPI連携では、タイムアウトや一時的なサーバーエラーが頻繁に発生します。**指数バックオフ**（1秒→2秒→4秒と待機時間を倍増）でリトライする仕組みを入れましょう。
+
+```python
+import time, requests
+
+def fetch_with_retry(url, max_retries=3, timeout=10):
+    for attempt in range(max_retries):
+        try:
+            res = requests.get(url, timeout=timeout)
+            res.raise_for_status()
+            return res
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+            else:
+                raise
+```
+
+### ファイル操作の安全なパターン
+
+ファイルを上書きする処理では、**バックアップ→処理→バックアップ削除**の3ステップが基本です。`try/except` で失敗時にバックアップから復元する仕組みを入れておくと、データ消失を防げます。
+
+## cron での定期実行
+
+前述の `schedule` ライブラリは手軽ですが、Pythonプロセスを常時起動し続ける必要があります。本番運用ではOSのcron（Linux/macOS）やタスクスケジューラ（Windows）を使うのが確実です。
+
+```bash
+# crontab を編集
+crontab -e
+
+# 毎日9時にファイル整理を実行（ログ出力付き）
+0 9 * * * /usr/bin/python3 /home/user/scripts/organize_files.py >> /home/user/logs/organize.log 2>&1
+
+# 毎時0分にログ分析を実行
+0 * * * * /usr/bin/python3 /home/user/scripts/analyze_log.py >> /home/user/logs/analyze.log 2>&1
+```
+
+**cron設定のポイント:** Pythonとスクリプトは**フルパス**で指定し、出力は`>> ログファイル 2>&1`でリダイレクトして実行結果を記録します。
+
 ## まとめ
 
 これらのスクリプトは、そのままコピペして使うことも、カスタマイズのベースにすることもできます。まずは「ファイル自動整理」や「CSV→Excel変換」から試してみてください。

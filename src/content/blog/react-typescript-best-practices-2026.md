@@ -258,6 +258,283 @@ AIツールを効果的に活用する方法は[Claude Code完全ガイド2026](
 
 ---
 
+## ベストプラクティス6：カスタムフックの実践パターン
+
+実際のプロジェクトでよく使う高度なカスタムフックのパターンを紹介します。
+
+### useLocalStorage — 型安全なローカルストレージ
+
+```typescript
+function useLocalStorage<T>(key: string, initialValue: T) {
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    if (typeof window === 'undefined') return initialValue;
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? (JSON.parse(item) as T) : initialValue;
+    } catch {
+      return initialValue;
+    }
+  });
+
+  const setValue = useCallback(
+    (value: T | ((val: T) => T)) => {
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
+      setStoredValue(valueToStore);
+      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+    },
+    [key, storedValue]
+  );
+
+  return [storedValue, setValue] as const;
+}
+
+// 使用例
+function SettingsPage() {
+  const [theme, setTheme] = useLocalStorage<'light' | 'dark'>('theme', 'light');
+  const [fontSize, setFontSize] = useLocalStorage<number>('fontSize', 14);
+
+  return (
+    <div>
+      <button onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}>
+        テーマ切替: {theme}
+      </button>
+      <input
+        type="range"
+        min={12}
+        max={24}
+        value={fontSize}
+        onChange={(e) => setFontSize(Number(e.target.value))}
+      />
+    </div>
+  );
+}
+```
+
+### useDebounce — 入力値のデバウンス
+
+```typescript
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+// 使用例: 検索入力のデバウンス
+function SearchPage() {
+  const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 300);
+  const { data: results } = useFetch<SearchResult[]>(
+    `/api/search?q=${debouncedQuery}`
+  );
+
+  return (
+    <div>
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="検索..."
+      />
+      {results?.map(r => <div key={r.id}>{r.title}</div>)}
+    </div>
+  );
+}
+```
+
+---
+
+## ベストプラクティス7：Error Boundaryの型安全な実装
+
+React 19でもError Boundaryはクラスコンポーネントが必要ですが、TypeScriptで型安全に実装できます。
+
+```typescript
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+  fallback: React.ReactNode | ((error: Error, reset: () => void) => React.ReactNode);
+  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    this.props.onError?.(error, errorInfo);
+    // エラー監視サービスに送信
+    console.error('ErrorBoundary caught:', error, errorInfo);
+  }
+
+  resetError = () => {
+    this.setState({ hasError: false, error: null });
+  };
+
+  render() {
+    if (this.state.hasError && this.state.error) {
+      const { fallback } = this.props;
+      if (typeof fallback === 'function') {
+        return fallback(this.state.error, this.resetError);
+      }
+      return fallback;
+    }
+    return this.props.children;
+  }
+}
+
+// 使用例
+function App() {
+  return (
+    <ErrorBoundary
+      fallback={(error, reset) => (
+        <div role="alert">
+          <h2>エラーが発生しました</h2>
+          <p>{error.message}</p>
+          <button onClick={reset}>再試行</button>
+        </div>
+      )}
+      onError={(error) => {
+        // Sentry等へエラーを送信
+        // Sentry.captureException(error);
+      }}
+    >
+      <UserDashboard />
+    </ErrorBoundary>
+  );
+}
+```
+
+---
+
+## ベストプラクティス8：パフォーマンス最適化の実践
+
+### React.lazyとSuspenseによるコード分割
+
+```typescript
+// ✅ ルートレベルのコード分割
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Settings = lazy(() => import('./pages/Settings'));
+const Analytics = lazy(() => import('./pages/Analytics'));
+
+function App() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <Routes>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/analytics" element={<Analytics />} />
+      </Routes>
+    </Suspense>
+  );
+}
+
+// ✅ コンポーネントレベルのコード分割（重いモーダルなど）
+const HeavyEditor = lazy(() => import('./components/HeavyEditor'));
+
+function EditorPage() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div>
+      <button onClick={() => setIsOpen(true)}>エディタを開く</button>
+      {isOpen && (
+        <Suspense fallback={<div>読み込み中...</div>}>
+          <HeavyEditor onClose={() => setIsOpen(false)} />
+        </Suspense>
+      )}
+    </div>
+  );
+}
+```
+
+### リスト描画の最適化
+
+```typescript
+// ✅ 仮想スクロールで大量データを効率的に描画
+// react-window を使用した例
+import { FixedSizeList } from 'react-window';
+
+interface VirtualListProps {
+  items: User[];
+  onSelect: (user: User) => void;
+}
+
+function VirtualUserList({ items, onSelect }: VirtualListProps) {
+  const Row = useCallback(
+    ({ index, style }: { index: number; style: React.CSSProperties }) => (
+      <div style={style} onClick={() => onSelect(items[index])}>
+        <span>{items[index].name}</span>
+        <span>{items[index].email}</span>
+      </div>
+    ),
+    [items, onSelect]
+  );
+
+  return (
+    <FixedSizeList
+      height={600}
+      width="100%"
+      itemCount={items.length}
+      itemSize={50}
+    >
+      {Row}
+    </FixedSizeList>
+  );
+}
+```
+
+### useTransitionによるUI応答性の改善
+
+```typescript
+// ✅ React 19のuseTransitionで重い更新をバックグラウンドに
+function FilterableList({ items }: { items: Item[] }) {
+  const [query, setQuery] = useState('');
+  const [isPending, startTransition] = useTransition();
+  const [filteredItems, setFilteredItems] = useState(items);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value); // 即座に入力欄を更新
+
+    startTransition(() => {
+      // フィルタリングはバックグラウンドで実行（UIがブロックされない）
+      const filtered = items.filter(item =>
+        item.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredItems(filtered);
+    });
+  };
+
+  return (
+    <div>
+      <input value={query} onChange={handleSearch} placeholder="検索..." />
+      {isPending && <span>フィルタリング中...</span>}
+      <ul>
+        {filteredItems.map(item => (
+          <li key={item.id}>{item.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+---
+
 ## 関連記事
 
 - [Vitest完全ガイド2026](/blog/vitest-testing-guide-2026) — モダンなテスト環境の構築

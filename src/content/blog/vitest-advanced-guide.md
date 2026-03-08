@@ -227,7 +227,7 @@ Vitest UIでできること:
 
 ### 動的な値を含むスナップショット
 
-日時やランダムIDなど、毎回変わる値はカスタムシリアライザーで対応します。
+日時やランダムIDなど、毎回変わる値は`expect.any()`で対応します。
 
 ```typescript
 import { describe, it, expect } from 'vitest'
@@ -244,30 +244,6 @@ describe('Dynamic Snapshot', () => {
       id: expect.any(String),
       createdAt: expect.any(String),
     })
-  })
-})
-```
-
-### コンポーネントのスナップショット
-
-```typescript
-import { render } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
-import { Button } from './Button'
-
-describe('Button Snapshot', () => {
-  it('プライマリボタンのHTML構造', () => {
-    const { container } = render(
-      <Button variant="primary" size="lg">送信</Button>
-    )
-    expect(container.firstChild).toMatchSnapshot()
-  })
-
-  it('無効状態のボタン', () => {
-    const { container } = render(
-      <Button disabled>送信</Button>
-    )
-    expect(container.firstChild).toMatchSnapshot()
   })
 })
 ```

@@ -243,6 +243,292 @@ docker scout cves your-image:latest
 
 ---
 
+## ヘルスチェックの設計パターン
+
+本番環境では、コンテナの健全性を適切に監視することが不可欠です。
+
+### Dockerのヘルスチェック
+
+```dockerfile
+# Dockerfile — ヘルスチェック付き
+FROM node:20-alpine
+WORKDIR /app
+COPY . .
+RUN npm ci && npm run build
+
+# ヘルスチェック設定
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- http://localhost:3000/health || exit 1
+
+CMD ["node", "dist/server.js"]
+```
+
+```typescript
+// src/health.ts — ヘルスチェックエンドポイントの実装
+import { Router } from 'express';
+
+const healthRouter = Router();
+
+// Liveness: プロセスが生きているか
+healthRouter.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Readiness: リクエストを受け付ける準備ができているか
+healthRouter.get('/ready', async (req, res) => {
+  try {
+    // DB接続チェック
+    await db.raw('SELECT 1');
+    // Redis接続チェック
+    await redis.ping();
+
+    res.status(200).json({
+      status: 'ready',
+      checks: {
+        database: 'ok',
+        cache: 'ok',
+      },
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'not ready',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+export default healthRouter;
+```
+
+### Kubernetesのヘルスチェック（詳細設定）
+
+```yaml
+# deployment.yaml — 3種類のProbe設定
+spec:
+  containers:
+  - name: web-app
+    image: your-registry/web-app:v1.2.3
+    ports:
+    - containerPort: 3000
+
+    # startupProbe: 起動完了を確認（初回のみ）
+    startupProbe:
+      httpGet:
+        path: /health
+        port: 3000
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      failureThreshold: 30  # 最大150秒（5秒×30回）待機
+
+    # livenessProbe: プロセスが生きているか
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 3000
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3  # 3回失敗でコンテナ再起動
+
+    # readinessProbe: トラフィックを受ける準備ができているか
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 3000
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3  # 3回失敗でServiceから切り離し
+```
+
+## リソース制限の設計
+
+コンテナのリソース制限は、安定した本番運用に不可欠です。
+
+### Kubernetesのリソース設定ガイド
+
+```yaml
+# リソース設定の考え方
+spec:
+  containers:
+  - name: web-app
+    resources:
+      # requests: スケジューリング時に確保するリソース量
+      requests:
+        memory: "256Mi"    # 通常時のメモリ使用量
+        cpu: "250m"        # 0.25 vCPU
+      # limits: 使用可能な上限
+      limits:
+        memory: "512Mi"    # これを超えるとOOMKill
+        cpu: "500m"        # これを超えるとスロットリング
+```
+
+### アプリケーション種別ごとの推奨値
+
+```yaml
+# APIサーバー（Node.js/Express）
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "1000m"
+
+# バッチ処理（データ変換・集計）
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "500m"
+  limits:
+    memory: "2Gi"
+    cpu: "2000m"
+
+# フロントエンド（Next.js SSR）
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "500m"
+  limits:
+    memory: "1Gi"
+    cpu: "1000m"
+```
+
+### LimitRangeとResourceQuota
+
+```yaml
+# namespace全体のリソース制限
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: production-quota
+  namespace: production
+spec:
+  hard:
+    requests.cpu: "8"         # namespace全体でCPU 8コアまで
+    requests.memory: "16Gi"
+    limits.cpu: "16"
+    limits.memory: "32Gi"
+    pods: "50"                # Pod数の上限
+
+---
+# デフォルトのリソース制限（設定漏れ防止）
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: default-limits
+  namespace: production
+spec:
+  limits:
+  - default:          # limitsのデフォルト
+      memory: "512Mi"
+      cpu: "500m"
+    defaultRequest:   # requestsのデフォルト
+      memory: "256Mi"
+      cpu: "250m"
+    type: Container
+```
+
+## 監視環境の構築
+
+### Prometheus + Grafanaの導入
+
+```yaml
+# prometheus-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+    scrape_configs:
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+
+---
+# Grafanaのデプロイ
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: grafana/grafana:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: grafana-secrets
+              key: admin-password
+        volumeMounts:
+        - name: grafana-storage
+          mountPath: /var/lib/grafana
+      volumes:
+      - name: grafana-storage
+        persistentVolumeClaim:
+          claimName: grafana-pvc
+```
+
+### アプリケーションメトリクスの公開
+
+```typescript
+// src/metrics.ts — Prometheusメトリクスの公開
+import { collectDefaultMetrics, Counter, Histogram, Registry } from 'prom-client';
+
+const register = new Registry();
+collectDefaultMetrics({ register });
+
+// HTTPリクエストのカウンター
+const httpRequestsTotal = new Counter({
+  name: 'http_requests_total',
+  help: 'HTTPリクエストの総数',
+  labelNames: ['method', 'path', 'status'],
+  registers: [register],
+});
+
+// レスポンスタイムのヒストグラム
+const httpRequestDuration = new Histogram({
+  name: 'http_request_duration_seconds',
+  help: 'HTTPリクエストの処理時間（秒）',
+  labelNames: ['method', 'path'],
+  buckets: [0.01, 0.05, 0.1, 0.5, 1, 5],
+  registers: [register],
+});
+
+// Expressミドルウェア
+export function metricsMiddleware(req: Request, res: Response, next: NextFunction) {
+  const end = httpRequestDuration.startTimer({ method: req.method, path: req.route?.path || req.path });
+  res.on('finish', () => {
+    httpRequestsTotal.inc({ method: req.method, path: req.route?.path || req.path, status: res.statusCode });
+    end();
+  });
+  next();
+}
+
+// /metrics エンドポイント
+export async function metricsHandler(req: Request, res: Response) {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+}
+```
+
 ## まとめ：Docker/Kubernetesの習得ロードマップ
 
 ```

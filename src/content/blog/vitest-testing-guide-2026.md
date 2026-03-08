@@ -255,25 +255,6 @@ describe('getUserProfile', () => {
 });
 ```
 
-### 部分モック（spyOn）
-
-```typescript
-import { describe, it, expect, vi } from 'vitest';
-import * as dateUtils from './dateUtils';
-
-describe('部分モック', () => {
-  it('現在日時を固定してテストする', () => {
-    const fixedDate = new Date('2026-04-01T09:00:00Z');
-    vi.spyOn(dateUtils, 'getCurrentDate').mockReturnValue(fixedDate);
-
-    const result = dateUtils.isBusinessHour();
-    expect(result).toBe(true);
-
-    vi.restoreAllMocks();
-  });
-});
-```
-
 ---
 
 ## CI/CDへの統合
@@ -334,16 +315,13 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html', 'lcov', 'json-summary'],
       reportsDirectory: './coverage',
-      // ファイル単位の閾値設定
       thresholds: {
         lines: 80,
         functions: 80,
         branches: 70,
         statements: 80,
-        // 個別ファイルにも閾値を適用
         perFile: true,
       },
-      // カバレッジ対象の制御
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
         'src/**/*.test.{ts,tsx}',

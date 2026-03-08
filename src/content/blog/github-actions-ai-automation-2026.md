@@ -231,7 +231,6 @@ AI自動化と組み合わせて、複数のNode.jsバージョンやOSで並列
 ```yaml
 # .github/workflows/matrix-test.yml
 name: Matrix Test with AI Analysis
-
 on:
   pull_request:
     branches: [main]
@@ -242,8 +241,7 @@ jobs:
       matrix:
         node-version: [20, 22]
         os: [ubuntu-latest, macos-latest]
-      fail-fast: false  # 1つ失敗しても他のジョブを継続
-
+      fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -258,35 +256,15 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           echo "失敗環境: ${{ matrix.os }} / Node ${{ matrix.node-version }}"
-          # AI分析のcurlコマンドをここに記述
 ```
 
-`fail-fast: false` を設定すると、1つの環境で失敗しても他の環境のテストは最後まで実行されます。環境固有のバグを見逃さないために重要な設定です。
+`fail-fast: false` を設定すると、1つの環境で失敗しても他のテストは最後まで実行されます。
 
 ---
 
 ## Secrets管理のベストプラクティス
 
 AI APIキーを安全にGitHub Actionsで使うための設定方法です。
-
-### Environment単位での管理
-
-```yaml
-jobs:
-  ai-review:
-    runs-on: ubuntu-latest
-    environment: production  # Environment単位でsecretsを管理
-    steps:
-      - name: AI Review
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          # APIキーが空の場合はスキップ
-          if [ -z "$ANTHROPIC_API_KEY" ]; then
-            echo "APIキー未設定のためスキップ"
-            exit 0
-          fi
-```
 
 ### Secretsの階層設計
 
@@ -317,15 +295,9 @@ on:
   workflow_call:
     inputs:
       model:
-        description: '使用するAIモデル'
         required: false
         default: 'claude-sonnet-4-6'
         type: string
-      max_tokens:
-        description: '最大トークン数'
-        required: false
-        default: 1024
-        type: number
     secrets:
       ANTHROPIC_API_KEY:
         required: true
@@ -342,15 +314,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           DIFF=$(git diff origin/${{ github.base_ref }}...HEAD -- '*.ts' '*.tsx' | head -300)
-          curl -s https://api.anthropic.com/v1/messages \
-            -H "x-api-key: $ANTHROPIC_API_KEY" \
-            -H "anthropic-version: 2023-06-01" \
-            -H "content-type: application/json" \
-            -d '{
-              "model": "${{ inputs.model }}",
-              "max_tokens": ${{ inputs.max_tokens }},
-              "messages": [{"role": "user", "content": "コードレビュー:\n'"$DIFF"'"}]
-            }'
+          # Claude APIでレビューを実行
 ```
 
 ### 呼び出し側のワークフロー
@@ -367,12 +331,11 @@ jobs:
     uses: your-org/shared-workflows/.github/workflows/reusable-ai-review.yml@main
     with:
       model: 'claude-sonnet-4-6'
-      max_tokens: 2048
     secrets:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 ```
 
-この方式なら、AIレビューのプロンプト改善を1箇所で行うだけで、全リポジトリに反映されます。
+この方式なら、プロンプト改善を1箇所で行うだけで全リポジトリに反映されます。
 
 ---
 

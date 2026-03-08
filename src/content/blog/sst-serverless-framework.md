@@ -249,6 +249,253 @@ export default {
 };
 ```
 
+## デプロイ戦略
+
+本番環境でSSTを運用する際のデプロイ戦略を解説します。
+
+### マルチステージデプロイ
+
+```typescript
+// sst.config.ts — ステージ別の設定
+export default {
+  config() {
+    return {
+      name: "my-app",
+      region: "ap-northeast-1",
+    };
+  },
+  stacks(app) {
+    // ステージに応じた設定
+    const isProd = app.stage === "production";
+
+    app.setDefaultFunctionProps({
+      runtime: "nodejs20.x",
+      memorySize: isProd ? 1024 : 256,
+      timeout: isProd ? 30 : 10,
+      environment: {
+        STAGE: app.stage,
+      },
+    });
+
+    app.stack(MyStack);
+  },
+} satisfies SSTConfig;
+```
+
+```bash
+# デプロイの流れ
+# 1. 開発環境（個人用）
+npx sst dev --stage dev-tanaka
+
+# 2. ステージング環境
+npx sst deploy --stage staging
+
+# 3. 本番環境（CI/CDから実行）
+npx sst deploy --stage production
+```
+
+### GitHub Actionsによる自動デプロイ
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy SST
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # PRの場合はステージング環境にデプロイ
+      - name: Deploy Staging
+        if: github.event_name == 'pull_request'
+        run: npx sst deploy --stage staging
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # mainマージ時は本番環境にデプロイ
+      - name: Deploy Production
+        if: github.ref == 'refs/heads/main'
+        run: npx sst deploy --stage production
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+```
+
+## モニタリングとアラート設定
+
+サーバーレスアプリケーションは従来のサーバーと異なり、Lambda単位での監視が重要です。
+
+### CloudWatch Alarmsの設定
+
+```typescript
+// stacks/MonitoringStack.ts
+import { Function, Topic } from "sst/constructs";
+import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
+import * as actions from "aws-cdk-lib/aws-cloudwatch-actions";
+
+export function MonitoringStack({ stack }: StackContext) {
+  // アラート通知用SNSトピック
+  const alertTopic = new Topic(stack, "AlertTopic", {
+    subscribers: {
+      slack: "packages/functions/src/alert-to-slack.handler",
+    },
+  });
+
+  // Lambda エラー率のアラーム
+  const errorAlarm = new cloudwatch.Alarm(stack, "LambdaErrorAlarm", {
+    metric: new cloudwatch.Metric({
+      namespace: "AWS/Lambda",
+      metricName: "Errors",
+      dimensionsMap: {
+        FunctionName: "my-app-production-api",
+      },
+      statistic: "Sum",
+      period: cdk.Duration.minutes(5),
+    }),
+    threshold: 5,           // 5分間で5回以上エラー
+    evaluationPeriods: 1,
+    alarmDescription: "Lambda関数のエラー率が閾値を超えました",
+  });
+
+  errorAlarm.addAlarmAction(
+    new actions.SnsAction(alertTopic.cdk.topic)
+  );
+}
+```
+
+### Lambda関数のログ構造化
+
+```typescript
+// packages/functions/src/lib/logger.ts
+type LogLevel = "info" | "warn" | "error";
+
+interface LogEntry {
+  level: LogLevel;
+  message: string;
+  requestId?: string;
+  duration?: number;
+  [key: string]: unknown;
+}
+
+export function log(entry: LogEntry) {
+  console.log(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    ...entry,
+  }));
+}
+
+// 使用例
+export async function handler(event: APIGatewayProxyEvent) {
+  const start = Date.now();
+  const requestId = event.requestContext.requestId;
+
+  log({ level: "info", message: "Request received", requestId, path: event.path });
+
+  try {
+    const result = await processRequest(event);
+    log({
+      level: "info",
+      message: "Request completed",
+      requestId,
+      duration: Date.now() - start,
+    });
+    return { statusCode: 200, body: JSON.stringify(result) };
+  } catch (error) {
+    log({
+      level: "error",
+      message: "Request failed",
+      requestId,
+      error: error instanceof Error ? error.message : "Unknown error",
+      duration: Date.now() - start,
+    });
+    return { statusCode: 500, body: JSON.stringify({ error: "Internal Server Error" }) };
+  }
+}
+```
+
+## コスト最適化の実践
+
+サーバーレスは「使った分だけ課金」ですが、設定を誤ると予想外のコストが発生します。
+
+### Lambda関数のコスト最適化
+
+```typescript
+// ✅ メモリとタイムアウトの適切な設定
+const api = new Api(stack, "Api", {
+  defaults: {
+    function: {
+      // メモリはパフォーマンステストで最適値を見つける
+      // AWS Lambda Power Tuning ツールの利用を推奨
+      memorySize: 512,     // デフォルト128MBは遅すぎることが多い
+      timeout: 10,          // 必要最小限に設定
+      architecture: "arm64", // ARM（Graviton2）はx86より約20%安い
+    },
+  },
+});
+```
+
+### DynamoDBのコスト最適化
+
+```typescript
+const table = new Table(stack, "Users", {
+  fields: {
+    id: "string",
+    email: "string",
+  },
+  primaryIndex: { partitionKey: "id" },
+  globalIndexes: {
+    emailIndex: { partitionKey: "email" },
+  },
+  // オンデマンドモード: トラフィックが予測不能な場合
+  cdk: {
+    table: {
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      // TTLで古いデータを自動削除（ストレージコスト削減）
+      timeToLiveAttribute: "expiresAt",
+    },
+  },
+});
+```
+
+### コスト見積もりの目安
+
+```
+月間100万リクエスト、平均実行時間200ms、メモリ512MBの場合:
+
+Lambda:
+  リクエスト料金:  100万 × $0.20/100万 = $0.20
+  コンピュート:    100万 × 0.2秒 × 512MB = 100,000 GB秒
+                  100,000 × $0.0000166667 = $1.67
+  Lambda合計:     約$1.87/月（約¥280）
+
+API Gateway:
+  100万リクエスト × $1.00/100万 = $1.00/月（約¥150）
+
+DynamoDB (オンデマンド):
+  書き込み: 50万 × $1.25/100万 = $0.625
+  読み取り: 100万 × $0.25/100万 = $0.25
+  DynamoDB合計:   約$0.88/月（約¥132）
+
+月額合計: 約$3.75（約¥560）
+→ 同等のEC2構成（t3.small）: 約$18/月（約¥2,700）
+→ サーバーレスで約80%のコスト削減
+```
+
 ## まとめ
 
 SST v3は、AWSサーバーレス開発の新しいスタンダードとして急速に普及しています。特にLive Lambda Developmentは、従来のデプロイ待ち時間を大幅に短縮し、開発速度を向上させます。

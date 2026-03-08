@@ -271,14 +271,11 @@ dialog:has(.error-message) header {
 
 `:has()` は現在、すべての主要ブラウザで安定サポートされています。
 
-| ブラウザ | サポート開始バージョン | リリース時期 |
-|---------|---------------------|------------|
-| Chrome | 105+ | 2022年8月 |
-| Safari | 15.4+ | 2022年3月 |
+| ブラウザ | サポート開始 | リリース時期 |
+|---------|-----------|------------|
+| Chrome / Edge | 105+ | 2022年8月 |
+| Safari / iOS Safari | 15.4+ | 2022年3月 |
 | Firefox | 121+ | 2023年12月 |
-| Edge | 105+ | 2022年8月 |
-| Opera | 91+ | 2022年9月 |
-| Samsung Internet | 20+ | 2023年3月 |
 
 2026年時点でのグローバルサポート率は **96%以上** です。IE11はサポート対象外ですが、IE11のサポート終了（2022年6月）から4年が経過しており、実務で考慮する必要はほぼありません。
 
@@ -301,30 +298,6 @@ dialog:has(.error-message) header {
     display: grid;
     grid-template-columns: 250px 1fr;
     gap: 1rem;
-  }
-}
-```
-
-### 実践パターン: フォームのリアルタイムフィードバック
-
-```css
-/* ベースライン: JavaScriptで .has-error クラスを付与するフォールバック */
-.field-group.has-error .error-text {
-  display: block;
-}
-
-/* エンハンスメント: :has() でJavaScript不要に */
-@supports selector(:has(*)) {
-  .field-group:has(input:invalid:not(:placeholder-shown)) .error-text {
-    display: block;
-  }
-
-  .field-group:has(input:invalid:not(:placeholder-shown)) input {
-    border-color: #d32f2f;
-  }
-
-  .field-group:has(input:valid) input {
-    border-color: #2e7d32;
   }
 }
 ```
