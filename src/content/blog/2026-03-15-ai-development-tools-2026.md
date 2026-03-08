@@ -3,7 +3,7 @@ title: "AI開発ツール完全比較2026【GitHub Copilot vs Cursor vs Claude C
 description: "2026年最新のAIコーディングツール3強を徹底比較。GitHub Copilot・Cursor・Claude Codeの機能・料金・得意分野を表で整理。現役エンジニアが実際の開発フローで使い分ける方法を解説します。"
 pubDate: "2026-03-15"
 tags: ["ai", "development", "tools", "comparison", "github-copilot"]
-heroImage: "/blog-placeholder-1.jpg"
+heroImage: "../../assets/blog-placeholder-1.jpg"
 ---
 
 ## はじめに
