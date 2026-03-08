@@ -1,6 +1,6 @@
 ---
 title: "Render.comでアプリをデプロイする完全ガイド - 無料枠から本番運用まで"
-description: "Render.comでWebアプリ・API・静的サイト・PostgreSQLをデプロイする手順を解説。無料枠の制限、GitHub自動デプロイ、本番運用のスケーリング設定まで網羅。"
+description: "Render.comでWebアプリ・API・静的サイト・PostgreSQLをデプロイする手順をステップごとに解説。Heroku代替としての強み、無料枠の制限と注意点、GitHubプッシュ連動の自動デプロイ、本番運用でのスケーリング設定まで網羅。"
 pubDate: "2025-02-05"
 tags: ['インフラ', '開発ツール']
 heroImage: '../../assets/thumbnails/render-deployment-guide.jpg'

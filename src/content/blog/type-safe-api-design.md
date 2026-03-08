@@ -1,6 +1,6 @@
 ---
 title: 'TypeScriptで型安全なAPI設計パターン完全ガイド'
-description: 'tRPC・Zod・TypeScriptを組み合わせたエンドツーエンド型安全なAPI設計パターンを解説。フロントとバックエンド間の型不整合によるバグを根本から防ぐ方法がわかります。'
+description: 'tRPC・Zod・TypeScriptを組み合わせたエンドツーエンドで型安全なAPI設計パターンを実践コード付きで解説。フロントエンドとバックエンド間の型不整合によるランタイムバグを根本から防ぐアーキテクチャ設計の考え方がわかります。'
 pubDate: '2026-02-05'
 tags: ['API', 'TypeScript', 'バックエンド', 'フロントエンド']
 heroImage: '../../assets/thumbnails/type-safe-api-design.jpg'

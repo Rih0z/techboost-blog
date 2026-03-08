@@ -1,6 +1,6 @@
 ---
 title: "Carbon言語入門 - C++の後継を目指す新言語"
-description: "GoogleがC++の後継として開発中のCarbon言語を解説。基本文法・型システム・メモリ安全性・既存C++コードとの相互運用方法をコード例付きで紹介します。"
+description: "GoogleがC++の後継として開発中のCarbon言語を基礎から解説。変数宣言・関数定義・ジェネリクスなどの基本文法、型システム、メモリ安全性の仕組み、既存C++コードベースとの相互運用方法をコード例付きで詳しく紹介します。"
 pubDate: "2025-02-05"
 tags: ['プログラミング', '開発ツール']
 heroImage: '../../assets/thumbnails/carbon-language-guide.jpg'
