@@ -1,6 +1,6 @@
 ---
 title: 'Docker完全ガイド — コンテナ・イメージ・Compose・本番運用まで'
-description: 'Dockerの基礎概念からコンテナ・イメージの仕組み、Dockerfile最適化、マルチステージビルド、Docker Compose連携、セキュリティ対策、本番環境でのベストプラクティスまでを豊富なコード例とともに体系的に解説します。'
+description: 'Dockerの基礎概念からコンテナ・イメージの仕組み、Dockerfile最適化、マルチステージビルド、Docker Compose連携、セキュリティ対策、本番環境でのベストプラクティスまでを豊富なコード例とともに体系的に解説。初心者から中級者まで対応の完全ガイド。'
 pubDate: '2026-02-20'
 tags: ['Docker', 'インフラ', '開発ツール']
 heroImage: '../../assets/thumbnails/docker-complete-guide.jpg'

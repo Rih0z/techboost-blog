@@ -1,6 +1,6 @@
 ---
 title: 'モノレポ管理ツール徹底比較：Turborepo vs Nx - 2026年版'
-description: 'TurborepoとNxをセットアップ手順・ビルドキャッシュ性能・プラグイン拡張性・CI/CD統合の観点で徹底比較。大規模プロジェクトでのモノレポ管理ツール選定に必要な判断基準と実践的な使い分けガイドを提供します。'
+description: '2026年版モノレポ管理ツール決定版。TurborepoとNxをセットアップ手順・ビルドキャッシュ性能・プラグイン拡張性・CI/CD統合の観点で徹底比較。大規模プロジェクトでのモノレポ管理ツール選定に必要な判断基準と実践的な使い分けガイドを提供。'
 pubDate: '2026-02-05'
 tags: ['プログラミング', '開発ツール']
 heroImage: '../../assets/thumbnails/monorepo-turborepo-nx.jpg'

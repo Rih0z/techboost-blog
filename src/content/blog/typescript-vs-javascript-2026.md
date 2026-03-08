@@ -1,6 +1,6 @@
 ---
 title: '【2026年】TypeScript vs JavaScript徹底比較 - どっちを学ぶべき？'
-description: '2026年最新のTypeScriptとJavaScriptを型安全性・開発体験・ビルド速度・エコシステム成熟度・転職市場での求人数の観点で徹底比較。初心者がどちらから学ぶべきか、現役エンジニアが移行すべきかを明確に解説します。'
+description: '2026年最新のTypeScriptとJavaScriptを型安全性・開発体験・ビルド速度・エコシステム成熟度・転職市場での求人数の5観点で徹底比較。プログラミング初心者がどちらから学ぶべきか、現役エンジニアがTypeScriptに移行すべきかを明確に解説。'
 pubDate: '2026-02-04'
 tags: ['JavaScript', 'TypeScript', 'フロントエンド']
 heroImage: '../../assets/thumbnails/typescript-vs-javascript-2026.jpg'
