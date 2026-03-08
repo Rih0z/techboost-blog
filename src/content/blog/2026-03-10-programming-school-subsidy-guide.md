@@ -3,7 +3,7 @@ title: "プログラミングスクール給付金・補助金完全ガイド202
 description: "プログラミングスクールの費用を最大70%還元できる教育訓練給付金の仕組みを徹底解説。専門実践・一般・特定一般の3種類の違い、申請条件、対象スクール一覧、ハローワーク手続きの流れを図解でわかりやすく説明。"
 pubDate: "2026-03-10"
 tags: ["programming-school", "subsidy", "career", "money"]
-heroImage: "/blog-placeholder-1.jpg"
+heroImage: '../../assets/thumbnails/2026-05-01-programming-school-kyuufukin-guide-2026.jpg'
 ---
 
 ## はじめに
