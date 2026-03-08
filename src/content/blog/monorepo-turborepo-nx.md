@@ -3,6 +3,7 @@ title: 'モノレポ管理ツール徹底比較：Turborepo vs Nx - 2026年版'
 description: 'Turborepo と Nx を実際のプロジェクトで比較。'
 pubDate: '2026-02-05'
 tags: ['プログラミング', '開発ツール']
+heroImage: '../../assets/thumbnails/monorepo-turborepo-nx.jpg'
 ---
 
 大規模なプロジェクトでは、複数のパッケージやアプリケーションを効率的に管理するモノレポ構成が一般的になってきました。2026年現在、Turborepo と Nx が主要なモノレポ管理ツールとして人気を集めています。

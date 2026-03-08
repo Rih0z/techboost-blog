@@ -3,6 +3,7 @@ title: 'React 19新機能完全ガイド｜useアクション・Server Component
 description: 'React 19の新機能を網羅的に解説。useアクション、Server Components正式対応、useOptimistic、useFormStatus、use()フック、ref改善など、実践コードとともに徹底ガイド。初心者から実務レベルまで段階的に学べる内容です。'
 pubDate: '2026-03-05'
 tags: ['React', 'JavaScript', 'フロントエンド', 'Web開発', 'TypeScript']
+heroImage: '../../assets/thumbnails/react-19-new-features-complete-guide.jpg'
 ---
 
 ## React 19で何が変わったのか

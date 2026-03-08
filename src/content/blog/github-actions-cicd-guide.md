@@ -3,6 +3,7 @@ title: 'GitHub Actions完全ガイド — CI/CDパイプラインをゼロから
 description: 'GitHub Actionsを使ったCI/CDパイプラインの構築方法を徹底解説。Node.js/Next.jsのテスト自動化・Vercelデプロイ・Docker Build・マトリックスビルド・シークレット管理・セルフホストランナーまで実践コード付きで解説。'
 pubDate: '2026-02-20'
 tags: ['GitHub Actions', 'CICD', 'DevOps', 'Docker', 'Vercel']
+heroImage: '../../assets/thumbnails/github-actions-cicd-guide.jpg'
 ---
 
 GitHub Actionsは、GitHubに統合されたCI/CDプラットフォームです。コードのプッシュやプルリクエストをトリガーに、テスト・ビルド・デプロイを自動化できます。本記事では、基本概念から実践的なパイプライン構築まで、動作するYAMLコードとともに徹底解説します。

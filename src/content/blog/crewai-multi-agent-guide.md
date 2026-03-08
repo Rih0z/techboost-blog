@@ -3,6 +3,7 @@ title: "CrewAIでマルチエージェントシステムを開発する完全ガ
 description: "CrewAIを使ってAIエージェントのチームを構築する方法を徹底解説。エージェント・タスク・クルーの定義から、実践的なユースケース（リサーチ・コンテンツ生成・データ分析）まで実装例付きで解説。AI・CrewAI・マルチエージェントに関する実践情報。"
 pubDate: "2026-03-04"
 tags: ["AI", "CrewAI", "マルチエージェント", "Python", "LLM", "エージェント"]
+heroImage: '../../assets/thumbnails/crewai-multi-agent-guide.jpg'
 ---
 ## はじめに
 

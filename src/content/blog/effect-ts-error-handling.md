@@ -4,6 +4,7 @@ description: "Effect-TSで実現する実践的なエラーハンドリングパ
 pubDate: "2025-08-15"
 updatedDate: "2025-08-15"
 tags: ["Effect-TS", "TypeScript", "エラーハンドリング", "依存性注入", "関数型プログラミング"]
+heroImage: '../../assets/thumbnails/effect-ts-error-handling.jpg'
 ---
 Effect-TSは型安全な副作用管理ライブラリとして知られていますが、その真価は**実践的なエラーハンドリング**と**依存性注入**にあります。この記事では、実際のプロダクション環境で使える高度なパターンを解説します。
 

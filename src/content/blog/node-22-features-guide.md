@@ -3,6 +3,7 @@ title: 'Node.js 22新機能完全ガイド - ネイティブfetch、Webストリ
 description: 'Node.js 22の新機能を徹底解説。ネイティブfetchの安定化、Webストリーム対応、テストランナー改善、パーミッションモデル、V8最適化などを実例とともに紹介。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: '2026-02-05'
 tags: ['Node.js', 'JavaScript', 'Backend']
+heroImage: '../../assets/thumbnails/node-22-features-guide.jpg'
 ---
 
 Node.js 22は2024年4月にリリースされ、多くの画期的な機能が安定版として提供されました。本記事では、Node.js 22で追加・改善された主要機能を実践的なコード例とともに解説します。

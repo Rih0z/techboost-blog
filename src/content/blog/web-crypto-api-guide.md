@@ -3,6 +3,7 @@ title: 'Web Crypto API完全ガイド2026 - 暗号化、署名、ハッシュ、
 description: 'Web Crypto APIを徹底解説。AES暗号化、RSA署名、SHA-256ハッシュ、鍵管理、セキュアストレージ、HTTPS通信、パスワードハッシュ化を実例付きで紹介。JavaScript・セキュリティ・Web APIに関する実践情報。'
 pubDate: '2026-02-05'
 tags: ['JavaScript', 'セキュリティ', 'Web API', '暗号化']
+heroImage: '../../assets/thumbnails/web-crypto-api-guide.jpg'
 ---
 
 Web Crypto APIは、ブラウザで暗号化処理を安全に実行できる標準APIです。本記事では、暗号化の基本から実践的な使い方まで解説します。

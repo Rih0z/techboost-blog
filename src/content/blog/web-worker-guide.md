@@ -3,6 +3,7 @@ title: 'Web Worker実践ガイド - ブラウザで並列処理を実現する'
 description: 'Web Workerの基本から実践まで徹底解説。'
 pubDate: '2026-02-05'
 tags: ['プログラミング', '開発ツール']
+heroImage: '../../assets/thumbnails/web-worker-guide.jpg'
 ---
 
 JavaScriptはシングルスレッドで動作しますが、Web Workerを使用することで別スレッドでコードを実行し、メインスレッドをブロックせずに重い処理を行えます。

@@ -3,6 +3,7 @@ title: 'Prisma ORM完全ガイド — スキーマ設計・マイグレーショ
 description: 'Prisma ORMを完全解説。スキーマ定義・マイグレーション管理・型安全クエリ・リレーション・トランザクション・接続プール・本番最適化をTypeScriptコード付きで網羅。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: '2026-02-20'
 tags: ['Prisma', 'ORM', 'TypeScript', 'PostgreSQL', 'データベース']
+heroImage: '../../assets/thumbnails/prisma-orm-complete-guide.jpg'
 ---
 現代のNode.js/TypeScript開発において、データベースアクセス層の設計はアプリケーションの品質を左右する重要な要素だ。Prisma ORMは、型安全性・開発体験・本番パフォーマンスを高次元で両立する次世代ORMとして、急速に普及している。
 

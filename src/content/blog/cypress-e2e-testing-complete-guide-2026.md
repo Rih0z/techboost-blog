@@ -3,6 +3,7 @@ title: 'Cypress E2Eテスト完全ガイド2026｜コンポーネントテスト
 description: 'CypressによるE2Eテストとコンポーネントテストを解説。セットアップ、セレクタ戦略、API モック、認証テスト、CI/CD連携、Playwrightとの比較まで。'
 pubDate: '2026-03-05'
 tags: ['Cypress', 'テスト', 'E2E', 'フロントエンド', 'TypeScript']
+heroImage: '../../assets/thumbnails/cypress-e2e-testing-complete-guide-2026.jpg'
 ---
 
 Webアプリケーションの品質を担保するうえで、E2E（End-to-End）テストは欠かせない存在です。**Cypress**はブラウザ内で直接テストを実行するアーキテクチャにより、高速かつ安定したE2Eテストを実現するフレームワークとして広く採用されています。本記事では、2026年時点の最新バージョンをベースに、セットアップからCI/CD連携まで実践的に解説します。

@@ -3,6 +3,7 @@ title: "Podman入門ガイド - Docker互換のデーモンレスコンテナエ
 description: "PodmanはRed Hat社開発のDocker互換コンテナエンジンです。デーモンレス・ルートレス設計でセキュリティに優れ、Docker CLIと同じコマンドが使えます。Dockerからの移行方法、Pod機能、Systemd統合、Quadlet設定から本番運用まで解説します。"
 pubDate: "2026-03-05"
 tags: ['Docker', 'Linux', 'コンテナ', 'インフラ']
+heroImage: '../../assets/thumbnails/podman-container-guide.jpg'
 ---
 
 **Podman**は、Red Hat社が開発するオープンソースのコンテナエンジンです。Docker互換のCLIを持ちながら、デーモンレス・ルートレス設計によりセキュリティと運用性が向上しています。

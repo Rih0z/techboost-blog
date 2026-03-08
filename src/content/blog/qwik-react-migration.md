@@ -3,6 +3,7 @@ title: "ReactからQwikへの移行ガイド — Resumabilityへの道"
 description: "ReactアプリをQwikに移行する完全ガイド。コンポーネント変換、フック移行、ルーティング、状態管理、エコシステム対応まで実践的に解説。段階的移行戦略とパフォーマンス改善の実例付き。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2026-02-06"
 tags: ["Qwik", "React", "移行", "Resumability", "パフォーマンス", "フレームワーク"]
+heroImage: '../../assets/thumbnails/qwik-react-migration.jpg'
 ---
 Reactからqwikへの移行は、ハイドレーションによるパフォーマンスボトルネックを解消する有力な選択肢です。
 

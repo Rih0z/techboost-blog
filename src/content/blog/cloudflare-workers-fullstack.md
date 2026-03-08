@@ -3,6 +3,7 @@ title: "Cloudflare Workersフルスタック開発ガイド - D1・R2・KV活用
 description: "Cloudflare WorkersでフルスタックWebアプリを構築する実践ガイド。D1データベース、R2ストレージ、KVストア、Durable Objectsを活用したエッジコンピューティング開発を徹底解説します。具体的なコード例とともに詳しく紹介します。"
 pubDate: "2025-02-06"
 tags: ["Cloudflare Workers", "D1", "R2", "KV", "エッジコンピューティング"]
+heroImage: '../../assets/thumbnails/cloudflare-workers-fullstack.jpg'
 ---
 
 Cloudflare Workersは、CDNのエッジネットワーク上でコードを実行できる革新的なプラットフォームです。従来のサーバーレスプラットフォームと比較して、グローバルに分散されたエッジロケーションで瞬時にレスポンスを返すことができ、レイテンシの大幅な改善とコスト削減を実現します。

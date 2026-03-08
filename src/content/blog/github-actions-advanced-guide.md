@@ -3,6 +3,7 @@ title: 'GitHub Actions上級テクニック完全ガイド2026'
 description: 'GitHub Actionsのマトリクスビルド、再利用可能ワークフロー、カスタムアクション作成、セキュリティベストプラクティス、キャッシュ最適化まで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
 pubDate: '2026-02-05'
 tags: ['GitHub Actions', 'CICD', 'DevOps', '自動化', 'インフラ']
+heroImage: '../../assets/thumbnails/github-actions-advanced-guide.jpg'
 ---
 
 GitHub Actionsは進化を続け、2026年時点でさらに強力な機能が追加されています。本記事では、マトリクスビルド、再利用可能ワークフロー、カスタムアクションなど、上級テクニックを徹底解説します。

@@ -3,6 +3,7 @@ title: "フリーランスエンジニアが使うべきツール・サービス
 description: "フリーランスエンジニアが収益を最大化するためのツール・サービス選び。"
 pubDate: "2026-03-09"
 tags: ["フリーランス", "転職エージェント", "キャリア", "レンタルサーバー", "AI開発ツール"]
+heroImage: '../../assets/thumbnails/freelance-engineer-tools-2026.jpg'
 ---
 ## フリーランスエンジニアに必要なツール全体像
 

@@ -3,6 +3,7 @@ title: 'tRPCエンドツーエンド型安全API開発完全ガイド — フロ
 description: 'tRPCでエンドツーエンドの型安全API開発を実現。Next.js 15 App Router、Prisma、Zodと組み合わせた実践的な実装例、認証、エラーハンドリング、最適化手法まで完全網羅します。具体的なコード例とともに詳しく紹介します。'
 pubDate: '2025-02-06'
 tags: ['tRPC', 'TypeScript', 'Next.js', 'API', 'Type Safety']
+heroImage: '../../assets/thumbnails/trpc-end-to-end-typesafe.jpg'
 ---
 tRPC（TypeScript Remote Procedure Call）は、TypeScriptでエンドツーエンドの型安全なAPIを構築できる革命的なライブラリです。2026年現在、Next.js、Prisma、Zodとの組み合わせで、フロントエンドからバックエンドまで完全に型で守られた開発が主流になっています。
 

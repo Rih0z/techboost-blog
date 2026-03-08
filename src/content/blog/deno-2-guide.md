@@ -3,6 +3,7 @@ title: "Deno 2.0 完全ガイド — Node.js互換・npm対応・JSR・本番利
 description: "Deno 2.0の全機能を完全解説。Node.js完全互換、npmパッケージ対応、JSRレジストリ、Freshフレームワーク、本番環境での利用方法まで実践的に紹介します。Deno・JavaScript・TypeScriptに関する実践情報。"
 pubDate: "2026-03-04"
 tags: ["Deno", "JavaScript", "TypeScript", "バックエンド", "Node.js"]
+heroImage: '../../assets/thumbnails/deno-2-guide.jpg'
 ---
 ## はじめに
 

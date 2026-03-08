@@ -3,6 +3,7 @@ title: "Docker Compose本番環境構築ガイド2026"
 description: "Docker Composeで開発・ステージング・本番の3環境を構築する実践ガイド。Web+API+DB+Redisのマルチサービス設計からヘルスチェック、ログ集約、セキュリティまで網羅します。"
 pubDate: "2026-03-06"
 tags: ['Docker', 'server', 'インフラ', 'DevOps']
+heroImage: '../../assets/thumbnails/docker-compose-production-guide-2026.jpg'
 ---
 
 Docker Composeは開発環境の構築に使うもの、という認識は過去のものだ。Docker Compose V2の登場と`docker compose`コマンドのネイティブ統合により、中小規模サービスの本番運用にも十分対応できるようになっている。

@@ -4,6 +4,7 @@ description: 'tRPC v11の新機能Server Functionsを活用し、Next.js App Rou
 pubDate: '2025-11-18'
 updatedDate: 'Nov 18 2025'
 tags: ['tRPC', 'TypeScript', 'Next.js', 'React Server Components']
+heroImage: '../../assets/thumbnails/trpc-v11-server-functions.jpg'
 ---
 
 tRPC v11では、React Server Components（RSC）やNext.js App Routerとのシームレスな統合を実現する「Server Functions」が導入されました。この記事では、従来のRPC方式とServer Functionsの違い、実装パターン、パフォーマンス最適化まで徹底解説します。

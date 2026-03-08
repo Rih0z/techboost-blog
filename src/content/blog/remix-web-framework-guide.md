@@ -3,6 +3,7 @@ title: 'Remix完全ガイド — Web標準準拠・Loader/Action・Nested Routes
 description: 'RemixでWeb標準に忠実なフルスタックアプリを構築する完全ガイド。Loader/Action・Nested Routes・Error Boundary・Optimistic UI・Vite移行・Cloudflare Workers/Vercelデプロイまで実装例付きで解説。'
 pubDate: '2026-02-20'
 tags: ['Remix', 'React', 'TypeScript', 'フルスタック', 'Web標準']
+heroImage: '../../assets/thumbnails/remix-web-framework-guide.jpg'
 ---
 
 Remixは2021年にオープンソース化されたフルスタックWebフレームワークです。React Routerの作者陣が開発し、「ブラウザとHTTPの仕様に忠実であること」を哲学の中核に据えています。Next.jsが独自のAPIやData Fetching規約を積み重ねてきたのとは対照的に、RemixはWeb標準——`fetch` API・`FormData`・HTTPレスポンス——を最大限に活用します。本記事ではプロジェクト作成から本番デプロイまで、Remixのすべてを実践的なTypeScriptコードとともに解説します。

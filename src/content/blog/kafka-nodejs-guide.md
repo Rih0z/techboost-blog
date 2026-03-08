@@ -3,6 +3,7 @@ title: 'Apache Kafka完全ガイド — Node.js・イベント駆動アーキテ
 description: 'Apache KafkaをNode.jsで活用するイベント駆動アーキテクチャの完全ガイド。Topic・Producer・Consumer・Consumer Group・Partition・kafkajs実装・スキーマレジストリ・Kafka Connect・モニタリングまで解説。'
 pubDate: '2026-02-20'
 tags: ['Kafka', 'Node.js', 'イベント駆動', 'メッセージキュー', 'マイクロサービス', 'プログラミング']
+heroImage: '../../assets/thumbnails/kafka-nodejs-guide.jpg'
 ---
 
 Apache Kafkaは、LinkedInが2011年にオープンソース化した分散ストリーミングプラットフォームだ。現在では世界中の大規模システムで採用され、1秒間に数百万件のイベントを処理するインフラの中核を担っている。本記事では、Kafkaのアーキテクチャを根本から理解し、Node.js（TypeScript）での実践的な実装方法を徹底解説する。

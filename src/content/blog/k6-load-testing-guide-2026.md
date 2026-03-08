@@ -3,6 +3,7 @@ title: 'k6負荷テスト完全ガイド2026｜シナリオ設計・閾値設定
 description: 'Grafana k6による負荷テストを解説。JavaScript/TypeScriptでのシナリオ設計、閾値設定、負荷パターン、CI/CD連携、Grafanaダッシュボードでの結果分析まで。'
 pubDate: '2026-03-05'
 tags: ['k6', 'テスト', '負荷テスト', 'DevOps', 'パフォーマンス']
+heroImage: '../../assets/thumbnails/k6-load-testing-guide-2026.jpg'
 ---
 
 ## k6とは

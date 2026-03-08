@@ -3,6 +3,7 @@ title: 'SolidStart フルスタックフレームワーク入門'
 description: 'SolidStartでフルスタックアプリを構築。Fine-grained Reactivity、サーバー関数、ファイルベースルーティング、API Routes、認証実装まで実例で解説。SolidStart・SolidJS・フルスタックに関する実践情報。'
 pubDate: '2025-02-06'
 tags: ['SolidStart', 'SolidJS', 'フルスタック', 'SSR', 'サーバー関数', 'プログラミング']
+heroImage: '../../assets/thumbnails/solid-start-fullstack.jpg'
 ---
 
 SolidStartは、SolidJS公式のフルスタックフレームワークです。Fine-grained Reactivityの強力な性能を活かしながら、サーバーサイドレンダリング、サーバー関数、APIルートを統合した開発体験を提供します。

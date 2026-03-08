@@ -3,6 +3,7 @@ title: "Cloudflare D1データベース活用ガイド"
 description: "Cloudflare Workersで動作するサーバーレスSQLiteデータベースD1の基礎から実践的な使い方まで解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。"
 pubDate: "2025-02-05"
 tags: ['Cloudflare', 'D1', 'Database', 'Serverless', 'SQLite', 'インフラ']
+heroImage: '../../assets/thumbnails/cloudflare-d1-database.jpg'
 ---
 Cloudflare D1は、Cloudflare Workers上で動作するサーバーレスSQLiteデータベースです。エッジコンピューティング環境でのデータ永続化を実現し、低レイテンシーでスケーラブルなアプリケーション開発が可能になります。本記事では、D1の基礎から実践的な使い方まで詳しく解説します。
 

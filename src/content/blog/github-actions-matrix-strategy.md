@@ -3,6 +3,7 @@ title: "GitHub Actions Matrix Strategy活用術：効率的な並列テストと
 description: "GitHub ActionsのMatrix Strategyを使った並列テスト実行とCI/CDパイプライン最適化の実践ガイド。複数環境でのテストを効率化します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2025-02-06"
 tags: ["GitHub Actions", "CICD", "DevOps", "Testing", "Automation", "インフラ"]
+heroImage: '../../assets/thumbnails/github-actions-matrix-strategy.jpg'
 ---
 
 複数のNode.jsバージョン、OS、ブラウザでテストを実行したいとき、手動で設定するのは非効率です。**GitHub Actions Matrix Strategy**を使えば、設定を宣言的に記述するだけで、自動的に並列実行されます。本記事では、Matrix Strategyの基礎から高度な活用法まで、実践的なテクニックを解説します。

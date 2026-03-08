@@ -4,6 +4,7 @@ description: 'Dockerマルチステージビルドを使った本番イメージ
 pubDate: '2025-03-18'
 updatedDate: '2025-03-18'
 tags: ['Docker', 'DevOps', 'セキュリティ', 'パフォーマンス', 'コンテナ']
+heroImage: '../../assets/thumbnails/docker-multi-stage-builds.jpg'
 ---
 ## マルチステージビルドとは？
 

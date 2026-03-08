@@ -3,6 +3,7 @@ title: 'TypeScript 5.x最新機能まとめ2026｜Decorators・satisfies・const
 description: 'TypeScript 5.0〜5.7の新機能を網羅。TC39 Decorators、satisfies演算子、const型パラメータ、isolated declarations、正規表現型チェックなど実践コード付きで解説。初心者から実務レベルまで段階的に学べる内容です。'
 pubDate: '2026-03-05'
 tags: ['TypeScript', 'JavaScript', 'Web開発', 'プログラミング', 'フロントエンド']
+heroImage: '../../assets/thumbnails/typescript-5-new-features-2026.jpg'
 ---
 
 ## TypeScript 5.xの進化

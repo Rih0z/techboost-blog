@@ -3,6 +3,7 @@ title: 'WXTブラウザ拡張機能開発ガイド - 次世代の拡張機能フ
 description: 'WXTフレームワークでのブラウザ拡張機能開発を徹底解説。Manifest V3対応、TypeScript、Vue/React対応、Chrome/Firefox/Safari対応、HMRによる高速開発を習得しよう。ベストプラクティスと注意点も紹介します。'
 pubDate: '2026-02-05'
 tags: ['WXT', 'BrowserExtension', 'ManifestV3', 'TypeScript']
+heroImage: '../../assets/thumbnails/wxt-browser-extension-guide.jpg'
 ---
 
 WXTは、モダンなブラウザ拡張機能開発のためのフレームワークです。TypeScript、Vue/React、Manifest V3をサポートし、HMRによる高速開発体験を提供します。

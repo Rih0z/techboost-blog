@@ -3,6 +3,7 @@ title: '未経験からエンジニア転職におすすめのプログラミン
 description: '未経験からエンジニア転職を目指す方向けにプログラミングスクール5校を比較。'
 pubDate: '2026-03-05'
 tags: ['プログラミング学習', 'キャリア', 'プログラミングスクール']
+heroImage: '../../assets/thumbnails/engineer-career-change-bootcamp-2026.jpg'
 ---
 ## はじめに
 

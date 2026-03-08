@@ -4,6 +4,7 @@ description: 'CSS最新機能@scopeと@layerを使った実践的なスタイル
 pubDate: '2025-12-03'
 updatedDate: 'Dec 03 2025'
 tags: ['CSS', 'Web Standards', 'Frontend', 'Design System', 'プログラミング']
+heroImage: '../../assets/thumbnails/css-scope-layer-guide.jpg'
 ---
 
 CSS @scopeと@layerは、モダンなWeb開発におけるスタイル管理の課題を解決する強力な機能です。この記事では、従来のCSS設計手法との違い、実践的な使用パターン、パフォーマンス最適化まで詳しく解説します。

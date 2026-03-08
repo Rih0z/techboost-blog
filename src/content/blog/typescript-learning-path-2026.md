@@ -3,6 +3,7 @@ title: "TypeScript習得ロードマップ2026：型安全な開発者への道"
 description: "JavaScript経験者向けのTypeScript習得ロードマップ。型システム基礎からジェネリクス、ユーティリティ型、実践パターンまで段階的に解説。つまずきポイントと解決法付き。"
 pubDate: "2026-03-06"
 tags: ['TypeScript', 'school', 'プログラミング']
+heroImage: '../../assets/thumbnails/typescript-learning-path-2026.jpg'
 ---
 
 ## はじめに：なぜ2026年にTypeScriptが必須なのか

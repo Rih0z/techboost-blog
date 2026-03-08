@@ -3,6 +3,7 @@ title: "TypeScript satisfies 演算子完全解説 - 型安全性と柔軟性の
 description: "TypeScript 4.9で導入されたsatisfies演算子の使い方を徹底解説。型アサーション(as)との違い、実践的なユースケース、オブジェクト・配列・関数での活用方法を具体例とともに紹介。TypeScript・型安全・プログラミングに関する実践情報。"
 pubDate: "2025-02-05"
 tags: ["TypeScript", "型安全", "プログラミング"]
+heroImage: '../../assets/thumbnails/typescript-satisfies.jpg'
 ---
 TypeScript 4.9で導入された`satisfies`演算子は、型安全性を保ちながら推論される型を維持できる画期的な機能です。本記事では、その使い方と実践的なテクニックを詳しく解説します。
 

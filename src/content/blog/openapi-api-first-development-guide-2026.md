@@ -3,6 +3,7 @@ title: 'OpenAPI × API First開発ガイド2026｜スキーマ駆動・コード
 description: 'OpenAPI仕様によるAPI First開発を解説。スキーマ定義、TypeScript/Pythonコード自動生成、Prismでのモックサーバー、Spectralによるリンティング、CI/CD連携まで。'
 pubDate: '2026-03-05'
 tags: ['OpenAPI', 'API', 'TypeScript', 'バックエンド', '設計']
+heroImage: '../../assets/thumbnails/openapi-api-first-development-guide-2026.jpg'
 ---
 
 ## API First開発とは

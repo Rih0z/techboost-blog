@@ -3,6 +3,7 @@ title: "オンライン学習サービス おすすめ比較2026"
 description: "2026年最新のオンライン学習サービスを徹底比較。Udemy・Progate・paiza・Coursera・Aidemyをコスパ・学習内容・対象レベルで比較し、目的別おすすめを解説。年間コストシミュレーションや挫折パターンと対策も紹介。エンジニアのスキルアップに必須のガイドです。"
 pubDate: "2026-03-05"
 tags: ["オンライン学習", "プログラミング学習", "Udemy", "スキルアップ", "キャリア"]
+heroImage: '../../assets/thumbnails/online-learning-comparison-2026.jpg'
 ---
 ## なぜオンライン学習がエンジニアに必須なのか
 

@@ -4,6 +4,7 @@ description: "Kyselyを使った実践的なマイグレーション管理。ス
 pubDate: "2025-09-22"
 updatedDate: "2025-09-22"
 tags: ["Kysely", "PostgreSQL", "マイグレーション", "データベース", "TypeScript"]
+heroImage: '../../assets/thumbnails/kysely-migrations-guide.jpg'
 ---
 Kyselyは型安全なSQLクエリビルダーとして知られていますが、**マイグレーション機能**も強力です。この記事では、実践的なマイグレーション戦略と本番環境での安全な運用方法を解説します。
 

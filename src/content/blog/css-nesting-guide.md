@@ -3,6 +3,7 @@ title: 'CSSネスティング完全ガイド - ネイティブCSS Nesting、&セ
 description: 'CSSネスティングの完全ガイド。ネイティブCSS Nesting構文、&セレクタ、@scopeルール、Sassからの移行方法、実践的なパターンを詳しく解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
 pubDate: '2026-02-05'
 tags: ['CSS', 'Frontend', 'Web', 'プログラミング']
+heroImage: '../../assets/thumbnails/css-nesting-guide.jpg'
 ---
 
 ついにCSSにネイティブなネスティング機能が実装されました。長年Sass/Lessなどのプリプロセッサが提供してきた機能が、標準CSSで利用できるようになりました。本記事では、CSS Nestingの構文から実践的な使い方、移行方法までを徹底解説します。

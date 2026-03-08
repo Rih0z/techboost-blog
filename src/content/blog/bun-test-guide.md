@@ -3,6 +3,7 @@ title: 'Bun Test完全ガイド - 超高速Jest互換テストランナー'
 description: 'Bun組み込みテストランナーを徹底解説。Jest互換API、スナップショットテスト、モック、カバレッジなど、高速テスト環境の構築方法。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
 pubDate: '2026-02-05'
 tags: ['Bun', 'テスト', 'JavaScript', 'TypeScript']
+heroImage: '../../assets/thumbnails/bun-test-guide.jpg'
 ---
 
 Bun Testは、Bunに組み込まれた超高速なテストランナーです。Jest互換のAPIを提供しながら、圧倒的なパフォーマンスを実現します。追加の設定やインストールは不要で、すぐに使い始めることができます。

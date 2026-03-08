@@ -3,6 +3,7 @@ title: 'Node.js非同期処理完全ガイド — Promise・async/await・イベ
 description: 'JavaScriptの非同期処理を基礎から徹底解説。コールバック地獄からPromise・async/await・並列処理パターンまで。イベントループの仕組み・エラーハンドリング・並行制御・ストリーム処理・Worker Threadsまで実践コード付き。'
 pubDate: '2026-02-20'
 tags: ['Node.js', 'JavaScript', 'TypeScript', '非同期処理', 'Promise']
+heroImage: '../../assets/thumbnails/nodejs-async-patterns.jpg'
 ---
 
 Node.jsアプリケーションの性能と信頼性は、非同期処理の理解度に直結します。コールバック地獄に悩んだ経験、`Promise.all` と `Promise.allSettled` の違いを説明できない経験、`async/await` を使っているのに直列実行になってしまった経験——これらはすべて、非同期処理の基礎が固まっていないことに起因します。本記事では、JavaScriptのシングルスレッドモデルから始め、実践的な並行制御パターン・エラーハンドリング・ストリーム処理・Worker Threadsまで、体系的に解説します。

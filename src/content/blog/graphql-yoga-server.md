@@ -3,6 +3,7 @@ title: 'GraphQL Yogaサーバー構築ガイド - モダンなGraphQL開発'
 description: 'GraphQL Yogaを使った完全なサーバー構築ガイド。セットアップからスキーマ定義、リゾルバー実装、サブスクリプション、認証・認可まで実践的に解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
 pubDate: '2026-02-05'
 tags: ['GraphQL', 'インフラ', 'バックエンド']
+heroImage: '../../assets/thumbnails/graphql-yoga-server.jpg'
 ---
 
 GraphQL Yogaは、The Guildが開発する軽量で柔軟なGraphQLサーバーフレームワークです。Apollo Serverの代替として注目を集めており、モダンな機能と優れたDXを提供します。

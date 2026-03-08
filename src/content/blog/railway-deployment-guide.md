@@ -3,6 +3,7 @@ title: "Railway.appでアプリを簡単デプロイ - モダンなPaaS完全ガ
 description: "Railway.appを使った簡単なアプリケーションデプロイ方法を解説。GitHubとの連携、データベース設定、環境変数管理、カスタムドメイン設定まで実践的に紹介します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2025-02-05"
 tags: ['AI', '開発ツール', '開発効率化']
+heroImage: '../../assets/thumbnails/railway-deployment-guide.jpg'
 ---
 
 Railway.appは、開発者にとって最もシンプルで強力なPlatform as a Service（PaaS）の一つです。GitHubリポジトリと連携するだけで、Node.js、Python、Go、Rustなど様々な言語のアプリケーションを数分でデプロイできます。

@@ -3,6 +3,7 @@ title: 'Web Animations API完全ガイド2026'
 description: 'Web Animations APIを徹底解説。CSSアニメーションの代替、JavaScriptによるタイムライン制御、スクロール連動アニメーション、パフォーマンス最適化を実例付きで紹介。JavaScript・CSS・アニメーションに関する実践情報。'
 pubDate: '2026-02-05'
 tags: ['JavaScript', 'CSS', 'アニメーション', 'Web API']
+heroImage: '../../assets/thumbnails/web-animation-api-guide.jpg'
 ---
 
 Web Animations API（WAAPI）は、JavaScriptでアニメーションを制御できる標準APIです。本記事では、CSSアニメーションを超える柔軟な実装方法を解説します。

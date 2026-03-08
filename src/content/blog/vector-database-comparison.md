@@ -3,6 +3,7 @@ title: "ベクトルデータベース比較ガイド2026"
 description: "主要ベクトルデータベースの徹底比較。"
 pubDate: "2026-02-06"
 tags: ["ベクトルDB", "AI", "RAG", "埋め込み", "検索"]
+heroImage: '../../assets/thumbnails/vector-database-comparison.jpg'
 ---
 ベクトルデータベースは、RAG（Retrieval-Augmented Generation）やセマンティック検索に不可欠なインフラです。
 

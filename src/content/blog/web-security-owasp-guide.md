@@ -3,6 +3,7 @@ title: 'Webセキュリティ完全ガイド — OWASP Top 10・XSS・CSRF・SQL
 description: 'Webアプリケーションセキュリティを完全解説。OWASP Top 10・XSS/CSRF防御・SQLインジェクション・認証セキュリティ・CSP・HTTPS設定・セキュリティヘッダー・脆弱性スキャンまで実装例付きで網羅。開発効率を上げるヒントが満載です。'
 pubDate: '2026-02-20'
 tags: ['セキュリティ', 'OWASP', 'XSS', 'CSRF', 'Node.js', 'プログラミング']
+heroImage: '../../assets/thumbnails/web-security-owasp-guide.jpg'
 ---
 Webアプリケーションのセキュリティは、現代の開発において最も重要な関心事のひとつです。毎年数千件以上の脆弱性が報告され、データ漏洩・不正アクセス・サービス停止による被害は世界規模で数兆円に達しています。本記事では、業界標準である **OWASP Top 10（2021年版）** を軸に、XSS・CSRF・SQLインジェクションといった代表的な攻撃手法と防御実装を、Node.js/TypeScript のコード例とともに体系的に解説します。
 

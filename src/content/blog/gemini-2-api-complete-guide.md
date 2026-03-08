@@ -3,6 +3,7 @@ title: 'Gemini 2.0 API完全ガイド｜マルチモーダルAI・Function Calli
 description: 'Google Gemini 2.0 APIの使い方を徹底解説。マルチモーダル入力、Function Calling、Context Caching、Grounding、Structured Output等の新機能を実践コードとともにガイド。GPT-4oとの比較も。'
 pubDate: '2026-03-05'
 tags: ['Gemini', 'API', 'マルチモーダル', 'LLM', 'TypeScript']
+heroImage: '../../assets/thumbnails/gemini-2-api-complete-guide.jpg'
 ---
 
 GPT-4oを使っていたプロジェクトをGemini 2.0に移行したところ、Context CachingだけでAPI費用が60%削減できました。200ページ超のPDFマニュアルを毎回プロンプトに含めていた社内Q&Aボットで、キャッシュヒット率が90%を超えた結果です。

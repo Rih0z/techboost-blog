@@ -3,6 +3,7 @@ title: 'pnpm完全ガイド — 高速パッケージ管理・Workspace・モノ
 description: 'pnpmで高速・効率的なパッケージ管理を実現する完全ガイド。Symlink node_modules・ハードリンク仕組み・Workspace設定・モノレポ管理・Catalog・npm/yarn移行手順・CI/CD最適化まで解説。実務で役立つポイントを厳選して解説。'
 pubDate: '2026-02-20'
 tags: ['pnpm', 'パッケージ管理', 'モノレポ', 'Node.js', 'JavaScript']
+heroImage: '../../assets/thumbnails/pnpm-workspace-guide.jpg'
 ---
 Node.js エコシステムには npm・yarn・pnpm という3つの主要パッケージマネージャーが存在する。その中で **pnpm（Performant npm）** は、ディスク使用量の削減と高速なインストールを両立することで急速に普及した。Next.js・Vite・Turborepo など主要フレームワークの公式テンプレートでも採用され、今やモノレポ開発の標準ツールとなっている。
 

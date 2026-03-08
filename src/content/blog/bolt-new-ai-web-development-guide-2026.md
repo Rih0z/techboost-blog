@@ -3,6 +3,7 @@ title: "Bolt.new完全ガイド2026｜AIでWeb開発を自動化"
 description: "Bolt.newの使い方を徹底解説。自然言語プロンプトからReact/Next.js/Astroアプリを自動生成しワンクリックデプロイする手順をスクリーンショット付きで紹介。Lovable・Replit・v0との機能比較やプロンプト設計のベストプラクティスも。"
 pubDate: "2026-03-05"
 tags: ["AI", "開発ツール", "フロントエンド", "React", "開発効率化"]
+heroImage: '../../assets/thumbnails/bolt-new-ai-web-development-guide-2026.jpg'
 ---
 
 ## Bolt.newとは何か — ブラウザだけでフルスタック開発が完結する時代

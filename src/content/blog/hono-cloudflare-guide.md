@@ -3,6 +3,7 @@ title: "Hono + Cloudflare Workers実践ガイド — エッジで動く超高速
 description: "HonoとCloudflare Workersで構築する実践的なWebアプリケーション。D1/KV/R2連携、認証、ミドルウェア、デプロイまで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "Feb 05 2026"
 tags: ["Hono", "Cloudflare Workers", "D1", "KV", "Edge Computing", "TypeScript"]
+heroImage: '../../assets/thumbnails/hono-cloudflare-guide.jpg'
 ---
 ## Hono + Cloudflare Workersとは
 

@@ -3,6 +3,7 @@ title: 'Next.js App Routerの使い方'
 description: 'Next.js 13以降のApp Routerを徹底解説。Server ComponentsとClient Componentsの使い分け、データフェッチ、Server Actionsまで。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: '2026-02-12'
 tags: ['JavaScript', 'Next.js', 'React', 'フロントエンド']
+heroImage: '../../assets/thumbnails/third-post.jpg'
 ---
 Next.js 13で導入されたApp Routerは、Reactのサーバーコンポーネントを活用した新しいルーティングシステムです。この記事では、App Routerの基本から実践的なパターンまでを解説します。
 

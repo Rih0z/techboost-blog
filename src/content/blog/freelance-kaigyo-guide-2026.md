@@ -3,6 +3,7 @@ title: 'フリーランスエンジニアの開業届・青色申告申請ガイ
 description: 'フリーランスエンジニアの開業届と青色申告承認申請書の書き方・提出方法を完全解説。'
 pubDate: '2026-03-05'
 tags: ['フリーランス', '確定申告', '開業届', 'キャリア', '青色申告']
+heroImage: '../../assets/thumbnails/freelance-kaigyo-guide-2026.jpg'
 ---
 ## はじめに
 

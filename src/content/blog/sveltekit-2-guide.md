@@ -4,6 +4,7 @@ description: "SvelteKit 2とSvelte 5 Runesを使った最新Web開発の完全�
 pubDate: "2025-09-05"
 updatedDate: "2025-09-05"
 tags: ["SvelteKit", "Svelte", "Runes", "Web Development", "SSR", "プログラミング"]
+heroImage: '../../assets/thumbnails/sveltekit-2-guide.jpg'
 ---
 ## はじめに
 

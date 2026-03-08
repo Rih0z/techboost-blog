@@ -3,6 +3,7 @@ title: "LangFuseでLLMアプリの可観測性を実現する完全ガイド2026
 description: "LangFuseを使ってLLMアプリのトレーシング・コスト監視・品質評価を実装する方法を解説。OpenAI・LangChain・LlamaIndex・PydanticAI連携から、カスタム評価スコアの実装まで実践例付きで紹介。サンプルコード付きで実践的に解説。"
 pubDate: "2026-03-04"
 tags: ["AI", "LangFuse", "LLMOps", "可観測性", "Python", "モニタリング"]
+heroImage: '../../assets/thumbnails/langfuse-llm-observability-guide.jpg'
 ---
 ## はじめに
 

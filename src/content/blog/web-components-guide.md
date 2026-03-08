@@ -3,6 +3,7 @@ title: 'Web Components完全ガイド'
 description: 'Web Componentsでフレームワーク非依存の再利用可能コンポーネントを構築する完全ガイド。Custom Elements・Shadow DOM・HTML Templates・Slots・Lit・TypeScript統合・React/Vue連携まで実装例付きで解説。'
 pubDate: '2026-02-20'
 tags: ['Web Components', 'Custom Elements', 'Shadow DOM', 'TypeScript', 'Lit']
+heroImage: '../../assets/thumbnails/web-components-guide.jpg'
 ---
 
 フロントエンド開発において、Reactや Vueといったフレームワークへの依存が当たり前になった現代でも、**Web Components**はブラウザネイティブの標準技術として存在感を増し続けている。Web Componentsは特定フレームワークに縛られず、どこでも使える真の意味での「再利用可能コンポーネント」を実現する技術仕様群だ。

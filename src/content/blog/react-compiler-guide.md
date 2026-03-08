@@ -3,6 +3,7 @@ title: 'React Compiler完全ガイド - useMemo/useCallbackが不要になる自
 description: 'React 19で導入されるReact Compilerの仕組みと使い方を徹底解説。自動メモ化によるパフォーマンス最適化、導入方法、従来の手動最適化との違いまで完全網羅。React・React-Compiler・パフォーマンスに関する実践情報。'
 pubDate: '2026-02-05'
 tags: ['React', 'React-Compiler', 'パフォーマンス']
+heroImage: '../../assets/thumbnails/react-compiler-guide.jpg'
 ---
 
 React 19で正式導入されるReact Compilerは、開発者の手動によるメモ化（useMemo、useCallback）を不要にし、自動的にコンポーネントを最適化する革新的な機能です。この記事では、React Compilerの仕組み、導入方法、ベストプラクティスを徹底的に解説します。

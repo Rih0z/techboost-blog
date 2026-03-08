@@ -3,6 +3,7 @@ title: "Zustand 完全ガイド — React状態管理の新標準。ReduxとJota
 description: "Zustandの完全ガイド。基本的な使い方、middleware、persist、devtools連携からRedux・Jotaiとの詳細比較まで、実践的なコード例とともに解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2026-03-04"
 tags: ["Zustand", "React", "状態管理", "JavaScript", "TypeScript"]
+heroImage: '../../assets/thumbnails/zustand-guide.jpg'
 ---
 ## はじめに
 

@@ -3,6 +3,7 @@ title: "Wrangler CLI完全ガイド：Cloudflare Workersの開発・デプロイ
 description: "Wrangler CLIを使ったCloudflare Workersの開発からデプロイまでの完全ガイド。効率的なワークフロー構築とベストプラクティスを解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2025-02-06"
 tags: ["Cloudflare", "Wrangler", "CLI", "Serverless", "DevOps", "インフラ"]
+heroImage: '../../assets/thumbnails/wrangler-cli-complete-guide.jpg'
 ---
 
 Cloudflare Workersは、エッジコンピューティングを活用したサーバーレスプラットフォームとして急速に普及しています。その開発体験を支えるのが**Wrangler CLI**です。本記事では、Wranglerを使った効率的な開発フローから本番デプロイまで、実践的なテクニックを網羅的に解説します。

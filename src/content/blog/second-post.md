@@ -3,6 +3,7 @@ title: 'TypeScript入門 — 型安全なJavaScriptで開発効率を上げる'
 description: 'TypeScriptの基本的な型システムからジェネリクス、ユーティリティ型まで。実務で使える型定義パターンを解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。'
 pubDate: '2026-02-11'
 tags: ['JavaScript', 'TypeScript', 'フロントエンド']
+heroImage: '../../assets/thumbnails/second-post.jpg'
 ---
 TypeScriptは、JavaScriptに静的型付けを追加した言語です。型があることで、エディタの補完が効き、バグを早期に発見できます。この記事では、実務でよく使う型の知識を解説します。
 

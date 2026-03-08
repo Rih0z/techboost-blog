@@ -3,6 +3,7 @@ title: "TypeScript Decorators完全ガイド — Stage 3デコレーターの使
 description: "TypeScript 5.0+で利用可能なTC39 Stage 3デコレーターの完全ガイド。クラスデコレーター、メソッドデコレーター、フィールドデコレーター、アクセサデコレーターの使い方と実用パターンを解説します。2026年最新の情報を反映しています。"
 pubDate: "2026-02-05"
 tags: ["TypeScript", "Decorators", "JavaScript", "メタプログラミング"]
+heroImage: '../../assets/thumbnails/typescript-decorators-guide.jpg'
 ---
 ## TypeScript Decoratorsとは
 

@@ -3,6 +3,7 @@ title: "SvelteKit 2認証実装ガイド"
 description: "SvelteKit 2でのユーザー認証、フォームアクション、OAuth、JWTの実装を完全解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。"
 pubDate: "2025-02-05"
 tags: ['Svelte', 'フロントエンド', '開発ツール']
+heroImage: '../../assets/thumbnails/sveltekit-2-auth-guide.jpg'
 ---
 SvelteKit 2は、フルスタックWebアプリケーション開発のための強力なフレームワークです。本記事では、SvelteKit 2でのユーザー認証実装を基礎から応用まで徹底的に解説します。フォームアクション、サーバーサイドセッション、OAuth連携、JWT、ミドルウェア(hooks)によるガードまで、実践的な実装方法をカバーします。
 

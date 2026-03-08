@@ -3,6 +3,7 @@ title: 'モノレポツール完全比較2026 - Turborepo、Nx、pnpm、Lerna、
 description: 'モノレポ管理ツールの決定版ガイド。Turborepo、Nx、pnpm Workspace、Lerna、Moonを機能・パフォーマンス・DXで徹底比較。プロジェクトに最適なツール選定をサポート。モノレポ・Turborepo・Nxに関する実践情報。'
 pubDate: '2026-02-05'
 tags: ['モノレポ', 'Turborepo', 'Nx', 'プログラミング']
+heroImage: '../../assets/thumbnails/monorepo-tools-2026-guide.jpg'
 ---
 
 モノレポ（Monorepo）は、複数のプロジェクトを1つのリポジトリで管理する手法です。この記事では、2026年時点で主流のモノレポツールを徹底比較し、プロジェクトに最適な選択をサポートします。

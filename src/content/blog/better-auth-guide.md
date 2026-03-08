@@ -3,6 +3,7 @@ title: 'Better Auth：Next.js向け認証ライブラリ完全ガイド'
 description: 'Better Authを使った認証システムの構築方法。OAuth、メール/パスワード認証、セッション管理、ミドルウェアまで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
 pubDate: '2026-02-05'
 tags: ['Better Auth', '認証', 'Next.js', 'TypeScript', 'OAuth']
+heroImage: '../../assets/thumbnails/better-auth-guide.jpg'
 ---
 
 認証システムの実装は、Webアプリケーション開発において最も重要かつ複雑な部分の一つです。セキュリティを確保しつつ、優れたユーザー体験を提供する必要があります。

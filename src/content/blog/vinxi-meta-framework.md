@@ -3,6 +3,7 @@ title: "Vinxi完全ガイド - SolidStart/TanStack Startを支えるメタフレ
 description: "VinxiはViteベースの次世代メタフレームワーク基盤。SolidStart、TanStack Startの土台として、Full-Stack型安全性、ファイルルーティング、SSR/RSC、モジュラー設計を実現。2026年最新の情報を反映しています。"
 pubDate: "2025-02-06"
 tags: ['Vinxi', 'Meta-Framework', 'Vite', 'SolidStart', 'TanStack Start']
+heroImage: '../../assets/thumbnails/vinxi-meta-framework.jpg'
 ---
 
 ## Vinxiとは

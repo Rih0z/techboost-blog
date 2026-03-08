@@ -3,6 +3,7 @@ title: "PWA + Workbox実践ガイド：Service Workerを活用したオフライ
 description: "WorkboxライブラリでPWA開発を効率化する方法を解説。Service Workerによるキャッシュ戦略、オフライン対応、プッシュ通知の実装まで実践的に学びます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2025-02-06"
 tags: ["PWA", "Workbox", "Service Worker", "Web", "Offline", "プログラミング"]
+heroImage: '../../assets/thumbnails/pwa-workbox-guide.jpg'
 ---
 
 Progressive Web Apps（PWA）は、Webアプリにネイティブアプリのような体験をもたらす技術です。その核となる**Service Worker**の実装を簡単にするのが**Workbox**です。本記事では、Workboxを使ったPWA開発の実践的なテクニックを解説します。

@@ -3,6 +3,7 @@ title: 'n8n自動化ガイド｜Docker構築からAI連携まで'
 description: 'n8nでワークフロー自動化を構築する方法を徹底解説。Docker環境構築からAPI連携・Webhook受信・AIノード統合・カスタムノード開発まで実践コード付きで紹介。Zapier/Makeとの料金・機能比較やセルフホスト運用のベストプラクティスも網羅。'
 pubDate: '2026-03-05'
 tags: ['server', '開発ツール', '自動化', 'Docker']
+heroImage: '../../assets/thumbnails/n8n-workflow-automation-guide-2026.jpg'
 ---
 
 日々の開発業務には、驚くほど多くの「手作業の繰り返し」が潜んでいます。Slackに通知を飛ばす、スプレッドシートにデータを転記する、APIのレスポンスを加工して別のサービスに投げる。ひとつひとつは数分の作業でも、積み重なれば週に何時間も消えていきます。

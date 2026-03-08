@@ -3,6 +3,7 @@ title: "REST API設計ベストプラクティス2026"
 description: "2026年版REST API設計のベストプラクティスを体系的に解説。URL設計、HTTPステータスコード、JWT/OAuth認証、バージョニング、OpenAPI定義、Zod/Honoの実装例まで網羅します。"
 pubDate: "2026-03-06"
 tags: ['API', 'バックエンド', 'TypeScript', 'career']
+heroImage: '../../assets/thumbnails/rest-api-design-best-practices-2026.jpg'
 ---
 
 REST APIの設計品質は、開発チームの生産性とサービスの保守性に直結する。設計が雑なAPIは後からの修正コストが膨大になり、クライアント側にも負担を強いる。

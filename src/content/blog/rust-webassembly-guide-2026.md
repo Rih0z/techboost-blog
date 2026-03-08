@@ -3,6 +3,7 @@ title: "Rust×WebAssembly実践ガイド2026"
 description: "RustとWebAssemblyで高速なWebアプリケーションを開発する実践ガイド。wasm-bindgen、wasm-pack、JavaScript連携、パフォーマンス最適化を具体的なコード例とともに解説します。"
 pubDate: '2026-03-05'
 tags: ['Rust', 'WebAssembly', 'パフォーマンス', 'フロントエンド', 'wasm']
+heroImage: '../../assets/thumbnails/rust-webassembly-guide-2026.jpg'
 ---
 
 WebAssembly（Wasm）は、ブラウザ上でネイティブに近い速度でコードを実行できるバイナリフォーマットです。Rustは、メモリ安全性とゼロコスト抽象化を兼ね備えた言語として、WebAssemblyのコンパイルターゲットとして最も適した言語の一つです。

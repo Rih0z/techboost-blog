@@ -3,6 +3,7 @@ title: 'インボイス制度フリーランスエンジニア完全対応ガイ
 description: 'フリーランスエンジニア向けにインボイス制度の登録手順、適格請求書の記載要件、2割特例・簡易課税の節税シミュレーション、freee/マネーフォワードでの設定方法、TypeScript/PDFKitでの請求書自動生成コードまで2026年最新情報で網羅的に解説。経過措置の変更点も詳しく紹介します。'
 pubDate: '2026-03-06'
 tags: ['フリーランス', '確定申告', 'accounting', 'TypeScript']
+heroImage: '../../assets/thumbnails/invoice-system-freelance-engineer-2026.jpg'
 ---
 
 ## はじめに：2026年はインボイス制度の転換点

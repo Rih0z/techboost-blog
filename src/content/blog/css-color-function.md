@@ -3,6 +3,7 @@ title: "CSS color() 関数活用ガイド - 新しい色空間で表現力を高
 description: "CSS Color Module Level 4で導入されたcolor()関数の使い方を徹底解説。Display P3、Rec.2020など広色域をサポートし、より鮮やかな色表現が可能に。実践的なコード例とブラウザ対応状況も紹介。実務で役立つポイントを厳選して解説。"
 pubDate: "2025-02-05"
 tags: ["CSS", "Web開発", "デザイン", "プログラミング"]
+heroImage: '../../assets/thumbnails/css-color-function.jpg'
 ---
 CSS Color Module Level 4で導入された`color()`関数は、従来のRGBやHSLを超えた広色域での色指定を可能にする画期的な機能です。本記事では、この新しい色空間の活用方法と実践的な使い方を詳しく解説します。
 

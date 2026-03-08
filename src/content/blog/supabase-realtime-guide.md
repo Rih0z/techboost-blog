@@ -4,6 +4,7 @@ description: 'Supabase Realtimeを使ったリアルタイムアプリケーシ�
 pubDate: 2025-09-28
 updatedDate: 2025-09-28
 tags: ['Supabase', 'Realtime', 'websocket', 'React', 'Database']
+heroImage: '../../assets/thumbnails/supabase-realtime-guide.jpg'
 ---
 ## Supabase Realtimeとは
 

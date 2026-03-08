@@ -3,6 +3,7 @@ title: "VS Code生産性向上エクステンション厳選2026"
 description: "2026年版VS Codeの生産性向上に直結するエクステンション厳選ガイド。AI系・フロントエンド系・バックエンド系・Git系を網羅し、settings.jsonやkeybindingsの設定例も掲載します。"
 pubDate: "2026-03-06"
 tags: ['開発ツール', 'プログラミング', 'career', 'TypeScript']
+heroImage: '../../assets/thumbnails/vscode-productivity-extensions-2026.jpg'
 ---
 
 VS Codeの拡張機能は数万種類あり、どれを選ぶべきか迷うエンジニアは多い。闇雲にインストールすると起動速度が低下し、逆に生産性が下がる場合もある。

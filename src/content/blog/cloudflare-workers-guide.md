@@ -3,6 +3,7 @@ title: 'Cloudflare Workers完全ガイド'
 description: 'Cloudflare WorkersでEdge Computingアプリを構築する完全ガイド。Workers基礎・KV Storage・D1 Database・R2 Storage・Durable Objects・Queue・Cron Triggers・Wrangler CLIまで実装例付きで解説。'
 pubDate: '2026-02-20'
 tags: ['Cloudflare Workers', 'Edge', 'TypeScript', 'KV', 'D1']
+heroImage: '../../assets/thumbnails/cloudflare-workers-guide.jpg'
 ---
 
 Cloudflare Workersは、世界330拠点以上のエッジロケーションでJavaScript/TypeScriptコードを実行できるEdge Computingプラットフォームだ。従来のサーバーレスとは一線を画す低レイテンシ・高スケーラビリティを実現し、KV Storage・D1 Database・R2 Storage・Durable Objectsといった豊富なバインディングで完結したアプリケーションを構築できる。本記事ではWrangler CLIのセットアップからプロダクション運用まで、実装コードを交えて徹底解説する。

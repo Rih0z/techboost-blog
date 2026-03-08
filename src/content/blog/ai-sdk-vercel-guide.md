@@ -3,6 +3,7 @@ title: 'Vercel AI SDK実践ガイド2026'
 description: 'Vercel AI SDKを徹底解説。useChat/useCompletion、ストリーミングUI、マルチモーダル対応、ツール使用、エージェント構築、Next.js統合、OpenAI/Claude/Gemini連携を実例付きで紹介。基礎から応用まで幅広くカバーしています。'
 pubDate: '2026-02-05'
 tags: ['AI', 'Vercel', 'Next.js', 'TypeScript']
+heroImage: '../../assets/thumbnails/ai-sdk-vercel-guide.jpg'
 ---
 
 Vercel AI SDKは、AIアプリケーション開発を簡単にする包括的なツールキットです。本記事では、基本から応用までを網羅的に解説します。

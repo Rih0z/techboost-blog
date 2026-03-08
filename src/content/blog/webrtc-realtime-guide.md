@@ -3,6 +3,7 @@ title: 'WebRTC完全ガイド：ブラウザでリアルタイム通信を実現
 description: 'WebRTCの仕組みから実装まで徹底解説。ビデオ通話・音声通話・データチャネル・シグナリング・STUN/TURN・Simple-peer・メディアサーバーまで実践的に学ぶ。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: '2026-02-20'
 tags: ['WebRTC', 'リアルタイム', 'Frontend', 'プログラミング']
+heroImage: '../../assets/thumbnails/webrtc-realtime-guide.jpg'
 ---
 WebRTCは、ブラウザとモバイルアプリがプラグインなしにリアルタイムのオーディオ・ビデオ・データ通信を行えるようにするオープンな標準技術である。Google Meetのようなビデオ会議ツールから、Discord、さらにはP2Pファイル転送アプリまで、現代のリアルタイムWeb通信のほぼすべてがWebRTCを基盤としている。
 

@@ -3,6 +3,7 @@ title: 'pnpm完全ガイド2026'
 description: 'pnpmを徹底解説。コンテンツアドレッサブルストレージによる高速化、厳格な依存関係管理、ワークスペース、npm/yarnからの移行、モノレポ構築を実例付きで紹介。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: '2026-02-05'
 tags: ['pnpm', 'npm', 'JavaScript', 'ツール']
+heroImage: '../../assets/thumbnails/pnpm-complete-guide.jpg'
 ---
 
 pnpmは、高速でディスクスペース効率が良いパッケージマネージャーです。本記事では、基本から応用までを網羅的に解説します。

@@ -3,6 +3,7 @@ title: 'サーバーレスフレームワーク完全比較2026'
 description: '主要サーバーレスフレームワークを完全比較。'
 pubDate: '2026-02-05'
 tags: ['サーバーレス', 'AWS', 'IaC', 'クラウド']
+heroImage: '../../assets/thumbnails/serverless-framework-comparison-guide.jpg'
 ---
 
 サーバーレスアプリケーションの開発には、適切なフレームワーク選びが重要です。本記事では、主要な5つのフレームワークを徹底比較します。

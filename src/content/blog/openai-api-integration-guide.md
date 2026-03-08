@@ -3,6 +3,7 @@ title: 'OpenAI API実践ガイド — ChatGPT統合・ストリーミング・Fu
 description: 'OpenAI APIをNode.js/TypeScriptで実装する実践ガイド。Chat Completions・ストリーミング・Function Calling・Embeddings・RAG（Retrieval-Augmented Generation）・コスト管理・レート制限対策まで実装例付きで解説。'
 pubDate: '2026-02-20'
 tags: ['OpenAI', 'ChatGPT', 'AI', 'TypeScript', 'RAG']
+heroImage: '../../assets/thumbnails/openai-api-integration-guide.jpg'
 ---
 
 OpenAI APIはGPT-4oをはじめとする最先端の大規模言語モデル（LLM）をアプリケーションに組み込むための公式インターフェイスだ。本記事では、Node.js/TypeScript環境でOpenAI APIを実践的に活用する方法を、基礎から応用まで体系的に解説する。Chat Completions・ストリーミング・Function Calling・Vision・Embeddings・RAG実装・コスト管理・レート制限対策・エラーハンドリング・Vercel AI SDK統合まで、実際のプロダクション環境で即座に使える実装例とともに網羅する。

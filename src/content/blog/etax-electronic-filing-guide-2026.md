@@ -3,6 +3,7 @@ title: 'e-Tax電子申告の完全手順2026：エンジニア向けセットア
 description: 'e-Taxによる確定申告の電子申告手順をエンジニア・フリーランス向けに徹底解説。マイナンバーカード方式の初期設定からfreee・マネーフォワード連携、XMLエクスポート取込、経費自動分類の自動化スクリプトまで2026年最新の実践ステップガイドです。'
 pubDate: '2026-03-06'
 tags: ['確定申告', 'フリーランス', 'accounting', '税金', 'e-Tax']
+heroImage: '../../assets/thumbnails/etax-electronic-filing-guide-2026.jpg'
 ---
 
 ### はじめに

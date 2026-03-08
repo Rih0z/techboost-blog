@@ -3,6 +3,7 @@ title: "Carbon言語入門 - C++の後継を目指す新言語"
 description: "GoogleがC++の後継として開発しているCarbon言語の基本文法、特徴、C++との相互運用性について詳しく解説します。"
 pubDate: "2025-02-05"
 tags: ['プログラミング', '開発ツール']
+heroImage: '../../assets/thumbnails/carbon-language-guide.jpg'
 ---
 ## Carbon言語とは
 

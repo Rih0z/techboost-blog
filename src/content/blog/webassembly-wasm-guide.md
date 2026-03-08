@@ -3,6 +3,7 @@ title: 'WebAssembly（WASM）完全ガイド — ブラウザで高速実行・R
 description: 'WebAssemblyをブラウザと Node.jsで活用する完全ガイド。WASM基礎・Rust/wasm-pack・wasm-bindgen・JavaScript連携・WASI・Wasmtime・コンポーネントモデル・パフォーマンスまで実装例付きで解説。'
 pubDate: '2026-02-20'
 tags: ['WebAssembly', 'WASM', 'Rust', 'パフォーマンス', 'ブラウザ', 'プログラミング']
+heroImage: '../../assets/thumbnails/webassembly-wasm-guide.jpg'
 ---
 
 WebAssembly（WASM）は、ブラウザ上でネイティブに近いパフォーマンスを実現するバイナリ命令フォーマットだ。2019年にW3Cの正式勧告となり、現在ではRust・C++・Goなど多様な言語からコンパイルしてブラウザで実行できる。画像処理・暗号化・物理シミュレーション・ゲームエンジンなど、JavaScriptだけでは性能が足りないユースケースを一気に解決する技術として、フロントエンドエンジニアにとって習得必須のスキルとなっている。

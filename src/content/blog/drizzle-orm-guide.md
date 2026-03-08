@@ -3,6 +3,7 @@ title: 'Drizzle ORM完全ガイド — 型安全・軽量・高速なTypeScript 
 description: 'Drizzle ORMをTypeScriptで使い倒す完全ガイド。スキーマ定義・マイグレーション・クエリビルダー・リレーション・トランザクション・PostgreSQL/SQLite/MySQL対応・Next.js統合まで実装例付きで解説。ベストプラクティスと注意点も紹介します。'
 pubDate: '2026-02-20'
 tags: ['Drizzle', 'ORM', 'TypeScript', 'PostgreSQL', 'データベース']
+heroImage: '../../assets/thumbnails/drizzle-orm-guide.jpg'
 ---
 TypeScript製ORMの世界は急速に進化している。Prismaが「スキーマファースト」の設計思想で市場を席巻する一方、**Drizzle ORM**は全く異なるアプローチで注目を集めている。「コードファースト」「ゼロオーバーヘッド」「SQLライク」な設計哲学を掲げるDrizzleは、2024年以降急激にスターを伸ばし、TypeScript開発者の新たな選択肢として定着しつつある。
 

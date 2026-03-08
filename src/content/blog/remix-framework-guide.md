@@ -3,6 +3,7 @@ title: 'Remixフレームワーク完全ガイド - Next.jsとの違いと実践
 description: 'ReactベースのフルスタックフレームワークRemixの基礎から応用まで。Next.jsとの違い、ルーティング、データ取得、フォーム処理など実践的な使い方を徹底解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: '2026-02-05'
 tags: ['Remix', 'React', 'フルスタック']
+heroImage: '../../assets/thumbnails/remix-framework-guide.jpg'
 ---
 Remixは、Reactをベースとしたフルスタックフレームワークで、Webの基本に立ち返った設計思想が特徴です。2022年にオープンソース化され、2026年現在ではShopifyに買収されて開発が加速しています。
 

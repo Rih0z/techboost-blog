@@ -3,6 +3,7 @@ title: 'Edge Runtime実践ガイド - 次世代のサーバーレス実行環境
 description: 'Edge Runtimeの基本概念から、Vercel Edge Functions、Cloudflare Workers、Deno Deployまで、各プラットフォームの特徴・パフォーマンス比較・実践的なユースケースを網羅的に解説します。実務で役立つポイントを厳選して解説。'
 pubDate: '2026-02-05'
 tags: ['インフラ', '開発ツール']
+heroImage: '../../assets/thumbnails/edge-runtime-guide.jpg'
 ---
 
 Edge Runtimeは、世界中のエッジロケーションでJavaScript/TypeScriptコードを実行できる次世代の実行環境です。従来のサーバーレス関数と比べて、圧倒的な低レイテンシと高速なコールドスタートを実現します。

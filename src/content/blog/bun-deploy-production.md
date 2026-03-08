@@ -3,6 +3,7 @@ title: "Bunで本番環境にデプロイする方法 — Docker・Fly.io・Rend
 description: "Bun 1.2+を本番環境にデプロイする完全ガイド。Dockerマルチステージビルド、Fly.io・Render・Railwayへのデプロイ手順、パフォーマンスチューニングまで実践的に解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2026-02-05"
 tags: ["Bun", "デプロイ", "Docker", "Fly.io", "Render", "本番環境"]
+heroImage: '../../assets/thumbnails/bun-deploy-production.jpg'
 ---
 ## Bunとは
 

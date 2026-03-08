@@ -3,6 +3,7 @@ title: 'Caddy v2リバースプロキシ詳解ガイド'
 description: 'Caddy v2を使ったリバースプロキシの実践的な設定方法。自動HTTPS、ロードバランシング、WebSocket対応、ヘッダー操作、キャッシュ戦略、セキュリティ設定を詳しく解説します。Caddy・リバースプロキシ・HTTPSに関する実践情報。'
 pubDate: '2026-02-06'
 tags: ['Caddy', 'リバースプロキシ', 'HTTPS', 'WebSocket', 'インフラ']
+heroImage: '../../assets/thumbnails/caddy-reverse-proxy-guide.jpg'
 ---
 
 リバースプロキシは、モダンなWebアプリケーションのインフラにおいて不可欠なコンポーネントです。NginxやApacheが長年使われてきましたが、Caddyは自動HTTPS、シンプルな設定、モダンなアーキテクチャにより、急速に人気を集めています。

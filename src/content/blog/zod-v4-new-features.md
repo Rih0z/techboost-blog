@@ -4,6 +4,7 @@ description: "Zod v4で実装された新機能とパフォーマンス改善を
 pubDate: "2025-07-15"
 updatedDate: "2025-07-15"
 tags: ["Zod", "TypeScript", "バリデーション", "型安全性", "パフォーマンス"]
+heroImage: '../../assets/thumbnails/zod-v4-new-features.jpg'
 ---
 TypeScriptの型安全なバリデーションライブラリとして広く使われているZodが、v4で大幅なアップデートを遂げました。本記事では、Zod v4で追加された新機能とパフォーマンス改善について、実践的なコード例とともに詳しく解説します。
 

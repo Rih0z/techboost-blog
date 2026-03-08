@@ -3,6 +3,7 @@ title: 'エッジデータベース完全比較ガイド - Turso、Neon、Planet
 description: 'エッジコンピューティング時代のデータベース選定ガイド。Turso、Neon、PlanetScale、Cloudflare D1、Upstash Redisを機能・パフォーマンス・価格で徹底比較。データベース・Edge・Tursoに関する実践情報。'
 pubDate: '2026-02-05'
 tags: ['データベース', 'Edge', 'Turso', 'インフラ']
+heroImage: '../../assets/thumbnails/edge-database-guide.jpg'
 ---
 
 エッジコンピューティングの普及により、グローバルに分散されたデータベースの重要性が高まっています。この記事では、主要なエッジデータベースサービスを徹底的に比較し、プロジェクトに最適な選択をサポートします。

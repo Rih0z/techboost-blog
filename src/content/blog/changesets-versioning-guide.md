@@ -3,6 +3,7 @@ title: 'Changesetsでパッケージバージョン管理完全ガイド — モ
 description: 'Changesetsでモノレポのバージョン管理とnpmリリースを完全自動化する実践ガイド。changeset追加・バージョンバンプ・CHANGELOG生成・GitHub Actions自動リリース・npmパブリッシュ・プレリリースまで解説。'
 pubDate: '2026-02-20'
 tags: ['Changesets', 'バージョン管理', 'モノレポ', 'npm', 'GitHub Actions', 'プログラミング']
+heroImage: '../../assets/thumbnails/changesets-versioning-guide.jpg'
 ---
 
 npm パッケージのバージョン管理は、単体パッケージでも面倒だがモノレポになると一気に複雑さが増す。パッケージ間の依存関係・CHANGELOG の整合性・タグ管理・npm への公開タイミング——これらを手作業で管理し続けることは現実的ではない。

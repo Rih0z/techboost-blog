@@ -3,6 +3,7 @@ title: 'PWA（プログレッシブウェブアプリ）完全ガイド — Serv
 description: 'PWAを完全実装する実践ガイド。Service Worker・Cache API・Background Sync・Push Notifications・Web App Manifest・インストール・Workbox・Next.js PWA対応まで実装例付きで解説。'
 pubDate: '2026-02-20'
 tags: ['PWA', 'Service Worker', 'オフライン', 'プッシュ通知', 'Web API', 'プログラミング']
+heroImage: '../../assets/thumbnails/pwa-progressive-web-app-guide.jpg'
 ---
 
 ## はじめに — なぜ今 PWA なのか

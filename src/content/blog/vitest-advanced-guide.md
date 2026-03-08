@@ -3,6 +3,7 @@ title: "Vitest高度なテスト技法ガイド - モック、スナップショ
 description: "ViteベースのテストフレームワークVitestの高度な使い方を徹底解説。"
 pubDate: "2025-02-06"
 tags: ['テスト', 'ビルドツール', 'フロントエンド', '開発ツール', '開発効率化']
+heroImage: '../../assets/thumbnails/vitest-advanced-guide.jpg'
 ---
 
 VitestはViteベースの超高速テストフレームワークです。Jestとの互換性を保ちながら、ESMネイティブサポート、TypeScript標準対応、そして驚異的な実行速度を実現しています。

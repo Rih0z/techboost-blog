@@ -3,6 +3,7 @@ title: 'Next.js App Router 実践ガイド'
 description: 'Next.js 14のApp Routerを実務レベルで使いこなすための完全ガイド。Server Actions、Streaming、Suspense、Route Handlers、キャッシュ制御、PPR（Partial Prerendering）まで実践的なコード例で解説。'
 pubDate: '2026-02-20'
 tags: ['Next.js', 'App Router', 'React', 'TypeScript', 'Server Actions']
+heroImage: '../../assets/thumbnails/nextjs-app-router-advanced.jpg'
 ---
 
 Next.js 14のApp Routerは、Reactのサーバーコンポーネントモデルを本格的に活用できる革命的なアーキテクチャです。本記事では、基礎的な使い方を超えて、実務で差がつく高度な機能を網羅的に解説します。

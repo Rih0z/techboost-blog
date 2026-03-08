@@ -3,6 +3,7 @@ title: "Cloudflare Workers AI完全ガイド2026｜エッジでAI推論"
 description: "Cloudflare Workers AIでエッジAI推論を実装する方法を解説。LLM・画像生成・テキスト埋め込みをサーバーレスで実行する手順をコード付きで紹介。モデル選択からRAG構築・本番デプロイまでGPU不要で始められる実践ガイドです。"
 pubDate: "2026-03-05"
 tags: ["Cloudflare", "AI", "サーバーレス", "エッジコンピューティング", "サーバー"]
+heroImage: '../../assets/thumbnails/cloudflare-workers-ai-guide-2026.jpg'
 ---
 
 エッジコンピューティングとAIの融合が加速している。Cloudflare Workers AIは、世界中に分散されたCloudflareのネットワーク上でAI推論を実行できるプラットフォームだ。GPUクラスタを自前で用意する必要がなく、APIキーの管理も不要で、Workerから直接AIモデルを呼び出せる。

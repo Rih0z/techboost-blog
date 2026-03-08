@@ -3,6 +3,7 @@ title: "Signals完全ガイド — 次世代リアクティビティの標準化
 description: "React、Vue、Solid.jsを超える次世代リアクティビティモデルSignalsの完全ガイド。TC39提案、各フレームワークでの実装、パフォーマンス最適化まで徹底解説します。Signals・Reactivity・JavaScriptに関する実践情報。"
 pubDate: "2026-02-06"
 tags: ["Signals", "Reactivity", "JavaScript", "Performance", "フロントエンド"]
+heroImage: '../../assets/thumbnails/signal-reactivity-guide.jpg'
 ---
 Signalsは、フロントエンドフレームワークにおける次世代のリアクティビティモデルです。React、Vue、Angularなど、主要フレームワークがSignalsの採用を進めており、TC39でJavaScript標準化の提案も進んでいます。この記事では、Signalsの基本概念から実装パターン、パフォーマンス最適化まで徹底的に解説します。
 

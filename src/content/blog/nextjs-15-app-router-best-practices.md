@@ -3,6 +3,7 @@ title: 'Next.js 15 App Router設計パターン完全ガイド｜キャッシュ
 description: 'Next.js 15のApp Routerの実践的な設計パターンを解説。Parallel Routes、Intercepting Routes、キャッシュ戦略、Server Actions、Middleware活用法まで網羅。初心者から実務レベルまで段階的に学べる内容です。'
 pubDate: '2026-03-05'
 tags: ['Next.js', 'React', 'フロントエンド', 'TypeScript', 'Web開発']
+heroImage: '../../assets/thumbnails/nextjs-15-app-router-best-practices.jpg'
 ---
 
 ## Next.js 15 App Routerの設計思想

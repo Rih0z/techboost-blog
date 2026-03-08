@@ -4,6 +4,7 @@ description: "TursoのlibSQLとCloudflare Workers、Vercel Edge、Deno Deployな
 pubDate: "2025-07-15"
 updatedDate: "2025-07-15"
 tags: ["libSQL", "Edge Runtime", "SQLite", "Turso", "Cloudflare", "プログラミング"]
+heroImage: '../../assets/thumbnails/sqlite-libsql-edge-guide.jpg'
 ---
 
 ## はじめに

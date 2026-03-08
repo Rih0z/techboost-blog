@@ -3,6 +3,7 @@ title: "Dify入門 — LLMアプリをノーコードで開発する方法"
 description: "DifyでLLMアプリケーションを構築する方法を徹底解説。RAGパイプライン・AIエージェント・ワークフロー自動化・API公開の実践例をDocker環境構築手順とともにコード付きで紹介。LangChainとの違いやセルフホスト運用のコツも。"
 pubDate: "2026-03-05"
 tags: ["AI", "開発ツール", "LLM", "Python", "開発効率化"]
+heroImage: '../../assets/thumbnails/dify-llm-app-development-guide-2026.jpg'
 ---
 
 Difyは、LLM（大規模言語モデル）を活用したアプリケーションを**ノーコード/ローコード**で構築できるオープンソースプラットフォームである。2023年のリリース以来、急速にコミュニティが拡大し、2026年3月現在ではGitHub Star数が90,000を超え、エンタープライズ向けのAIアプリ開発基盤として広く採用されている。

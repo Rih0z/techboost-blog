@@ -3,6 +3,7 @@ title: "エンジニアのためのUdemy完全活用ガイド2026 - セール攻
 description: "エンジニア向けUdemy完全活用ガイド。セール攻略法（最安1,200円で購入するコツ）、AWS・Docker・React等のおすすめ講座、Progate・Courseraとの比較、キャリア別学習ロードマップを徹底解説。初心者から実務レベルまで対応。"
 pubDate: "Mar 05 2026"
 tags: ["オンライン学習", "Udemy", "スキルアップ", "プログラミング学習"]
+heroImage: '../../assets/thumbnails/udemy-engineer-guide-2026.jpg'
 ---
 ## はじめに
 

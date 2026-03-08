@@ -3,6 +3,7 @@ title: "OpenRouter API入門 - 複数LLMを統一APIで使い分ける方法"
 description: "OpenRouterは複数のLLMプロバイダーを統一APIで利用できるルーティングサービスです。Claude・GPT-4o・Gemini・Llama等200以上のモデル切替、コスト最適化、フォールバック設定からTypeScript・Pythonでの実装パターンまで実践的に解説します。"
 pubDate: "2026-03-05"
 tags: ['AI', 'API', 'LLM', '開発ツール']
+heroImage: '../../assets/thumbnails/openrouter-api-llm-guide.jpg'
 ---
 
 **OpenRouter**は、OpenAI・Anthropic・Google・Meta等の複数LLMプロバイダーを**統一されたAPI**で利用できるサービスです。モデルの切り替え、コスト比較、フォールバック設定をシンプルなAPIで実現します。

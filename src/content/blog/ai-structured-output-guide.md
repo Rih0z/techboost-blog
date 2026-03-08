@@ -4,6 +4,7 @@ description: 'OpenAI、Anthropic、GeminiなどのLLMから構造化出力を取
 pubDate: '2025-12-12'
 updatedDate: 'Dec 12 2025'
 tags: ['AI', 'LLM', 'TypeScript', 'OpenAI', 'Claude']
+heroImage: '../../assets/thumbnails/ai-structured-output-guide.jpg'
 ---
 
 LLM（Large Language Model）からの出力を構造化データとして扱うことで、アプリケーション統合が劇的に容易になります。この記事では、OpenAI、Anthropic Claude、Google Geminiから型安全な構造化出力を取得する実践的な方法を解説します。

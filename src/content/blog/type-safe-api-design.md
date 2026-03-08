@@ -3,6 +3,7 @@ title: 'TypeScriptで型安全なAPI設計パターン完全ガイド'
 description: 'tRPC、Zod、TypeScriptを組み合わせた、エンドツーエンドで型安全なAPI設計パターンを解説。'
 pubDate: '2026-02-05'
 tags: ['API', 'TypeScript', 'バックエンド', 'フロントエンド']
+heroImage: '../../assets/thumbnails/type-safe-api-design.jpg'
 ---
 
 フロントエンドとバックエンドで型定義がずれてバグが発生した経験はありませんか？TypeScriptを使っていても、API境界で型安全性が失われることはよくあります。

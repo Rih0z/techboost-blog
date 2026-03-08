@@ -3,6 +3,7 @@ title: "Effect-TS実践ガイド2026"
 description: "Effect-TSの導入から実践活用まで徹底解説。型安全なエラーハンドリング、依存性注入、並行処理、リトライ戦略、ストリーム処理の実装パターンを具体的なコード例とともに紹介します。"
 pubDate: '2026-03-05'
 tags: ['TypeScript', 'Effect', '関数型プログラミング', 'エラーハンドリング', 'バックエンド']
+heroImage: '../../assets/thumbnails/effect-ts-guide-2026.jpg'
 ---
 
 **関連記事**: [Effect-TSで型安全なエラーハンドリング - 完全実装ガイド](/blog/effect-ts-guide)では基礎的な実装パターンを解説しています。本記事は2026年版として、v3のSchema、HTTP API構築、リソース管理など最新機能を網羅しています。

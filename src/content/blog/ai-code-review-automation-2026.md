@@ -3,6 +3,7 @@ title: "AIコードレビュー自動化2026 CI/CD統合ガイド"
 description: "GitHub ActionsとAI APIを使ったPRレビュー自動化の実装方法を解説。Claude/GPT API連携、ESLint統合、セキュリティスキャンまでTypeScriptで実践的に構築します。"
 pubDate: "2026-03-06"
 tags: ['AI', 'DevOps', '開発ツール', 'TypeScript', 'career']
+heroImage: '../../assets/thumbnails/ai-code-review-automation-2026.jpg'
 ---
 
 コードレビューはソフトウェア開発の品質を担保する重要なプロセスだ。しかし、レビュアーの負担は大きく、レビュー待ちがボトルネックになるチームも少なくない。2026年現在、AIを活用したコードレビュー自動化は実用段階に入っている。

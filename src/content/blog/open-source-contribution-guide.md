@@ -3,6 +3,7 @@ title: "OSS貢献の始め方完全ガイド2026"
 description: "OSSへの貢献がキャリアとスキルに与える影響、Good First Issueの見つけ方、PR作成からマージまでの流れ、コードレビュー対応、コミュニティとのコミュニケーション術を完全解説。OSS・Open Source・GitHubに関する実践情報。"
 pubDate: "2026-02-05"
 tags: ["OSS", "Open Source", "GitHub", "Git", "Career", "Community"]
+heroImage: '../../assets/thumbnails/open-source-contribution-guide.jpg'
 ---
 
 オープンソースソフトウェア（OSS）への貢献は、開発者としてのスキルアップとキャリア構築に最も効果的な方法の一つです。しかし、「どこから始めればいいかわからない」「自分には敷居が高い」と感じる人も多いでしょう。この記事では、OSS貢献の第一歩から継続的な貢献まで、2026年の実践的な方法を完全解説します。

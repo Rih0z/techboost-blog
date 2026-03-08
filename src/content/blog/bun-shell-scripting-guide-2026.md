@@ -3,6 +3,7 @@ title: "Bun Shell完全ガイド｜JSでシェルスクリプト"
 description: "Bun Shellの使い方を徹底解説。$テンプレートリテラルでパイプ・環境変数・glob・リダイレクトをJavaScript/TypeScriptで扱う方法をコード例付きで紹介。Bash置き換えの実践パターンやCI/CDでの活用法まで網羅。"
 pubDate: "2026-03-05"
 tags: ["Bun", "JavaScript", "TypeScript", "開発ツール", "Web開発"]
+heroImage: '../../assets/thumbnails/bun-shell-scripting-guide-2026.jpg'
 ---
 
 Bun Shellは、Bunに組み込まれたクロスプラットフォーム対応のシェルです。JavaScriptの`$`タグ付きテンプレートリテラルを使って、シェルスクリプトをJavaScript/TypeScriptで記述できます。macOS、Linux、Windowsで同じコードが動作し、Bashやzshへの依存を排除した次世代のスクリプティング環境です。

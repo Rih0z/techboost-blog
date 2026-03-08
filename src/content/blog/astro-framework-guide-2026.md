@@ -3,6 +3,7 @@ title: "Astro完全ガイド2026 - 最速の静的サイト生成フレームワ
 description: "Astroの基礎から実践まで徹底解説。Islandsアーキテクチャ、コンテンツコレクション、React/Vue/Svelte統合、Astro DB、SSR/SSG、デプロイまで完全網羅。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2026-02-05"
 tags: ["Astro", "SSG", "静的サイト", "パフォーマンス", "フレームワーク", "プログラミング"]
+heroImage: '../../assets/thumbnails/astro-framework-guide-2026.jpg'
 ---
 ## はじめに
 

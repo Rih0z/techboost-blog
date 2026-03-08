@@ -3,6 +3,7 @@ title: 'Neon Serverless PostgreSQL完全ガイド'
 description: 'Neon Serverless PostgreSQLでデータベースを構築。ブランチング、オートスケーリング、エッジ接続、Prisma/Drizzle連携を実例とともに徹底解説。Neon・PostgreSQL・Serverlessに関する実践情報。'
 pubDate: '2025-02-06'
 tags: ['Neon', 'PostgreSQL', 'Serverless', 'Database', 'Prisma']
+heroImage: '../../assets/thumbnails/neon-serverless-postgres-advanced.jpg'
 ---
 
 Neonは、サーバーレスアーキテクチャを採用したPostgreSQLサービスです。従来のデータベースとは異なり、コンピュートとストレージを分離し、自動スケーリング、ブランチング、瞬時起動を実現します。

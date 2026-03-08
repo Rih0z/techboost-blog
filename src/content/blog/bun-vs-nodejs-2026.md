@@ -3,6 +3,7 @@ title: "Bun vs Node.js 2026年 — 速度・互換性・本番採用の実態比
 description: "BunとNode.jsの2026年最新比較。ベンチマーク、npm互換性、本番環境での採用状況、移行コスト、ユースケース別の選び方まで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2026-03-04"
 tags: ["Bun", "Node.js", "JavaScript", "TypeScript", "バックエンド"]
+heroImage: '../../assets/thumbnails/bun-vs-nodejs-2026.jpg'
 ---
 ## はじめに
 

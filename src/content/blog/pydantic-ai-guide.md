@@ -3,6 +3,7 @@ title: "PydanticAIで型安全なAIアプリを開発する完全ガイド2026 -
 description: "Pydanticチームが開発したAIフレームワーク「PydanticAI」を徹底解説。型安全なエージェント・構造化出力・ツール呼び出し・依存性注入を実装例付きで解説。FastAPIと組み合わせた本番実装も紹介。開発効率を上げるヒントが満載です。"
 pubDate: "2026-03-04"
 tags: ["AI", "PydanticAI", "Python", "Pydantic", "型安全", "エージェント"]
+heroImage: '../../assets/thumbnails/pydantic-ai-guide.jpg'
 ---
 ## はじめに
 

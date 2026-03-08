@@ -4,6 +4,7 @@ description: 'FastifyでハイパフォーマンスなNode.js APIを構築する
 pubDate: '2025-11-29'
 updatedDate: 'Nov 29 2025'
 tags: ['Fastify', 'Node.js', 'API', 'Backend', 'TypeScript']
+heroImage: '../../assets/thumbnails/fastify-nodejs-guide.jpg'
 ---
 
 Fastifyは、Node.js向けの高速・低オーバーヘッドなWebフレームワークです。Expressの約2倍の性能を誇り、TypeScriptとの親和性も高いため、モダンなAPI開発に最適です。この記事では、基礎から本番運用まで実践的に解説します。

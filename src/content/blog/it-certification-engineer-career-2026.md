@@ -3,6 +3,7 @@ title: "IT資格のキャリア効果2026：取るべき資格と費用対効果
 description: "2026年版IT資格のエンジニアキャリアへの効果を徹底分析。AWS認定、情報処理技術者、LPIC等の費用対効果、学習時間、年収への影響を資格比較表と学習計画スクリプト付きで解説。"
 pubDate: "2026-03-06"
 tags: ['career', 'キャリア', 'エンジニア']
+heroImage: '../../assets/thumbnails/it-certification-engineer-career-2026.jpg'
 ---
 
 ## はじめに：IT資格は本当にキャリアに効くのか

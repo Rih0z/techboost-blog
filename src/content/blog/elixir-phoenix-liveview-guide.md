@@ -3,6 +3,7 @@ title: 'Elixir Phoenix LiveView入門ガイド: リアルタイムUIをサーバ
 description: 'Phoenix LiveViewの完全ガイド。リアルタイムUI、サーバーサイドレンダリング、フォーム処理、WebSocket通信、最適化テクニックまで実践的に解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: 2025-02-05
 tags: ['Elixir', 'Phoenix', 'LiveView', 'リアルタイム', 'WebSocket', 'インフラ']
+heroImage: '../../assets/thumbnails/elixir-phoenix-liveview-guide.jpg'
 ---
 
 Phoenix LiveViewは、JavaScriptをほとんど書かずにリアルタイムでインタラクティブなWebアプリケーションを構築できる革新的なフレームワークです。本記事では、基本概念から実践的な実装パターンまで徹底解説します。

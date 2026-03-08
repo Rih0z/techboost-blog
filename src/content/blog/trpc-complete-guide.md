@@ -3,6 +3,7 @@ title: 'tRPC完全ガイド — フルスタック型安全API開発（Next.js +
 description: 'tRPCでエンドツーエンドの型安全APIを構築する完全ガイド。Router定義・Procedure・Middleware・Zod validation・Next.js統合・React Query・無限スクロールまで実装例付きで解説。現場で使える知識を体系的にまとめました。'
 pubDate: '2026-02-20'
 tags: ['tRPC', 'TypeScript', 'Next.js', 'API', 'React Query']
+heroImage: '../../assets/thumbnails/trpc-complete-guide.jpg'
 ---
 
 フロントエンドとバックエンドの型定義を二重管理していませんか？ REST APIのエンドポイントを変更するたびにクライアント側も手動で型を更新する作業は、チームの生産性を著しく低下させます。**tRPC**はこの問題を根本から解決するツールです。

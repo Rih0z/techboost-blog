@@ -3,6 +3,7 @@ title: 'View Transitions API完全ガイド2026'
 description: 'View Transitions APIを徹底解説。ページ遷移アニメーション、SPA/MPA対応、クロスドキュメントトランジション、Next.js統合、パフォーマンス最適化を実例付きで紹介。JavaScript・CSS・Web APIに関する実践情報。'
 pubDate: '2026-02-05'
 tags: ['JavaScript', 'CSS', 'Web API', 'アニメーション']
+heroImage: '../../assets/thumbnails/view-transitions-api-guide.jpg'
 ---
 
 View Transitions APIは、ページ遷移やDOM更新時にスムーズなアニメーションを実現する標準APIです。本記事では、基本から応用までを網羅的に解説します。

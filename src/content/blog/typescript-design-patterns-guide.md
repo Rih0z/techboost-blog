@@ -3,6 +3,7 @@ title: 'TypeScriptで学ぶデザインパターン完全ガイド — GoF・関
 description: 'TypeScriptでGoFデザインパターンを実装する実践ガイド。Singleton・Factory・Observer・Strategy・Decoratorから、React Hooks・カスタムHooks・Compound Componentパターンまで網羅。'
 pubDate: '2026-02-21'
 tags: ['TypeScript', 'デザインパターン', 'Architecture', 'React']
+heroImage: '../../assets/thumbnails/typescript-design-patterns-guide.jpg'
 ---
 
 ソフトウェア開発において「デザインパターン」は、過去の優秀なエンジニアたちが蓄積した設計の知恵を体系化したものです。TypeScriptはその静的型システムにより、これらのパターンをより安全かつ明確に実装できます。本記事では GoF の23パターンを中心に、React パターン、関数型パターンまで TypeScript の型システムをフル活用した実装例を紹介します。

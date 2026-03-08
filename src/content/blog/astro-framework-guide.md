@@ -3,6 +3,7 @@ title: 'Astro完全ガイド'
 description: 'Astroフレームワークを完全解説。Islands Architecture・.astroコンポーネント・Content Collections・React/Vue統合・View Transitions・SSG/SSR・Vercelデプロイまで実装例付きで網羅。'
 pubDate: '2026-02-20'
 tags: ['Astro', 'SSG', 'Islands Architecture', 'TypeScript', 'フロントエンド']
+heroImage: '../../assets/thumbnails/astro-framework-guide.jpg'
 ---
 
 Astroは2022年に正式リリースされて以来、コンテンツ主体のWebサイト構築において急速に支持を集めているフロントエンドフレームワークです。その最大の特徴は「デフォルトでJavaScriptを送らない」という大胆な設計思想にあります。本記事では、プロジェクトの初期化から本番デプロイまで、Astroのすべてを実践的なコード例とともに解説します。

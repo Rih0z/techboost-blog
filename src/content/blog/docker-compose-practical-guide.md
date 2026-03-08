@@ -3,6 +3,7 @@ title: 'Docker Compose 実践ガイド — 開発環境を5分で構築する方
 description: 'Docker Composeで開発環境を爆速構築。'
 pubDate: '2026-02-05'
 tags: ['Docker', 'インフラ', '開発ツール']
+heroImage: '../../assets/thumbnails/docker-compose-practical-guide.jpg'
 ---
 ## Docker Composeとは？複数コンテナを一括管理
 

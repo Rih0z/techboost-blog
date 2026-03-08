@@ -3,6 +3,7 @@ title: "Playwright E2Eテスト入門2026 — Cypressを超える次世代テス
 description: "Playwright完全ガイド。Cypress比較、セットアップ、テスト実装、ページオブジェクトモデル、CI/CD統合、ビジュアルテストまで網羅。2026年最新版。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2026-02-05"
 tags: ["Playwright", "E2Eテスト", "テスト自動化", "Cypress", "テスト"]
+heroImage: '../../assets/thumbnails/playwright-e2e-testing-guide.jpg'
 ---
 
 Webアプリケーションの品質保証において、End-to-End（E2E）テストは不可欠です。2026年現在、**Playwright**はCypressを超える勢いで普及し、Microsoft、Google、Netflix等の大手企業が採用しています。

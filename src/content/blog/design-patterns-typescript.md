@@ -3,6 +3,7 @@ title: "TypeScriptデザインパターン実践ガイド"
 description: "Factory、Builder、Singleton、Observer、Strategy、Command、Decorator、Adapter、Facade、Repository、Unit of Workなど、主要デザインパターンのTypeScript実装例と使い分け方を徹底解説"
 pubDate: "2026-02-05"
 tags: ["TypeScript", "Design Patterns", "Architecture", "Best Practices", "OOP"]
+heroImage: '../../assets/thumbnails/design-patterns-typescript.jpg'
 ---
 
 デザインパターンは、ソフトウェア開発における共通の問題に対する再利用可能な解決策です。TypeScriptの型システムと組み合わせることで、より堅牢で保守性の高いコードを書くことができます。この記事では、実務で頻繁に使われる主要なデザインパターンを、TypeScriptでの実装例とともに解説します。

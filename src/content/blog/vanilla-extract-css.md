@@ -3,6 +3,7 @@ title: "vanilla-extract完全ガイド - TypeScriptでゼロランタイムCSS-i
 description: "vanilla-extractはビルド時にCSSを生成するゼロランタイムCSS-in-JSライブラリ。TypeScript型安全性、静的抽出、テーマ、レスポンシブ、Next.js/Vite統合まで完全網羅。実務で役立つポイントを厳選して解説。"
 pubDate: "2025-02-06"
 tags: ["vanilla-extract", "CSS-in-JS", "TypeScript", "Zero Runtime", "Styling", "Frontend"]
+heroImage: '../../assets/thumbnails/vanilla-extract-css.jpg'
 ---
 
 ## vanilla-extractとは

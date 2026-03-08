@@ -3,6 +3,7 @@ title: "LangGraphでAIワークフローを構築する実践ガイド2026 - ス
 description: "LangGraphを使ってグラフベースのAIエージェントとワークフローを構築する方法を解説。状態管理、条件分岐、ループ処理、マルチエージェント連携まで実装例付きで完全網羅。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
 pubDate: "2026-03-04"
 tags: ["AI", "LangGraph", "LangChain", "エージェント", "Python", "LLM"]
+heroImage: '../../assets/thumbnails/langgraph-workflow-guide.jpg'
 ---
 ## はじめに
 

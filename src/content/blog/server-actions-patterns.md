@@ -4,6 +4,7 @@ description: "Next.js App RouterとReact 19のServer Actionsを使った実践�
 pubDate: "2025-07-28"
 updatedDate: "2025-07-28"
 tags: ["Server Actions", "Next.js", "React", "TypeScript", "Web Development"]
+heroImage: '../../assets/thumbnails/server-actions-patterns.jpg'
 ---
 ## はじめに
 

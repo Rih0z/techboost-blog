@@ -3,6 +3,7 @@ title: "Prisma ORM完全ガイド2026 — TypeScript最強のORM"
 description: "Prisma ORMでタイプセーフなデータベース操作。スキーマ定義、マイグレーション、CRUD、リレーション、Next.js統合まで実践的に解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2026-02-05"
 tags: ["Prisma", "ORM", "TypeScript", "データベース", "Next.js"]
+heroImage: '../../assets/thumbnails/prisma-orm-guide-2026.jpg'
 ---
 Prismaは、TypeScriptとNode.jsのための次世代ORMです。型安全、直感的なAPI、優れた開発者体験により、多くのプロジェクトで採用されています。本記事では、Prismaの基礎から実践的な活用法まで解説します。
 

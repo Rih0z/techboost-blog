@@ -3,6 +3,7 @@ title: "Zod + OpenAPI連携：型安全なAPIドキュメント自動生成"
 description: "ZodスキーマからOpenAPI仕様を自動生成し、型安全性とドキュメントの一貫性を保つ方法を実践的なコード例とともに詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
 pubDate: "2025-02-06"
 tags: ["Zod", "OpenAPI", "型安全", "API設計", "TypeScript"]
+heroImage: '../../assets/thumbnails/zod-openapi-integration.jpg'
 ---
 ## Zod + OpenAPI統合の価値
 

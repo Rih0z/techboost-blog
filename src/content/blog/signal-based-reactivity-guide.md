@@ -3,6 +3,7 @@ title: 'シグナルベースリアクティビティ入門 - Angular/Solid/Prea
 description: 'シグナルベースリアクティビティの完全ガイド。Signals概念の解説から、Angular、Solid.js、Preact、Vueの実装比較、Reactとの違い、パフォーマンス最適化まで詳しく解説。JavaScript・Frontend・Signalsに関する実践情報。'
 pubDate: '2026-02-05'
 tags: ['JavaScript', 'Frontend', 'Signals']
+heroImage: '../../assets/thumbnails/signal-based-reactivity-guide.jpg'
 ---
 
 Signalsは、フロントエンドフレームワークにおける新しい状態管理とリアクティビティのパラダイムです。Angular、Solid.js、Preact、Vueなど、多くの主要フレームワークが採用し、Reactコミュニティでも議論が活発化しています。本記事では、Signalsの概念から実装、パフォーマンスまで徹底解説します。

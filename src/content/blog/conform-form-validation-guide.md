@@ -3,6 +3,7 @@ title: 'Conform：React Server Actions向けフォームバリデーション完
 description: 'Conformを使ったプログレッシブエンハンスメント対応のフォームバリデーション。Zodスキーマとの統合、Server Actionsとの連携を実践的に解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
 pubDate: '2026-02-05'
 tags: ['Conform', 'React', 'Next.js', 'Server Actions', 'Zod', 'バリデーション']
+heroImage: '../../assets/thumbnails/conform-form-validation-guide.jpg'
 ---
 
 Reactのフォーム処理は、バリデーション、エラーハンドリング、状態管理など、複雑な要素を含みます。Server Actionsの登場により、フォーム処理がさらに進化しましたが、従来のクライアントサイドライブラリでは対応が難しい場合があります。
