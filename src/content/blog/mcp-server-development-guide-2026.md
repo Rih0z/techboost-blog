@@ -152,6 +152,303 @@ await server.connect(transport);
 
 ---
 
+## Resourcesの実装：AIにデータを読ませる
+
+```typescript
+import {
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
+import { readFile, readdir } from 'fs/promises';
+import { join } from 'path';
+
+// サーバー初期化時にresourcesを有効化
+const server = new Server(
+  { name: 'notes-mcp', version: '1.0.0' },
+  { capabilities: { tools: {}, resources: {} } }
+);
+
+const NOTES_DIR = './notes';
+
+// リソース一覧
+server.setRequestHandler(ListResourcesRequestSchema, async () => {
+  const files = await readdir(NOTES_DIR);
+  return {
+    resources: files
+      .filter(f => f.endsWith('.md'))
+      .map(f => ({
+        uri: `notes:///${f}`,
+        name: f.replace('.md', ''),
+        mimeType: 'text/markdown',
+      })),
+  };
+});
+
+// リソース読み取り
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+  const { uri } = request.params;
+  const filename = uri.replace('notes:///', '');
+  const content = await readFile(join(NOTES_DIR, filename), 'utf-8');
+
+  return {
+    contents: [{
+      uri,
+      mimeType: 'text/markdown',
+      text: content,
+    }],
+  };
+});
+```
+
+---
+
+## Promptsの実装：再利用可能なテンプレート
+
+```typescript
+import {
+  ListPromptsRequestSchema,
+  GetPromptRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
+
+server.setRequestHandler(ListPromptsRequestSchema, async () => ({
+  prompts: [
+    {
+      name: 'code_review',
+      description: 'コードレビューを依頼するプロンプト',
+      arguments: [
+        { name: 'language', description: 'プログラミング言語', required: true },
+        { name: 'code', description: 'レビュー対象のコード', required: true },
+      ],
+    },
+  ],
+}));
+
+server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+
+  if (name === 'code_review') {
+    return {
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `以下の${args?.language}コードをレビューしてください。
+バグ・セキュリティ・パフォーマンスの観点で改善点を指摘してください。
+
+\`\`\`${args?.language}
+${args?.code}
+\`\`\``,
+          },
+        },
+      ],
+    };
+  }
+  throw new McpError(ErrorCode.InvalidParams, `未知のプロンプト: ${name}`);
+});
+```
+
+---
+
+## テスト：Vitestで品質を保証する
+
+```typescript
+// src/__tests__/weather.test.ts
+import { describe, it, expect, vi } from 'vitest';
+
+// fetch をモック
+vi.stubGlobal('fetch', vi.fn());
+
+describe('get_weather tool', () => {
+  it('正常な都市名で天気情報を返す', async () => {
+    const mockFetch = vi.mocked(fetch);
+
+    // Geocoding APIのモック
+    mockFetch.mockResolvedValueOnce({
+      json: async () => ({
+        results: [{ latitude: 35.68, longitude: 139.76, name: 'Tokyo' }],
+      }),
+    } as Response);
+
+    // Weather APIのモック
+    mockFetch.mockResolvedValueOnce({
+      json: async () => ({
+        current_weather: {
+          temperature: 22.5,
+          windspeed: 10.2,
+          is_day: 1,
+        },
+      }),
+    } as Response);
+
+    // ツール実行
+    const result = await handleGetWeather({ city: 'Tokyo' });
+    const data = JSON.parse(result.content[0].text);
+
+    expect(data.city).toBe('Tokyo');
+    expect(data.temperature).toBe('22.5°C');
+    expect(data.isDay).toBe(true);
+  });
+
+  it('存在しない都市名でエラーを返す', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      json: async () => ({ results: [] }),
+    } as Response);
+
+    await expect(handleGetWeather({ city: 'XXXXX' }))
+      .rejects.toThrow('都市が見つかりません');
+  });
+});
+```
+
+```bash
+# テスト実行
+npx vitest run
+# カバレッジ付き
+npx vitest run --coverage
+```
+
+---
+
+## 実践例：SQLiteメモ帳MCPサーバー
+
+```typescript
+// SQLiteを使ったノート管理MCPサーバー
+import Database from 'better-sqlite3';
+
+const db = new Database('notes.db');
+db.exec(`
+  CREATE TABLE IF NOT EXISTS notes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+// ツール定義
+const tools = [
+  {
+    name: 'create_note',
+    description: 'ノートを作成',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string' },
+        content: { type: 'string' },
+      },
+      required: ['title', 'content'],
+    },
+  },
+  {
+    name: 'search_notes',
+    description: 'ノートを全文検索',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: '検索キーワード' },
+      },
+      required: ['query'],
+    },
+  },
+  {
+    name: 'list_notes',
+    description: '最新のノート一覧を取得',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', description: '取得件数（デフォルト10）' },
+      },
+    },
+  },
+];
+```
+
+---
+
+## Dockerでのデプロイ
+
+```dockerfile
+# Dockerfile
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./
+CMD ["node", "dist/index.js"]
+```
+
+```json
+// claude_desktop_config.json（Docker経由）
+{
+  "mcpServers": {
+    "notes": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "my-notes-mcp:latest"]
+    }
+  }
+}
+```
+
+---
+
+## セキュリティのベストプラクティス
+
+```typescript
+import { z } from 'zod';
+
+// 入力バリデーション（zodで厳密に）
+const CreateNoteSchema = z.object({
+  title: z.string().min(1).max(200),
+  content: z.string().min(1).max(50000),
+});
+
+// ツール実行時のバリデーション
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+
+  if (name === 'create_note') {
+    // zodでバリデーション
+    const parsed = CreateNoteSchema.safeParse(args);
+    if (!parsed.success) {
+      throw new McpError(
+        ErrorCode.InvalidParams,
+        `入力エラー: ${parsed.error.message}`
+      );
+    }
+    // SQLインジェクション対策：プレースホルダを使用
+    const stmt = db.prepare(
+      'INSERT INTO notes (title, content) VALUES (?, ?)'
+    );
+    const result = stmt.run(parsed.data.title, parsed.data.content);
+    return {
+      content: [{ type: 'text', text: `ノートID: ${result.lastInsertRowid}` }],
+    };
+  }
+});
+```
+
+**MCPサーバー開発のセキュリティチェックリスト：**
+
+```
+✅ 入力値は必ずzod等でバリデーション
+✅ SQLはプレースホルダ（パラメータバインド）を使用
+✅ ファイルパスはサンドボックス内に制限（パストラバーサル防止）
+✅ 外部APIキーは環境変数から読み込み
+✅ エラーメッセージに内部情報を含めない
+✅ レート制限を実装（DoS防止）
+```
+
+---
+
 ## 公式MCPサーバーの活用
 
 [GitHub公式MCPリポジトリ](https://github.com/modelcontextprotocol/servers)では以下が公開されています：
