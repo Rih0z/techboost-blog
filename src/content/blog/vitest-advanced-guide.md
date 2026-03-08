@@ -221,6 +221,174 @@ Vitest UIでできること:
 - テストファイルのソースコード表示
 - ホットリロード
 
+## スナップショットテストの実践パターン
+
+スナップショットテストは便利ですが、使い方を誤ると保守性が低下します。実務で役立つパターンを紹介します。
+
+### 動的な値を含むスナップショット
+
+日時やランダムIDなど、毎回変わる値はカスタムシリアライザーで対応します。
+
+```typescript
+import { describe, it, expect } from 'vitest'
+
+describe('Dynamic Snapshot', () => {
+  it('動的なフィールドをマスクする', () => {
+    const user = {
+      id: crypto.randomUUID(),
+      name: 'テストユーザー',
+      createdAt: new Date().toISOString(),
+    }
+
+    expect(user).toMatchSnapshot({
+      id: expect.any(String),
+      createdAt: expect.any(String),
+    })
+  })
+})
+```
+
+### コンポーネントのスナップショット
+
+```typescript
+import { render } from '@testing-library/react'
+import { describe, it, expect } from 'vitest'
+import { Button } from './Button'
+
+describe('Button Snapshot', () => {
+  it('プライマリボタンのHTML構造', () => {
+    const { container } = render(
+      <Button variant="primary" size="lg">送信</Button>
+    )
+    expect(container.firstChild).toMatchSnapshot()
+  })
+
+  it('無効状態のボタン', () => {
+    const { container } = render(
+      <Button disabled>送信</Button>
+    )
+    expect(container.firstChild).toMatchSnapshot()
+  })
+})
+```
+
+スナップショットファイルが肥大化する場合は `--update` フラグで定期的に整理しましょう。
+
+---
+
+## テストフィクスチャの活用
+
+テストデータの作成を効率化するフィクスチャパターンです。
+
+### ファクトリ関数パターン
+
+```typescript
+// test/factories/user.ts
+import { faker } from '@faker-js/faker/locale/ja'
+
+interface User {
+  id: string
+  name: string
+  email: string
+  role: 'admin' | 'user' | 'guest'
+}
+
+export function createUser(overrides: Partial<User> = {}): User {
+  return {
+    id: faker.string.uuid(),
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
+    role: 'user',
+    ...overrides,
+  }
+}
+
+// テスト内での使用
+describe('UserService', () => {
+  it('管理者ユーザーは全権限を持つ', () => {
+    const admin = createUser({ role: 'admin' })
+    expect(hasFullAccess(admin)).toBe(true)
+  })
+
+  it('ゲストユーザーは読み取り専用', () => {
+    const guest = createUser({ role: 'guest' })
+    expect(hasFullAccess(guest)).toBe(false)
+  })
+})
+```
+
+### Vitestのtest.extend
+
+Playwrightのようなフィクスチャ注入がVitestでも使えます。
+
+```typescript
+import { test as base } from 'vitest'
+
+interface Fixtures {
+  db: MockDatabase
+  authUser: User
+}
+
+const test = base.extend<Fixtures>({
+  db: async ({}, use) => {
+    const db = await MockDatabase.create()
+    await use(db)
+    await db.cleanup()
+  },
+  authUser: async ({ db }, use) => {
+    const user = await db.createUser({ role: 'admin' })
+    await use(user)
+  },
+})
+
+test('認証済みユーザーでデータを取得', async ({ db, authUser }) => {
+  const result = await db.query(authUser, 'SELECT * FROM orders')
+  expect(result).toHaveLength(0)
+})
+```
+
+---
+
+## パフォーマンステストパターン
+
+レスポンス時間やメモリ使用量の回帰テストもVitestで行えます。
+
+```typescript
+import { describe, it, expect, bench } from 'vitest'
+
+describe('Performance', () => {
+  // ベンチマークテスト（vitest bench で実行）
+  bench('配列ソート: 10,000要素', () => {
+    const arr = Array.from({ length: 10000 }, () => Math.random())
+    arr.sort((a, b) => a - b)
+  })
+
+  bench('Map検索: 10,000エントリ', () => {
+    const map = new Map<number, string>()
+    for (let i = 0; i < 10000; i++) {
+      map.set(i, `value-${i}`)
+    }
+    map.get(9999)
+  })
+})
+```
+
+実行時間の上限を設けることで、パフォーマンスの劣化を検知できます。
+
+```typescript
+it('重い処理が500ms以内に完了する', async () => {
+  const start = performance.now()
+  await heavyComputation()
+  const duration = performance.now() - start
+
+  expect(duration).toBeLessThan(500)
+})
+```
+
+CIでベンチマーク結果を記録し、PRごとにパフォーマンスの変化を追跡するとさらに効果的です。
+
+---
+
 ## まとめ
 
 Vitestは、高速で強力なテストフレームワークです。主な利点は以下の通りです。

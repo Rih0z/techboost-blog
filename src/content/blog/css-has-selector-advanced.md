@@ -279,7 +279,6 @@ dialog:has(.error-message) header {
 | Edge | 105+ | 2022年8月 |
 | Opera | 91+ | 2022年9月 |
 | Samsung Internet | 20+ | 2023年3月 |
-| iOS Safari | 15.4+ | 2022年3月 |
 
 2026年時点でのグローバルサポート率は **96%以上** です。IE11はサポート対象外ですが、IE11のサポート終了（2022年6月）から4年が経過しており、実務で考慮する必要はほぼありません。
 
@@ -296,10 +295,6 @@ dialog:has(.error-message) header {
   border: 1px solid #ddd;
 }
 
-.card .card-image + .card-content {
-  margin-top: 1rem;
-}
-
 /* エンハンスメント: :has() 対応ブラウザのみ */
 @supports selector(:has(*)) {
   .card:has(.card-image) {
@@ -307,28 +302,13 @@ dialog:has(.error-message) header {
     grid-template-columns: 250px 1fr;
     gap: 1rem;
   }
-
-  .card:has(.card-image) .card-image + .card-content {
-    margin-top: 0;
-  }
 }
 ```
 
 ### 実践パターン: フォームのリアルタイムフィードバック
 
 ```css
-/* ベースライン: JavaScriptで制御する前提 */
-.field-group {
-  margin-bottom: 1rem;
-}
-
-.field-group .error-text {
-  display: none;
-  color: #d32f2f;
-  font-size: 0.875rem;
-}
-
-/* JavaScriptで .has-error クラスを付与するフォールバック */
+/* ベースライン: JavaScriptで .has-error クラスを付与するフォールバック */
 .field-group.has-error .error-text {
   display: block;
 }
@@ -339,13 +319,8 @@ dialog:has(.error-message) header {
     display: block;
   }
 
-  .field-group:has(input:valid) .error-text {
-    display: none;
-  }
-
   .field-group:has(input:invalid:not(:placeholder-shown)) input {
     border-color: #d32f2f;
-    box-shadow: 0 0 0 1px #d32f2f;
   }
 
   .field-group:has(input:valid) input {
@@ -357,20 +332,6 @@ dialog:has(.error-message) header {
 ### パフォーマンスに関する注意点
 
 `:has()` セレクタは非常に強力ですが、使い方によってはパフォーマンスに影響します。
-
-```css
-/* 避けるべき: 深いネストの :has() */
-body:has(main section article .card:has(img:nth-of-type(3))) {
-  /* ブラウザの再計算コストが高い */
-}
-
-/* 推奨: セレクタを短く、対象を限定する */
-.card-grid:has(.card:nth-child(4)) {
-  grid-template-columns: repeat(2, 1fr);
-}
-```
-
-ベストプラクティスとして以下を心がけましょう。
 
 - `:has()` のネストは **2階層まで** に留める
 - `body:has(...)` のような広範なセレクタは最小限にする

@@ -251,6 +251,296 @@ resource "aws_appautoscaling_scheduled_action" "scale_up_morning" {
 
 ---
 
+## State管理のベストプラクティス
+
+TerraformのState（状態ファイル）管理は、チーム開発で最も重要なポイントです。
+
+### リモートStateの設定
+
+```hcl
+# backend.tf — S3 + DynamoDBによるState管理
+terraform {
+  backend "s3" {
+    bucket         = "my-company-terraform-state"
+    key            = "production/terraform.tfstate"
+    region         = "ap-northeast-1"
+    encrypt        = true
+    dynamodb_table = "terraform-locks"  # ロック用
+  }
+}
+
+# State用S3バケットの作成（初回のみ手動 or 別Terraformで管理）
+resource "aws_s3_bucket" "terraform_state" {
+  bucket = "my-company-terraform-state"
+
+  lifecycle {
+    prevent_destroy = true  # 誤削除防止
+  }
+}
+
+resource "aws_s3_bucket_versioning" "terraform_state" {
+  bucket = aws_s3_bucket.terraform_state.id
+  versioning_configuration {
+    status = "Enabled"  # 過去のStateを復元可能に
+  }
+}
+
+# State lockingのためのDynamoDBテーブル
+resource "aws_dynamodb_table" "terraform_locks" {
+  name         = "terraform-locks"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "LockID"
+
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+}
+```
+
+### State分割の戦略
+
+大規模プロジェクトでは、Stateを分割して管理します。
+
+```
+infra/
+├── global/           # IAM, Route53など（変更頻度: 低）
+│   ├── main.tf
+│   └── terraform.tfvars
+├── network/          # VPC, Subnet, NAT（変更頻度: 低）
+│   ├── main.tf
+│   └── terraform.tfvars
+├── database/         # RDS, ElastiCache（変更頻度: 中）
+│   ├── main.tf
+│   └── terraform.tfvars
+└── application/      # ECS, ALB, Auto Scaling（変更頻度: 高）
+    ├── main.tf
+    └── terraform.tfvars
+```
+
+State間でデータを参照するには `terraform_remote_state` または `data source` を使います。
+
+```hcl
+# application/main.tf からnetworkのStateを参照
+data "terraform_remote_state" "network" {
+  backend = "s3"
+  config = {
+    bucket = "my-company-terraform-state"
+    key    = "network/terraform.tfstate"
+    region = "ap-northeast-1"
+  }
+}
+
+# VPC IDやサブネットIDを取得
+locals {
+  vpc_id             = data.terraform_remote_state.network.outputs.vpc_id
+  private_subnet_ids = data.terraform_remote_state.network.outputs.private_subnet_ids
+}
+```
+
+## モジュール構造の設計パターン
+
+再利用可能なモジュールの設計は、Terraformプロジェクトの保守性を大きく左右します。
+
+### モジュールのディレクトリ構成
+
+```
+modules/
+├── ecs-service/
+│   ├── main.tf        # リソース定義
+│   ├── variables.tf   # 入力変数
+│   ├── outputs.tf     # 出力値
+│   └── README.md      # 使い方
+├── rds/
+│   ├── main.tf
+│   ├── variables.tf
+│   └── outputs.tf
+└── alb/
+    ├── main.tf
+    ├── variables.tf
+    └── outputs.tf
+```
+
+### 再利用可能なモジュールの例
+
+```hcl
+# modules/ecs-service/variables.tf
+variable "project" {
+  description = "プロジェクト名"
+  type        = string
+}
+
+variable "environment" {
+  description = "環境名（production, staging, development）"
+  type        = string
+  validation {
+    condition     = contains(["production", "staging", "development"], var.environment)
+    error_message = "環境名はproduction, staging, developmentのいずれかを指定してください"
+  }
+}
+
+variable "cpu" {
+  description = "タスクのCPUユニット"
+  type        = number
+  default     = 256
+}
+
+variable "memory" {
+  description = "タスクのメモリ（MiB）"
+  type        = number
+  default     = 512
+}
+
+variable "desired_count" {
+  description = "タスクの希望数"
+  type        = number
+  default     = 2
+}
+
+variable "health_check_path" {
+  description = "ヘルスチェックのパス"
+  type        = string
+  default     = "/health"
+}
+```
+
+```hcl
+# モジュールの呼び出し（環境ごとに変数を変えるだけ）
+# environments/production/main.tf
+module "api_service" {
+  source = "../../modules/ecs-service"
+
+  project           = "my-app"
+  environment       = "production"
+  cpu               = 1024
+  memory            = 2048
+  desired_count     = 3
+  health_check_path = "/api/health"
+}
+
+# environments/staging/main.tf
+module "api_service" {
+  source = "../../modules/ecs-service"
+
+  project           = "my-app"
+  environment       = "staging"
+  cpu               = 256
+  memory            = 512
+  desired_count     = 1
+  health_check_path = "/api/health"
+}
+```
+
+## CI/CDパイプラインとの統合
+
+GitHub ActionsでTerraformのplan/applyを自動化する実践的な構成です。
+
+### PRでplan、マージでapply
+
+```yaml
+# .github/workflows/terraform.yml
+name: Terraform CI/CD
+
+on:
+  pull_request:
+    paths: ['infra/**']
+  push:
+    branches: [main]
+    paths: ['infra/**']
+
+permissions:
+  id-token: write    # OIDC認証用
+  contents: read
+  pull-requests: write  # PRコメント用
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-northeast-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      # PRの場合: planのみ実行してコメントに結果を表示
+      - name: Terraform Plan
+        if: github.event_name == 'pull_request'
+        id: plan
+        run: terraform plan -no-color -out=tfplan
+        continue-on-error: true
+
+      - name: Post Plan to PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const output = `#### Terraform Plan 📖
+            \`\`\`
+            ${{ steps.plan.outputs.stdout }}
+            \`\`\`
+            *PR #${{ github.event.pull_request.number }}*`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      # mainマージ時: applyを実行
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          terraform plan -out=tfplan
+          terraform apply -auto-approve tfplan
+```
+
+### セキュリティのベストプラクティス
+
+```hcl
+# OIDC認証でAWSアクセスキーを不要にする
+# IAMロールの信頼ポリシー
+data "aws_iam_policy_document" "github_actions_trust" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    principals {
+      type        = "Federated"
+      identifiers = [aws_iam_openid_connect_provider.github.arn]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "token.actions.githubusercontent.com:aud"
+      values   = ["sts.amazonaws.com"]
+    }
+    condition {
+      test     = "StringLike"
+      variable = "token.actions.githubusercontent.com:sub"
+      values   = ["repo:your-org/your-repo:*"]
+    }
+  }
+}
+```
+
 ## まとめ：Terraform導入の3ステップ
 
 1. **State管理をS3に移行**（チーム開発の前提）
