@@ -36,6 +36,63 @@ GCP:   12% （Google AI技術との統合）
 
 **コスト面ではGCPが若干有利**ですが、学習コストやエコシステムを考えると差は小さいです。
 
+### スタートアップ向け無料枠比較
+
+各クラウドはスタートアップ向けに大規模な無料クレジットを提供しています。
+
+| プログラム | 無料枠 | 条件 |
+|-----------|-------|------|
+| AWS Activate | 最大$100,000 | VCまたはアクセラレーター経由 |
+| GCP for Startups | 最大$350,000 | Google審査あり |
+| Microsoft for Startups | 最大$150,000 | Microsoft Founders Hub登録 |
+
+### 個人開発者向けAlways Free枠
+
+| サービス | AWS | GCP | Azure |
+|---------|-----|-----|-------|
+| コンピュート | t2.micro 750h/月（12ヶ月） | e2-micro 1台（永久無料） | B1S 750h/月（12ヶ月） |
+| DB | RDS 750h/月（12ヶ月） | Firestore 1GB | SQL DB 250GB（12ヶ月） |
+| ストレージ | S3 5GB | Cloud Storage 5GB | Blob 5GB |
+| サーバーレス | Lambda 100万リクエスト/月 | Cloud Functions 200万回/月 | Functions 100万回/月 |
+| CDN | CloudFront 1TB/月（12ヶ月） | — | — |
+
+個人開発の場合、**GCPのe2-microが永久無料**なのは大きなアドバンテージです。ちょっとしたAPIサーバーやBotを動かすには十分なスペックです。
+
+### コスト最適化のベストプラクティス
+
+```bash
+# AWS: コスト管理の設定（CLI）
+# 月額予算アラートの設定
+aws budgets create-budget \
+  --account-id 123456789012 \
+  --budget '{
+    "BudgetName": "MonthlyBudget",
+    "BudgetLimit": {"Amount": "100", "Unit": "USD"},
+    "TimeUnit": "MONTHLY",
+    "BudgetType": "COST"
+  }' \
+  --notifications-with-subscribers '[{
+    "Notification": {
+      "NotificationType": "ACTUAL",
+      "ComparisonOperator": "GREATER_THAN",
+      "Threshold": 80
+    },
+    "Subscribers": [{
+      "SubscriptionType": "EMAIL",
+      "Address": "alert@example.com"
+    }]
+  }]'
+```
+
+```bash
+# GCP: 予算アラートの設定
+gcloud billing budgets create \
+  --billing-account=BILLING_ACCOUNT_ID \
+  --display-name="Monthly Budget" \
+  --budget-amount=100USD \
+  --threshold-rule=percent=0.8,basis=current-spend
+```
+
 ---
 
 ## AI/機械学習サービス比較
@@ -83,10 +140,45 @@ print(response.text)
 
 ### Azure AI/MLサービス
 
+```python
+# Azure OpenAI Service でGPT-4を使う例
+from openai import AzureOpenAI
+
+client = AzureOpenAI(
+    api_version="2024-10-01-preview",
+    azure_endpoint="https://your-resource.openai.azure.com/",
+    api_key="your-api-key"
+)
+
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "説明してください"}]
+)
+print(response.choices[0].message.content)
+```
+
 主要サービス：
 - Azure OpenAI Service（GPT-4・DALL-E等）
 - Azure Machine Learning（企業向けMLOps）
 - Cognitive Services（音声・画像・言語）
+
+### AI/MLサービス比較まとめ
+
+| 比較項目 | AWS Bedrock | GCP Vertex AI | Azure OpenAI |
+|---------|-------------|---------------|--------------|
+| 対応モデル | Claude, Stable Diffusion, Llama | Gemini, PaLM, Llama | GPT-4, DALL-E, Whisper |
+| 独自モデル | Amazon Titan | Gemini | — (OpenAI連携) |
+| ファインチューニング | ✓ | ✓ | ✓ |
+| RAG統合 | Knowledge Bases | Vertex AI Search | Azure AI Search |
+| 料金モデル | トークン課金 | トークン課金 | トークン課金 |
+| 日本リージョン | 東京 | 東京 | 東日本 |
+| エンタープライズ向け | ◎ | ◎ | ◎ |
+
+**2026年のAI/ML選択指針：**
+- **Claude/Anthropicを使いたい** → AWS Bedrock一択
+- **Google製AIエコシステムで統一** → GCP Vertex AI
+- **GPT-4/OpenAIを企業で安全に使いたい** → Azure OpenAI Service
+- **自社モデルを訓練したい** → AWS SageMaker or GCP Vertex AI
 
 ---
 
@@ -106,6 +198,41 @@ print(response.text)
 - AWS Certified Data Engineer：+80〜150万/年
 
 クラウドエンジニアへのキャリアチェンジを考えている方は[エンジニア年収を上げる戦略2026](/blog/engineer-salary-up-strategy-2026)もご覧ください。
+
+### 認定資格ロードマップ
+
+各クラウドの学習順序を示します。
+
+```
+【AWS認定資格ロードマップ】
+Level 1: Cloud Practitioner（基礎、2-4週間）
+  ↓
+Level 2: Solutions Architect Associate（設計、4-8週間）
+  ↓
+Level 3: Developer Associate or SysOps Associate（実装/運用）
+  ↓
+Level 4: Solutions Architect Professional（上級設計）
+  ↓
+Level 5: DevOps Engineer Professional（CI/CD・自動化）
+
+【GCP認定資格ロードマップ】
+Level 1: Cloud Digital Leader（基礎）
+  ↓
+Level 2: Associate Cloud Engineer（実装）
+  ↓
+Level 3: Professional Cloud Architect（設計）
+  ↓
+Level 4: Professional Data Engineer or ML Engineer
+
+【Azure認定資格ロードマップ】
+Level 1: AZ-900 Fundamentals（基礎）
+  ↓
+Level 2: AZ-104 Administrator（運用）
+  ↓
+Level 3: AZ-305 Solutions Architect Expert（設計）
+  ↓
+Level 4: AZ-400 DevOps Engineer Expert（CI/CD）
+```
 
 ---
 
