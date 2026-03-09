@@ -1,6 +1,6 @@
 ---
 title: 'Python FastAPI完全ガイド2026｜非同期API開発・自動ドキュメント・認証・デプロイ'
-description: 'Python FastAPIによるモダンAPI開発を解説。非同期処理、Pydanticバリデーション、自動OpenAPIドキュメント生成、OAuth2認証、SQLAlchemy連携、Docker/クラウドデプロイまで。'
+description: 'Python FastAPIによるモダンなREST API開発を徹底解説。async/awaitによる非同期処理、Pydanticバリデーション、自動OpenAPIドキュメント生成、OAuth2認証実装、SQLAlchemy連携、Docker・クラウドへのデプロイ手順までコード例付きで紹介します。'
 pubDate: '2026-03-05'
 tags: ['Python', 'FastAPI', 'API', 'バックエンド', 'Web開発']
 heroImage: '../../assets/thumbnails/python-fastapi-complete-guide-2026.jpg'

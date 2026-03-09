@@ -1,6 +1,6 @@
 ---
 title: 'Devin AI完全ガイド｜自律型AIソフトウェアエンジニアの実力と使い方'
-description: 'Cognition Labsが開発したDevin AIを徹底解説。自律的にコーディング・デバッグ・デプロイを行うAIエンジニアの機能、料金、実際の開発事例、Cursor/Copilotとの違い、導入のメリット・注意点を詳しく紹介。'
+description: 'Cognition Labsが開発した自律型AIソフトウェアエンジニアDevin AIを徹底解説。コーディング・デバッグ・デプロイを自動で行う機能の仕組み、料金プラン、実際の開発事例、GitHub Copilot・Cursorとの使い分け、チーム導入時のメリットと注意点を紹介します。'
 pubDate: '2026-03-05'
 tags: ['Devin', 'AI', 'AIエンジニア', 'Cognition Labs', '自動化', '開発効率化']
 heroImage: '../../assets/thumbnails/devin-ai-software-engineer-guide.jpg'

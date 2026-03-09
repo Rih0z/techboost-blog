@@ -1,6 +1,6 @@
 ---
 title: "Rust×WebAssembly実践ガイド2026"
-description: "RustとWebAssemblyで高速なWebアプリケーションを開発する実践ガイド。wasm-bindgen、wasm-pack、JavaScript連携、パフォーマンス最適化を具体的なコード例とともに解説します。"
+description: "RustとWebAssembly（Wasm）で高速なWebアプリケーションを開発する実践ガイド。wasm-bindgen・wasm-packの使い方、JavaScript連携、画像処理や暗号化でのパフォーマンス最適化手法を具体的なコード例とベンチマーク付きで徹底解説します。"
 pubDate: '2026-03-05'
 tags: ['Rust', 'WebAssembly', 'パフォーマンス', 'フロントエンド', 'wasm']
 heroImage: '../../assets/thumbnails/rust-webassembly-guide-2026.jpg'

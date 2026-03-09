@@ -1,6 +1,6 @@
 ---
 title: 'Spring Boot 3 + Kotlin完全ガイド2026｜コルーチン・WebFlux・GraalVM対応'
-description: 'Spring Boot 3とKotlinによるモダンなバックエンド開発を解説。Kotlin DSL、コルーチン対応、WebFlux、Spring Security、テスト、GraalVMネイティブイメージまで。'
+description: 'Spring Boot 3とKotlinによるモダンなバックエンド開発を徹底解説。Kotlin DSLの活用法、コルーチンによる非同期処理、WebFluxリアクティブプログラミング、Spring Security認証設定、テスト戦略、GraalVMネイティブイメージ化まで実践コード付きで紹介。'
 pubDate: '2026-03-05'
 tags: ['Spring Boot', 'Kotlin', 'Java', 'バックエンド', 'Web開発']
 heroImage: '../../assets/thumbnails/spring-boot-3-kotlin-guide-2026.jpg'

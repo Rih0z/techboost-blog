@@ -1,6 +1,6 @@
 ---
 title: "エンジニア技術面接完全対策2026：コーディング・システム設計"
-description: "2026年版エンジニア技術面接の完全対策ガイド。書類選考からコーディングテストのアルゴリズム例（TypeScript）、システム設計面接の回答フレームワーク、行動面接のSTAR法まで4フェーズ別に実践的な準備方法を解説します。"
+description: "2026年版エンジニア技術面接の完全対策ガイド。書類選考・ポートフォリオ準備からコーディングテストのアルゴリズム頻出問題（TypeScript例付き）、システム設計面接の回答フレームワーク、行動面接のSTAR法まで4フェーズ別に実践的な準備方法を解説します。"
 pubDate: "2026-03-06"
 tags: ['career', 'キャリア', 'TypeScript']
 heroImage: '../../assets/thumbnails/engineer-technical-interview-guide-2026.jpg'
