@@ -1,6 +1,6 @@
 ---
 title: '型安全API設計完全ガイド - tRPC、Zod、OpenAPIで実現するエンドツーエンド型安全'
-description: 'tRPC、Zod、OpenAPIを活用した型安全なAPI設計を徹底解説。フロントエンドからバックエンドまで完全な型安全性を実現する方法を完全網羅。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'tRPC、Zod、OpenAPIを活用した型安全なAPI設計を徹底解説。フロントエンドからバックエンドまで完全な型安全性を実現する方法を完全網羅。スキーマ駆動開発でフロントエンド・バックエンド間の型不一致によるバグを根絶する方法を紹介します。'
 pubDate: '2026-02-05'
 tags: ['tRPC', 'Zod', 'TypeScript']
 heroImage: '../../assets/thumbnails/typesafe-api-guide.jpg'

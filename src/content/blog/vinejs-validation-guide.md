@@ -1,6 +1,6 @@
 ---
 title: "VineJS入門 — Node.jsの高速バリデーションライブラリ"
-description: "Zodの14倍高速なバリデーションライブラリVineJSの特徴、スキーマ定義、カスタムルール、AdonisJS/Hono統合を実例とともに解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "Zodの14倍高速なバリデーションライブラリVineJSの特徴、スキーマ定義、カスタムルール、AdonisJS/Hono統合を実例とともに解説します。フォームバリデーション・API入力検証・ファイルアップロード検証の実装パターンも紹介します。"
 pubDate: "2026-02-05"
 tags: ["VineJS", "Validation", "Node.js", "TypeScript", "AdonisJS"]
 heroImage: '../../assets/thumbnails/vinejs-validation-guide.jpg'

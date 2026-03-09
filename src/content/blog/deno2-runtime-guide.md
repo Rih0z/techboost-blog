@@ -1,6 +1,6 @@
 ---
 title: 'Deno 2.0完全ガイド：次世代JavaScript/TypeScriptランタイム'
-description: 'Deno 2.0の新機能を徹底解説。Node.js互換性・npm対応・パッケージマネージャー・Fresh・Deno Deploy・テスト・セキュリティモデルまで実践的に学ぶ。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Deno 2.0の新機能を徹底解説。Node.js互換性・npm対応・パッケージマネージャー・Fresh・Deno Deploy・テスト・セキュリティモデルまで実践的に学ぶ。'
 pubDate: '2026-02-20'
 tags: ['Deno', 'JavaScript', 'Runtime']
 heroImage: '../../assets/thumbnails/deno2-runtime-guide.jpg'

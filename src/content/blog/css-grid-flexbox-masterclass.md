@@ -1,6 +1,6 @@
 ---
 title: 'CSS Grid vs Flexbox 完全マスター — 使い分けガイド2026年版'
-description: 'CSS GridとFlexboxの違いを徹底比較。それぞれの得意分野、使い分けのポイント、実践的なレイアウトパターン、パフォーマンス比較まで完全解説。モダンCSS レイアウトの決定版ガイド。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'CSS GridとFlexboxの違いを徹底比較。それぞれの得意分野、使い分けのポイント、実践的なレイアウトパターン、パフォーマンス比較まで完全解説。モダンCSS レイアウトの決定版ガイド。'
 pubDate: '2026-02-05'
 tags: ['CSS', 'フロントエンド']
 heroImage: '../../assets/thumbnails/css-grid-flexbox-masterclass.jpg'

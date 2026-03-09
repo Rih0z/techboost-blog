@@ -1,6 +1,6 @@
 ---
 title: 'MDXで最強の技術ブログを構築する - Next.js + MDX完全ガイド'
-description: 'MDXを使った技術ブログ構築の完全ガイド。Markdownにコンポーネントを埋め込み、インタラクティブな記事を作成する方法を実践的に解説します。Next.js App Router対応。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'MDXを使った技術ブログ構築の完全ガイド。MarkdownにReactコンポーネントを埋め込み、インタラクティブな記事を作成する方法を実践的に解説します。Next.js App Router対応。'
 pubDate: '2026-02-05'
 tags: ['MDX', 'Next.js', 'ブログ', 'Markdown', 'React']
 heroImage: '../../assets/thumbnails/mdx-blog-guide.jpg'

@@ -1,6 +1,6 @@
 ---
 title: "Next.js 15のServer Actions完全ガイド — フォーム処理からデータ更新まで"
-description: "Next.js 15のServer Actionsの仕組み、フォーム送信、楽観的UI更新、エラーハンドリング、セキュリティのベストプラクティスを実践的に解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "Next.js 15のServer Actionsの仕組み、フォーム送信、楽観的UI更新、エラーハンドリング、セキュリティのベストプラクティスをTypeScriptコード例付きで実践的に解説します。"
 pubDate: "2026-02-05"
 tags: ["Next.js", "Server Actions", "React", "TypeScript", "Forms"]
 heroImage: '../../assets/thumbnails/nextjs-15-server-actions.jpg'

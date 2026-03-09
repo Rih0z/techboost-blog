@@ -1,6 +1,6 @@
 ---
 title: 'Webパフォーマンス最適化完全ガイド2026'
-description: 'Core Web Vitals、INP対策、画像最適化、レンダリング戦略、Speculation Rules APIまで。2026年版Webパフォーマンス最適化の決定版ガイド。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Core Web Vitals、INP対策、画像最適化、レンダリング戦略、Speculation Rules APIまで。2026年版Webパフォーマンス最適化の決定版ガイド。Lighthouse CI連携やレンダリングパイプライン最適化の実例も紹介します。'
 pubDate: '2026-02-05'
 tags: ['パフォーマンス', 'Web Vitals', '最適化', 'フロントエンド', 'プログラミング']
 heroImage: '../../assets/thumbnails/web-performance-2026-guide.jpg'

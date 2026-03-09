@@ -1,6 +1,6 @@
 ---
 title: "TanStack Query楽観的更新パターン: リアルタイムUXの実装テクニック"
-description: "TanStack Query (React Query) の楽観的更新を使って、即座に反応する最高のユーザー体験を実現する方法を、実践的なパターンとコード例で解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "TanStack Query (React Query) の楽観的更新を使って、即座に反応する最高のユーザー体験を実現する方法を、実践的なパターンとコード例で解説します。ロールバック処理やエラーハンドリングのベストプラクティスも詳しく紹介します。"
 pubDate: "2025-06-25"
 updatedDate: "2025-06-25"
 tags: ["React", "TanStack Query", "UX", "パフォーマンス", "フロントエンド"]

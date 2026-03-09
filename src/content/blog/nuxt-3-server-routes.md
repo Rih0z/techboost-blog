@@ -1,6 +1,6 @@
 ---
 title: 'Nuxt 3 Server Routes完全ガイド'
-description: 'Nuxt 3のServer Routesを使ったAPI設計の実践方法。ルーティング、ミドルウェア、バリデーション、認証、エラーハンドリング、Nitroエンジン統合を詳しく解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Nuxt 3のServer Routesを使ったAPI設計の実践方法。ルーティング、ミドルウェア、バリデーション、認証、エラーハンドリング、Nitroエンジン統合をTypeScriptコード例付きで解説します。'
 pubDate: '2026-02-06'
 tags: ['Nuxt 3', 'Vue.js', 'API', 'TypeScript', 'Nitro']
 heroImage: '../../assets/thumbnails/nuxt-3-server-routes.jpg'

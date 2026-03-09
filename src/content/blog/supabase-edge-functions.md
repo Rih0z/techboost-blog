@@ -1,6 +1,6 @@
 ---
 title: "Supabase Edge Functionsで始めるサーバーレス開発"
-description: "Supabase Edge Functionsを使用して、グローバルに高速でスケーラブルなサーバーレス関数を構築する方法を詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "Supabase Edge Functionsを使用して、グローバルに高速でスケーラブルなサーバーレス関数を構築する方法を詳しく解説します。Deno Deploy基盤のTypeScript関数でDB連携・認証・Webhook処理まで幅広く実装できます。"
 pubDate: "2025-02-05"
 tags: ['Supabase', 'インフラ', 'バックエンド']
 heroImage: '../../assets/thumbnails/supabase-edge-functions.jpg'

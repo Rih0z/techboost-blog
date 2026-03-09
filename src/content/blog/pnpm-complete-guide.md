@@ -1,6 +1,6 @@
 ---
 title: 'pnpm完全ガイド2026'
-description: 'pnpmを徹底解説。コンテンツアドレッサブルストレージによる高速化、厳格な依存関係管理、ワークスペース、npm/yarnからの移行、モノレポ構築を実例付きで紹介。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'pnpmを徹底解説。コンテンツアドレッサブルストレージによる高速化、厳格な依存関係管理、ワークスペース機能、npm/yarnからの移行手順、モノレポ構築を実例付きで紹介します。'
 pubDate: '2026-02-05'
 tags: ['pnpm', 'npm', 'JavaScript', 'ツール']
 heroImage: '../../assets/thumbnails/pnpm-complete-guide.jpg'

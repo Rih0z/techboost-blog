@@ -1,6 +1,6 @@
 ---
 title: 'CSS三角関数実践ガイド：sin(), cos(), tan()で作るアニメーション'
-description: 'CSSの三角関数（sin, cos, tan, atan2）を使った実践的なテクニックを解説。円形配置、波形アニメーション、回転エフェクトなど、コード例とともに詳しく紹介します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'CSSの三角関数（sin, cos, tan, atan2）を使った実践的なテクニックを解説。円形配置、波形アニメーション、回転エフェクトなど、コード例とともに詳しく紹介します。'
 pubDate: '2026-02-06'
 tags: ['CSS', '三角関数', 'アニメーション', 'フロントエンド', 'デザイン', 'プログラミング']
 heroImage: '../../assets/thumbnails/css-trigonometric-functions.jpg'

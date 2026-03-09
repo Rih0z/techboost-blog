@@ -1,6 +1,6 @@
 ---
 title: 'Playwrightビジュアルリグレッションテスト: スクリーンショット比較でUI変更を検出'
-description: 'Playwrightのビジュアルリグレッションテスト機能を使い、スクリーンショット比較でUIの意図しない変更を自動検出する方法を実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'Playwrightのビジュアルリグレッションテスト機能を使い、スクリーンショット比較でUIの意図しない変更を自動検出する方法を解説。CI/CDパイプラインへの統合手順も紹介します。'
 pubDate: '2025-07-22'
 updatedDate: '2025-07-22'
 tags: ['Playwright', 'Testing', 'Visual Regression', 'E2E', 'UI Testing', 'プログラミング']

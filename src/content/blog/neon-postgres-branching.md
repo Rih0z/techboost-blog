@@ -1,6 +1,6 @@
 ---
 title: "Neonのブランチ機能でPostgreSQLデータベースを管理"
-description: "NeonのPostgreSQLブランチ機能を使って、開発環境を効率的に管理する方法を解説します。Gitのようなワークフローでデータベーススキーマとデータをバージョン管理し、安全にテストできます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "NeonのPostgreSQLブランチ機能を使って、開発環境を効率的に管理する方法を解説します。Gitのようなワークフローでデータベーススキーマとデータをバージョン管理し、安全にテストできます。"
 pubDate: "2025-02-05"
 tags: ['インフラ', 'データベース', 'バックエンド']
 heroImage: '../../assets/thumbnails/neon-postgres-branching.jpg'

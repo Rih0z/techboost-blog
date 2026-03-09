@@ -1,6 +1,6 @@
 ---
 title: "React + TypeScript 実践ベストプラクティス2026：プロが使うパターン集"
-description: "ReactとTypeScriptを組み合わせた実践的なベストプラクティスを解説。カスタムフック・型定義・パフォーマンス最適化・テスト戦略まで現場で使えるパターンを網羅。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "ReactとTypeScriptを組み合わせた実践的なベストプラクティスを解説。カスタムフック・型定義・パフォーマンス最適化・テスト戦略まで現場で使えるパターンを網羅。Next.js App Routerとの統合パターンやZodスキーマ連携も紹介します。"
 pubDate: "2026-03-14"
 tags: ["React", "TypeScript", "フロントエンド", "Web開発", "AI開発ツール", "プログラミング"]
 heroImage: '../../assets/thumbnails/react-typescript-best-practices-2026.jpg'

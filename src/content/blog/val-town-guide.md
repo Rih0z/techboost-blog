@@ -1,6 +1,6 @@
 ---
 title: 'Val Town完全ガイド - ブラウザで完結するサーバーレス開発'
-description: 'Val Townの使い方を徹底解説。Deno互換のサーバーレス関数、APIエンドポイント作成、スケジュール実行、Webスクレイピング、データベース連携まで網羅的に学ぼう。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Val Townの使い方を徹底解説。Deno互換のサーバーレス関数、APIエンドポイント作成、スケジュール実行、Webスクレイピング、データベース連携まで網羅的に学ぼう。Webhook受信やCronジョブの設定方法、SQLiteストレージの活用法も紹介します。'
 pubDate: '2026-02-05'
 tags: ['ValTown', 'Serverless', 'Deno', 'API', 'インフラ']
 heroImage: '../../assets/thumbnails/val-town-guide.jpg'

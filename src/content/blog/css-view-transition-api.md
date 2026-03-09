@@ -1,6 +1,6 @@
 ---
 title: "View Transition APIでページ遷移アニメーション"
-description: "モダンブラウザの新機能View Transition APIを使って、ネイティブアプリのようなスムーズなページ遷移とアニメーションを実装する完全ガイド。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "モダンブラウザの新機能View Transition APIを使って、ネイティブアプリのようなスムーズなページ遷移とアニメーションを実装する完全ガイド。"
 pubDate: "2025-02-06"
 tags: ['CSS', 'フロントエンド']
 heroImage: '../../assets/thumbnails/css-view-transition-api.jpg'

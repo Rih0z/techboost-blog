@@ -1,6 +1,6 @@
 ---
 title: 'Vite vs webpack 5 vs Rspack 徹底比較 2026 — フロントエンドビルドツール選択ガイド'
-description: 'Vite 5・webpack 5・Rspack（Rustベース高速バンドラ）の速度・設定・プラグインエコシステムを2026年版で徹底比較。プロジェクト規模別おすすめ・移行方法も解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Vite 5・webpack 5・Rspack（Rustベース高速バンドラ）の速度・設定・プラグインエコシステムを2026年版で徹底比較。プロジェクト規模別おすすめ・移行方法も解説。大規模プロジェクトでの実測ベンチマーク結果も紹介します。大規模プロジェクトでの実測データとベンチマーク結果も紹介します。'
 pubDate: '2026-02-21'
 tags: ['Vite', 'webpack', 'Rspack', 'Frontend', 'Build Tool']
 heroImage: '../../assets/thumbnails/vite-webpack-rspack-comparison.jpg'

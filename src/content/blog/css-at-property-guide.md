@@ -1,6 +1,6 @@
 ---
 title: 'CSS @propertyルール活用ガイド'
-description: 'CSS @propertyによるカスタムプロパティの型定義、初期値設定、アニメーション対応の実践的な使い方を完全解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。'
+description: 'CSS @propertyによるカスタムプロパティの型定義、初期値設定、アニメーション対応の実践的な使い方を完全解説。'
 pubDate: 2025-02-05
 tags: ['CSS', '@property', 'Custom Properties', 'CSS Variables', 'Animation']
 heroImage: '../../assets/thumbnails/css-at-property-guide.jpg'

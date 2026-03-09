@@ -1,6 +1,6 @@
 ---
 title: 'Remixフレームワーク完全ガイド - Next.jsとの違いと実践的な使い方【2026年版】'
-description: 'ReactベースのフルスタックフレームワークRemixの基礎から応用まで。Next.jsとの違い、ルーティング、データ取得、フォーム処理など実践的な使い方を徹底解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'ReactベースのフルスタックフレームワークRemixの基礎から応用まで。Next.jsとの違い、ルーティング、データ取得、フォーム処理など実践的な使い方を徹底解説します。ネストルーティングやSSR最適化のパターンも詳しく紹介します。Shopify買収後の進化やSSR最適化のパターンも詳しく紹介します。'
 pubDate: '2026-02-05'
 tags: ['Remix', 'React', 'フルスタック']
 heroImage: '../../assets/thumbnails/remix-framework-guide.jpg'

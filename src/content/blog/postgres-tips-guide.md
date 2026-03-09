@@ -1,6 +1,6 @@
 ---
 title: 'PostgreSQL実践テクニック集2026'
-description: 'PostgreSQLの実践的テクニックを完全網羅。インデックス最適化、JSONB活用、ウィンドウ関数、CTE、パフォーマンスチューニングまで実例で解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'PostgreSQLの実践的テクニックを完全網羅。インデックス最適化、JSONB活用、ウィンドウ関数、CTE、EXPLAIN ANALYZEによるパフォーマンスチューニングまでSQL実例で解説します。'
 pubDate: '2026-02-05'
 tags: ['PostgreSQL', 'Database', 'SQL', 'パフォーマンス', 'インフラ']
 heroImage: '../../assets/thumbnails/postgres-tips-guide.jpg'

@@ -1,6 +1,6 @@
 ---
 title: "PWA + Workbox実践ガイド：Service Workerを活用したオフライン対応"
-description: "WorkboxライブラリでPWA開発を効率化する方法を解説。Service Workerによるキャッシュ戦略、オフライン対応、プッシュ通知の実装まで実践的に学びます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "WorkboxライブラリでPWA開発を効率化する方法を解説。Service Workerによるキャッシュ戦略、オフライン対応、プッシュ通知の実装まで。Webアプリにネイティブアプリ並みの体験を実現できます。"
 pubDate: "2025-02-06"
 tags: ["PWA", "Workbox", "Service Worker", "Web", "Offline", "プログラミング"]
 heroImage: '../../assets/thumbnails/pwa-workbox-guide.jpg'

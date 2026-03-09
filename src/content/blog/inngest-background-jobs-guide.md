@@ -1,6 +1,6 @@
 ---
 title: 'Inngest：イベント駆動バックグラウンドジョブ完全ガイド'
-description: 'Inngestを使ったイベント駆動バックグラウンドジョブの構築方法。ステップ関数、スケジュール、リトライ、Next.js統合まで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'Inngestを使ったイベント駆動バックグラウンドジョブの構築方法。ステップ関数、スケジュール実行、リトライ戦略、Next.js/TypeScript統合まで実践的に解説します。'
 pubDate: '2026-02-05'
 tags: ['Inngest', 'バックグラウンドジョブ', 'Next.js', 'TypeScript', 'イベント駆動']
 heroImage: '../../assets/thumbnails/inngest-background-jobs-guide.jpg'

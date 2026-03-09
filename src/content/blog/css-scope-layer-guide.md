@@ -1,6 +1,6 @@
 ---
 title: 'CSS @scope と @layer実践: スタイルのカプセル化とカスケード制御'
-description: 'CSS最新機能@scopeと@layerを使った実践的なスタイル管理手法を解説。コンポーネント単位のカプセル化、優先順位制御、設計パターンまで網羅。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'CSS最新機能@scopeと@layerを使った実践的なスタイル管理手法を解説。コンポーネント単位のカプセル化、優先順位制御、設計パターンまで網羅。'
 pubDate: '2025-12-03'
 updatedDate: 'Dec 03 2025'
 tags: ['CSS', 'Web Standards', 'Frontend', 'Design System', 'プログラミング']

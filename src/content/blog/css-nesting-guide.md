@@ -1,6 +1,6 @@
 ---
 title: 'CSSネスティング完全ガイド - ネイティブCSS Nesting、&セレクタ、@scope実践'
-description: 'CSSネスティングの完全ガイド。ネイティブCSS Nesting構文、&セレクタ、@scopeルール、Sassからの移行方法、実践的なパターンを詳しく解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'CSSネスティングの完全ガイド。ネイティブCSS Nesting構文、&セレクタ、@scopeルール、Sassからの移行方法、実践的なパターンを詳しく解説。'
 pubDate: '2026-02-05'
 tags: ['CSS', 'Frontend', 'Web', 'プログラミング']
 heroImage: '../../assets/thumbnails/css-nesting-guide.jpg'

@@ -1,6 +1,6 @@
 ---
 title: 'RAG（検索拡張生成）開発実践ガイド - 精度の高いAIチャットボット構築【2026年版】'
-description: 'Retrieval-Augmented Generation（RAG）の基礎から実装まで。ベクトルDB選定、埋め込み生成、チャンク戦略など、実践的なRAGシステムの作り方を解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Retrieval-Augmented Generation（RAG）の基礎から実装まで。ベクトルDB選定、埋め込み生成、チャンク戦略など、実践的なRAGシステムの作り方を解説します。'
 pubDate: '2026-02-05'
 tags: ['RAG', 'AI', 'LLM', 'プログラミング']
 heroImage: '../../assets/thumbnails/ai-rag-development-guide.jpg'

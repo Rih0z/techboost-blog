@@ -1,6 +1,6 @@
 ---
 title: "CSS動的ビューポート単位（dvh, svh, lvh）実践ガイド - モバイルUIの新標準"
-description: "CSS動的ビューポート単位（dvh、svh、lvh）を使った実践的なモバイルUI設計を解説。従来のvhの問題点を解決し、スマートフォンのアドレスバーに対応したレイアウトを実現します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "CSS動的ビューポート単位（dvh、svh、lvh）を使った実践的なモバイルUI設計を解説。従来のvhの問題点を解決し、スマートフォンのアドレスバーに対応したレイアウトを実現します。"
 pubDate: "2025-02-05"
 tags: ['CSS', 'フロントエンド']
 heroImage: '../../assets/thumbnails/css-dynamic-viewport-units.jpg'

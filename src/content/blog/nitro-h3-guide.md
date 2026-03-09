@@ -1,6 +1,6 @@
 ---
 title: 'Nitro/H3完全ガイド - UnJSのサーバーフレームワーク'
-description: 'Nitro/H3サーバーエンジンの基本からAPI Routes、ミドルウェア、ストレージ、エッジデプロイまで。UnJSエコシステムのサーバーフレームワークを徹底解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Nitro/H3サーバーエンジンの基本からAPI Routes、ミドルウェア、ストレージ、エッジデプロイまで。Node.js・Cloudflare Workers・Deno対応のユニバーサルサーバーを徹底解説します。'
 pubDate: '2026-02-05'
 tags: ['Nitro', 'H3', 'UnJS', 'サーバー', 'Edge', 'インフラ']
 heroImage: '../../assets/thumbnails/nitro-h3-guide.jpg'

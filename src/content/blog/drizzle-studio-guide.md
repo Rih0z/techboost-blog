@@ -1,6 +1,6 @@
 ---
 title: 'Drizzle Studio完全ガイド - データベースを可視化する次世代GUIツール'
-description: 'Drizzle Studioの使い方を徹底解説。ブラウザベースのデータベース管理、マイグレーション可視化、クエリビルダー、リアルタイム編集機能の実践的な活用方法を完全網羅。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Drizzle Studioの使い方を徹底解説。ブラウザベースのデータベース管理、マイグレーション可視化、クエリビルダー、リアルタイム編集機能の実践的な活用方法を完全網羅。'
 pubDate: '2026-02-05'
 tags: ['Drizzle', 'Database', 'GUI', 'Development Tools', 'TypeScript']
 heroImage: '../../assets/thumbnails/drizzle-studio-guide.jpg'

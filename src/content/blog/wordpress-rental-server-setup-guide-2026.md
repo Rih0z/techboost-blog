@@ -1,6 +1,6 @@
 ---
 title: "WordPressサイト開設ガイド2026：レンタルサーバー選びから公開まで最短手順"
-description: "WordPressでブログやサービスサイトを立ち上げる完全手順。レンタルサーバーの選び方・ドメイン取得・WordPress設定・SEO初期設定まで初心者でもわかるよう解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "WordPressでブログやサービスサイトを立ち上げる完全手順。レンタルサーバーの選び方・ドメイン取得・WordPress設定・SEO初期設定まで初心者でもわかるよう解説。独自ドメインのSSL設定やテーマ選び、プラグイン導入のポイントも紹介します。"
 pubDate: "2026-03-06"
 tags: ["WordPress", "レンタルサーバー", "サーバー", "ブログ開設", "Web制作", "インフラ"]
 heroImage: '../../assets/thumbnails/wordpress-rental-server-setup-guide-2026.jpg'

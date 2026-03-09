@@ -1,6 +1,6 @@
 ---
 title: "Kubernetesオペレーター開発完全ガイド"
-description: "Kubernetes Operatorパターンの基礎から、Kubebuilderを使った実装、本番運用まで、実践的なカスタムコントローラーの開発方法を解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "Kubernetes Operatorパターンの基礎から、Kubebuilderを使ったCRD定義・カスタムコントローラーの実装、Reconcileループ、本番運用までを解説します。"
 pubDate: "2025-02-05"
 tags: ['Kubernetes', 'インフラ', '開発ツール']
 heroImage: '../../assets/thumbnails/kubernetes-operators-guide.jpg'

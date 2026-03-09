@@ -1,6 +1,6 @@
 ---
 title: "Kubernetes Gateway API完全ガイド"
-description: "次世代のKubernetesルーティング、Gateway APIの概念から実装まで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。"
+description: "次世代のKubernetesルーティング、Gateway APIの概念から実装まで徹底解説。Ingressの代替となるHTTPRoute・TLS設定・トラフィック分割をYAML設定例付きで紹介します。"
 pubDate: "2025-02-05"
 tags: ['Kubernetes', 'インフラ', '開発ツール']
 heroImage: '../../assets/thumbnails/kubernetes-gateway-api-guide.jpg'

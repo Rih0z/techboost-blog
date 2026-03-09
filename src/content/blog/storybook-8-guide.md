@@ -1,6 +1,6 @@
 ---
 title: "Storybook 8でUIコンポーネント開発を効率化"
-description: "Storybook 8 の新機能と実践的な使い方を徹底解説。React、Vue、Angular でのコンポーネント駆動開発を加速させる。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "Storybook 8 の新機能と実践的な使い方を徹底解説。React、Vue、Angular でのコンポーネント駆動開発を加速させる。テスト統合、インタラクションテスト、アドオン活用からCI/CDへの組み込みまで現場で使えるノウハウを網羅しています。"
 pubDate: "2025-02-05"
 tags: ['プログラミング', '開発ツール']
 heroImage: '../../assets/thumbnails/storybook-8-guide.jpg'

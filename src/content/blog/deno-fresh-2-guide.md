@@ -1,6 +1,6 @@
 ---
 title: 'Deno Fresh 2完全ガイド: Island Architectureで高速Webアプリ構築'
-description: 'Deno Fresh 2のIsland Architectureを活用した高速Webアプリケーション構築の完全ガイド。Preact、Signals、Server-Side Renderingを組み合わせた実践的な開発手法を解説します。初心者から実務レベルまで対応。'
+description: 'Deno Fresh 2のIsland Architectureを活用した高速Webアプリケーション構築の完全ガイド。Preact、Signals、Server-Side Renderingを組み合わせた実践的な開発手法を解説します。'
 pubDate: 2025-05-15
 updatedDate: 2025-05-15
 tags: ['Deno', 'Fresh', 'Island Architecture', 'Preact', 'SSR', 'プログラミング']

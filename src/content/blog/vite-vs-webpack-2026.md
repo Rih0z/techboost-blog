@@ -1,6 +1,6 @@
 ---
 title: "Vite vs Webpack 2026年版 — 移行すべき理由と手順完全ガイド"
-description: "ViteとWebpackの2026年最新比較。ビルド速度・HMR・設定の違いから、React/Vue/Svelteプロジェクトへの移行手順まで実践的に解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "ViteとWebpackの2026年最新比較。ビルド速度・HMR・設定の違いから、React/Vue/Svelteプロジェクトへの移行手順まで実践的に解説します。大規模プロジェクトでの移行事例やパフォーマンス計測結果も紹介します。大規模プロジェクトでの移行事例やベンチマーク結果も紹介します。"
 pubDate: "2026-03-04"
 tags: ["Vite", "Webpack", "JavaScript", "フロントエンド", "ビルドツール"]
 heroImage: '../../assets/thumbnails/vite-vs-webpack-2026.jpg'

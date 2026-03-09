@@ -1,6 +1,6 @@
 ---
 title: 'Docker マルチステージビルド完全ガイド — イメージサイズを90%削減する最適化テクニック'
-description: 'Dockerマルチステージビルドでイメージを最小化。Node.js/Go/Python/Java対応。BuildKit活用・キャッシュ最適化・セキュリティ強化まで実践解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Dockerマルチステージビルドでイメージを最小化。Node.js/Go/Python/Java対応。BuildKit活用・キャッシュ最適化・セキュリティ強化まで実践解説。'
 pubDate: '2026-02-21'
 tags: ['Docker', 'DevOps', 'Container', 'CICD', 'Optimization']
 heroImage: '../../assets/thumbnails/docker-multi-stage-build-guide.jpg'

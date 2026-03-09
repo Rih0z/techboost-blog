@@ -1,6 +1,6 @@
 ---
 title: "AWS vs GCP vs Azure比較2026：エンジニアが選ぶべきクラウドはどれか"
-description: "AWS・GCP・Azureの3大クラウドを2026年の最新情報で徹底比較。コスト・学習コスト・求人数・AI/ML機能・日本語サポートを実際の利用経験から解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "AWS・GCP・Azureの3大クラウドを2026年の最新情報で徹底比較。コスト・学習コスト・求人数・AI/ML機能・日本語サポートを実際の利用経験から解説。"
 pubDate: "2026-03-13"
 tags: ["AWS", "クラウド", "GCP", "Azure", "インフラ"]
 heroImage: '../../assets/thumbnails/aws-vs-gcp-vs-azure-comparison-2026.jpg'

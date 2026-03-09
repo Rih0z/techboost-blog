@@ -1,6 +1,6 @@
 ---
 title: "Xataサーバーレスデータベース入門 - PostgreSQLベースの次世代DB"
-description: "Xataは、PostgreSQLをベースにした次世代のサーバーレスデータベースです。全文検索、ファイルストレージ、ブランチ機能などを備えた使いやすいDBを解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "Xataは、PostgreSQLをベースにした次世代のサーバーレスデータベースです。全文検索、ファイルストレージ、ブランチ機能などを備えた使いやすいDBを解説します。TypeScript SDKの活用やNext.js連携パターンも紹介します。"
 pubDate: "2025-02-05"
 tags: ['インフラ', 'データベース', 'バックエンド']
 heroImage: '../../assets/thumbnails/xata-serverless-database.jpg'

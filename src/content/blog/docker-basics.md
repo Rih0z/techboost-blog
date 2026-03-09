@@ -1,6 +1,6 @@
 ---
 title: 'Docker入門 — コンテナ化で開発環境を統一する'
-description: 'Dockerの基本概念からDockerfile作成、docker-composeまで。チーム全員が同じ環境で開発できるようになる。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。'
+description: 'Dockerの基本概念からDockerfile作成、docker-composeまで。チーム全員が同じ環境で開発できるようになる。'
 pubDate: '2026-02-14'
 tags: ['Docker', 'DevOps']
 heroImage: '../../assets/thumbnails/docker-basics.jpg'

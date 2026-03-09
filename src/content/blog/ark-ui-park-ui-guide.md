@@ -1,6 +1,6 @@
 ---
 title: 'Ark UI + Park UI：ヘッドレスUIコンポーネント完全ガイド'
-description: 'Ark UIとPark UIを使ったアクセシブルなUIコンポーネントの構築方法。ヘッドレスコンポーネント、プリセット、カスタマイズまで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'Ark UIとPark UIを使ったアクセシブルなUIコンポーネントの構築方法。ヘッドレスコンポーネント、プリセット、カスタマイズまで実践的に解説します。'
 pubDate: '2026-02-05'
 tags: ['Ark UI', 'Park UI', 'React', 'アクセシビリティ', 'UI Components']
 heroImage: '../../assets/thumbnails/ark-ui-park-ui-guide.jpg'

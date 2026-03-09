@@ -1,6 +1,6 @@
 ---
 title: 'pnpm Workspaceでモノレポ構築ガイド: セットアップからCI/CDまで実践'
-description: 'pnpm Workspaceを使ったモノレポの完全セットアップガイド。プロジェクト構成、依存関係管理、共有パッケージ作成、ビルド最適化、CI/CD統合まで実践的に解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'pnpm Workspaceを使ったモノレポの完全セットアップガイド。プロジェクト構成、依存関係管理、共有パッケージ作成、ビルド最適化、GitHub Actions CI/CD統合まで実践的に解説します。'
 pubDate: 2025-02-05
 tags: ['pnpm', 'Workspace', 'Monorepo', 'CICD', 'DevOps', 'インフラ']
 heroImage: '../../assets/thumbnails/pnpm-workspace-monorepo-setup-guide.jpg'

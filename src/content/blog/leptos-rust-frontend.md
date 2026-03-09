@@ -1,6 +1,6 @@
 ---
 title: "Leptos：RustでフルスタックWebアプリ開発"
-description: "Rustの型安全性とパフォーマンスを活かしたモダンなフロントエンドフレームワークLeptosの実践ガイド。リアクティブシステム、サーバーサイドレンダリング、フルスタック開発まで徹底解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "Rustの型安全性とパフォーマンスを活かしたフロントエンドフレームワークLeptosの実践ガイド。リアクティブシステム、SSR、WASM、フルスタック開発まで徹底解説します。"
 pubDate: "2025-02-06"
 tags: ['Rust', 'フロントエンド', 'プログラミング']
 heroImage: '../../assets/thumbnails/leptos-rust-frontend.jpg'

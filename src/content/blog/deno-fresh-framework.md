@@ -1,6 +1,6 @@
 ---
 title: "Deno Fresh フレームワーク入門"
-description: "Deno Fresh フレームワークの特徴と使い方を解説。Islands Architectureによる高速なWebアプリケーション開発を実現。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "Deno Fresh フレームワークの特徴と使い方を解説。Islands Architectureによる高速なWebアプリケーション開発を実現。"
 pubDate: "2025-02-05"
 tags: ['Deno', 'Fresh', 'WebFramework', 'Islands Architecture', 'プログラミング']
 heroImage: '../../assets/thumbnails/deno-fresh-framework.jpg'

@@ -1,6 +1,6 @@
 ---
 title: 'React Hooks完全ガイド — useState/useEffect/カスタムフック徹底解説'
-description: 'React Hooksの全種類を実例付きで解説。useState、useEffect、useContext、useMemo、useCallbackからカスタムフック設計パターンまで完全網羅。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'React Hooksの全種類を実例付きで解説。useState、useEffect、useContext、useMemo、useCallbackからカスタムフック設計パターンまで完全網羅。React 19対応のuseフックやuseOptimisticなど最新APIも解説します。'
 pubDate: '2026-02-05'
 tags: ['React', 'フロントエンド', '開発ツール']
 heroImage: '../../assets/thumbnails/react-hooks-complete-guide.jpg'

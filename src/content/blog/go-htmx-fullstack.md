@@ -1,6 +1,6 @@
 ---
 title: "Go + htmxでモダンフルスタックWeb開発"
-description: "GoとhtmxでSPAのようなUXを持つフルスタックWebアプリケーションを構築。サーバーサイドレンダリングとHTMLオーバーザワイヤーによるシンプルで保守性の高い開発手法を解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "GoとhtmxでSPAのようなUXを持つフルスタックWebアプリケーションを構築。サーバーサイドレンダリングとHTMLオーバーザワイヤーによるシンプルで保守性の高い開発手法を解説します。"
 pubDate: "2025-02-06"
 tags: ['Go', 'バックエンド']
 heroImage: '../../assets/thumbnails/go-htmx-fullstack.jpg'

@@ -1,6 +1,6 @@
 ---
 title: "tRPCで型安全なフルスタックTypeScript開発 - エンドツーエンドの型安全性を実現"
-description: "tRPCを使ったフルスタックTypeScriptアプリケーション開発の実践ガイド。Next.js App Router、Prisma、Zodを組み合わせた完全な型安全開発を解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "tRPCを使ったフルスタックTypeScriptアプリケーション開発の実践ガイド。Next.js App Router、Prisma、Zodを組み合わせた完全な型安全開発を解説します。サブスクリプション、ミドルウェア認証、エラーハンドリングの実装パターンも紹介します。"
 pubDate: "2025-02-05"
 tags: ['TypeScript', 'フロントエンド']
 heroImage: '../../assets/thumbnails/trpc-fullstack-typescript.jpg'

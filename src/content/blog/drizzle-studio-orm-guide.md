@@ -1,6 +1,6 @@
 ---
 title: 'Drizzle Studio実践ガイド: ブラウザベースのデータベースGUIとスキーマ管理'
-description: 'Drizzle Studioを使った視覚的なデータベース管理、ブラウザベースのGUIツール、データ操作、スキーマエディタ、本番環境での活用方法を実践的に解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Drizzle Studioを使った視覚的なデータベース管理、ブラウザベースのGUIツール、データ操作、スキーマエディタ、本番環境での活用方法を実践的に解説します。'
 pubDate: '2025-08-15'
 updatedDate: '2025-08-15'
 tags: ['Drizzle', 'Database', 'ORM', 'TypeScript', 'GUI']

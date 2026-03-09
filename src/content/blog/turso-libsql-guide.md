@@ -1,6 +1,6 @@
 ---
 title: "TursoとlibSQLで分散SQLiteデータベース"
-description: "TursoとlibSQLを使用して、エッジコンピューティングに最適化された分散SQLiteデータベースを構築する方法を詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "TursoとlibSQLを使用して、エッジコンピューティングに最適化された分散SQLiteデータベースを構築する方法を詳しく解説します。グローバルレプリケーション、組み込みモード、Drizzle ORM連携など、実運用に必要な知識を網羅しています。"
 pubDate: "2025-02-05"
 tags: ['インフラ', 'データベース', 'バックエンド', '開発ツール']
 heroImage: '../../assets/thumbnails/turso-libsql-guide.jpg'

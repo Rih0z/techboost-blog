@@ -1,6 +1,6 @@
 ---
 title: "WebAssembly入門2026 — Webの限界を超える技術"
-description: "Rust・C++からWasmへのビルド、JavaScriptとの連携、画像処理・ゲーム・暗号化などの実用例、WASI（サーバーサイドWasm）まで完全解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "Rust・C++からWasmへのビルド、JavaScriptとの連携、画像処理・ゲーム・暗号化などの実用例、WASI（サーバーサイドWasm）まで完全解説。コンポーネントモデルやThreads提案など最新仕様の動向も紹介。2026年版の決定版ガイドです。"
 pubDate: "2026-02-05"
 tags: ["WebAssembly", "Wasm", "Rust", "C++", "JavaScript"]
 heroImage: '../../assets/thumbnails/wasm-web-assembly-guide.jpg'

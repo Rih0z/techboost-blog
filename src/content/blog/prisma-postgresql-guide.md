@@ -1,6 +1,6 @@
 ---
 title: 'Prisma + PostgreSQL 完全ガイド — 型安全なデータベース設計とNext.js統合'
-description: 'PrismaとPostgreSQLを使った型安全なデータベース開発を徹底解説。スキーマ設計・マイグレーション・リレーション・トランザクション・パフォーマンス最適化、Next.js App Routerとの統合パターンまで実践コード付き。初心者から実務レベルまで対応。'
+description: 'PrismaとPostgreSQLを使った型安全なデータベース開発を徹底解説。スキーマ設計・マイグレーション・リレーション・トランザクション・パフォーマンス最適化、Next.js App Routerとの統合パターンまで実践コード付き。'
 pubDate: '2026-02-20'
 tags: ['Prisma', 'PostgreSQL', 'データベース', 'Next.js', 'TypeScript']
 heroImage: '../../assets/thumbnails/prisma-postgresql-guide.jpg'

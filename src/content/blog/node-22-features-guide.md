@@ -1,6 +1,6 @@
 ---
 title: 'Node.js 22新機能完全ガイド - ネイティブfetch、Webストリーム、テストランナー改善'
-description: 'Node.js 22の新機能を徹底解説。ネイティブfetchの安定化、Webストリーム対応、テストランナー改善、パーミッションモデル、V8最適化などを実例とともに紹介。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Node.js 22の新機能を徹底解説。ネイティブfetchの安定化、Webストリーム対応、テストランナー改善、パーミッションモデル、V8最適化などを実例コード付きで紹介します。'
 pubDate: '2026-02-05'
 tags: ['Node.js', 'JavaScript', 'Backend']
 heroImage: '../../assets/thumbnails/node-22-features-guide.jpg'

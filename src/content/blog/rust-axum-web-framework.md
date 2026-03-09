@@ -1,6 +1,6 @@
 ---
 title: "Rust Axum Webフレームワーク入門"
-description: "RustのモダンなWebフレームワークAxumを使った高速で型安全なAPI開発の基礎から実践まで解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。"
+description: "RustのモダンなWebフレームワークAxumを使った高速で型安全なAPI開発の基礎から実践まで解説します。ルーティング、ミドルウェア、エラーハンドリング、SQLx連携、認証実装まで実務で使えるパターンを網羅しています。Tower middleware連携やOpenAPI生成の実装例も紹介します。"
 pubDate: "2025-02-05"
 tags: ['Rust', 'axum', 'web-framework', 'Backend', 'プログラミング']
 heroImage: '../../assets/thumbnails/rust-axum-web-framework.jpg'

@@ -1,6 +1,6 @@
 ---
 title: "CSS field-sizing プロパティ完全ガイド - 入力欄を自動リサイズ"
-description: "CSS field-sizingプロパティを使ったinput、textarea、selectの自動サイズ調整方法を解説。ブラウザサポート状況とフォールバック方法も紹介します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "CSS field-sizingプロパティを使ったinput、textarea、selectの自動サイズ調整方法を解説。ブラウザサポート状況とフォールバック方法も紹介します。"
 pubDate: "2025-02-06"
 tags: ['CSS', 'フロントエンド', '開発ツール']
 heroImage: '../../assets/thumbnails/css-field-sizing-guide.jpg'

@@ -1,6 +1,6 @@
 ---
 title: "PartyKit入門：リアルタイムマルチプレイヤーアプリの構築"
-description: "PartyKitを使ってリアルタイムコラボレーションやマルチプレイヤー機能を実装する方法を、実践的なコード例とともに詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "PartyKitを使ってリアルタイムコラボレーションやマルチプレイヤー機能を実装する方法を、TypeScriptコード例とともに詳しく解説。WebSocketベースの通信を簡単に構築できます。"
 pubDate: "2025-02-06"
 tags: ["PartyKit", "WebSocket", "リアルタイム", "マルチプレイヤー", "TypeScript"]
 heroImage: '../../assets/thumbnails/partykit-realtime-guide.jpg'

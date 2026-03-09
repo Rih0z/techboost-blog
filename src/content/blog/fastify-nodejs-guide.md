@@ -1,6 +1,6 @@
 ---
 title: 'Fastify完全ガイド: Node.js最速フレームワークでAPIを構築'
-description: 'FastifyでハイパフォーマンスなNode.js APIを構築する実践ガイド。プラグインシステム、バリデーション、認証、デプロイまで網羅。ExpressやHonoとの比較も解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'FastifyでハイパフォーマンスなNode.js APIを構築する実践ガイド。プラグインシステム、バリデーション、認証、デプロイまで網羅。ExpressやHonoとの比較も解説。'
 pubDate: '2025-11-29'
 updatedDate: 'Nov 29 2025'
 tags: ['Fastify', 'Node.js', 'API', 'Backend', 'TypeScript']

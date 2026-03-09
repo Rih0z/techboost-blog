@@ -1,6 +1,6 @@
 ---
 title: 'Fly.ioでグローバルデプロイ - 2026年版実践ガイド'
-description: 'エッジコンピューティング時代のデプロイプラットフォームFly.ioを徹底解説。無料枠から本番運用、スケーリング、マルチリージョン展開まで完全網羅。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'エッジコンピューティング時代のデプロイプラットフォームFly.ioを徹底解説。無料枠から本番運用、スケーリング、マルチリージョン展開まで完全網羅。Docker・PostgreSQL連携も紹介。'
 pubDate: '2026-02-05'
 tags: ['Fly.io', 'Deploy', 'Edge Computing', 'DevOps', 'Infrastructure', 'インフラ']
 heroImage: '../../assets/thumbnails/fly-io-deploy-guide.jpg'

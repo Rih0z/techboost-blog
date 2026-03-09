@@ -1,6 +1,6 @@
 ---
 title: "Turborepo完全ガイド — モノレポ開発を10倍高速化する"
-description: "Turborepoを使ったモノレポ開発の完全ガイド。パイプライン設計、キャッシング戦略、リモートキャッシュ、pnpm workspaces連携まで実践的に解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "Turborepoを使ったモノレポ開発の完全ガイド。パイプライン設計、キャッシング戦略、リモートキャッシュ、pnpm workspaces連携まで実践的に解説。ビルド時間を劇的に短縮できます。"
 pubDate: "2026-02-05"
 tags: ["Turborepo", "Monorepo", "ビルドツール", "開発効率化", "プログラミング"]
 heroImage: '../../assets/thumbnails/monorepo-turborepo-guide.jpg'

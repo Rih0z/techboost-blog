@@ -1,6 +1,6 @@
 ---
 title: "Node.jsバージョン管理完全ガイド — Volta / fnm / nvm / asdf 徹底比較"
-description: "Node.jsバージョン管理ツールの決定版。Volta、fnm、nvm、asdfの特徴、パフォーマンス、使い方を徹底比較。プロジェクト別バージョン管理のベストプラクティス。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "Node.jsバージョン管理ツールの決定版。Volta、fnm、nvm、asdfの特徴、パフォーマンス、使い方を徹底比較。プロジェクト別バージョン切替のベストプラクティスも解説します。"
 pubDate: "Feb 05 2026"
 tags: ["Node.js", "Volta", "fnm", "nvm", "asdf"]
 heroImage: '../../assets/thumbnails/node-version-manager-guide.jpg'

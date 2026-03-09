@@ -1,6 +1,6 @@
 ---
 title: 'Lucia v3認証マイグレーション: セッションベース認証の次世代アプローチ'
-description: 'Lucia v2からv3への移行ガイド。破壊的変更への対応、新しいAPI設計、パフォーマンス改善、Better Authとの比較まで実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'Lucia v2からv3への移行ガイド。破壊的変更への対応、新しいAPI設計、パフォーマンス改善、Better Authとの比較まで実践的に解説。セッションベース認証の次世代アプローチを紹介します。'
 pubDate: '2025-11-05'
 updatedDate: '2025-11-05'
 tags: ['Lucia', 'Authentication', 'Migration', 'TypeScript', 'セキュリティ']

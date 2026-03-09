@@ -1,6 +1,6 @@
 ---
 title: "Fresh 2.0 Denoフレームワーク完全ガイド"
-description: "Fresh 2.0の新機能、Islands Architecture、Deno Deployとの連携まで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。"
+description: "Fresh 2.0の新機能、Islands Architecture、Deno Deployとの連携まで徹底解説。ルーティング・ミドルウェア・Preact統合・SSRパフォーマンス最適化をコード例付きで紹介。"
 pubDate: "2025-02-05"
 tags: ['プログラミング', '開発ツール']
 heroImage: '../../assets/thumbnails/fresh-2-deno-guide.jpg'

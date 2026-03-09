@@ -1,6 +1,6 @@
 ---
 title: "CSS color-mix()関数の実践活用：動的カラー生成テクニック"
-description: "CSS color-mix()関数を使った動的な色生成、テーマカラーの派生、アクセシビリティ対応など、実践的な活用方法を詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "CSS color-mix()関数を使った動的な色生成、テーマカラーの派生、アクセシビリティ対応など、実践的な活用方法を詳しく解説します。"
 pubDate: "2025-02-06"
 tags: ["CSS", "color-mix", "デザインシステム", "アクセシビリティ", "カラー", "プログラミング"]
 heroImage: '../../assets/thumbnails/css-color-mix-guide.jpg'

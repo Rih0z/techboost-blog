@@ -1,6 +1,6 @@
 ---
 title: "Railway.appでアプリを簡単デプロイ - モダンなPaaS完全ガイド"
-description: "Railway.appを使った簡単なアプリケーションデプロイ方法を解説。GitHubとの連携、データベース設定、環境変数管理、カスタムドメイン設定まで実践的に紹介します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "Railway.appを使った簡単なアプリケーションデプロイ方法を解説。GitHubとの連携、データベース設定、環境変数管理、カスタムドメイン設定まで実践的に紹介します。Docker対応、PostgreSQL/Redis接続、自動デプロイの設定手順まで網羅した入門ガイドです。"
 pubDate: "2025-02-05"
 tags: ['AI', '開発ツール', '開発効率化']
 heroImage: '../../assets/thumbnails/railway-deployment-guide.jpg'

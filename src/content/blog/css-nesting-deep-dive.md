@@ -1,6 +1,6 @@
 ---
 title: "CSSネイティブネスティング詳解: Sass不要の時代へ"
-description: "CSSネイティブネスティング完全ガイド。&セレクタ、@nestルール、疑似クラス・疑似要素との組み合わせ、Sass/SCSSとの違い、移行戦略、ブラウザ対応状況を徹底解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "CSSネイティブネスティング完全ガイド。&セレクタ、@nestルール、疑似クラス・疑似要素との組み合わせ、Sass/SCSSとの違い、移行戦略、ブラウザ対応状況を徹底解説。"
 pubDate: "2025-02-05"
 tags: ["CSS", "ネスティング", "Sass", "SCSS", "フロントエンド"]
 heroImage: '../../assets/thumbnails/css-nesting-deep-dive.jpg'

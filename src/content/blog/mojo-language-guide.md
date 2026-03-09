@@ -1,6 +1,6 @@
 ---
 title: "Mojo言語入門 - Pythonの100倍速い次世代プログラミング言語"
-description: "Mojoは高速性と使いやすさを両立した新言語。Pythonとの互換性、Rustレベルのパフォーマンス、AI・機械学習に最適化された設計。構文、型システム、メモリ管理、実践例を解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "Mojoは高速性と使いやすさを両立した新言語。Pythonとの互換性を保ちつつRustレベルのパフォーマンスを実現。AI・機械学習に最適化された構文、型システム、メモリ管理、実践例を解説します。"
 pubDate: "2025-02-05"
 tags: ['Python', 'バックエンド', '開発ツール']
 heroImage: '../../assets/thumbnails/mojo-language-guide.jpg'

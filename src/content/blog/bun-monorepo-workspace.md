@@ -1,6 +1,6 @@
 ---
 title: "Bunワークスペース活用：モノレポプロジェクトの効率的な管理"
-description: "Bunのワークスペース機能を使ってモノレポを構築し、複数パッケージを効率的に管理する方法を実践的に解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。"
+description: "Bunのワークスペース機能を使ってモノレポを構築し、複数パッケージを効率的に管理する方法を実践的に解説します。"
 pubDate: "2025-02-06"
 tags: ['Bun', 'Monorepo', 'workspace', 'パッケージ管理', 'TypeScript']
 heroImage: '../../assets/thumbnails/bun-monorepo-workspace.jpg'

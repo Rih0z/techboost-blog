@@ -1,6 +1,6 @@
 ---
 title: 'PocketBaseでバックエンドを爆速構築 - 2026年版完全ガイド'
-description: 'たった1つのバイナリで動く次世代BaaS、PocketBaseを徹底解説。インストールからリアルタイムDB、認証、ファイルストレージ、本番デプロイまで完全網羅。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'たった1つのバイナリで動く次世代BaaS、PocketBaseを徹底解説。インストールからリアルタイムDB、認証、ファイルストレージ、本番デプロイまで完全網羅。Firebase/Supabaseの軽量代替です。'
 pubDate: '2026-02-05'
 tags: ['PocketBase', 'Backend', 'BaaS', 'Database', 'Realtime', 'インフラ']
 heroImage: '../../assets/thumbnails/pocketbase-guide.jpg'

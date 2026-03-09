@@ -1,6 +1,6 @@
 ---
 title: 'Stripe決済実装完全ガイド - サブスクから単発決済まで【2026年版】'
-description: 'Stripe APIを使った決済システムの実装方法を徹底解説。サブスクリプション、単発決済、Webhookの処理など、実際のコードで学べる実践ガイドです。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'Stripe APIを使った決済システムの実装方法を徹底解説。サブスクリプション、単発決済、Webhookの処理など、実際のコードで学べる実践ガイドです。Checkout Session、Customer Portal、テスト環境構築まで網羅した決済実装の決定版です。'
 pubDate: '2026-02-05'
 tags: ['Stripe', '決済', 'サブスクリプション', 'プログラミング']
 heroImage: '../../assets/thumbnails/stripe-payment-guide.jpg'

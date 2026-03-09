@@ -1,6 +1,6 @@
 ---
 title: 'Go言語Context完全ガイド: キャンセル・タイムアウト・値の伝播'
-description: 'Go言語のcontextパッケージを徹底解説。WithCancel、WithTimeout、WithValueの使い方、伝播パターン、ベストプラクティスを実例コード付きで説明します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Go言語のcontextパッケージを徹底解説。WithCancel、WithTimeout、WithValueの使い方、伝播パターン、ベストプラクティスを実例コード付きで説明します。goroutine間の安全な制御に必須の知識です。'
 pubDate: '2025-02-05'
 tags: ['Go', 'Golang', 'Context', 'concurrency', 'Best Practices', 'プログラミング']
 heroImage: '../../assets/thumbnails/golang-context-best-practices.jpg'

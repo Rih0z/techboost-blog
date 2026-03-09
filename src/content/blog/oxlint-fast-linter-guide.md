@@ -1,6 +1,6 @@
 ---
 title: 'OXLint高速リンター入門: ESLintから100倍速への移行ガイド'
-description: 'Rust製の超高速JavaScriptリンターOXLintの導入方法を解説。ESLintからの移行手順、ルール設定、パフォーマンス比較、CI/CD統合まで実践的に説明します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Rust製の超高速JavaScriptリンターOXLintの導入方法を解説。ESLintからの移行手順、ルール設定、パフォーマンス比較、CI/CD統合まで。ESLintの50〜100倍速いLint環境を構築できます。'
 pubDate: '2025-02-05'
 tags: ['OXLint', 'ESLint', 'Linter', 'JavaScript', 'TypeScript', 'DevTools']
 heroImage: '../../assets/thumbnails/oxlint-fast-linter-guide.jpg'

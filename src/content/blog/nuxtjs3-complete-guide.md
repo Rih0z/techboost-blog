@@ -1,6 +1,6 @@
 ---
 title: 'Nuxt.js 3完全ガイド：Vue.js製フルスタックフレームワーク'
-description: 'Nuxt.js 3の基本から応用まで完全解説。SSR・SSG・ISR・Nitroエンジン・Composables・Pinia・Nuxt UI・APIルート・デプロイまで実践的に学ぶ。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Nuxt.js 3の基本から応用まで完全解説。SSR・SSG・ISR・Nitroエンジン・Composables・Pinia・Nuxt UI・APIルート・Vercel/Netlifyデプロイまで体系的に学べます。'
 pubDate: '2026-02-20'
 tags: ['JavaScript', 'Vue.js', 'フロントエンド', '開発ツール']
 heroImage: '../../assets/thumbnails/nuxtjs3-complete-guide.jpg'

@@ -1,6 +1,6 @@
 ---
 title: 'Neutralinojs入門：軽量デスクトップアプリ開発の新時代'
-description: 'Electronの代替としてのNeutralinojs。軽量で高速なデスクトップアプリフレームワークの使い方を完全解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。'
+description: 'Electronの代替としてのNeutralinojs。軽量で高速なクロスプラットフォームデスクトップアプリフレームワークの使い方を完全解説。セットアップからビルド、配布まで紹介します。'
 pubDate: '2026-02-05'
 tags: ['Neutralino', 'Electron', 'デスクトップアプリ', 'JavaScript', 'クロスプラットフォーム']
 heroImage: '../../assets/thumbnails/neutralinojs-guide.jpg'

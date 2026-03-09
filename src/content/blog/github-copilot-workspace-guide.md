@@ -1,6 +1,6 @@
 ---
 title: 'GitHub Copilot Workspace完全ガイド - AI駆動開発環境の実践'
-description: 'GitHub Copilot Workspaceの完全ガイド。AI駆動開発環境、自動コード生成、テスト自動化、PR作成、実装計画からデプロイまでの実践的な使い方を詳しく解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'GitHub Copilot Workspaceの完全ガイド。AI駆動の自動コード生成、テスト自動化、PR作成、実装計画からデプロイまでの実践的な使い方を詳しく解説します。'
 pubDate: '2026-02-05'
 tags: ['GitHub', 'AI', 'Copilot', 'プログラミング']
 heroImage: '../../assets/thumbnails/github-copilot-workspace-guide.jpg'

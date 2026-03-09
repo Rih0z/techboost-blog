@@ -1,6 +1,6 @@
 ---
 title: 'SignalDB: リアクティブローカルファーストデータベース入門'
-description: 'SignalDBは信号ベースのリアクティビティを備えたローカルファーストデータベース。CRUD操作、永続化、リアクティブクエリの実践的な使い方を解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'SignalDBは信号ベースのリアクティビティを備えたローカルファーストデータベース。CRUD操作、永続化、リアクティブクエリの実践的な使い方を解説します。React・Solid・Angular等のUIフレームワークとの統合パターンも詳しく紹介します。'
 pubDate: '2025-02-05'
 tags: ['SignalDB', 'Database', 'LocalFirst', 'React', 'TypeScript']
 heroImage: '../../assets/thumbnails/signaldb-reactive-database.jpg'

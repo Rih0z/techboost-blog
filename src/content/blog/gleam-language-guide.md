@@ -1,6 +1,6 @@
 ---
 title: "Gleam言語入門ガイド - Erlang VM上の型安全関数型プログラミング"
-description: "Erlang VM上で動作する型安全な関数型言語Gleamの基本から実践まで。型システム、パターンマッチング、OTP連携、WebアプリケーションとCLIツールの作成方法を解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "Erlang VM上で動作する型安全な関数型言語Gleamの基本から実践まで。型システム、パターンマッチング、OTP連携、WebアプリケーションとCLIツールの作成方法を解説します。"
 pubDate: "2025-02-05"
 tags: ['プログラミング', '開発ツール']
 heroImage: '../../assets/thumbnails/gleam-language-guide.jpg'

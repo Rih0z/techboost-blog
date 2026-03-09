@@ -1,6 +1,6 @@
 ---
 title: "Zod完全ガイド2026 — TypeScript時代の最強バリデーションライブラリ"
-description: "Zod徹底解説。スキーマ定義、型推論、バリデーションルール、react-hook-form連携、API検証まで実践的に解説。TypeScript必携ツール。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "Zod徹底解説。スキーマ定義、型推論、バリデーションルール、react-hook-form連携、API検証まで実践的に解説。TypeScript必携ツール。カスタムエラーメッセージやAPI入力検証、Prismaスキーマ連携の実装パターンも紹介します。"
 pubDate: "2026-02-05"
 tags: ["Zod", "TypeScript", "バリデーション", "型安全", "React"]
 heroImage: '../../assets/thumbnails/zod-validation-guide.jpg'

@@ -1,6 +1,6 @@
 ---
 title: 'Go + Templ + HTMXでモダンWeb開発: サーバーサイドレンダリングの新しいスタイル'
-description: 'Go、Templ、HTMXを組み合わせたモダンなWeb開発手法を解説。型安全なテンプレート、動的UI、パフォーマンス最適化、実践的なアプリケーション構築まで完全ガイド。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Go、Templ、HTMXを組み合わせたモダンなWeb開発手法を解説。型安全なテンプレート、動的UI、パフォーマンス最適化、実践的なアプリケーション構築までの完全ガイドです。'
 pubDate: '2025-02-05'
 tags: ['Go', 'Templ', 'htmx', 'サーバーサイドレンダリング', 'Web開発']
 heroImage: '../../assets/thumbnails/go-templ-htmx-guide.jpg'

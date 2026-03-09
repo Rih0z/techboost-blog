@@ -1,6 +1,6 @@
 ---
 title: 'Deno 2の新機能と実践的な使い方ガイド【2026年版】'
-description: 'Deno 2の新機能、Node.js互換性の向上、npm packageの使い方、パフォーマンス改善を徹底解説。DenoでWebアプリ開発を始めるための完全ガイド。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Deno 2の新機能、Node.js互換性の向上、npm packageの使い方、パフォーマンス改善を徹底解説。DenoでWebアプリ開発を始めるための完全ガイド。'
 pubDate: '2026-02-05'
 tags: ['Deno', 'JavaScript', 'TypeScript']
 heroImage: '../../assets/thumbnails/deno-2-guide-2026.jpg'

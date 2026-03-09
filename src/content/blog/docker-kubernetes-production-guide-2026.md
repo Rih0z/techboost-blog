@@ -1,6 +1,6 @@
 ---
 title: "Docker + Kubernetes入門2026：最小構成から始めるコンテナ化"
-description: "DockerとKubernetesの基礎を実践的に解説。最小構成から始めるコンテナ化の手順、基本的な設計パターン、CI/CD連携の入門知識を紹介。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "DockerとKubernetesの基礎を実践的に解説。最小構成から始めるコンテナ化の手順、基本的な設計パターン、CI/CD連携の入門知識を紹介。"
 pubDate: "2026-03-15"
 tags: ["Docker", "Kubernetes", "インフラ", "DevOps", "クラウド"]
 heroImage: '../../assets/thumbnails/docker-kubernetes-production-guide-2026.jpg'

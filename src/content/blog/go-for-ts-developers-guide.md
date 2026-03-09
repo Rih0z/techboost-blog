@@ -1,6 +1,6 @@
 ---
 title: 'TypeScript開発者のためのGo入門 - 型システム・goroutine・エラーハンドリング'
-description: 'TypeScript開発者向けにGo言語の型システム、goroutine、エラーハンドリング、Webサーバー構築を比較しながら解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'TypeScript開発者向けにGo言語の型システム、goroutine、エラーハンドリング、Webサーバー構築をTS/Goの比較コード付きで解説。両言語の違いを理解してGoを習得できます。'
 pubDate: '2026-02-05'
 tags: ['Go', 'TypeScript', 'Backend', 'プログラミング']
 heroImage: '../../assets/thumbnails/go-for-ts-developers-guide.jpg'

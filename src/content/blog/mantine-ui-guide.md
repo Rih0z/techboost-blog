@@ -1,6 +1,6 @@
 ---
 title: "Mantine UI完全ガイド — React UIライブラリの決定版"
-description: "Mantine v7の特徴と使い方を徹底解説。100以上のコンポーネント、フック、テーマシステム、フォーム管理、shadcn/uiとの比較、実践例まで完全網羅。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "Mantine v7の特徴と使い方を徹底解説。100以上のコンポーネント、40以上のフック、テーマシステム、フォーム管理、shadcn/uiとの比較、実践例まで完全網羅します。"
 pubDate: "Feb 05 2026"
 tags: ["Mantine", "React", "UI Library", "TypeScript", "フロントエンド"]
 heroImage: '../../assets/thumbnails/mantine-ui-guide.jpg'

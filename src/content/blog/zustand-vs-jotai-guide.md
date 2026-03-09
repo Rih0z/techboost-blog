@@ -1,6 +1,6 @@
 ---
 title: 'Zustand vs Jotai徹底比較2026 - アトミックvsストア、パフォーマンス、使い分け、実装例完全ガイド'
-description: 'ZustandとJotaiを徹底比較。アトミック vs ストアアーキテクチャ、パフォーマンス、DevTools、使い分け、実装パターンを実例付きで解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'ZustandとJotaiを徹底比較。アトミック vs ストアアーキテクチャ、パフォーマンス、DevTools、使い分け、実装パターンを実例付きで解説。再レンダリング最適化やミドルウェア設計など、プロジェクト規模に応じた選定基準も紹介します。'
 pubDate: '2026-02-05'
 tags: ['React', '状態管理', 'Zustand', 'Jotai']
 heroImage: '../../assets/thumbnails/zustand-vs-jotai-guide.jpg'

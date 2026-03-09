@@ -1,6 +1,6 @@
 ---
 title: "Appwriteオープンソースバックエンド入門"
-description: "Firebase代替として注目のAppwriteで、認証・データベース・ストレージ・関数を備えた完全なバックエンドを構築。オープンソースでセルフホスト可能なBaaS完全ガイド。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "Firebase代替として注目のAppwriteで、認証・データベース・ストレージ・関数を備えた完全なバックエンドを構築。オープンソースでセルフホスト可能なBaaS完全ガイド。"
 pubDate: "2025-02-06"
 tags: ['プログラミング', '開発ツール']
 heroImage: '../../assets/thumbnails/appwrite-backend-guide.jpg'

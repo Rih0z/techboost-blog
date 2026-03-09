@@ -1,6 +1,6 @@
 ---
 title: "Tinybirdでリアルタイムアナリティクスパイプライン構築"
-description: "Tinybirdを使ったリアルタイムデータ分析基盤の構築方法を解説。SQLでデータパイプラインを定義し、低レイテンシなAPIエンドポイントを自動生成する方法を実践的に学びます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "Tinybirdを使ったリアルタイムデータ分析基盤の構築方法を解説。SQLでデータパイプラインを定義し、低レイテンシなAPIエンドポイントを自動生成する方法を実践的に学びます。Kafka連携やNode.js SDKの使い方、コスト最適化のコツも紹介します。"
 pubDate: "2025-02-05"
 tags: ['プログラミング', '開発ツール']
 heroImage: '../../assets/thumbnails/tinybird-analytics-guide.jpg'

@@ -1,6 +1,6 @@
 ---
 title: "Turso データベース入門ガイド"
-description: "Turso（libSQL）の特徴と使い方を解説。エッジで動作する分散SQLiteデータベースを活用した高速なアプリケーション開発。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。初心者から実務レベルまで段階的に学べる内容です。"
+description: "Turso（libSQL）の特徴と使い方を解説。エッジで動作する分散SQLiteデータベースを活用した高速なアプリケーション開発。グローバル分散レプリケーション、Drizzle ORM連携、無料枠での運用方法まで詳しく紹介します。無料枠の運用方法やNext.js連携の実装例も紹介します。"
 pubDate: "2025-02-05"
 tags: ["Turso", "libSQL", "Database", "SQLite", "Edge", "インフラ"]
 heroImage: '../../assets/thumbnails/turso-database-guide.jpg'

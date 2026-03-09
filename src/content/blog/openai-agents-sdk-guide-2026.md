@@ -1,6 +1,6 @@
 ---
 title: 'OpenAI Agents SDK入門2026 - マルチエージェント構築、ツール統合、Guardrails実装の完全ガイド'
-description: 'OpenAI Agents SDKの基礎から実践まで。Agent/Tool/Guardrails/Handoff/Tracingの5コアコンセプトを実例付きで解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'OpenAI Agents SDKの基礎から実践まで。Agent/Tool/Guardrails/Handoff/Tracingの5コアコンセプトをPythonコード例付きで解説。マルチエージェントシステムを構築できます。'
 pubDate: '2026-03-07'
 tags: ['AI', 'OpenAI', 'エージェント', 'Python']
 heroImage: '../../assets/thumbnails/openai-agents-sdk-guide-2026.jpg'

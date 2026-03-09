@@ -1,6 +1,6 @@
 ---
 title: 'shadcn/ui Charts完全ガイド - Rechartsベースの美しいチャートコンポーネント'
-description: 'shadcn/ui Chartsを使ったデータ可視化を徹底解説。折れ線グラフ、棒グラフ、円グラフなど、カスタマイズ可能なチャートコンポーネントの実装方法。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'shadcn/ui Chartsを使ったデータ可視化を徹底解説。折れ線グラフ、棒グラフ、円グラフなど、カスタマイズ可能なチャートコンポーネントの実装方法。Tailwind CSSとの統合やダッシュボード構築に使えるカスタマイズ手法も詳しく解説します。'
 pubDate: '2026-02-05'
 tags: ['shadcn', 'React', 'データ可視化', 'Charts']
 heroImage: '../../assets/thumbnails/shadcn-charts-guide.jpg'

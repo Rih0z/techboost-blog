@@ -1,6 +1,6 @@
 ---
 title: "GraphQL + Apollo実践ガイド2026"
-description: "GraphQLとApollo（Server/Client）でモダンなAPI開発。スキーマ設計、Query/Mutation/Subscription、キャッシュ戦略まで実践的に解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "GraphQLとApollo Server/Clientを使ったモダンなAPI開発。スキーマ設計、Query/Mutation/Subscription、キャッシュ戦略、TypeScript型生成まで実践的に解説します。"
 pubDate: "2026-02-05"
 tags: ["GraphQL", "Apollo", "API", "TypeScript", "React"]
 heroImage: '../../assets/thumbnails/graphql-apollo-guide.jpg'

@@ -1,6 +1,6 @@
 ---
 title: 'Changesets実践ガイド: モノレポでのバージョン管理とリリース自動化'
-description: 'Changesetsを使ったモノレポのバージョン管理、自動リリース、チーム運用、CI/CD統合、npm公開の実践的な実装方法を詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'Changesetsを使ったモノレポのバージョン管理、自動リリース、チーム運用、CI/CD統合、npm公開の実践的な実装方法を詳しく解説。Turborepo・pnpm Workspaceとの連携も紹介します。'
 pubDate: '2025-11-21'
 updatedDate: '2025-11-21'
 tags: ['Monorepo', 'Changesets', 'バージョン管理', 'CICD', 'npm', 'インフラ']

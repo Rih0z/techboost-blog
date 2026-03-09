@@ -1,6 +1,6 @@
 ---
 title: 'Claude Agent SDK入門2026 - TypeScriptでAIエージェント構築、ツール定義、マルチターン会話の実践ガイド'
-description: 'Anthropic Claude Agent SDKの基礎から実践まで。TypeScriptでのエージェント構築、カスタムツール定義、マルチターン会話、ストリーミング対応を実例付きで解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'Anthropic Claude Agent SDKの基礎から実践まで。TypeScriptでのエージェント構築、カスタムツール定義、マルチターン会話、ストリーミング対応を実例付きで解説。'
 pubDate: '2026-03-07'
 tags: ['AI', 'Claude', 'TypeScript', 'エージェント']
 heroImage: '../../assets/thumbnails/claude-agent-sdk-guide-2026.jpg'

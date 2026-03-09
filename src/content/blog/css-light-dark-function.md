@@ -1,6 +1,6 @@
 ---
 title: "CSS light-dark()関数でテーマ切り替えを簡単に実装する"
-description: "CSSの新しいlight-dark()関数を使って、ライトモードとダークモードのテーマ切り替えをシンプルに実装する方法を解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "CSSの新しいlight-dark()関数を使って、ライトモードとダークモードのテーマ切り替えをシンプルに実装する方法を解説します。"
 pubDate: "2025-02-05"
 tags: ['CSS', 'フロントエンド']
 heroImage: '../../assets/thumbnails/css-light-dark-function.jpg'

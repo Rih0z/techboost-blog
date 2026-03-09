@@ -1,6 +1,6 @@
 ---
 title: "OpenAPI仕様書完全ガイド: REST APIドキュメント自動生成"
-description: "OpenAPI Specification（旧Swagger）を使ったAPI設計からドキュメント自動生成まで徹底解説。2026年最新のOpenAPI 3.1対応の実践ガイドです。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "OpenAPI Specification（旧Swagger）を使ったAPI設計からドキュメント自動生成まで徹底解説。2026年最新のOpenAPI 3.1対応。クライアントコード生成やSwagger UI連携も紹介します。"
 pubDate: "2025-02-05"
 tags: ["OpenAPI", "Swagger", "API", "REST", "Documentation", "プログラミング"]
 heroImage: '../../assets/thumbnails/openapi-specification-guide.jpg'

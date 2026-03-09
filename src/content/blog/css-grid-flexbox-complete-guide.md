@@ -1,6 +1,6 @@
 ---
 title: 'CSS Grid vs Flexbox 完全ガイド — 使い分けの判断基準と実践パターン30選'
-description: 'CSS GridとFlexboxの本質的な違いを理解し、状況に応じて使い分ける判断基準を解説。実務で使えるレイアウトパターン30選を具体的なコード例付きで紹介。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'CSS GridとFlexboxの本質的な違いを理解し、状況に応じて使い分ける判断基準を解説。実務で使えるレイアウトパターン30選を具体的なコード例付きで紹介。'
 pubDate: '2026-02-20'
 tags: ['CSS', 'Grid', 'Flexbox', 'レイアウト', 'フロントエンド', 'プログラミング']
 heroImage: '../../assets/thumbnails/css-grid-flexbox-complete-guide.jpg'

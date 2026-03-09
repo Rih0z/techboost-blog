@@ -1,6 +1,6 @@
 ---
 title: 'Cline完全ガイド2026 - VS Code AI自律コーディング、プラン&アクト、MCP連携の実践入門'
-description: 'ClineをVS Codeで使いこなす方法を徹底解説。自律コーディング、Plan & Act Mode、MCPサーバー連携、カスタムインストラクション設定を実例付きで解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'ClineをVS Codeで使いこなす方法を徹底解説。自律コーディング、Plan & Act Mode、MCPサーバー連携、カスタムインストラクション設定を実例付きで解説。'
 pubDate: '2026-03-07'
 tags: ['AI', 'VS Code', 'Cline', '開発ツール']
 heroImage: '../../assets/thumbnails/cline-ai-coding-guide-2026.jpg'

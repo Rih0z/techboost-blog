@@ -1,6 +1,6 @@
 ---
 title: "CSS text-wrap: balanceで美しいテキストレイアウト"
-description: "CSS text-wrap: balanceプロパティを使用して、見出しや短いテキストのレイアウトを自動的に最適化する方法を詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "CSS text-wrap: balanceプロパティを使用して、見出しや短いテキストのレイアウトを自動的に最適化する方法を詳しく解説します。"
 pubDate: "2025-02-05"
 tags: ['CSS', 'フロントエンド']
 heroImage: '../../assets/thumbnails/css-text-wrap-balance.jpg'

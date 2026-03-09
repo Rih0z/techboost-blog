@@ -1,6 +1,6 @@
 ---
 title: "Webアクセシビリティ完全ガイド2026 - WCAG 2.2対応の実践テクニック"
-description: "WCAG 2.2に準拠したWebアクセシビリティの実装方法を徹底解説。セマンティックHTML、ARIA属性、キーボードナビゲーション、スクリーンリーダー対応まで、実装例付きで学べます。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "WCAG 2.2に準拠したWebアクセシビリティの実装方法を徹底解説。セマンティックHTML、ARIA属性、キーボードナビゲーション、スクリーンリーダー対応まで、実装例付きで学べます。axe-coreやLighthouseを使った自動テスト手法も紹介します。"
 pubDate: "2026-02-05"
 tags: ["アクセシビリティ", "a11y", "WCAG", "HTML", "ARIA", "プログラミング"]
 heroImage: '../../assets/thumbnails/web-accessibility-guide.jpg'

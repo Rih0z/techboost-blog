@@ -1,6 +1,6 @@
 ---
 title: "htmx 入門ガイド - JavaScriptなしでモダンUI"
-description: "htmxを使ってJavaScriptフレームワークなしでインタラクティブなWebアプリケーションを構築する方法を解説。軽量でシンプルなアプローチを紹介します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "htmxを使ってJavaScriptフレームワークなしでインタラクティブなWebアプリケーションを構築する方法を解説。HTML属性でAJAX・WebSocket・SSEを実現する軽量でシンプルなアプローチを紹介します。"
 pubDate: "2025-02-05"
 tags: ['htmx', 'web-development', 'HTML', 'JavaScript']
 heroImage: '../../assets/thumbnails/htmx-guide.jpg'

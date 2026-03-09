@@ -1,6 +1,6 @@
 ---
 title: 'VS Code ショートカットキー 完全一覧 — 生産性が10倍になる50選'
-description: 'Visual Studio Codeの生産性を劇的に向上させるショートカットキー50選。編集、ナビゲーション、デバッグ、Git、ターミナル操作まで、実務で即使える厳選テクニック。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'Visual Studio Codeの生産性を劇的に向上させるショートカットキー50選を厳選。編集、ナビゲーション、デバッグ、Git操作、ターミナル操作まで実務で即使えるテクニック集。Mac/Windows両対応の一覧表付きです。'
 pubDate: '2026-02-05'
 tags: ['プログラミング', '開発ツール']
 heroImage: '../../assets/thumbnails/vscode-shortcuts-productivity.jpg'

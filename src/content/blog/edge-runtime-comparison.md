@@ -1,6 +1,6 @@
 ---
 title: "エッジランタイム徹底比較"
-description: "主要エッジランタイムの特徴、制限、パフォーマンス、料金体系を徹底比較。ユースケース別のおすすめプラットフォームと実装例を紹介します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "主要エッジランタイムの特徴、制限、パフォーマンス、料金体系を徹底比較。Cloudflare Workers・Vercel Edge・Deno Deployなどユースケース別のおすすめプラットフォームと実装例を紹介します。"
 pubDate: "2026-02-05"
 tags: ["Edge Computing", "Cloudflare Workers", "Vercel", "Deno Deploy", "Serverless", "インフラ"]
 heroImage: '../../assets/thumbnails/edge-runtime-comparison.jpg'

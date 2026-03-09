@@ -1,6 +1,6 @@
 ---
 title: 'APIレートリミティング実装ガイド2026'
-description: 'APIレートリミティングの実装を完全解説。トークンバケット、スライディングウィンドウ、Redis実装、Express/Hono対応まで実践的に紹介。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'APIレートリミティングの実装を完全解説。トークンバケット、スライディングウィンドウ、Redis実装、Express/Hono対応まで実践的に紹介。'
 pubDate: '2026-02-05'
 tags: ['API', 'セキュリティ', 'Redis', 'Node.js', 'インフラ']
 heroImage: '../../assets/thumbnails/api-rate-limiting-guide.jpg'

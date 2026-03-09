@@ -1,6 +1,6 @@
 ---
 title: "プログラミングスクールおすすめ比較2026｜厳選10校"
-description: "2026年最新のプログラミングスクール比較。TechAcademy・RUNTEQ・DMM WEBCAMP等を料金・就職率で徹底比較。目的別に最適なスクールを解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "2026年最新のプログラミングスクール比較。TechAcademy・RUNTEQ・DMM WEBCAMP・テックキャンプ等を料金・就職率・カリキュラムで徹底比較。目的別に最適なスクールを解説します。"
 pubDate: "2026-03-05"
 tags: ["プログラミングスクール", "プログラミング学習", "Web開発", "転職", "キャリア"]
 heroImage: '../../assets/thumbnails/programming-school-comparison-2026.jpg'

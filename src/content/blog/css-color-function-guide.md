@@ -1,6 +1,6 @@
 ---
 title: 'CSS color()関数完全ガイド: Display P3とワイドガマット時代のカラーマネジメント'
-description: 'CSS color()関数を使ったモダンなカラー指定を徹底解説。Display P3、sRGB、カラースペース、色域変換、ブラウザサポート、実践的な活用方法まで完全網羅。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'CSS color()関数を使ったモダンなカラー指定を徹底解説。Display P3、sRGB、カラースペース、色域変換、ブラウザサポート、実践的な活用方法まで完全網羅。'
 pubDate: '2025-02-05'
 tags: ['CSS', 'color()', 'Display P3', 'カラースペース', 'ワイドガマット']
 heroImage: '../../assets/thumbnails/css-color-function-guide.jpg'

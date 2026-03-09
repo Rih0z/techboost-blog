@@ -1,6 +1,6 @@
 ---
 title: "Nitroサーバーフレームワーク完全ガイド：ユニバーサルJSサーバー構築"
-description: "Nitroを使って高速でスケーラブルなユニバーサルJavaScriptサーバーを構築する方法を、実践的なコード例とともに詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "Nitroを使って高速でスケーラブルなユニバーサルJavaScriptサーバーを構築する方法を解説。Nuxt 3のサーバーエンジンとして生まれた次世代フレームワークの単体活用法を紹介します。"
 pubDate: "2025-02-06"
 tags: ["Nitro", "サーバーフレームワーク", "フルスタック", "TypeScript", "Nuxt"]
 heroImage: '../../assets/thumbnails/nitro-server-framework.jpg'

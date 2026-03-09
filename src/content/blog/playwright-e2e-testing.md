@@ -1,6 +1,6 @@
 ---
 title: "Playwright E2Eテスト入門2026 — Cypressを超える次世代テスト自動化"
-description: "Playwright完全ガイド。Cypress比較、セットアップ、テスト実装、ページオブジェクトモデル、CI/CD統合、ビジュアルテストまで網羅。2026年最新版。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "Playwright完全ガイド。Cypressとの比較、セットアップ、テスト実装、ページオブジェクトモデル、CI/CD統合、ビジュアルリグレッションテストまで網羅した2026年最新版です。"
 pubDate: "2026-02-05"
 tags: ["Playwright", "E2Eテスト", "テスト自動化", "Cypress", "テスト"]
 heroImage: '../../assets/thumbnails/playwright-e2e-testing-guide.jpg'

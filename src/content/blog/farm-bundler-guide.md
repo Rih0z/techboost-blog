@@ -1,6 +1,6 @@
 ---
 title: 'Farm完全ガイド - Rust製超高速バンドラーで開発体験を革新する'
-description: 'Rust製の超高速バンドラーFarmを徹底解説。Vite互換のAPI、強力なプラグインシステム、爆速HMR、Next.jsライクな機能まで完全網羅。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'Rust製の超高速バンドラーFarmを徹底解説。Vite互換のAPI、強力なプラグインシステム、爆速HMR、Next.jsライクな機能まで完全網羅。Webpackからの移行手順も紹介。'
 pubDate: '2026-02-05'
 tags: ['Farm', 'Rust', 'バンドラー', 'プログラミング']
 heroImage: '../../assets/thumbnails/farm-bundler-guide.jpg'

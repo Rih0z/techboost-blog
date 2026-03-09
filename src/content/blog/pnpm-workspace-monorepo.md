@@ -1,6 +1,6 @@
 ---
 title: "pnpm Workspace完全ガイド - 効率的なモノレポ管理とパッケージリンク"
-description: "pnpm Workspaceを使った効率的なモノレポ構築の完全ガイド。パッケージ間の依存関係管理、ビルドパイプライン、CI/CD統合、実践的な設計パターンまで徹底解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "pnpm Workspaceを使った効率的なモノレポ構築の完全ガイド。パッケージ間の依存関係管理、ビルドパイプライン、CI/CD統合、実践的な設計パターンまで徹底解説します。"
 pubDate: "2025-08-10"
 updatedDate: "2025-08-10"
 tags: ["pnpm", "Monorepo", "Workspace", "Package Management", "DevOps", "インフラ"]

@@ -1,6 +1,6 @@
 ---
 title: "pnpm vs npm vs yarn 2026年完全比較ガイド — 最速パッケージマネージャーはどれ？"
-description: "2026年版パッケージマネージャー徹底比較。pnpm、npm、yarnの速度・ディスク使用量・機能を実測データで解説。モノレポ対応、移行手順も網羅。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "2026年版パッケージマネージャー徹底比較。pnpm、npm、yarnの速度・ディスク使用量・機能を実測ベンチマークで解説。モノレポ対応、移行手順も網羅します。"
 pubDate: "2026-02-05"
 tags: ["pnpm", "npm", "yarn", "パッケージマネージャー", "JavaScript"]
 heroImage: '../../assets/thumbnails/pnpm-npm-yarn-comparison.jpg'

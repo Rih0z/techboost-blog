@@ -1,6 +1,6 @@
 ---
 title: "SST（Serverless Stack）完全ガイド — AWSサーバーレス開発の最適解"
-description: "SSTでAWSサーバーレスアプリ開発を簡単に。Lambda、API Gateway、DynamoDB、Next.js/Astro統合、Live Lambda、デプロイまで徹底解説。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "SSTでAWSサーバーレスアプリ開発を簡単に。Lambda、API Gateway、DynamoDB、Next.js/Astro統合、Live Lambda、デプロイまで徹底解説。IAMポリシー設計やモニタリング、ステージ管理のベストプラクティスも紹介します。"
 pubDate: "Feb 05 2026"
 tags: ["SST", "AWS", "Serverless", "Lambda", "Next.js", "TypeScript"]
 heroImage: '../../assets/thumbnails/sst-serverless-guide.jpg'

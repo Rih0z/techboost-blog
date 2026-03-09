@@ -1,6 +1,6 @@
 ---
 title: 'Lucia Auth → Better Authへの移行ガイド：認証ライブラリの選択肢'
-description: 'Lucia Authの非推奨化を受けて、Better AuthやAuth.jsへの移行パス、セッション管理の実装、各ライブラリの比較を詳しく解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'Lucia Authの非推奨化を受けて、Better AuthやAuth.jsへの移行パス、セッション管理の実装、各ライブラリの比較を詳しく解説。Next.js/SvelteKitでの移行コード例付きです。'
 pubDate: '2026-02-05'
 tags: ['Lucia Auth', 'Better Auth', 'Auth.js', '認証', 'Next.js']
 heroImage: '../../assets/thumbnails/lucia-to-better-auth-migration.jpg'

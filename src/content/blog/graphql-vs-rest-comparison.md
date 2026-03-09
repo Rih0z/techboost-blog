@@ -1,6 +1,6 @@
 ---
 title: 'GraphQL vs REST API 徹底比較 — どちらを選ぶべき？実践ガイド2026'
-description: 'GraphQLとREST APIを実践的に徹底比較。それぞれのメリット・デメリット、使い分けの基準、移行戦略まで、2026年の現場で役立つ知識を具体例とともに解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'GraphQLとREST APIを実践的に徹底比較。それぞれのメリット・デメリット、使い分けの基準、移行戦略まで、2026年の現場で役立つ知識を具体例とともに解説します。'
 pubDate: '2026-02-05'
 tags: ['API', 'GraphQL', 'バックエンド']
 heroImage: '../../assets/thumbnails/graphql-vs-rest-comparison.jpg'

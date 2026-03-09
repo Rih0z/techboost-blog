@@ -1,6 +1,6 @@
 ---
 title: 'LiveKit：リアルタイム音声・映像通信フレームワークガイド'
-description: 'WebRTCベースのリアルタイム通信フレームワークLiveKitの完全ガイド。ルーム管理、音声・映像配信、画面共有、録画機能など、実践的なコード例とともに詳しく解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。'
+description: 'WebRTCベースのリアルタイム通信フレームワークLiveKitの完全ガイド。ルーム管理、音声・映像配信、画面共有、録画機能など、TypeScriptコード例とともに詳しく解説します。'
 pubDate: '2026-02-06'
 tags: ['WebRTC', 'LiveKit', 'リアルタイム通信', 'ビデオ会議', 'TypeScript']
 heroImage: '../../assets/thumbnails/livekit-realtime-audio-video.jpg'

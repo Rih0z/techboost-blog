@@ -1,6 +1,6 @@
 ---
 title: "SQLite WASM完全ガイド - ブラウザでSQLiteを使う実践的な方法"
-description: "ブラウザ上でSQLiteを動かすSQLite WASMの完全ガイド。セットアップ、クエリ実行、パフォーマンス最適化、実践的なユースケースまで徹底解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "ブラウザ上でSQLiteを動かすSQLite WASMの完全ガイド。セットアップ、クエリ実行、パフォーマンス最適化、実践的なユースケースまで徹底解説。OPFS永続化やWeb Worker連携によるオフライン対応アプリの構築パターンも紹介します。"
 pubDate: "2025-02-05"
 tags: ["SQLite", "WASM", "WebAssembly", "Browser", "Database", "インフラ"]
 heroImage: '../../assets/thumbnails/sqlite-wasm-browser-guide.jpg'

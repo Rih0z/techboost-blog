@@ -1,6 +1,6 @@
 ---
 title: "Next.jsのデプロイ先比較2026：Vercel vs AWS vs レンタルサーバー"
-description: "Next.jsアプリのデプロイ先を徹底比較。Vercel・AWS・レンタルサーバー・VPSそれぞれのメリット・デメリット・コストを実際の設定例と共に解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "Next.jsアプリのデプロイ先を徹底比較。Vercel・AWS・レンタルサーバー・VPSそれぞれのメリット・デメリット・コストを実際の設定例と共に解説。用途別の最適な選択肢がわかります。"
 pubDate: "2026-03-10"
 tags: ["Next.js", "デプロイ", "レンタルサーバー", "サーバー", "Vercel", "インフラ"]
 heroImage: '../../assets/thumbnails/nextjs-deployment-vercel-server-2026.jpg'

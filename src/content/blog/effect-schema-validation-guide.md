@@ -1,6 +1,6 @@
 ---
 title: "Effect Schema バリデーション実践ガイド - 型安全なデータ検証"
-description: "@effect/schemaの基本的な使い方、スキーマ定義とバリデーション、パース・エンコード・デコード、Zodとの比較、実践的なAPI入力検証の例を詳しく解説します。最新の技術動向を踏まえた実践的なガイドです。開発者必見の内容を網羅しています。"
+description: "@effect/schemaの基本的な使い方、スキーマ定義とバリデーション、パース・エンコード・デコード、Zodとの比較、実践的なAPI入力検証の例を詳しく解説します。TypeScriptの型安全なデータ検証を実現。"
 pubDate: "2025-02-05"
 tags: ['プログラミング', '開発ツール']
 heroImage: '../../assets/thumbnails/effect-schema-validation-guide.jpg'

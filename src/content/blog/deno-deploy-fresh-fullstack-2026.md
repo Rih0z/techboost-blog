@@ -1,6 +1,6 @@
 ---
 title: "Deno Deploy実践ガイド: Fresh 2.0でフルスタックアプリを開発・デプロイする"
-description: "Deno DeployとFresh 2.0を使ったフルスタックWebアプリの開発からデプロイまでを実践的に解説。エッジコンピューティング、Deno KV連携、API設計、パフォーマンス最適化のベストプラクティスを紹介します。初心者から実務レベルまで段階的に学べる内容です。"
+description: "Deno DeployとFresh 2.0を使ったフルスタックWebアプリの開発からデプロイまでを実践的に解説。エッジコンピューティング、Deno KV連携、API設計、パフォーマンス最適化のベストプラクティスを紹介します。"
 pubDate: "2026-03-05"
 tags: ["Deno", "TypeScript", "フルスタック", "サーバーレス", "Fresh"]
 heroImage: '../../assets/thumbnails/deno-deploy-fresh-fullstack-2026.jpg'

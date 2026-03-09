@@ -1,6 +1,6 @@
 ---
 title: "レンタルサーバーおすすめ比較2026｜WordPress対応7社"
-description: "2026年最新のレンタルサーバー比較。Xserver・ConoHa WING・ロリポップ等を速度・料金・安定性で徹底比較。WordPress向けの選び方も解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "2026年最新のレンタルサーバー比較。Xserver・ConoHa WING・ロリポップ等を速度・料金・安定性で徹底比較。WordPress向けの選び方も解説。ブログ運営や副業サイトに最適なプランの選び方をわかりやすく紹介します。ブログ運営や副業サイトに最適なプランの選び方も紹介。"
 pubDate: "2026-03-05"
 tags: ["レンタルサーバー", "WordPress", "Web開発", "ホスティング", "インフラ"]
 heroImage: '../../assets/thumbnails/rental-server-comparison-2026.jpg'

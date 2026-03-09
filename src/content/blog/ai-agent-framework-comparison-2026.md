@@ -1,6 +1,6 @@
 ---
 title: 'AIエージェントフレームワーク比較2026 — LangChain vs CrewAI vs AutoGen vs Mastra'
-description: '2026年最新のAIエージェントフレームワーク4種を徹底比較。LangChain・CrewAI・AutoGen・Mastraの特徴、コード例、性能、ユースケース別おすすめを実践的に解説します。初心者から実務レベルまで段階的に学べる内容です。'
+description: '2026年最新のAIエージェントフレームワーク4種を徹底比較。LangChain・CrewAI・AutoGen・Mastraの特徴、コード例、性能、ユースケース別おすすめを実践的に解説します。'
 pubDate: '2026-03-05'
 tags: ['AI', 'LLM', 'エージェント', 'Python', 'TypeScript']
 heroImage: '../../assets/thumbnails/ai-agent-framework-comparison-2026.jpg'

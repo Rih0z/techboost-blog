@@ -1,6 +1,6 @@
 ---
 title: 'Dockerセキュリティ完全ガイド - 安全なコンテナ運用のベストプラクティス'
-description: 'イメージスキャン、rootless実行、Secrets管理、ネットワーク分離など、Dockerの本番運用に必要なセキュリティ対策を徹底解説します。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。'
+description: 'イメージスキャン、rootless実行、Secrets管理、ネットワーク分離など、Dockerの本番運用に必要なセキュリティ対策を徹底解説します。'
 pubDate: '2026-02-05'
 tags: ['Docker', 'セキュリティ', 'DevOps', 'コンテナ']
 heroImage: '../../assets/thumbnails/docker-security-guide.jpg'
