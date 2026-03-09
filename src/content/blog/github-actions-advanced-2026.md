@@ -1,6 +1,6 @@
 ---
 title: "GitHub Actions上級ガイド2026"
-description: "GitHub Actionsの上級テクニックを徹底解説。マトリックスビルド、依存関係キャッシュ、セルフホストランナー、Reusable Workflows、セキュリティ強化の実践手法を紹介します。"
+description: "GitHub Actionsの上級テクニックを徹底解説する2026年版ガイド。マトリックスビルドによる並列テスト、依存関係キャッシュ最適化、セルフホストランナー構築、Reusable Workflowsの設計、セキュリティ強化を実践的に紹介します。"
 pubDate: '2026-03-05'
 tags: ['GitHub Actions', 'CICD', 'DevOps', '自動化', 'インフラ']
 heroImage: '../../assets/thumbnails/github-actions-advanced-2026.jpg'

@@ -1,6 +1,6 @@
 ---
 title: 'Cypress E2Eテスト完全ガイド2026｜コンポーネントテスト・CI連携・ベストプラクティス'
-description: 'CypressによるE2Eテストとコンポーネントテストを解説。セットアップ、セレクタ戦略、API モック、認証テスト、CI/CD連携、Playwrightとの比較まで。'
+description: 'CypressによるE2Eテストとコンポーネントテストの実践ガイド2026年版。セットアップからセレクタ戦略、APIモック、認証テスト、CI/CD連携、Playwrightとの性能・機能比較まで、Webアプリの品質担保に必要な知識をコード例付きで徹底解説します。'
 pubDate: '2026-03-05'
 tags: ['Cypress', 'テスト', 'E2E', 'フロントエンド', 'TypeScript']
 heroImage: '../../assets/thumbnails/cypress-e2e-testing-complete-guide-2026.jpg'

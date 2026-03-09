@@ -1,6 +1,6 @@
 ---
 title: 'マイクロフロントエンド実践ガイド2026｜Module Federation・Single-SPA・設計パターン'
-description: 'マイクロフロントエンドの設計と実装を解説。Module Federation、Single-SPA、Web Components方式の比較、チーム分割、状態共有、ルーティング、CI/CDパイプラインまで。'
+description: 'マイクロフロントエンドの設計と実装を解説する2026年版ガイド。Module Federation・Single-SPA・Web Components方式の比較、チーム分割戦略、状態共有・ルーティング設計、独立デプロイのCI/CD構築までコード例付きで網羅。'
 pubDate: '2026-03-05'
 tags: ['マイクロフロントエンド', 'アーキテクチャ', 'React', 'TypeScript', 'Web開発']
 heroImage: '../../assets/thumbnails/micro-frontends-architecture-guide-2026.jpg'

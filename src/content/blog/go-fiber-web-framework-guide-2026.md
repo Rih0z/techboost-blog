@@ -1,6 +1,6 @@
 ---
 title: 'Go Fiber完全ガイド2026｜Express風の高速WebフレームワークでAPI開発'
-description: 'Go言語のFiberフレームワークによるWeb API開発を解説。Express.jsライクなAPI設計、ミドルウェア、バリデーション、JWT認証、WebSocket、テスト、デプロイまで。'
+description: 'Go言語のFiberフレームワークによるWeb API開発を解説する2026年版ガイド。Fasthttpベースの高速なExpress.jsライクAPI設計、ミドルウェア、JWT認証、WebSocket対応、Gin/Echoとの性能比較、テストとデプロイまでコード例付きで網羅。'
 pubDate: '2026-03-05'
 tags: ['Go', 'Fiber', 'API', 'バックエンド', 'Web開発']
 heroImage: '../../assets/thumbnails/go-fiber-web-framework-guide-2026.jpg'

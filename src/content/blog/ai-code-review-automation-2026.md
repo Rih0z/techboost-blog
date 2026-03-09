@@ -1,6 +1,6 @@
 ---
 title: "AIコードレビュー自動化2026 CI/CD統合ガイド"
-description: "GitHub ActionsとAI APIを使ったPRレビュー自動化の実装方法を解説。Claude/GPT API連携、ESLint統合、セキュリティスキャンまでTypeScriptで実践的に構築します。"
+description: "GitHub ActionsとAI API（Claude/GPT）を使ったPRレビュー自動化の実装方法を解説する2026年版ガイド。CI/CDへの統合手順、ESLint自動適用、セキュリティスキャンまでTypeScriptで実践的に構築する方法を紹介します。"
 pubDate: "2026-03-06"
 tags: ['AI', 'DevOps', '開発ツール', 'TypeScript', 'career']
 heroImage: '../../assets/thumbnails/ai-code-review-automation-2026.jpg'

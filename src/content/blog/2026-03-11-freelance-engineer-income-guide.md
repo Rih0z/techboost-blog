@@ -1,9 +1,9 @@
 ---
 title: "フリーランスエンジニアの収入完全ガイド2026【平均年収・単価・案件獲得】"
-description: "フリーランスエンジニアの実態を徹底調査。言語別・経験年数別の単価相場、案件獲得方法、フリーランス化のメリット・デメリット、税務・確定申告のポイントまで2026年最新情報で解説。"
+description: "フリーランスエンジニアの収入実態を徹底調査。JavaScript・Python・Go等の言語別単価相場、経験年数別の年収推移、エージェント・直営業・SNSでの案件獲得方法、フリーランス化のメリット・デメリット、税務・確定申告のポイントまで2026年最新データで解説します。"
 pubDate: "2026-03-11"
 tags: ["freelance", "income", "engineer", "career"]
-heroImage: "../../assets/blog-placeholder-1.jpg"
+heroImage: "/blog-placeholder-1.jpg"
 ---
 
 ## はじめに
@@ -302,17 +302,5 @@ Phase 4:
 - [エンジニア転職エージェント徹底比較2026](/blog/engineer-career-agent-comparison-2026/) — エージェント活用
 
 ---
-
-## フリーランス案件を今すぐ探す
-
-<div style="display:flex;flex-direction:column;gap:1em;margin:2em 0;">
-
-<div style="padding:1.5em;background:#f8f0ff;border-radius:8px;border-left:4px solid #8e44ad;">
-<strong>💼 フリーランスエンジニア専門エージェント — 明光キャリアパートナーズ（無料相談）</strong><br>
-IT・エンジニア職に強い転職・フリーランス支援。無料カウンセリングで希望単価・稼働条件のマッチング。<br>
-<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" rel="noopener sponsored" target="_blank" style="display:inline-block;margin-top:0.75em;background:#8e44ad;color:white;padding:10px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">→ 無料でキャリア相談する</a>
-</div>
-
-</div>
 
 *最終更新: 2026年3月*

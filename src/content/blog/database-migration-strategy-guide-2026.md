@@ -1,6 +1,6 @@
 ---
 title: 'データベースマイグレーション戦略ガイド2026｜Prisma・Drizzle・Alembic・ゼロダウンタイム'
-description: 'データベースマイグレーションの設計と運用を解説。Prisma Migrate、Drizzle Kit、Alembic、Flyway等のツール比較、ゼロダウンタイム移行、ロールバック戦略まで。'
+description: 'データベースマイグレーションの設計と運用を解説する2026年版ガイド。Prisma Migrate・Drizzle Kit・Alembic・Flyway等のツール比較、ゼロダウンタイム移行、安全なロールバック戦略、CI/CDへの組み込みまでコード例付きで網羅。'
 pubDate: '2026-03-05'
 tags: ['データベース', 'マイグレーション', 'DevOps', 'TypeScript', 'バックエンド']
 heroImage: '../../assets/thumbnails/database-migration-strategy-guide-2026.jpg'

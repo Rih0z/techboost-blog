@@ -1,6 +1,6 @@
 ---
 title: 'WebTransport API実践ガイド2026｜HTTP/3ベースの次世代リアルタイム通信'
-description: 'WebTransport APIの仕組みと実装を解説。HTTP/3(QUIC)ベースの双方向通信、WebSocketとの比較、ストリーム/データグラム、サーバー実装、ユースケースまで。'
+description: 'WebTransport APIの仕組みと実装を解説する2026年版ガイド。HTTP/3（QUIC）ベースの低遅延双方向通信の基本、WebSocket・SSEとの性能比較、ストリーム・データグラムの使い分け、サーバー実装とユースケースまで網羅。'
 pubDate: '2026-03-05'
 tags: ['WebTransport', 'HTTP3', 'リアルタイム', 'Web API', 'TypeScript']
 heroImage: '../../assets/thumbnails/webtransport-api-guide-2026.jpg'

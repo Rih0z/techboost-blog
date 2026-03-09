@@ -1,6 +1,6 @@
 ---
 title: "Docker Compose本番環境構築ガイド2026"
-description: "Docker Composeで開発・ステージング・本番の3環境を構築する実践ガイド。Web+API+DB+Redisのマルチサービス設計からヘルスチェック、ログ集約、セキュリティまで網羅します。"
+description: "Docker Compose V2で開発・ステージング・本番の3環境を構築する実践ガイド2026年版。Web+API+DB+Redisのマルチサービス設計、ヘルスチェック設定、ログ集約、シークレット管理、セキュリティ強化、ゼロダウンタイムデプロイまでコード例付きで網羅します。"
 pubDate: "2026-03-06"
 tags: ['Docker', 'server', 'インフラ', 'DevOps']
 heroImage: '../../assets/thumbnails/docker-compose-production-guide-2026.jpg'

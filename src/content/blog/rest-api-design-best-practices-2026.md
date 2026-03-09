@@ -1,6 +1,6 @@
 ---
 title: "REST API設計ベストプラクティス2026"
-description: "2026年版REST API設計のベストプラクティスを体系的に解説。URL設計、HTTPステータスコード、JWT/OAuth認証、バージョニング、OpenAPI定義、Zod/Honoの実装例まで網羅します。"
+description: "2026年版REST API設計のベストプラクティスを体系的に解説。URL設計の6原則、HTTPステータスコードの使い分け、JWT/OAuth認証の実装、バージョニング戦略、OpenAPI定義、Zod/Honoでの型安全な実装例まで網羅します。"
 pubDate: "2026-03-06"
 tags: ['API', 'バックエンド', 'TypeScript', 'career']
 heroImage: '../../assets/thumbnails/rest-api-design-best-practices-2026.jpg'

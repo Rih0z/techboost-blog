@@ -1,6 +1,6 @@
 ---
 title: "CSS light-dark()関数活用ガイド"
-description: "CSS light-dark()関数の基本からダークモード実装まで実践的に解説。実践的な解説と具体的なコード例で、基礎から応用まで段階的に学べる技術ガイドです。開発効率の向上に役立ちます。"
+description: "CSS light-dark()関数を使ったダークモード実装を実践的に解説。基本構文からprefers-color-scheme連携、カスタムプロパティとの組み合わせ、ブラウザ対応状況、従来のメディアクエリ方式との比較までコード例付きで紹介します。"
 pubDate: "2025-02-05"
 tags: ['CSS', 'フロントエンド', '開発ツール']
 heroImage: '../../assets/thumbnails/css-light-dark-function-guide.jpg'

@@ -1,6 +1,6 @@
 ---
 title: 'Webアクセシビリティ実装ガイド2026｜WCAG準拠・WAI-ARIA・テスト自動化'
-description: 'Webアクセシビリティの実装方法を徹底解説。WCAG 2.2準拠、WAI-ARIA属性、キーボード操作、スクリーンリーダー対応、axe-coreによるテスト自動化まで。'
+description: 'Webアクセシビリティの実装方法を徹底解説する2026年版ガイド。WCAG 2.2準拠のセマンティックHTML、WAI-ARIA属性の正しい使い方、キーボード操作対応、スクリーンリーダー対応、axe-coreによるテスト自動化まで、法的義務化の動向を踏まえ実践的に解説します。'
 pubDate: '2026-03-05'
 tags: ['アクセシビリティ', 'HTML', 'フロントエンド', 'Web開発', 'UX']
 heroImage: '../../assets/thumbnails/web-accessibility-guide-2026.jpg'

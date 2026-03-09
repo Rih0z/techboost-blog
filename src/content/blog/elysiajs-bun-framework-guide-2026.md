@@ -1,6 +1,6 @@
 ---
 title: 'ElysiaJS完全ガイド2026｜Bun最速フレームワークの実装パターン・プラグイン・デプロイ'
-description: 'ElysiaJSの基本から実践まで解説。Bunネイティブの超高速Webフレームワーク、型安全なルーティング、プラグインシステム、バリデーション、認証、WebSocket対応まで。'
+description: 'ElysiaJSの基本から実践まで解説する2026年版完全ガイド。Bunネイティブの超高速Webフレームワークの型安全ルーティング、プラグイン、バリデーション、JWT認証、WebSocket対応、Express/Fastifyとの性能比較まで網羅。'
 pubDate: '2026-03-05'
 tags: ['ElysiaJS', 'Bun', 'TypeScript', 'バックエンド', 'Web開発']
 heroImage: '../../assets/thumbnails/elysiajs-bun-framework-guide-2026.jpg'

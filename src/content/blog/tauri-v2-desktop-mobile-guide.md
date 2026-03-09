@@ -1,6 +1,6 @@
 ---
 title: "Tauri 2.0完全ガイド — Rust + Web技術でデスクトップ&モバイルアプリ開発"
-description: "Tauri 2.0でデスクトップとモバイルの両方に対応するクロスプラットフォームアプリを構築する方法を、セットアップからビルド・配布まで実践的なコード付きで徹底解説します。"
+description: "Tauri 2.0でWindows・macOS・Linux・Android・iOSの5プラットフォーム対応アプリを構築する方法を解説。Rust+Web技術によるセットアップからプラグイン、モバイル対応、ビルド・配布まで実践コード付きガイド。"
 pubDate: "2026-03-05"
 tags: ["Tauri", "Rust", "デスクトップアプリ", "クロスプラットフォーム", "TypeScript"]
 heroImage: '../../assets/thumbnails/tauri-v2-desktop-mobile-guide.jpg'

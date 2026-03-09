@@ -1,6 +1,6 @@
 ---
 title: "shadcn/ui v3実践ガイド2026"
-description: "shadcn/ui v3の導入から実践活用まで徹底解説。Radix UIベースのアクセシブルなコンポーネント、Tailwind CSS v4統合、カスタマイズ手法を具体的なコード例とともに紹介します。"
+description: "shadcn/ui v3の導入から実践活用まで徹底解説する2026年版ガイド。Radix UIベースのアクセシブルなコンポーネント設計、Tailwind CSS v4対応、React Server Components最適化、テーマカスタマイズを具体的なコード例とともに紹介。"
 pubDate: '2026-03-05'
 tags: ['React', 'UI', 'shadcn-ui', 'フロントエンド', 'Tailwind CSS']
 heroImage: '../../assets/thumbnails/shadcn-ui-v3-guide-2026.jpg'

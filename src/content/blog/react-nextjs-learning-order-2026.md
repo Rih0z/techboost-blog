@@ -1,6 +1,6 @@
 ---
 title: "React/Next.js学習の正しい順番2026：挫折しない段階的アプローチ"
-description: "React/Next.js学習の正しい順番を段階的に解説。HTML/CSSからReact Hooks、Next.js App Routerまで各段階のミニプロジェクト例とコード付きで挫折しない学習法を紹介。"
+description: "React/Next.js学習の正しい順番を段階的に解説する2026年版ガイド。HTML/CSS基礎からReact Hooks、状態管理、Next.js App Routerまで各段階のミニプロジェクト例とコード付きで挫折しない学習法を紹介。よくある失敗パターンと回避策も解説。"
 pubDate: "2026-03-06"
 tags: ['React', 'Next.js', 'school', 'TypeScript']
 heroImage: '../../assets/thumbnails/react-nextjs-learning-order-2026.jpg'

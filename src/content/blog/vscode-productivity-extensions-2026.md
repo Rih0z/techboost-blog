@@ -1,6 +1,6 @@
 ---
 title: "VS Code生産性向上エクステンション厳選2026"
-description: "2026年版VS Codeの生産性向上に直結するエクステンション厳選ガイド。AI系・フロントエンド系・バックエンド系・Git系を網羅し、settings.jsonやkeybindingsの設定例も掲載します。"
+description: "2026年版VS Codeの生産性向上に直結するエクステンションを厳選紹介するガイド。AI補完・フロントエンド・バックエンド・Git管理・コードフォーマットなどカテゴリ別に網羅し、各拡張機能のsettings.jsonやkeybindings.jsonの最適な設定例も掲載します。"
 pubDate: "2026-03-06"
 tags: ['開発ツール', 'プログラミング', 'career', 'TypeScript']
 heroImage: '../../assets/thumbnails/vscode-productivity-extensions-2026.jpg'

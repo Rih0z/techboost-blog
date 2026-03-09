@@ -1,6 +1,6 @@
 ---
 title: "Claude Code実践ガイド2026"
-description: "Claude Codeの導入から実践活用まで徹底解説。AIコーディングエージェントによる開発効率化、プロンプト設計、CI/CD統合、チーム運用のベストプラクティスを紹介します。"
+description: "Claude Codeの導入から実践活用まで徹底解説する2026年版ガイド。ターミナルベースのAIコーディングエージェントによる開発効率化、MCP統合、効果的なプロンプト設計、CI/CDパイプライン連携、チーム開発での運用ベストプラクティスをコード例付きで紹介します。"
 pubDate: '2026-03-05'
 tags: ['AI', 'Claude', '開発ツール', 'プログラミング', '自動化']
 heroImage: '../../assets/thumbnails/claude-code-ai-coding-guide-2026.jpg'

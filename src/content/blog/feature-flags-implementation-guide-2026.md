@@ -1,6 +1,6 @@
 ---
 title: 'フィーチャーフラグ実装ガイド2026｜LaunchDarkly・Unleash・自前実装の比較と実践'
-description: 'フィーチャーフラグの設計と実装を解説。LaunchDarkly、Unleash、自前実装の比較、React/Next.jsでの統合、A/Bテスト、段階的ロールアウト、CI/CD連携まで。'
+description: 'フィーチャーフラグの設計と実装を解説する2026年版ガイド。LaunchDarkly・Unleash・自前実装のコスト比較、React/Next.jsでの統合、A/Bテストや段階的ロールアウトの運用パターン、CI/CD連携までコード例付きで解説。'
 pubDate: '2026-03-05'
 tags: ['フィーチャーフラグ', 'DevOps', 'React', 'TypeScript', 'アーキテクチャ']
 heroImage: '../../assets/thumbnails/feature-flags-implementation-guide-2026.jpg'

@@ -1,9 +1,9 @@
 ---
 title: "プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】"
-description: "2026年最新のプログラミングスクール8校を現役エンジニアが徹底比較。費用・期間・就職率・カリキュラムを比較表で整理。失敗しないスクール選びのポイントを実体験をもとに解説します。"
+description: "2026年最新のプログラミングスクール厳選8校を現役エンジニアが徹底比較。受講料・学習期間・就職率・カリキュラム内容・メンターの質を比較表で整理し、未経験者・転職希望者・副業目的など目的別に失敗しないスクール選びのポイントを実体験ベースで解説します。"
 pubDate: "2026-03-08"
 tags: ["programming-school", "career", "beginner", "comparison"]
-heroImage: "../../assets/blog-placeholder-1.jpg"
+heroImage: '../../assets/thumbnails/programming-school-comparison-2026.jpg'
 ---
 
 ## はじめに
@@ -327,23 +327,5 @@ ITパスポート・基本情報技術者などの資格取得コースも充実
 プログラミングスクールは大きな投資だ。無料体験や説明会を活用して、自分に合ったスクールを慎重に選んでほしい。給付金制度を最大限活用し、費用を抑えながら効率よくスキルを身につけることが成功への近道だ。
 
 ---
-
-## エンジニア転職・キャリアアップを今すぐ始める
-
-<div style="display:flex;flex-direction:column;gap:1em;margin:2em 0;">
-
-<div style="padding:1.5em;background:#fff8f0;border-radius:8px;border-left:4px solid #e67e22;">
-<strong>🎯 転職・就職サポート — 明光キャリアパートナーズ（無料）</strong><br>
-IT・エンジニア職に特化した転職エージェント。無料キャリアカウンセリングでスクール選びから就職まで一貫サポート。<br>
-<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" rel="noopener sponsored" target="_blank" style="display:inline-block;margin-top:0.75em;background:#e67e22;color:white;padding:10px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">→ 無料でキャリア相談する（明光キャリアパートナーズ）</a>
-</div>
-
-<div style="padding:1.5em;background:#f0fff4;border-radius:8px;border-left:4px solid #27ae60;">
-<strong>📚 給付金対応スクール — ITシュガー（最大70%補助）</strong><br>
-教育訓練給付金対象コースで費用を最大70%還元。就職率も高く、ゼロから学びたい方に最適。<br>
-<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+ENI2R6+4RIG+HWAG1" rel="noopener sponsored" target="_blank" style="display:inline-block;margin-top:0.75em;background:#27ae60;color:white;padding:10px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">→ ITシュガー 無料資料請求はこちら</a>
-</div>
-
-</div>
 
 *最終更新: 2026年3月*
