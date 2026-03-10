@@ -1,6 +1,6 @@
 ---
 title: "Geekly（ギークリー）IT転職エージェント評判・口コミ2026年版"
-description: "GeeklyのIT転職エージェントとしての評判・口コミを徹底解説。ゲーム業界・Web系・スタートアップへの転職支援力、求人数、サービスの強みと弱みをレバテックキャリアと比較してエンジニア目線でレビューします。"
+description: "GeeklyのIT転職エージェントとしての評判・口コミを徹底解説。ゲーム業界・Web系・スタートアップへの転職支援力や求人数・サポート品質をレバテックキャリアと比較。利用手順・転職成功事例・活用コツをエンジニア目線でわかりやすく解説します。"
 pubDate: "2026-03-10"
 tags: ["career", "転職", "フリーランス"]
 heroImage: "../../assets/blog-placeholder-2.jpg"
@@ -210,6 +210,136 @@ Web系・スタートアップにも十分な求人があるため、IT業界全
 | 地方・リモート | ★★★☆☆ | 東京中心で地方は限定的 |
 
 IT・ゲーム業界でのキャリアアップを目指すエンジニアは、まず無料登録して担当者と話してみることをおすすめする。
+
+---
+
+## Geeklyのよくある質問（FAQ）
+
+### Q: ゲーム業界未経験でも登録できますか？
+
+**A:** 登録は可能。ただしゲーム企業への転職には:
+- IT業界での開発経験（最低2年以上）
+- ゲームへの興味・熱意（ポートフォリオや自作ゲームがあれば強い）
+
+ゲーム専用エンジン（Unity/Unreal Engine）の経験があれば強みになるが、未経験でもWebエンジニアとしてゲーム企業のWebサービス部門に転職できるケースもある。
+
+### Q: 地方在住ですが使えますか？
+
+**A:** 首都圏・大都市圏の求人がメインだが:
+- フルリモート求人は全国対応
+- ゲーム会社の一部はリモート勤務可
+- 転居を前提とする場合は選択肢が広がる
+
+地方在住でリモート限定の場合、選択肢は限られるが可能性はある。
+
+### Q: 登録後にしつこく連絡が来ますか？
+
+**A:** 担当者によって差がある。「今すぐ転職を考えていない」「自分のペースで活動したい」という場合は、最初のカウンセリングで率直に伝えること。連絡頻度の希望を伝えれば対応してもらえる。
+
+---
+
+## ゲーム業界転職に必要なスキルセット
+
+### Unityエンジニアに求められるスキル
+
+```csharp
+// Unity開発で重要なスキルの例:
+// 1. C#の基礎から応用（LINQ・async/await）
+// 2. Unityの主要コンポーネント理解
+
+using UnityEngine;
+using System.Collections;
+
+public class PlayerController : MonoBehaviour
+{
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private Rigidbody2D rb;
+
+    private Vector2 movement;
+
+    void Update()
+    {
+        // 入力取得
+        movement.x = Input.GetAxisRaw("Horizontal");
+        movement.y = Input.GetAxisRaw("Vertical");
+    }
+
+    void FixedUpdate()
+    {
+        // 物理演算で移動
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+    }
+}
+
+// 重要な概念:
+// - MonoBehaviour ライフサイクル
+// - Object Pooling（ゲーム最適化の必須知識）
+// - Scriptable Objects
+// - Addressable Assets
+// - UniRx / UniTask（非同期処理）
+```
+
+### Webエンジニアがゲーム企業のWeb部門に転職するケース
+
+```typescript
+// ゲーム企業のWebチームに求められる技術（例）:
+// - ゲームポータルサイト・公式サイトの開発
+// - ユーザー管理システム（ゲームアカウント）
+// - 課金・決済システム
+// - ゲームAPI（リアルタイム通信含む）
+
+// WebSocket を使ったリアルタイム通信の例
+const socket = new WebSocket('wss://game.example.com/realtime');
+
+socket.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  switch (data.type) {
+    case 'PLAYER_SCORE':
+      updateLeaderboard(data.payload);
+      break;
+    case 'MATCH_START':
+      startGameMatch(data.payload);
+      break;
+  }
+};
+```
+
+---
+
+## 転職活動のタイムライン（参考）
+
+```
+Geekly活用の典型的な転職スケジュール:
+Week 1:
+  - Geeklyに登録
+  - キャリアアドバイザーとのカウンセリング（1時間）
+  - 職務経歴書の修正・提出
+
+Week 2-3:
+  - 担当者から求人紹介（5〜10件）
+  - 興味のある求人に応募
+  - 書類選考結果待ち
+
+Week 3-5:
+  - 書類通過の連絡
+  - 面接日程調整
+  - 1次面接（技術テスト）
+
+Week 5-7:
+  - 2次・3次面接（役員面接等）
+  - 内定連絡
+
+Week 7-8:
+  - 給与交渉
+  - 入社日確定
+  - 現職退職交渉開始
+
+Week 8-12:
+  - 引き継ぎ期間
+  - 入社準備
+
+目安の転職活動期間: 約2〜3ヶ月
+```
 
 ---
 

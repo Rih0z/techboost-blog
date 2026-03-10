@@ -1,6 +1,6 @@
 ---
 title: "Angular 19新機能・完全ガイド2026年版【シグナル・SSR・Zoneless】"
-description: "Angular 19の主要新機能を詳しく解説。シグナルAPIの進化、Zoneless変更検知、SSR/ハイドレーション改善、新しいリアクティブフォームを実践的なコード例とともに紹介します。Angular開発者必読の最新情報。"
+description: "Angular 19の主要新機能を詳しく解説。Linked Signals・Resource API・Zoneless変更検知・Incremental HydrationをTypeScriptコード例で紹介。アップグレード手順・パフォーマンス比較も網羅した完全ガイドです。"
 pubDate: "2026-03-10"
 tags: ["エンジニア", "プログラミング", "フロントエンド", "TypeScript"]
 heroImage: "../../assets/blog-placeholder-1.jpg"

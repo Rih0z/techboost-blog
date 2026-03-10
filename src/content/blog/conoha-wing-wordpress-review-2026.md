@@ -1,6 +1,6 @@
 ---
 title: "ConoHa WINGでWordPressを始める完全ガイド【2026年版】"
-description: "ConoHa WINGでWordPressを始める手順を徹底解説。料金プラン・速度・使いやすさをXserverと比較し、ブログ・ポートフォリオ・副業サイトに最適な選び方を詳しく紹介します。初心者でも迷わない設定手順付き。"
+description: "ConoHa WINGでWordPressを始める手順を徹底解説。料金プラン・速度・使いやすさをXserverと比較し、ブログ・ポートフォリオ・副業サイトに最適なサーバーの選び方を紹介します。WING PACK・LiteSpeed設定・SSH接続の手順付き。"
 pubDate: "2026-03-10"
 tags: ["server", "WordPress", "インフラ", "ホスティング"]
 heroImage: "../../assets/blog-placeholder-3.jpg"
