@@ -313,6 +313,24 @@ heroImage: '../../assets/thumbnails/freelance-engineer-contract-guide-2026.jpg'
 
 契約書は自分を守る盾です。面倒でも必ず確認し、不利な条件は交渉しましょう。
 
+
+## フリーランス案件・転職支援
+
+<div style="display:flex;flex-direction:column;gap:1em;margin:2em 0;">
+<div style="padding:1.5em;background:#f0f7ff;border-radius:8px;border-left:4px solid #0066cc;">
+<strong>💼 フリーランスエンジニア向け案件マッチング【フリーランスボード】</strong><br>
+IT・エンジニア向けのフリーランス案件を多数掲載。高単価・リモートOK・週3〜5日と幅広く対応。完全無料で登録できます。<br><br>
+<a href="https://px.a8.net/svt/ejp?a8mat=4AZ8K4+38P04A+5R1M+5YJRM" rel="nofollow" style="display:inline-block;padding:0.8em 1.5em;background:#0066cc;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">→ フリーランスボードで案件を探す（無料登録）</a>
+<img border="0" width="1" height="1" src="https://www11.a8.net/0.gif?a8mat=4AZ8K4+38P04A+5R1M+5YJRM" alt="">
+</div>
+<div style="padding:1.5em;background:#f0fff4;border-radius:8px;border-left:4px solid #00a65a;">
+<strong>🚀 エンジニア専門の転職エージェント【明光キャリアパートナーズ】</strong><br>
+IT・Web系エンジニアの転職支援実績多数。専任エージェントが希望条件に合った求人を紹介。年収アップを目指したい方に最適。<br><br>
+<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" rel="nofollow" style="display:inline-block;padding:0.8em 1.5em;background:#00a65a;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">→ 明光キャリアで転職相談する（無料）</a>
+<img border="0" width="1" height="1" src="https://www11.a8.net/0.gif?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" alt="">
+</div>
+</div>
+
 ## 関連記事
 
 - [フリーランスエンジニア独立ガイド](/blog/freelance-engineer-start-guide/) — 独立準備から案件獲得まで
