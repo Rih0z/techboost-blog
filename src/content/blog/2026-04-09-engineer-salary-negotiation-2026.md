@@ -3,7 +3,7 @@ title: "エンジニア給与交渉・年収アップテクニック完全ガイ
 description: "エンジニアが年収アップするための給与交渉テクニックを完全解説。市場価値の正確な調べ方・最適な交渉タイミング・そのまま使える具体的な台詞例を完全網羅。転職時の内定後交渉・在職中の昇給交渉・フリーランス単価交渉の3つのパターンを成功事例つきで解説。"
 pubDate: "2026-04-09"
 tags: ["career", "転職", "フリーランス"]
-heroImage: '../../assets/thumbnails/2026-04-09-engineer-salary-negotiation-2026.jpg'
+heroImage: "../../assets/blog-placeholder-3.jpg"
 ---
 
 ## はじめに
