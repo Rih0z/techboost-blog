@@ -574,6 +574,14 @@ console.log(result);
 
 給付金制度を賢く活用して、コストを抑えながらエンジニアとしてのキャリアをスタートさせましょう。
 
+
+<div style="margin:2em 0;padding:1.5em;background:#f3e5f5;border-radius:8px;border-left:4px solid #7b1fa2;">
+<strong>🎨 プロクリエイターから学ぶオンライン動画講座【Coloso】</strong><br>
+デザイン・イラスト・映像・3D・プログラミングなど、各分野のプロが直接教えるオンライン動画講座。韓国発グローバルプラットフォームで、実践的なスキルを身につけよう。<br>
+<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+F2ZCHE+5Q4A+5YJRM" rel="noopener sponsored" target="_blank">→ Colosoで講座を探す（無料会員登録）</a>
+<img border="0" width="1" height="1" src="https://www10.a8.net/0.gif?a8mat=4AZ9C1+F2ZCHE+5Q4A+5YJRM" alt="">
+</div>
+
 ## 関連記事
 
 - [プログラミングスクール比較ガイド](/blog/programming-school-comparison)

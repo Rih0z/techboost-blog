@@ -722,3 +722,10 @@ IT資格の取得は、エンジニアキャリアにおいて確実にプラス
 特にAWS SAA（Solutions Architect Associate）は、投資額に対する年収影響が最も大きく、2026年時点で最もROIの高いIT資格です。クラウドに関心があるエンジニアは、最初の目標として設定することをおすすめします。
 
 キャリアアップを目指すなら、プログラミングスクールや資格対策講座の受講も有効です。教育訓練給付金の対象講座であれば、費用の最大70%が補助される制度もあります（参照: 厚生労働省「教育訓練給付制度」https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/jinzaikaihatsu/kyouiku.html）。
+
+<div style="margin:2em 0;padding:1.5em;background:#f3e5f5;border-radius:8px;border-left:4px solid #7b1fa2;">
+<strong>🎨 プロクリエイターから学ぶオンライン動画講座【Coloso】</strong><br>
+デザイン・イラスト・映像・3D・プログラミングなど、各分野のプロが直接教えるオンライン動画講座。韓国発グローバルプラットフォームで、実践的なスキルを身につけよう。<br>
+<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+F2ZCHE+5Q4A+5YJRM" rel="noopener sponsored" target="_blank">→ Colosoで講座を探す（無料会員登録）</a>
+<img border="0" width="1" height="1" src="https://www10.a8.net/0.gif?a8mat=4AZ9C1+F2ZCHE+5Q4A+5YJRM" alt="">
+</div>
