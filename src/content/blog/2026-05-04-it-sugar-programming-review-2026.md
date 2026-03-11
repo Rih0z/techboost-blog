@@ -3,7 +3,7 @@ title: "ITシュガー評判・口コミ2026｜プログラミングスクール
 description: "ITシュガーの評判・口コミを2026年最新情報で徹底調査。受講料・カリキュラム・就職サポートの特徴、受講者のリアルな声、他スクールとの比較を詳しく解説。無料カウンセリングで確認すべき質問リストとプログラミングスクール選びで後悔しないための選択ポイントも紹介します。"
 pubDate: "2026-05-04"
 tags: ["school", "プログラミングスクール", "IT転職", "キャリア"]
-heroImage: "../../assets/blog-placeholder-1.jpg"
+heroImage: "../../assets/thumbnails/techboost-it-sugar-review-2026.jpg"
 ---
 
 ## ITシュガーとは
