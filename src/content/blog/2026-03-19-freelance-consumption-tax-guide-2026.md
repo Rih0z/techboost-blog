@@ -93,11 +93,11 @@ heroImage: "../../assets/blog-placeholder-4.jpg"
 ### 「特定期間」のルールに注意
 
 ```
-特定期間（1月1日〜6月30日）の売上が1,000万円超
-→ その年の翌年から課税事業者
+特定期間（前年1月1日〜6月30日）の課税売上が1,000万円超
+→ その年から課税事業者
 
 例:
-  2025年1〜6月の売上が600万円超（年換算1,200万円超）
+  2025年1〜6月の売上が1,000万円超（6ヶ月間の実績が基準）
   2026年から課税事業者になる可能性
 ```
 
@@ -355,6 +355,13 @@ freeeの場合:
 消費税は複雑に見えるが、クラウド会計ソフトと正確な記帳習慣があれば、決して難しいものではない。早めに仕組みを理解して、損なく申告しよう。
 
 ---
+
+## 関連記事
+
+- [インボイス制度フリーランスエンジニア完全対応ガイド2026](https://techboostblog.com/blog/invoice-system-freelance-engineer-2026/)
+- [青色申告 vs 白色申告 エンジニア向け徹底比較2026](https://techboostblog.com/blog/2026-03-18-blue-vs-white-tax-return-engineer-2026/)
+- [フリーランスエンジニア節税完全ガイド2026【年間50万円を節税する方法】](https://techboostblog.com/blog/2026-03-14-freelance-tax-saving-guide-2026/)
+- [クラウド会計ソフト比較2026：freee・マネーフォワード・弥生の特徴と選び方](https://techboostblog.com/blog/cloud-accounting-comparison-2026/)
 
 ## 参考リンク
 

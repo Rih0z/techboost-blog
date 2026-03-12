@@ -439,6 +439,13 @@ async function createTransaction(tx: FreeeTransaction): Promise<void> {
 
 ---
 
+## 関連記事
+
+- [青色申告 vs 白色申告 エンジニア向け徹底比較2026](https://techboostblog.com/blog/2026-03-18-blue-vs-white-tax-return-engineer-2026/)
+- [クラウド会計ソフト比較2026：freee・マネーフォワード・弥生の特徴と選び方](https://techboostblog.com/blog/cloud-accounting-comparison-2026/)
+- [確定申告でよくある失敗10選と完全回避ガイド2026](https://techboostblog.com/blog/2026-03-20-kakuteishinkoku-mistakes-avoid-guide-2026/)
+- [エンジニアが使える確定申告経費50選【2026年版チェックリスト】](https://techboostblog.com/blog/2026-03-13-engineer-kakuteishinkoku-deduction-2026/)
+
 ## 参考リンク
 
 - [国税庁: 帳簿の記帳について](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2080.htm)
