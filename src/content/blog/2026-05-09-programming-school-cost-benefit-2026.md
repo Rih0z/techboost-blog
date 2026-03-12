@@ -306,3 +306,16 @@ IT業界は技術の進化が速いため、スクールで学んだ知識は常
 ```
 
 全項目にチェックが入ったら、自信を持って決断できます。
+
+---
+
+## 関連記事
+
+### スクール比較
+- [プログラミングスクールおすすめ比較2026｜厳選10校](/blog/programming-school-comparison-2026) -- 10校の料金・就職率を徹底比較
+- [プログラミングスクール比較2026年版【厳選8校】](/blog/2026-03-08-programming-school-comparison-2026) -- 8校の詳細レビュー
+- [転職向けプログラミングスクール比較TOP5](/blog/2026-05-05-programming-school-transfer-comparison-2026) -- 転職特化ランキング
+- [未経験からエンジニア転職におすすめスクール5選](/blog/engineer-career-change-bootcamp-2026) -- 未経験者向け5選
+- [プログラミングスクール vs 独学 どっちが正解？](/blog/2026-05-02-programming-school-vs-self-study-2026) -- 費用・期間比較
+- [教育訓練給付金でスクール費用を最大80%削減](/blog/2026-05-01-programming-school-kyuufukin-guide-2026) -- 給付金完全ガイド
+- [スクール選び方チェックリスト2026](/blog/2026-05-08-programming-school-selection-checklist-2026) -- 失敗しない7つの基準

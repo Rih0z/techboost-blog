@@ -381,7 +381,14 @@ IT・Web系エンジニアの転職支援実績多数。専任エージェント
 
 ## 関連記事
 
+### スクールで転職準備するなら
+- [プログラミングスクールおすすめ比較2026｜厳選10校](/blog/programming-school-comparison-2026) -- 10校の料金・就職率を徹底比較
+- [転職向けプログラミングスクール比較TOP5](/blog/2026-05-05-programming-school-transfer-comparison-2026) -- 転職特化ランキング
+- [未経験からエンジニア転職におすすめスクール5選](/blog/engineer-career-change-bootcamp-2026) -- 未経験者向け5選
+- [教育訓練給付金でスクール費用を最大80%削減](/blog/2026-05-01-programming-school-kyuufukin-guide-2026) -- 給付金完全ガイド
+
+### キャリア・転職
+- [エンジニア転職エージェント比較2026](/blog/engineer-career-agent-comparison-2026) -- 転職エージェント選び
+- [新年度エンジニアスキルアップ戦略2026](/blog/2026-04-03-new-year-engineer-skill-strategy-2026)
 - [エンジニアのリモートワーク環境構築2026](/blog/2026-04-05-engineer-remote-work-setup-2026)
 - [フリーランスエンジニア独立チェックリスト2026](/blog/2026-04-02-freelance-independence-checklist-2026)
-- [新年度エンジニアスキルアップ戦略2026](/blog/2026-04-03-new-year-engineer-skill-strategy-2026)
-- [エンジニア転職エージェント比較2026](/blog/engineer-career-agent-comparison-2026)

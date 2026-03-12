@@ -247,9 +247,16 @@ heroImage: "../../assets/blog-placeholder-4.jpg"
 
 ## 関連記事
 
-- [転職向けプログラミングスクール比較TOP5 2026](/blog/2026-05-05-programming-school-transfer-comparison-2026)
-- [社会人・30代40代からのプログラミングスクール選び方2026](/blog/2026-05-06-programming-school-adult-beginner-2026)
-- [教育訓練給付金でプログラミングスクール費用を最大80%削減する方法](/blog/2026-05-01-programming-school-kyuufukin-guide-2026)
+### スクール比較
+- [プログラミングスクールおすすめ比較2026｜厳選10校](/blog/programming-school-comparison-2026) -- 10校の料金・就職率を徹底比較
+- [プログラミングスクール比較2026年版【厳選8校】](/blog/2026-03-08-programming-school-comparison-2026) -- 8校の詳細レビュー
+- [転職向けプログラミングスクール比較TOP5 2026](/blog/2026-05-05-programming-school-transfer-comparison-2026) -- 転職特化ランキング
+- [未経験からエンジニア転職におすすめスクール5選](/blog/engineer-career-change-bootcamp-2026) -- 未経験者向け5選
+- [プログラミングスクール vs 独学](/blog/2026-05-02-programming-school-vs-self-study-2026) -- どっちが正解？
+
+### 費用・給付金
+- [教育訓練給付金でスクール費用を最大80%削減](/blog/2026-05-01-programming-school-kyuufukin-guide-2026) -- 給付金完全ガイド
+- [社会人・30代40代からのスクール選び方2026](/blog/2026-05-06-programming-school-adult-beginner-2026) -- 社会人向けガイド
 
 ---
 

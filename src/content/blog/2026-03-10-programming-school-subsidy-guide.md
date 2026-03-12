@@ -328,6 +328,16 @@ heroImage: "../../assets/blog-placeholder-1.jpg"
 
 *最終更新: 2026年3月*
 
+## 関連記事
+
+### スクール比較
+- [プログラミングスクールおすすめ比較2026｜厳選10校](/blog/programming-school-comparison-2026) -- 10校の料金・就職率を徹底比較
+- [転職向けプログラミングスクール比較TOP5](/blog/2026-05-05-programming-school-transfer-comparison-2026) -- 転職特化ランキング
+- [未経験からエンジニア転職におすすめスクール5選](/blog/engineer-career-change-bootcamp-2026) -- 未経験者向け5選
+- [プログラミングスクール vs 独学 どっちが正解？](/blog/2026-05-02-programming-school-vs-self-study-2026) -- 費用・期間比較
+- [教育訓練給付金 詳細ガイド（対象8校の実質負担額比較）](/blog/2026-05-01-programming-school-kyuufukin-guide-2026) -- 申請手順を完全解説
+- [プログラミングスクール費用・コスパ比較2026](/blog/2026-05-09-programming-school-cost-benefit-2026) -- 投資対効果分析
+
 <div style="margin:2em 0;padding:1.5em;background:#f3e5f5;border-radius:8px;border-left:4px solid #7b1fa2;">
 <strong>🎨 プロクリエイターから学ぶオンライン動画講座【Coloso】</strong><br>
 デザイン・イラスト・映像・3D・プログラミングなど、各分野のプロが直接教えるオンライン動画講座。韓国発グローバルプラットフォームで、実践的なスキルを身につけよう。<br>
