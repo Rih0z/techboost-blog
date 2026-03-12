@@ -77,19 +77,10 @@ heroImage: "../../assets/blog-placeholder-3.jpg"
   実質負担: 24万円
 
 条件:
-  - 雇用保険加入期間が一定以上（初回利用は2年以上）
+  - 雇用保険加入期間が一定以上（3年以上等）
   - 厚生労働大臣が指定したスクール
   - 修了後に就職・賃金向上等の条件を満たすこと
 ```
-
-給付金対象スクールを選べば実質負担を大幅に抑えられる。以下のような動画学習プラットフォームと組み合わせて基礎を固めてからスクールに進む方法も効果的だ。
-
-<div style="padding:1.5em;background:#fff8e1;border-radius:8px;border-left:4px solid #f0a500;margin:2em 0;">
-<strong>🎓 スキルを動画で体系的に学ぶ【Coloso（コロソ）】</strong><br>
-プロ講師によるデザイン・映像・エンジニアリング講座が充実。買い切り型で繰り返し学習可能。スクール入学前の基礎固めにも最適。<br><br>
-<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+F2ZCHE+5Q4A+5YJRM" rel="nofollow" style="display:inline-block;padding:0.8em 1.5em;background:#f0a500;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">→ Colosoで講座を見る（無料会員登録）</a>
-<img border="0" width="1" height="1" src="https://www14.a8.net/0.gif?a8mat=4AZ9C1+F2ZCHE+5Q4A+5YJRM" alt="">
-</div>
 
 ---
 
@@ -167,15 +158,6 @@ heroImage: "../../assets/blog-placeholder-3.jpg"
   マイナビIT AGENT: 幅広い求人
   リクルートエージェント: 総合型・求人数が多い
 ```
-
-<div style="display:flex;flex-direction:column;gap:1em;margin:2em 0;">
-<div style="padding:1.5em;background:#f0fff4;border-radius:8px;border-left:4px solid #00a65a;">
-<strong>🚀 エンジニア専門の転職エージェント【明光キャリアパートナーズ】</strong><br>
-IT・Web系エンジニアの転職支援実績多数。専任エージェントが希望条件に合った求人を紹介。未経験からのキャリアチェンジ相談も無料。<br><br>
-<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" rel="nofollow" style="display:inline-block;padding:0.8em 1.5em;background:#00a65a;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">→ 明光キャリアで転職相談する（無料）</a>
-<img border="0" width="1" height="1" src="https://www11.a8.net/0.gif?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" alt="">
-</div>
-</div>
 
 ### 転職活動のタイムライン
 
@@ -297,21 +279,6 @@ IT・Web系エンジニアの転職支援実績多数。専任エージェント
 ```
 
 最初の一歩が一番難しい。今日から学習を始めよう。
-
-<div style="display:flex;flex-direction:column;gap:1em;margin:2em 0;">
-<div style="padding:1.5em;background:#f0f7ff;border-radius:8px;border-left:4px solid #0066cc;">
-<strong>💼 将来はフリーランスも視野に【フリーランスボード】</strong><br>
-エンジニアとして実力をつけたら、フリーランスという選択肢もある。高単価・リモートOK・週3〜5日と幅広い案件を無料で検索できる。<br><br>
-<a href="https://px.a8.net/svt/ejp?a8mat=4AZ8K4+38P04A+5R1M+5YJRM" rel="nofollow" style="display:inline-block;padding:0.8em 1.5em;background:#0066cc;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">→ フリーランスボードで案件を探す（無料登録）</a>
-<img border="0" width="1" height="1" src="https://www11.a8.net/0.gif?a8mat=4AZ8K4+38P04A+5R1M+5YJRM" alt="">
-</div>
-</div>
-
-### 関連記事
-
-- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)
-- [プログラミングスクール比較2026【給付金で費用を抑える方法】](/blog/2026-03-08-programming-school-comparison-2026)
-- [フリーランスエンジニアのキャリアガイド【独立までの完全ロードマップ】](/blog/freelance-engineer-start-guide)
 
 ---
 

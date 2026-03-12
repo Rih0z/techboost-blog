@@ -416,13 +416,6 @@ YYYY-MM-DD_経費種別_内容_金額.pdf
 
 ---
 
-## 関連記事
-
-- [青色申告 vs 白色申告 エンジニア向け徹底比較2026](https://techboostblog.com/blog/2026-03-18-blue-vs-white-tax-return-engineer-2026/)
-- [エンジニアが使える確定申告経費50選【2026年版チェックリスト】](https://techboostblog.com/blog/2026-03-13-engineer-kakuteishinkoku-deduction-2026/)
-- [フリーランスエンジニアの記帳・帳簿管理完全ガイド2026](https://techboostblog.com/blog/2026-03-22-freelance-bookkeeping-guide-2026/)
-- [e-Tax電子申告の完全手順2026：エンジニア向けセットアップから送信まで](https://techboostblog.com/blog/etax-electronic-filing-guide-2026/)
-
 ## 参考リンク
 
 - [国税庁: 確定申告書の提出期間](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2024.htm)
