@@ -8,11 +8,19 @@ heroImage: "../../assets/blog-placeholder-2.jpg"
 
 ## はじめに
 
+> *本記事にはアフィリエイト広告（A8.net）が含まれます。*
+
 「Dockerは開発環境で使っているが、本番サーバーでの運用方法がわからない」というエンジニアは多い。
 
 この記事ではVPS（Ubuntu 22.04）上でDockerとDocker Composeを使い、**WebアプリをHTTPS対応・自動起動・ゼロダウンタイムデプロイで本番運用する全手順**を解説する。
 
 > **免責事項**: ツールのバージョン・仕様は記事執筆時点の情報です。最新の公式ドキュメントも合わせてご確認ください。
+
+<div style="padding:1.5em;background:#f0f7ff;border-radius:8px;border-left:4px solid #0066cc;margin:1.5em 0;">
+<strong>Docker本番運用に最適なVPS</strong><br>
+NVMe SSD搭載でDockerイメージビルドが高速なXServerVPSが本番環境におすすめ。<br>
+<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" rel="noopener sponsored" target="_blank" style="display:inline-block;margin-top:0.75em;background:#0066cc;color:white;padding:10px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">→ XServerVPS 公式サイトで申し込む</a>
+</div>
 
 ---
 
@@ -547,17 +555,21 @@ sudo systemctl status myapp.service
 
 ## おすすめVPSサービス
 
-### XServerVPS
+<div style="display:flex;flex-direction:column;gap:1em;margin:2em 0;">
 
-DockerやDocker Composeを使った本番運用に最適なVPS。NVMe SSDでイメージビルドも高速。
+<div style="padding:1.5em;background:#f0f7ff;border-radius:8px;border-left:4px solid #0066cc;">
+<strong>XServerVPS — Docker本番運用に最適</strong><br>
+NVMe SSDでDockerイメージビルドが高速。Dockerテンプレートあり・本番運用に最適なVPS。<br>
+<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" rel="noopener sponsored" target="_blank" style="display:inline-block;margin-top:0.75em;background:#0066cc;color:white;padding:10px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">→ XServerVPS 公式サイトで申し込む</a>
+</div>
 
-[XServerVPS公式サイトで申し込む](https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY)
+<div style="padding:1.5em;background:#fff7f0;border-radius:8px;border-left:4px solid #e67e22;">
+<strong>ConoHa WING — 小規模・WordPress向け</strong><br>
+小規模プロジェクトやWordPressとの併用に。使いやすいUIと時間課金で低リスクで始められる。<br>
+<a href="https://px.a8.net/svt/ejp?a8mat=4AZBO0+C968T6+50+5SJPS2" rel="noopener sponsored" target="_blank" style="display:inline-block;margin-top:0.75em;background:#e67e22;color:white;padding:10px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">→ ConoHa WING 公式サイトで詳細を見る</a>
+</div>
 
-### ConoHa WING
-
-小規模プロジェクトやWordPressとの併用には ConoHa WING も選択肢。
-
-[ConoHa WING公式サイトで詳細を見る](https://px.a8.net/svt/ejp?a8mat=4AZBO0+C968T6+50+5SJPS2)
+</div>
 
 ---
 
@@ -621,6 +633,6 @@ DockerとDocker Composeを使えば、開発環境と本番環境の差異を最
 
 ## 関連記事
 
-- VPS初期設定完全ガイド2026（Ubuntu）
-- XServerVPS vs ConoHa VPS徹底比較2026
-- さくらVPS vs XServerVPS比較2026
+- [VPS初期設定完全ガイド2026（Ubuntu）](/blog/2026-06-02-vps-initial-setup-guide-2026/)
+- [XServerVPS vs ConoHa VPS徹底比較2026](/blog/2026-06-01-xservervps-vs-conoha-vps-2026/)
+- [さくらVPS vs XServerVPS比較2026](/blog/2026-06-04-sakura-vps-vs-xservervps-2026/)
