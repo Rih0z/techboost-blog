@@ -3,7 +3,7 @@ title: "レンタルサーバー vs VPS vs クラウド 選び方2026"
 description: "レンタルサーバー・VPS・クラウド（AWS/GCP/Azure）の違いをエンジニア向けに徹底解説。料金・自由度・管理難易度の比較表と、個人開発・副業・スタートアップ・本番運用それぞれに最適なサーバー選びのポイントを2026年版でまとめます。"
 pubDate: "2026-06-05"
 tags: ["server", "インフラ", "クラウド"]
-heroImage: "../../assets/blog-placeholder-2.jpg"
+heroImage: '../../assets/thumbnails/2026-06-05-server-types-comparison-2026.jpg'
 ---
 
 ## はじめに

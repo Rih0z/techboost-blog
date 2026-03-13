@@ -3,7 +3,7 @@ title: "MSW（Mock Service Worker）でAPI モックテスト実践"
 description: "Mock Service Worker（MSW）を使ったAPIモックテストの実践方法を解説。REST/GraphQLのハンドラー定義からVitest・Playwright連携、ネットワーク境界テストまでTypeScriptの実装例付きで紹介します。"
 pubDate: "2026-03-09"
 tags: ["testing", "JavaScript", "TypeScript", "エンジニア"]
-heroImage: "../../assets/blog-placeholder-4.jpg"
+heroImage: '../../assets/thumbnails/msw-mock-service-worker-testing-guide.jpg'
 ---
 
 ## はじめに

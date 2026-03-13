@@ -3,7 +3,7 @@ title: "HashiCorp Nomadで学ぶ軽量コンテナオーケストレーション
 description: "HashiCorp Nomadを使った軽量コンテナオーケストレーションの方法を解説。Kubernetesとの比較、ジョブ定義、サービスディスカバリ、Consulとの連携まで実践的なHCLコード付きで紹介します。"
 pubDate: "2026-03-09"
 tags: ["DevOps", "インフラ", "container", "cloud"]
-heroImage: "../../assets/blog-placeholder-4.jpg"
+heroImage: '../../assets/thumbnails/nomad-container-orchestration-guide-2026.jpg'
 ---
 
 ## はじめに

@@ -3,7 +3,7 @@ title: "Kotlin Multiplatformでクロスプラットフォーム開発入門"
 description: "Kotlin Multiplatform（KMP）を使ったクロスプラットフォーム開発の方法を解説。共有ロジックの設計、expect/actual宣言、Compose Multiplatform、iOS/Android/デスクトップ対応まで実践コード付きで紹介します。"
 pubDate: "2026-03-09"
 tags: ["Kotlin", "mobile", "cross-platform", "エンジニア"]
-heroImage: "../../assets/blog-placeholder-4.jpg"
+heroImage: '../../assets/thumbnails/kotlin-multiplatform-cross-platform-guide-2026.jpg'
 ---
 
 ## はじめに

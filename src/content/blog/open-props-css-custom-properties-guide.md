@@ -3,7 +3,7 @@ title: "Open PropsでCSS設計を効率化する実践ガイド"
 description: "Open Propsを使ったCSS設計の効率化方法を解説。デザイントークンとしてのCSS Custom Properties活用、カラー・タイポグラフィ・スペーシングの統一、ダークモード対応、Tailwind CSSとの併用まで実践コード付きで紹介します。"
 pubDate: "2026-03-09"
 tags: ["CSS", "デザイン", "フロントエンド"]
-heroImage: "../../assets/blog-placeholder-5.jpg"
+heroImage: '../../assets/thumbnails/open-props-css-custom-properties-guide.jpg'
 ---
 
 ## はじめに

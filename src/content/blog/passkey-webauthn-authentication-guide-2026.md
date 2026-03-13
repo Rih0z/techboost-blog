@@ -3,7 +3,7 @@ title: "パスキー認証（WebAuthn）完全実装ガイド2026"
 description: "パスキー（Passkey）とWebAuthn APIを使った次世代認証の実装方法を解説。パスワードレス認証のセットアップからReact/Node.jsでの実装例、FIDO2標準準拠のセキュリティ設計まで、実践的なコード付きで紹介します。"
 pubDate: "2026-03-09"
 tags: ["security", "WebAuthn", "TypeScript", "エンジニア"]
-heroImage: "../../assets/blog-placeholder-3.jpg"
+heroImage: '../../assets/thumbnails/passkey-webauthn-authentication-guide-2026.jpg'
 ---
 
 ## はじめに

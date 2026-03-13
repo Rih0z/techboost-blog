@@ -3,7 +3,7 @@ title: "Angular 19新機能・完全ガイド2026年版【シグナル・SSR・Z
 description: "Angular 19の主要新機能を詳しく解説。Linked Signals・Resource API・Zoneless変更検知・Incremental HydrationをTypeScriptコード例で紹介。アップグレード手順・パフォーマンス比較も網羅した完全ガイドです。"
 pubDate: "2026-03-10"
 tags: ["エンジニア", "プログラミング", "フロントエンド", "TypeScript"]
-heroImage: "../../assets/blog-placeholder-1.jpg"
+heroImage: '../../assets/thumbnails/angular-19-complete-guide-2026.jpg'
 ---
 
 ## はじめに
@@ -493,3 +493,10 @@ Angular 19は**シグナルAPIの成熟とパフォーマンス改善**が主役
 - [Angular 19 公式ブログ](https://blog.angular.dev/)
 - [Angular公式ドキュメント](https://angular.dev/)
 - [Angular Signals RFC](https://github.com/angular/angular/discussions/49685)
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

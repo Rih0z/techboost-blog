@@ -3,7 +3,7 @@ title: "SwiftUIで始めるiOSアプリ開発実践ガイド2026"
 description: "SwiftUIを使ったiOSアプリ開発の実践方法を解説。宣言的UI構築、データフロー（@State/@Binding/@Observable）、NavigationStack、Swift Concurrency連携まで最新のコード例付きで紹介します。"
 pubDate: "2026-03-09"
 tags: ["iOS", "Swift", "mobile", "エンジニア"]
-heroImage: "../../assets/blog-placeholder-5.jpg"
+heroImage: '../../assets/thumbnails/swiftui-ios-development-guide-2026.jpg'
 ---
 
 ## はじめに

@@ -3,7 +3,7 @@ title: "Pulumi入門ガイド｜TypeScriptでインフラを管理"
 description: "PulumiでTypeScriptを使ったインフラ管理の方法を解説。Terraformとの比較、AWS/GCP/Azureリソースの定義、プログラミング言語の利点を活かしたIaCパターンまで実践コード付きで紹介します。"
 pubDate: "2026-03-09"
 tags: ["DevOps", "インフラ", "TypeScript", "cloud"]
-heroImage: "../../assets/blog-placeholder-3.jpg"
+heroImage: '../../assets/thumbnails/pulumi-infrastructure-as-code-guide-2026.jpg'
 ---
 
 ## はじめに

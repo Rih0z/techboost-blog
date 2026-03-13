@@ -3,7 +3,7 @@ title: "Dockerをサーバーで本番運用する完全ガイド2026"
 description: "DockerとDocker ComposeでWebアプリを本番VPSにデプロイする全手順を解説。Nginx・SSL・自動起動・ログ管理・ヘルスチェック・ゼロダウンタイムデプロイまで、実用的なdocker-compose.ymlで徹底解説します。"
 pubDate: "2026-06-03"
 tags: ["server", "docker", "インフラ"]
-heroImage: "../../assets/blog-placeholder-2.jpg"
+heroImage: '../../assets/thumbnails/2026-06-03-docker-production-server-guide-2026.jpg'
 ---
 
 ## はじめに

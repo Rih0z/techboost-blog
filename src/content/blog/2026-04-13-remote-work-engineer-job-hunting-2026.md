@@ -3,7 +3,7 @@ title: "エンジニア向けリモートワーク転職完全ガイド2026"
 description: "フルリモートのエンジニア求人の探し方・リモート面接の対策・テレワーク機材環境構築・リモート採用企業の見極め方を2026年最新版で完全解説。求人票のリモート記載の実態確認・リモート文化がある企業の特徴・条件交渉のコツまで転職全ステップを網羅。"
 pubDate: "2026-04-13"
 tags: ["career", "転職", "エンジニア"]
-heroImage: "../../assets/blog-placeholder-4.jpg"
+heroImage: '../../assets/thumbnails/2026-04-13-remote-work-engineer-job-hunting-2026.jpg'
 ---
 
 ## はじめに

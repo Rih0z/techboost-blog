@@ -3,7 +3,7 @@ title: "さくらVPS vs XServerVPS比較2026【料金・性能・使い勝手】
 description: "さくらのVPSとXServerVPSを2026年最新情報で徹底比較。料金・CPU・NVMe vs SSDスペック・コントロールパネルの使いやすさ・サポート体制・エンジニア実用面まで詳細に検証。年間コスト比較と用途別おすすめの選び方を丁寧に解説します。"
 pubDate: "2026-06-04"
 tags: ["server", "VPS", "インフラ"]
-heroImage: "../../assets/blog-placeholder-2.jpg"
+heroImage: '../../assets/thumbnails/2026-06-04-sakura-vps-vs-xservervps-2026.jpg'
 ---
 
 ## はじめに

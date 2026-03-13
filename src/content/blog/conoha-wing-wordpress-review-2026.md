@@ -3,7 +3,7 @@ title: "ConoHa WINGでWordPressを始める完全ガイド【2026年版】"
 description: "ConoHa WINGでWordPressを始める手順を徹底解説。料金プラン・速度・使いやすさをXserverと比較し、ブログ・ポートフォリオ・副業サイトに最適なサーバーの選び方を紹介します。WING PACK・LiteSpeed設定・SSH接続の手順付き。"
 pubDate: "2026-03-10"
 tags: ["server", "WordPress", "インフラ", "ホスティング"]
-heroImage: "../../assets/blog-placeholder-3.jpg"
+heroImage: '../../assets/thumbnails/conoha-wing-wordpress-review-2026.jpg'
 ---
 
 ## はじめに
@@ -363,3 +363,10 @@ ConoHa WINGはWordPressでブログや副業サイトを始めるエンジニア
 - [LiteSpeed Cache WordPressプラグイン公式](https://docs.litespeedtech.com/lscache/lscwp/)
 - [Google PageSpeed Insights](https://pagespeed.web.dev/)
 - [WordPress.org 公式サイト](https://wordpress.org/)
+---
+
+## 関連記事
+
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)
+- [フリーランスエンジニアの収入完全ガイド2026【平均年収・単価・案件獲得】](/blog/2026-03-11-freelance-engineer-income-guide)
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)

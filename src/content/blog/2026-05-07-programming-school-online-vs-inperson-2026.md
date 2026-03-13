@@ -3,7 +3,7 @@ title: "オンラインvs通学制プログラミングスクール比較2026"
 description: "オンラインと通学制プログラミングスクールを2026年版で徹底比較。学習継続率・費用・就職実績・向き不向きを詳しく解説。社会人・地方在住・完全未経験者それぞれに最適な形式の選び方、ハイブリッド型の新トレンドと各形式のおすすめスクールを詳しく紹介します。"
 pubDate: "2026-05-07"
 tags: ["school", "プログラミングスクール", "オンライン学習", "比較"]
-heroImage: "../../assets/blog-placeholder-4.jpg"
+heroImage: '../../assets/thumbnails/2026-05-07-programming-school-online-vs-inperson-2026.jpg'
 ---
 
 ## オンラインvsリアル：プログラミングスクールの二大形式

@@ -3,7 +3,7 @@ title: "レバテックキャリアの評判・口コミ2026年版【IT転職を
 description: "レバテックキャリアの評判・口コミを現役エンジニア目線で徹底解説。登録から内定までの流れ・求人数・年収レンジ・サポート品質をGeeklyや転職ドラフトと比較し、IT転職に本当に使うべきか正直にレビューします。利用手順・成功事例・よくある疑問も解説。"
 pubDate: "2026-03-10"
 tags: ["career", "転職", "フリーランス", "副業"]
-heroImage: "../../assets/blog-placeholder-4.jpg"
+heroImage: '../../assets/thumbnails/levtech-career-review-2026.jpg'
 ---
 
 ## はじめに

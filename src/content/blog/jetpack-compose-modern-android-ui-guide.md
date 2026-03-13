@@ -3,7 +3,7 @@ title: "Jetpack Composeで始めるモダンAndroid UI開発"
 description: "Jetpack Composeを使ったモダンAndroid UI開発の方法を解説。宣言的UIの基本、Composable関数、状態管理、Material Design 3対応、Navigation、アニメーションまで実践コード付きで紹介します。"
 pubDate: "2026-03-09"
 tags: ["Android", "Kotlin", "mobile", "エンジニア"]
-heroImage: "../../assets/blog-placeholder-4.jpg"
+heroImage: '../../assets/thumbnails/jetpack-compose-modern-android-ui-guide.jpg'
 ---
 
 ## はじめに

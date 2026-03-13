@@ -3,7 +3,7 @@ title: "Tauri 2.0でデスクトップアプリ開発入門ガイド"
 description: "Tauri 2.0を使ったクロスプラットフォームデスクトップアプリの開発方法を解説。Electronとの比較、Rust+React/Vue/Svelteでの構築手順、プラグインシステム、モバイル対応まで実装例付きで紹介します。"
 pubDate: "2026-03-09"
 tags: ["Rust", "desktop", "フロントエンド", "エンジニア"]
-heroImage: "../../assets/blog-placeholder-3.jpg"
+heroImage: '../../assets/thumbnails/tauri-2-desktop-app-guide-2026.jpg'
 ---
 
 ## はじめに

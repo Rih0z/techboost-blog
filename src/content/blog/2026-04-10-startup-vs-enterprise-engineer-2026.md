@@ -3,7 +3,7 @@ title: "スタートアップvs大企業エンジニアのキャリア比較2026
 description: "スタートアップと大企業でエンジニアとして働く違いを年収・成長速度・技術環境・働き方・リスクの5軸で完全比較。どちらへの転職か迷うエンジニアが後悔しない選択をするための判断フローチャートと具体的な転職成功の事例2件を交えてリアルに解説します。"
 pubDate: "2026-04-10"
 tags: ["career", "転職", "プログラミング", "エンジニア"]
-heroImage: "../../assets/blog-placeholder-4.jpg"
+heroImage: '../../assets/thumbnails/2026-04-10-startup-vs-enterprise-engineer-2026.jpg'
 ---
 
 ## はじめに

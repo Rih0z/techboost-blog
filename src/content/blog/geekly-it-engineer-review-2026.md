@@ -3,7 +3,7 @@ title: "Geekly（ギークリー）IT転職エージェント評判・口コミ2
 description: "GeeklyのIT転職エージェントとしての評判・口コミを徹底解説。ゲーム業界・Web系・スタートアップへの転職支援力や求人数・サポート品質をレバテックキャリアと比較。利用手順・転職成功事例・活用コツをエンジニア目線でわかりやすく解説します。"
 pubDate: "2026-03-10"
 tags: ["career", "転職", "フリーランス"]
-heroImage: "../../assets/blog-placeholder-2.jpg"
+heroImage: '../../assets/thumbnails/geekly-it-engineer-review-2026.jpg'
 ---
 
 ## はじめに

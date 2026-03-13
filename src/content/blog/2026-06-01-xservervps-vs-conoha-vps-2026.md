@@ -3,7 +3,7 @@ title: "XServerVPS vs ConoHa VPS徹底比較2026【エンジニア向け】"
 description: "XServerVPSとConoHa VPSを料金・スペック・使いやすさ・Docker運用で徹底比較。2026年最新版。NVMe SSDの性能差・CPUコア数・年間コストシミュレーション・個人開発から本番運用まで用途別おすすめを詳しく解説します。"
 pubDate: "2026-06-01"
 tags: ["server", "インフラ", "VPS"]
-heroImage: "../../assets/blog-placeholder-2.jpg"
+heroImage: '../../assets/thumbnails/2026-06-01-xservervps-vs-conoha-vps-2026.jpg'
 ---
 
 ## はじめに

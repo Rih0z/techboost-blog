@@ -3,7 +3,7 @@ title: "Lightning CSSで高速CSSビルドパイプラインを構築"
 description: "Lightning CSS（旧Parcel CSS）を使った高速CSSビルドパイプラインの構築方法を解説。PostCSSとの比較、CSS Modules対応、ブラウザターゲット設定、Vite連携まで実践的な設定例付きで紹介します。"
 pubDate: "2026-03-09"
 tags: ["CSS", "パフォーマンス", "ツール", "フロントエンド"]
-heroImage: "../../assets/blog-placeholder-5.jpg"
+heroImage: '../../assets/thumbnails/lightning-css-fast-css-toolchain-guide.jpg'
 ---
 
 ## はじめに

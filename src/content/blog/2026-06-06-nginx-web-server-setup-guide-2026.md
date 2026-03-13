@@ -3,7 +3,7 @@ title: "NginxでWebサーバー構築完全ガイド2026【Ubuntu VPS対応】"
 description: "Ubuntu VPS上でNginxをインストールしてHTTPS対応Webサーバーを構築する全手順を解説。仮想ホスト設定・gzip圧縮・セキュリティヘッダー・パフォーマンスチューニング・ログ管理まで2026年最新の実践内容を詳しく説明します。"
 pubDate: "2026-06-06"
 tags: ["server", "インフラ", "linux"]
-heroImage: "../../assets/blog-placeholder-5.jpg"
+heroImage: '../../assets/thumbnails/2026-06-06-nginx-web-server-setup-guide-2026.jpg'
 ---
 
 ## はじめに

@@ -3,7 +3,7 @@ title: "VPSでWordPressを高速化する方法2026【Nginx+Redis+OPcache】"
 description: "VPS上のWordPressをNginx+PHP-FPM+Redis+OPcacheで高速化する全手順を解説。PageSpeed 90点以上達成のための設定・W3 Total Cache・ヒートマップ分析まで2026年最新の実践的な高速化手法を詳しく説明します。"
 pubDate: "2026-06-09"
 tags: ["server", "wordpress", "パフォーマンス"]
-heroImage: "../../assets/blog-placeholder-5.jpg"
+heroImage: '../../assets/thumbnails/2026-06-09-vps-wordpress-performance-2026.jpg'
 ---
 
 ## はじめに

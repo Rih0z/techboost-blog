@@ -3,7 +3,7 @@ title: "第二新卒・既卒エンジニア転職のためのプログラミン
 description: "第二新卒・既卒がプログラミングスクールを活用してエンジニア転職を成功させる方法を2026年版で徹底解説。第二新卒の強み・弱みの活かし方、転職エージェントとの組み合わせ戦略、採用担当者に刺さるポートフォリオ作成と面接対策まで詳しく紹介します。"
 pubDate: "2026-05-10"
 tags: ["school", "プログラミングスクール", "第二新卒", "IT転職", "career"]
-heroImage: "../../assets/blog-placeholder-2.jpg"
+heroImage: '../../assets/thumbnails/2026-05-10-programming-school-second-career-2026.jpg'
 ---
 
 ## 第二新卒・既卒からエンジニアへの転職は可能か

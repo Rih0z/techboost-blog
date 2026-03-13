@@ -3,7 +3,7 @@ title: "エンジニア転職を成功させる職務経歴書の書き方2026"
 description: "エンジニア転職で採用担当者の目に留まる職務経歴書の書き方を2026年最新版で完全解説。技術スタックの習熟度の書き方・定量的な実績の示し方・ポートフォリオ連携・職種別の採用担当者が重視するポイントをサンプルと悪い例・失敗パターン付きで徹底説明。"
 pubDate: "2026-04-12"
 tags: ["career", "転職", "エンジニア"]
-heroImage: "../../assets/blog-placeholder-4.jpg"
+heroImage: '../../assets/thumbnails/2026-04-12-engineer-resume-writing-guide-2026.jpg'
 ---
 
 ## はじめに
