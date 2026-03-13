@@ -333,3 +333,13 @@ function FilterableList({ items }: { items: Item[] }) {
 - [Claude Code完全ガイド2026](/blog/claude-code-complete-guide-2026) — AIでReact開発を10倍速に
 - [AIコーディングツール比較2026](/blog/ai-coding-assistant-comparison-2026) — Cursor vs Windsurf vs Copilot
 - [エンジニア年収を上げる戦略2026](/blog/engineer-salary-up-strategy-2026) — TypeScriptスキルで年収アップ
+
+---
+
+## スキルアップ・キャリアを加速させる
+
+React + TypeScriptのスキルを実務に活かしたいなら、キャリアへの投資も重要です。
+
+- [未経験からエンジニアになる完全ロードマップ2026](/blog/2026-04-11-new-grad-engineer-career-start-2026/) — フロントエンドエンジニアへの具体的なキャリアパス
+- [プログラミングスクール徹底比較2026【給付金・転職保証あり】](/blog/2026-03-08-programming-school-comparison-2026/) — React・TypeScript学習に特化したスクール比較
+- [Coloso評判・口コミ完全ガイド2026](/blog/2026-03-23-coloso-review-reputation-2026/) — プロから学ぶ動画講座でスキルを加速

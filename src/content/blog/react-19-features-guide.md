@@ -583,3 +583,13 @@ React 19は以下の点で革新的です:
 - [React 19 公式ドキュメント](https://react.dev/)
 - [React 19 リリースノート](https://react.dev/blog/2024/12/05/react-19)
 - [React Compiler](https://react.dev/learn/react-compiler)
+
+---
+
+## Reactを活かしたキャリアアップ
+
+Reactスキルを習得したら、フロントエンドエンジニアとしてのキャリアパスを本格的に考えてみましょう。
+
+- [未経験からエンジニアになる完全ロードマップ2026](/blog/2026-04-11-new-grad-engineer-career-start-2026/) — Reactを活かした転職・就活の戦略
+- [プログラミングスクール徹底比較2026【給付金・転職保証あり】](/blog/2026-03-08-programming-school-comparison-2026/) — フロントエンドに強いスクールを選ぶ方法
+- [Coloso評判・口コミ完全ガイド2026](/blog/2026-03-23-coloso-review-reputation-2026/) — Reactなどフロントエンド動画講座の学習に

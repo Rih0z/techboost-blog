@@ -354,3 +354,36 @@ IT・エンジニア職に特化した転職エージェント。無料キャリ
 <a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+F2ZCHE+5Q4A+5YJRM" rel="noopener sponsored" target="_blank">→ Colosoで講座を探す（無料会員登録）</a>
 <img border="0" width="1" height="1" src="https://www10.a8.net/0.gif?a8mat=4AZ9C1+F2ZCHE+5Q4A+5YJRM" alt="">
 </div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "プログラミングスクールは本当に就職できますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "多くのスクールが就職率90〜98%を公表しています。ただし条件や定義が異なるため、卒業後の就職実績・サポート内容・受講中の学習量を総合的に確認することが重要です。DMM WEBCAMPやRUNTEQなど就職支援に力を入れたスクールでは、未経験からエンジニア就職に成功する事例が多数あります。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "未経験からエンジニアになるのに何ヶ月かかりますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "スクール受講期間は3〜12ヶ月が一般的です。その後の就職活動期間を含めると、最短で約4〜6ヶ月でエンジニア転職を実現する人もいますが、平均的には受講開始から内定まで6〜12ヶ月程度を見込むと現実的です。学習スピードや目指す職種によって大きく異なります。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "給付金を使えるプログラミングスクールはどれですか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "教育訓練給付金（専門実践教育訓練）に対応しているスクールには、DMM WEBCAMP・テックアカデミー・ヒューマンアカデミー・デジタルハリウッド・CoTechなどがあります。給付金を利用すると受講料の最大70%が還元される場合があります。条件は雇用保険の加入期間などにより異なるため、ハローワークで事前確認が必要です。"
+      }
+    }
+  ]
+}
+</script>
