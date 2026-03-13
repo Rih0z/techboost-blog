@@ -3,7 +3,7 @@ title: "フリーランスエンジニアの住民税・国保節税術2026"
 description: "フリーランスエンジニアの住民税と国民健康保険料を合法的に節約する方法を2026年最新版で解説。小規模企業共済・iDeCoで年間50万円節税する方法・ふるさと納税の活用法・国保の所得割計算・任意継続と国保の比較を具体的な数字のシミュレーション付きで説明します。"
 pubDate: "2026-03-21"
 tags: ["accounting", "フリーランス", "確定申告", "副業"]
-heroImage: "../../assets/blog-placeholder-2.jpg"
+heroImage: '../../assets/thumbnails/2026-03-21-freelance-juminzei-kokuho-saving-2026.jpg'
 ---
 
 ## はじめに

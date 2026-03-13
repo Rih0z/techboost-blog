@@ -3,7 +3,7 @@ title: "フリーランスエンジニアの記帳・帳簿管理完全ガイド
 description: "フリーランスエンジニアが知っておくべき記帳の基本から効率化まで2026年最新版で解説。複式簿記をエンジニア視点で解説・freee/マネーフォワードの初期設定・電子帳簿保存法への実践対応・月次クローズ30分ルーティーンを具体的なコード例付きで説明します。"
 pubDate: "2026-03-22"
 tags: ["accounting", "フリーランス", "確定申告"]
-heroImage: "../../assets/blog-placeholder-1.jpg"
+heroImage: '../../assets/thumbnails/2026-03-22-freelance-bookkeeping-guide-2026.jpg'
 ---
 
 ## はじめに

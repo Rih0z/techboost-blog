@@ -3,7 +3,7 @@ title: "エンジニアが使える確定申告経費50選【2026年版チェッ
 description: "フリーランス・副業エンジニアが確定申告で使える経費を50項目カテゴリ別に整理。在宅勤務の家賃・光熱費の按分計算方法・PC・ガジェット・クラウドサービス費用の経費化ポイントを計算式付きで詳しく解説。青色申告の節税効果についても詳しく紹介します。"
 pubDate: "2026-03-13"
 tags: ["accounting", "確定申告", "フリーランス", "副業"]
-heroImage: "../../assets/blog-placeholder-5.jpg"
+heroImage: '../../assets/thumbnails/2026-03-13-engineer-kakuteishinkoku-deduction-2026.jpg'
 ---
 
 ## はじめに

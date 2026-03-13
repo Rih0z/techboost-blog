@@ -3,7 +3,7 @@ title: "フリーランスエンジニア節税完全ガイド2026【年間50万
 description: "フリーランスエンジニアが合法的に節税できる方法15選を徹底解説。青色申告65万控除・小規模企業共済・iDeCo・ふるさと納税・経費按分の計算方法と節税シミュレーション付き。年収帯別の節税ロードマップで年間50万円節税を実現する方法を紹介します。"
 pubDate: "2026-03-14"
 tags: ["accounting", "フリーランス", "確定申告", "副業"]
-heroImage: "../../assets/blog-placeholder-5.jpg"
+heroImage: '../../assets/thumbnails/2026-03-14-freelance-tax-saving-guide-2026.jpg'
 ---
 
 ## はじめに

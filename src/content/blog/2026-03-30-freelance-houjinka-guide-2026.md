@@ -3,7 +3,7 @@ title: "フリーランスエンジニアの法人化完全ガイド2026"
 description: "フリーランスエンジニアが個人事業主から法人化するタイミング・メリット・手続き・コスト・税金の違いを2026年最新情報で徹底解説。年収600万円が目安の理由・株式会社と合同会社の比較・節税シミュレーション・設立手順チェックリスト付きで完全網羅。"
 pubDate: "2026-03-30"
 tags: ["accounting", "フリーランス", "副業"]
-heroImage: "../../assets/blog-placeholder-4.jpg"
+heroImage: '../../assets/blog-placeholder-3.jpg'
 ---
 
 ## はじめに

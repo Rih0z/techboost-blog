@@ -3,7 +3,7 @@ title: "確定申告でよくある失敗10選と完全回避ガイド2026"
 description: "フリーランスエンジニアが確定申告でやってしまいがちなミスと対策を2026年最新版で解説。経費按分のNG事例・無申告加算税のペナルティ・青色申告承認申請書の提出漏れ・インボイス対応ミス・記帳放置など税務調査リスクを減らす実践的な回避法を説明します。"
 pubDate: "2026-03-20"
 tags: ["accounting", "フリーランス", "確定申告"]
-heroImage: "../../assets/blog-placeholder-5.jpg"
+heroImage: '../../assets/thumbnails/2026-03-20-kakuteishinkoku-mistakes-avoid-guide-2026.jpg'
 ---
 
 ## はじめに
