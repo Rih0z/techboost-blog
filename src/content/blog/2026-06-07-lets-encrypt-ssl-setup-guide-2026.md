@@ -1,6 +1,6 @@
 ---
 title: "Let's Encrypt無料SSL証明書設定完全ガイド2026【Certbot+Nginx】"
-description: "CertbotでLet's EncryptのSSL証明書を取得しNginxに設定する全手順を解説。自動更新・ワイルドカード証明書・複数ドメイン対応・HSTS設定まで、2026年最新版でHTTPS化を完全に実現する方法を説明します。"
+description: "CertbotでLet's EncryptのSSL証明書を取得しNginxに設定する全手順を解説。自動更新・ワイルドカード証明書・複数ドメイン対応・TLS強化・HSTS設定まで、2026年最新版でHTTPS化を完全に実現する方法を詳しく説明します。"
 pubDate: "2026-06-07"
 tags: ["server", "インフラ", "セキュリティ"]
 heroImage: "../../assets/blog-placeholder-5.jpg"
