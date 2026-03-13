@@ -615,7 +615,7 @@ ssh-keygen -t ed25519 -C "github-actions-deploy-new" -f ~/.ssh/github_actions_de
 
 <div style="padding:1.5em;background:#f0f7ff;border-radius:8px;border-left:4px solid #0066cc;margin:1.5em 0;">
 <strong>GitHub Actions自動デプロイの練習環境</strong><br>
-ConoHa VPSなら時間課金で安く試せる。GitHub ActionsのCIパイプライン練習に最適。<br>
+ConoHa WINGなら初期費用無料で試せる。GitHub ActionsのCIパイプライン練習に最適。<br>
 <a href="https://px.a8.net/svt/ejp?a8mat=4AZBO0+C968T6+50+5SJPS2" rel="noopener sponsored" target="_blank" style="display:inline-block;margin-top:0.75em;background:#0066cc;color:white;padding:10px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">→ ConoHa WING 公式サイトで詳細を見る</a>
 </div>
 

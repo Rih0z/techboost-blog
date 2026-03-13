@@ -58,7 +58,7 @@ WordPressの速度に影響する要因と対策を整理する。
 | PHP実行 | PHPスクリプトのコンパイル | **OPcache**（バイトコードキャッシュ） |
 | DB接続 | WordPressのDB接続コスト | **Redis**（オブジェクトキャッシュ） |
 | ページ生成 | 毎リクエストでHTML生成 | **Nginxマイクロキャッシュ / W3TC** |
-| 静的ファイル | CSS/JS/画像の転送量 | **gzip圧縮 / Broti / ブラウザキャッシュ** |
+| 静的ファイル | CSS/JS/画像の転送量 | **gzip圧縮 / Brotli / ブラウザキャッシュ** |
 | 画像 | 非圧縮・非WebP画像 | **WebP変換 / Lazy Load** |
 | ネットワーク | HTTP/1.1 | **HTTP/2 / CDN** |
 

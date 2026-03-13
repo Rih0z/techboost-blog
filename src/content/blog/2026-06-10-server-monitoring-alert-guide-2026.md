@@ -482,10 +482,10 @@ sudo systemctl reload prometheus
 ## 6. Grafanaダッシュボードの構築
 
 ```bash
-# Grafanaのリポジトリを追加
-sudo apt install -y apt-transport-https
-wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
-echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+# Grafanaのリポジトリを追加（Ubuntu 22.04推奨の署名方式）
+sudo apt install -y apt-transport-https software-properties-common
+wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | sudo tee /usr/share/keyrings/grafana.gpg > /dev/null
+echo "deb [signed-by=/usr/share/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
 
 sudo apt update
 sudo apt install grafana -y
