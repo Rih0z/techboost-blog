@@ -646,3 +646,9 @@ CREATE TABLE product_tags (
 - AIコーディングツール比較2026 — SQLクエリ生成にAI活用
 
 **便利ツール**: [DevToolBox](/tools) でSQL整形・ER図作成が可能です。
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

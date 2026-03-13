@@ -713,3 +713,10 @@ React 19 Server Actionsは以下の点で優れています。
 - [React 19 Server Actions](https://react.dev/reference/react/use-server)
 - [Next.js Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations)
 - [React useActionState](https://react.dev/reference/react/useActionState)
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

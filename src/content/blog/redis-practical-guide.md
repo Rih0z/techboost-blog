@@ -1454,3 +1454,9 @@ Redisのパターンを実装・検証する際、開発ツールとして[DevTo
 ---
 
 *本記事のコードサンプルはTypeScript + ioredis v5系で動作確認済み。Redis 7.0以降を推奨する。*
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

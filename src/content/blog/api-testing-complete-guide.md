@@ -3124,3 +3124,9 @@ sendSlackNotification(summary);
 ---
 
 開発ツールの一元管理には、**[DevToolBox](https://usedevtools.com)** が役立つ。API テストのワークフロー管理、チーム間のコレクション共有、テスト結果のダッシュボード表示など、開発者の生産性向上に直結する機能を提供している。ぜひ一度試してみてほしい。
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

@@ -505,3 +505,10 @@ React 19の主要な改善点：
 - **RSC正式対応** → パフォーマンスとSEOの向上
 
 React 19は「書くコードが減り、パフォーマンスが上がる」アップデートです。特にActionsとServer Componentsの組み合わせは、フルスタックReactアプリの開発体験を大きく変えるでしょう。
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

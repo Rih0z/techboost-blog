@@ -1286,3 +1286,10 @@ LangChainとAIアプリ開発のスキルは、現在最も需要が高い技術
 ### オンライン学習
 - **[Udemy](https://www.udemy.com)** — LangChain・LangGraph・RAGシステム構築の実践コースが充実。最新のLLMアプリ開発手法を動画で体系的に学べる。セール時は90%オフになることも。
 - **[Coursera](https://www.coursera.org)** — DeepLearning.AIのLLM・プロンプトエンジニアリングコースを受講可能。Andrew Ng監修のAI基礎から応用まで体系的に習得できる。
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

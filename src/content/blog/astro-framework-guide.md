@@ -1682,3 +1682,10 @@ Astroは万能ではありませんが、適切なユースケースでは圧倒
 本記事で解説したContent Collectionsを実装すると、JSONスキーマのデバッグ作業が発生することがあります。特にZodスキーマと実際のMarkdown frontmatterの型が一致しているか確認する場面では、[DevToolBox](https://usedevtools.com/)が非常に役立ちます。JSONのバリデーション・フォーマット・型チェックをブラウザ上でリアルタイムに確認できるため、Content Collectionsのスキーマ設計時にぜひ活用してください。
 
 Astroのエコシステムは急速に成熟しており、公式インテグレーション（Tailwind・React・Vue・Svelte・MDX・Sitemap・Partytown）が充実しています。まずは`pnpm create astro@latest`でプロジェクトを作成し、Islands Architectureの圧倒的なパフォーマンスを体感してみてください。
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

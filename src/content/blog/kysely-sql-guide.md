@@ -611,3 +611,10 @@ Kyselyの主な利点：
 4. **柔軟** - PostgreSQL、MySQL、SQLiteに対応
 
 SQLの知識を活かしつつ型安全性を得たい場合、Kyselyは最適な選択肢です。Prismaのようなフルスタック機能は不要で、純粋なクエリビルダーが欲しい場合に特に力を発揮します。
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

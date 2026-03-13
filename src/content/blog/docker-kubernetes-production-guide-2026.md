@@ -334,3 +334,7 @@ Month 3: 本番運用
 - [Terraform AWS完全ガイド2026](/blog/terraform-aws-guide-2026) — IaCでインフラ管理
 - [AWS vs GCP vs Azure比較2026](/blog/aws-vs-gcp-vs-azure-comparison-2026) — クラウドKubernetes比較
 - [PostgreSQLパフォーマンス最適化2026](/blog/postgresql-performance-guide-2026) — DBのパフォーマンスチューニング
+
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)
+- [フリーランスエンジニアの収入完全ガイド2026【平均年収・単価・案件獲得】](/blog/2026-03-11-freelance-engineer-income-guide)
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)

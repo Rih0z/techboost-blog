@@ -1687,3 +1687,10 @@ ElasticsearchのクエリDSLはJSONで記述します。クエリを組み立て
 - [@elastic/elasticsearch Node.js クライアント](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/index.html)
 - [Kibana ドキュメント](https://www.elastic.co/guide/en/kibana/current/index.html)
 - [Elasticsearch kNN search](https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html)
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

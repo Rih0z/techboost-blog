@@ -2554,3 +2554,10 @@ LLMファインチューニングのスキルは、AI開発の最前線で求め
 ### オンライン学習
 - **[Coursera](https://www.coursera.org)** — DeepLearning.AIのLLM・ファインチューニング専門コースが充実。Andrew Ng監修のコースで基礎から最先端まで体系的に学べる。無料聴講も可能。
 - **[Udemy](https://www.udemy.com)** — LoRA・QLoRA・DPOなどの実践的なファインチューニング手法を動画で学べる。Hugging Face・PyTorchを使った実装コースが充実している。
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

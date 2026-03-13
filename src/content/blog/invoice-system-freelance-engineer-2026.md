@@ -1427,3 +1427,10 @@ console.log(`納税額:   ${result.minimumTax.toLocaleString()}円`);
 - [国税庁 適格請求書等保存方式に関するQ&A](https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/qa_invoice_mokuji.htm)
 - [国税庁 2割特例の概要](https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_2wari.htm)
 - [公正取引委員会 インボイス制度への対応に関するQ&A](https://www.jftc.go.jp/dk/guideline/unyoukijun/invoice_qanda.html)
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

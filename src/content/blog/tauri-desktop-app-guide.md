@@ -1642,3 +1642,10 @@ Rustが書けない場合でも、バックエンドをほぼ触らずにReact/T
 ---
 
 *本記事で紹介したJSON設定ファイルのバリデーションには、[DevToolBox](https://usedevtools.com/) を活用してください。ブラウザ上で動作するJSON Formatter・Validator・差分チェッカーなど、開発者向けツールを無料で提供しています。`tauri.conf.json` や `capabilities/*.json` の構文チェックに役立てていただければ幸いです。*
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

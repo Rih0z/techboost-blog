@@ -757,3 +757,9 @@ View Transitionsは**プログレッシブエンハンスメント**です。非
 - [Astro View Transitions](https://docs.astro.build/en/guides/view-transitions/)
 - [View Transitions API (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API)
 - [Chrome Developers: View Transitions](https://developer.chrome.com/docs/web-platform/view-transitions/)
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)

@@ -1038,3 +1038,10 @@ Kyselyは**TypeScript型安全SQLクエリビルダー**として、以下の価
 - ORM完全抽象化が必要（Prisma）
 
 Kyselyは現代的なTypeScript開発において、SQLの柔軟性と型安全性の両立を実現する最良の選択肢です。
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

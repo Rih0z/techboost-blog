@@ -341,3 +341,7 @@ VPSでは自分でバックアップを構築します。`tar`でWebファイル
 - [フリーランスエンジニアの始め方](/blog/freelance-engineer-start-guide/) — 独立へのロードマップ
 - [エンジニアの経費完全リスト2026](/blog/engineer-freelance-tax-expenses-2026/) — サーバー費用の経費計上
 - [Docker・Kubernetes本番運用ガイド2026](/blog/docker-kubernetes-production-guide-2026/) — コンテナ技術でのデプロイ
+
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)
+- [フリーランスエンジニアの収入完全ガイド2026【平均年収・単価・案件獲得】](/blog/2026-03-11-freelance-engineer-income-guide)
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)

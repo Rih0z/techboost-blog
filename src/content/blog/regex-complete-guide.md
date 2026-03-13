@@ -791,3 +791,10 @@ function testWithTimeout(
 - HTMLの完全な解析にはDOMParserやcheerioを使う
 
 正規表現のテストには[DevToolBoxの正規表現テスター](https://usedevtools.com/regex-tester)が便利だ。リアルタイムでマッチ結果を確認できるので、パターンの開発・デバッグが大幅に効率化できる。ブラウザで開いてすぐ使えるため、開発中のブックマークにぜひ追加してほしい。
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

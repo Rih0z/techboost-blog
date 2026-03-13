@@ -3,7 +3,7 @@ title: "Coloso評判・口コミ2026｜利用者の本音と徹底レビュー"
 description: "Coloso（コロソ）の評判・口コミを2026年最新版で徹底検証。料金・コース品質・学習スタイルのメリット・デメリットを実際の利用者目線でまとめ、どんな人に向いているか・おすすめジャンル・受講フロー・副業転職の成功事例まで詳しく解説します。"
 pubDate: "2026-03-23"
 tags: ["school", "プログラミング", "学習"]
-heroImage: "../../assets/blog-placeholder-2.jpg"
+heroImage: "../../assets/thumbnails/2026-03-23-coloso-review-reputation-2026.jpg"
 ---
 
 ## Colosoの評判は？2026年最新口コミを徹底検証

@@ -1351,3 +1351,10 @@ export default tseslint.config(
 ESLint 9のFlat Configへの移行は、最初は設定の書き直しに時間がかかるように見えるが、一度移行が完了すれば設定の見通しが格段に改善される。「どの設定がどのファイルに適用されているか」が単純な配列のトップダウンで把握できるようになり、デバッグも容易になる。
 
 TypeScript・React・Next.jsを使った現代的なフロントエンド開発において、Flat Configは今後の標準となる。早めに移行して、より堅牢なコード品質管理体制を整えよう。
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)

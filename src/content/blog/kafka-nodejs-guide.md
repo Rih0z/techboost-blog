@@ -1628,3 +1628,10 @@ Kafkaは強力だが、運用コストも相応に高い。小規模なタスク
 *Apache Kafka公式ドキュメント: https://kafka.apache.org/documentation/*  
 *kafkajs公式ドキュメント: https://kafka.js.org/*  
 *Confluent Platform: https://docs.confluent.io/platform/current/overview.html*
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)
+- [フリーランスエンジニアの収入完全ガイド2026【平均年収・単価・案件獲得】](/blog/2026-03-11-freelance-engineer-income-guide)

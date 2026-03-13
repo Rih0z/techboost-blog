@@ -508,3 +508,10 @@ Remix v3からReact Router v7への移行は、主に以下の変更が必要で
 - **API統一**: RemixとReact Routerの機能が完全統合
 
 移行は比較的シンプルで、多くの場合はインポートパスの変更が中心となります。React Router v7は、Remixの優れた開発者体験を標準のReact Routerに統合し、より広いエコシステムでの利用を可能にします。
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版【現役エンジニアが選ぶ厳選8校】](/blog/2026-03-08-programming-school-comparison-2026)
+- [Coloso評判・口コミ2026｜利用者の本音と徹底レビュー](/blog/2026-03-23-coloso-review-reputation-2026)
+- [エンジニア転職完全ガイド2026【未経験・経験者別ロードマップ】](/blog/2026-03-09-engineer-career-change-guide-2026)
