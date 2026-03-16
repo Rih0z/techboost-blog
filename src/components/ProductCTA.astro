@@ -1,10 +1,94 @@
 ---
-// Cross-platform CTA: note + BOOTH + DevToolBox
+// Cross-platform CTA: note + BOOTH + DevToolBox (tag-aware tool recommendations)
 interface Props {
   title?: string;
   description?: string;
+  tags?: string[];
 }
-const { title, description } = Astro.props;
+const { title = '', description = '', tags = [] } = Astro.props;
+
+// Tag-based DevToolBox tool recommendations
+const tagStr = (tags.join(' ') + ' ' + title + ' ' + description).toLowerCase();
+
+interface ToolRec { href: string; label: string }
+const toolRecs: ToolRec[] = [];
+
+const toolMap: { pattern: RegExp; tools: ToolRec[] }[] = [
+  { pattern: /json|api|rest/, tools: [
+    { href: 'https://usedevtools.com/json-formatter', label: 'JSON整形ツール' },
+    { href: 'https://usedevtools.com/json-path', label: 'JSONPathテスター' },
+  ]},
+  { pattern: /jwt|認証|auth/, tools: [
+    { href: 'https://usedevtools.com/jwt-decoder', label: 'JWTデコーダー' },
+    { href: 'https://usedevtools.com/jwt-builder', label: 'JWTビルダー' },
+  ]},
+  { pattern: /typescript|型|type/, tools: [
+    { href: 'https://usedevtools.com/json-to-ts', label: 'JSON→TypeScript変換' },
+  ]},
+  { pattern: /正規表現|regex|パターン/, tools: [
+    { href: 'https://usedevtools.com/regex-tester', label: '正規表現テスター' },
+    { href: 'https://usedevtools.com/ai-regex', label: 'AI正規表現生成' },
+  ]},
+  { pattern: /css|スタイル|tailwind|デザイン/, tools: [
+    { href: 'https://usedevtools.com/css-unit', label: 'CSS単位変換' },
+    { href: 'https://usedevtools.com/color-contrast', label: 'コントラストチェッカー' },
+    { href: 'https://usedevtools.com/css-gradient', label: 'CSSグラデーション' },
+  ]},
+  { pattern: /セキュリティ|security|暗号|hash|crypto/, tools: [
+    { href: 'https://usedevtools.com/hash-generator', label: 'ハッシュ生成' },
+    { href: 'https://usedevtools.com/password-generator', label: 'パスワード生成' },
+  ]},
+  { pattern: /base64|エンコード|encode/, tools: [
+    { href: 'https://usedevtools.com/base64', label: 'Base64変換' },
+    { href: 'https://usedevtools.com/url-encode', label: 'URLエンコード' },
+  ]},
+  { pattern: /git|diff|バージョン/, tools: [
+    { href: 'https://usedevtools.com/diff', label: 'テキスト差分比較' },
+    { href: 'https://usedevtools.com/semver', label: 'セマンティックバージョニング' },
+  ]},
+  { pattern: /sql|データベース|db/, tools: [
+    { href: 'https://usedevtools.com/sql-formatter', label: 'SQLフォーマッター' },
+  ]},
+  { pattern: /markdown|md|ブログ|astro/, tools: [
+    { href: 'https://usedevtools.com/markdown-html', label: 'Markdown→HTML変換' },
+  ]},
+  { pattern: /yaml|設定ファイル|config/, tools: [
+    { href: 'https://usedevtools.com/json-yaml', label: 'JSON⇔YAML変換' },
+    { href: 'https://usedevtools.com/env-parser', label: '.env パーサー' },
+  ]},
+  { pattern: /日時|timestamp|temporal|時間/, tools: [
+    { href: 'https://usedevtools.com/timestamp', label: 'タイムスタンプ変換' },
+    { href: 'https://usedevtools.com/timezone', label: 'タイムゾーン変換' },
+  ]},
+  { pattern: /uuid|id|識別子/, tools: [
+    { href: 'https://usedevtools.com/uuid', label: 'UUID生成' },
+  ]},
+  { pattern: /cron|定期実行|スケジュール|github actions/, tools: [
+    { href: 'https://usedevtools.com/cron-builder', label: 'Cron式ビルダー' },
+  ]},
+  { pattern: /svg|画像|image/, tools: [
+    { href: 'https://usedevtools.com/svg-optimizer', label: 'SVG最適化' },
+  ]},
+  { pattern: /linux|シェル|コマンド|chmod/, tools: [
+    { href: 'https://usedevtools.com/chmod-calculator', label: 'chmod計算機' },
+  ]},
+  { pattern: /カラー|color|配色/, tools: [
+    { href: 'https://usedevtools.com/color-palette', label: 'カラーパレット生成' },
+    { href: 'https://usedevtools.com/color-converter', label: 'カラー変換' },
+  ]},
+];
+
+const seen = new Set<string>();
+for (const { pattern, tools } of toolMap) {
+  if (pattern.test(tagStr)) {
+    for (const tool of tools) {
+      if (!seen.has(tool.href) && toolRecs.length < 3) {
+        seen.add(tool.href);
+        toolRecs.push(tool);
+      }
+    }
+  }
+}
 ---
 
 <aside class="cross-platform-cta" aria-label="関連サービス">
@@ -30,16 +114,31 @@ const { title, description } = Astro.props;
         <span class="cta-action">&yen;490〜 &rarr;</span>
       </div>
     </a>
-    <a href="https://usedevtools.com/" target="_blank" rel="noopener noreferrer" class="cta-card cta-card--devtools">
+    <div class="cta-card cta-card--devtools">
       <span class="cta-icon" aria-hidden="true">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
       </span>
       <div class="cta-text">
         <span class="cta-label">DevToolBox</span>
-        <span class="cta-title">無料オンライン開発ツール46種</span>
-        <span class="cta-action">ツールを使う &rarr;</span>
+        {toolRecs.length > 0 ? (
+          <span class="cta-title">この記事に関連する無料ツール</span>
+          <ul class="devtools-links">
+            {toolRecs.map((tool) => (
+              <li>
+                <a href={tool.href} target="_blank" rel="noopener noreferrer">
+                  {tool.label} &rarr;
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <a href="https://usedevtools.com/" target="_blank" rel="noopener noreferrer" class="cta-title-link">
+            <span class="cta-title">無料オンライン開発ツール46種</span>
+            <span class="cta-action">ツールを使う &rarr;</span>
+          </a>
+        )}
       </div>
-    </a>
+    </div>
   </div>
 </aside>
 
@@ -117,11 +216,40 @@ const { title, description } = Astro.props;
     line-height: 1.4;
   }
 
+  .cta-title-link {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
   .cta-action {
     font-size: 0.8125rem;
     font-weight: 600;
     color: rgb(var(--accent));
     margin-top: 0.125rem;
+  }
+
+  .devtools-links {
+    list-style: none;
+    padding: 0;
+    margin: 0.25rem 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .devtools-links li a {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: rgb(var(--accent));
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+
+  .devtools-links li a:hover {
+    opacity: 0.7;
+    text-decoration: underline;
   }
 
   @media (min-width: 640px) {
@@ -135,6 +263,9 @@ const { title, description } = Astro.props;
       text-align: center;
     }
     .cta-text {
+      align-items: center;
+    }
+    .devtools-links {
       align-items: center;
     }
   }
