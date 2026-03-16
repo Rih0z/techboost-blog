@@ -628,6 +628,8 @@ for k, v in cats.items():
 
 ## 関連記事
 
+- [VPSサーバー比較2026｜用途別おすすめランキング](/blog/2026-03-12-vps-server-comparison-2026)
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
 - [NginxでWebサーバー構築完全ガイド2026](/blog/2026-06-06-nginx-web-server-setup-guide-2026/) — NginxのWordPress向け設定の基礎
 - [Let's Encrypt無料SSL証明書設定完全ガイド2026](/blog/2026-06-07-lets-encrypt-ssl-setup-guide-2026/) — WordPressのHTTPS化手順
 - [Dockerをサーバーで本番運用する完全ガイド2026](/blog/2026-06-03-docker-production-server-guide-2026/) — DockerでWordPressを動かす方法

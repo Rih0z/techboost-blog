@@ -884,6 +884,13 @@ if (!supportsHas) {
 }
 ```
 
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026](/blog/2026-03-09-engineer-career-change-guide-2026)
+
 ## まとめ
 
 CSS :has()セレクタは、CSSの表現力を大幅に向上させる革命的な機能です。

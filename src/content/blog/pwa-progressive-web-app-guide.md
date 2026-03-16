@@ -1982,6 +1982,13 @@ async function syncLatestContent(): Promise<void> {
 
 ---
 
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026](/blog/2026-03-09-engineer-career-change-guide-2026)
+
 ## まとめ
 
 PWA は「一度作ればどこでも動く」Webの強みと、「ネイティブアプリのような体験」を両立する現代的なアーキテクチャだ。本記事で解説した要素をまとめると：

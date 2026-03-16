@@ -311,6 +311,13 @@ dialog:has(.error-message) header {
 - アニメーションと組み合わせる場合は `will-change` プロパティを活用する
 - 大量のDOM要素に対する `:has()` は、JavaScriptでの実装と比較検討する
 
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026](/blog/2026-03-09-engineer-career-change-guide-2026)
+
 ## まとめ
 
 CSS `:has()` 疑似クラスは、従来JavaScriptが必要だった多くのインタラクティブなUIパターンを、純粋なCSSで実装可能にしました。主な利点は以下の通りです。

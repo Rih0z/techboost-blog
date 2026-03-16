@@ -602,6 +602,13 @@ app.get('/api/internal/migration-status', async (req, res) => {
 })
 ```
 
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026](/blog/2026-03-09-engineer-career-change-guide-2026)
+
 ## まとめ
 
 APIバージョニングは、長期的な保守性を確保するための重要な戦略です。

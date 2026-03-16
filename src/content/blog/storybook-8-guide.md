@@ -685,6 +685,13 @@ export const Loading: Story = {
 };
 ```
 
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026](/blog/2026-03-09-engineer-career-change-guide-2026)
+
 ## まとめ
 
 Storybook 8 は、UIコンポーネント開発の効率を大幅に向上させるツールです。主な利点:

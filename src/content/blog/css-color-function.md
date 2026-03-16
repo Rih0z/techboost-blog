@@ -430,6 +430,13 @@ console.table(colorSpaceSupport);
 .button { border-color: var(--brand-color); }
 ```
 
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026](/blog/2026-03-09-engineer-career-change-guide-2026)
+
 ## まとめ
 
 CSS `color()`関数は、Webデザインにおける色表現の可能性を大きく広げる革新的な機能です。Display P3やRec.2020といった広色域を活用することで、従来のsRGBでは実現できなかった鮮やかで豊かな色彩表現が可能になります。

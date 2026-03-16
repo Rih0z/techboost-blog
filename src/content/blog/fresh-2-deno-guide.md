@@ -446,6 +446,13 @@ async function fetchPostFromDB(id: string) {
 }
 ```
 
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026](/blog/2026-03-09-engineer-career-change-guide-2026)
+
 ## まとめ
 
 Fresh 2.0は、Denoエコシステムにおける強力なWebフレームワークです。Islands Architectureによる最適なJavaScript配信、Preactの軽量性、Deno Deployとのシームレスな統合により、高速で保守しやすいWebアプリケーションを構築できます。

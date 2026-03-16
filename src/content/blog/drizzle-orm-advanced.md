@@ -695,6 +695,13 @@ describe('Users', () => {
 });
 ```
 
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026](/blog/2026-03-09-engineer-career-change-guide-2026)
+
 ## まとめ
 
 Drizzle ORMは、TypeScriptの型安全性を最大限に活用しながら、柔軟で高性能なデータベース操作を可能にします。

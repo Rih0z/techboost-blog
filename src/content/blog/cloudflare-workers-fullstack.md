@@ -973,6 +973,13 @@ export async function getDashboardData(env: Env): Promise<DashboardData> {
 }
 ```
 
+---
+
+## 関連記事
+
+- [VPSサーバー比較2026｜用途別おすすめランキング](/blog/2026-03-12-vps-server-comparison-2026)
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
+
 ## まとめ
 
 Cloudflare Workersを使ったフルスタック開発では、以下のような利点があります。

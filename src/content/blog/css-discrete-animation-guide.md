@@ -453,6 +453,13 @@ document.addEventListener('keydown', (e) => {
 }
 ```
 
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026](/blog/2026-03-09-engineer-career-change-guide-2026)
+
 ## まとめ
 
 `transition-behavior: allow-discrete`により、CSSアニメーションの可能性が大きく広がりました。

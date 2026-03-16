@@ -698,6 +698,13 @@ func Process[T, U, V any](input T, fn1 func(T) U, fn2 func(U) V) V {
 }
 ```
 
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026](/blog/2026-03-09-engineer-career-change-guide-2026)
+
 ## まとめ
 
 Go言語のジェネリクスは、型安全性を保ちながらコードの再利用性を大幅に向上させます。主なポイントは以下の通りです。

@@ -1119,6 +1119,13 @@ ol[role="list"] {
 }
 ```
 
+---
+
+## 関連記事
+
+- [プログラミングスクール比較2026年版｜現役エンジニアが選ぶ厳選8校](/blog/2026-03-08-programming-school-comparison-2026)
+- [エンジニア転職完全ガイド2026](/blog/2026-03-09-engineer-career-change-guide-2026)
+
 ## まとめ
 
 Open Propsは、CSS Custom Propertiesを活用したデザイントークンライブラリとして、フロントエンド開発に一貫性と効率性をもたらす。本記事の内容を整理する。
