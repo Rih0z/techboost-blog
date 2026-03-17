@@ -1,9 +1,102 @@
 ---
-// Stub: Related articles component
+import { getCollection } from 'astro:content';
+
 interface Props {
   currentSlug?: string;
   tags?: string[];
   title?: string;
 }
-const { currentSlug, tags, title } = Astro.props;
+
+const { currentSlug = '', tags = [], title = '' } = Astro.props;
+
+// タグの一致数でスコアリングし、関連度の高い記事を3件取得
+const allPosts = await getCollection('blog');
+const published = allPosts
+  .filter(p => p.slug !== currentSlug)
+  .map(p => {
+    const postTags = (p.data.tags as string[] | undefined) ?? [];
+    const matchCount = tags.filter(t => postTags.includes(t)).length;
+    return { ...p, matchCount };
+  })
+  .filter(p => p.matchCount > 0)
+  .sort((a, b) => {
+    if (b.matchCount !== a.matchCount) return b.matchCount - a.matchCount;
+    return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
+  })
+  .slice(0, 3);
 ---
+
+{published.length > 0 && (
+  <aside class="related-articles" aria-label="関連記事">
+    <h2 class="related-title">関連記事</h2>
+    <div class="related-grid">
+      {published.map(post => (
+        <a href={`/blog/${post.slug}/`} class="related-card">
+          <span class="related-card-title">{post.data.title}</span>
+          <span class="related-card-tags">
+            {((post.data.tags as string[] | undefined) ?? []).slice(0, 3).map(t => `#${t}`).join(' ')}
+          </span>
+        </a>
+      ))}
+    </div>
+  </aside>
+)}
+
+<style>
+  .related-articles {
+    margin-top: var(--spacing-6);
+    padding: var(--spacing-3);
+    border: var(--border-card, 4px) solid var(--color-outline);
+    border-radius: var(--radius, 4px);
+    background: var(--color-surface-variant);
+  }
+
+  .related-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0 0 var(--spacing-2) 0;
+    color: var(--color-on-surface, #1a1f36);
+  }
+
+  .related-grid {
+    display: grid;
+    gap: var(--spacing-2);
+  }
+
+  .related-card {
+    display: block;
+    padding: var(--spacing-2);
+    border: 2px solid var(--color-outline);
+    border-radius: var(--radius, 4px);
+    background: var(--color-surface, #fff);
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 3px 3px 0 var(--color-shadow, rgba(26,31,54,1));
+  }
+
+  .related-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 var(--color-shadow, rgba(26,31,54,1));
+  }
+
+  .related-card-title {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--color-on-surface, #1a1f36);
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+  }
+
+  .related-card-tags {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-muted, #6b7280);
+  }
+
+  @media (min-width: 640px) {
+    .related-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
