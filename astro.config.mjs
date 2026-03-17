@@ -49,12 +49,12 @@ export default defineConfig({
 				return true;
 			},
 			serialize(item) {
-				// Tag pages: lower priority, weekly
+				// Tag pages: lower priority
 				if (item.url.includes('/blog/tag/')) {
 					item.priority = 0.3;
 					item.changefreq = 'weekly';
 				} else if (item.url.includes('/blog/') && !item.url.endsWith('/blog/')) {
-					// Blog articles: use pubDate from slug if available
+					// Use pubDate from slug for lastmod
 					const slugMatch = item.url.match(/\/blog\/(\d{4}-\d{2}-\d{2})-/);
 					if (slugMatch) {
 						item.lastmod = new Date(slugMatch[1]).toISOString();
