@@ -24,6 +24,21 @@ export default defineConfig({
 		'/blog/vite-5-guide': '/blog/vite-6-new-features/',
 		'/blog/prisma-guide': '/blog/prisma-orm-complete-guide/',
 		'/blog/astro-3-guide': '/blog/astro-framework-guide-2026/',
+		'/blog/bun-runtime-guide': '/blog/bun-complete-guide-2026/',
+		'/blog/hono-web-framework': '/blog/hono-web-framework-guide/',
+		'/blog/shadcn-ui-components': '/blog/shadcn-ui-complete-guide/',
+		'/blog/vercel-ai-sdk-guide': '/blog/ai-coding-tools-guide/',
+		'/blog/temporal-api-javascript': '/blog/javascript-temporal-api-guide-2026/',
+		'/blog/drizzle-orm-v1-guide': '/blog/drizzle-orm-guide/',
+		'/blog/tauri-v2-desktop-apps': '/blog/tauri-2-desktop-app-guide-2026/',
+		'/blog/biome-linter-formatter': '/blog/biome-linter-formatter-guide/',
+		'/blog/ai-coding-tools-comparison': '/blog/ai-coding-assistant-comparison/',
+		'/blog/opentelemetry-observability-guide': '/blog/opentelemetry-guide/',
+		'/blog/github-actions-guide': '/blog/github-actions-advanced-guide/',
+		'/blog/react-server-components-patterns': '/blog/react-server-components-guide/',
+		'/blog/css-anchor-positioning': '/blog/css-anchor-positioning-guide/',
+		'/blog/val-town-serverless': '/blog/val-town-guide/',
+		'/blog/redis-for-developers': '/blog/redis-practical-guide/',
 	},
 	integrations: [
 		mdx(),
@@ -31,8 +46,6 @@ export default defineConfig({
 			filter(page) {
 				// Exclude paginated listing pages (/blog/2/, /blog/3/, etc.)
 				if (/\/blog\/\d+\/?$/.test(page)) return false;
-				// Exclude redirect pages
-				if (/\/(tailwind-css-practical-guide|react-19-(upgrade|complete)-guide|bun-runtime-guide-2026|supabase-guide|next-js-14-guide|typescript-5-guide|docker-compose-guide|git-advanced-guide|supabase-authentication-guide|nextjs-14-app-router-guide|react-server-components-guide|vite-5-guide|prisma-guide|astro-3-guide|bun-runtime-guide|hono-web-framework|shadcn-ui-components|vercel-ai-sdk-guide|temporal-api-javascript|drizzle-orm-v1-guide|tauri-v2-desktop-apps|biome-linter-formatter|ai-coding-tools-comparison|opentelemetry-observability-guide|github-actions-guide|react-server-components-patterns|css-anchor-positioning|val-town-serverless|redis-for-developers)\/?$/.test(page)) return false;
 				return true;
 			},
 			serialize(item) {
@@ -41,7 +54,7 @@ export default defineConfig({
 					item.priority = 0.3;
 					item.changefreq = 'weekly';
 				} else if (item.url.includes('/blog/') && !item.url.endsWith('/blog/')) {
-					// Blog articles: use pubDate from slug if available, otherwise current date
+					// Blog articles: use pubDate from slug if available
 					const slugMatch = item.url.match(/\/blog\/(\d{4}-\d{2}-\d{2})-/);
 					if (slugMatch) {
 						item.lastmod = new Date(slugMatch[1]).toISOString();
