@@ -2,7 +2,7 @@
 title: 'shadcn/ui応用ガイド2026 — カスタムコンポーネントと実践テクニック'
 description: 'shadcn/uiの応用編。カスタムコンポーネント作成、高度なテーマカスタマイズ、アニメーション、パフォーマンス最適化を解説します。'
 pubDate: 'Feb 05 2026'
-tags: ['shadcn/ui', 'React', 'Tailwind CSS', 'Advanced', 'Custom Components']
+tags: ['shadcn-ui', 'React', 'Tailwind CSS', 'Advanced', 'Custom Components']
 ---
 
 shadcn/uiは基本的なコンポーネントを提供していますが、実際のプロジェクトでは独自のコンポーネントやカスタマイズが必要になります。この記事では、shadcn/uiの応用テクニックを実践的に解説します。

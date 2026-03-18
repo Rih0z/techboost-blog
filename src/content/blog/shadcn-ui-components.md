@@ -2,7 +2,7 @@
 title: 'shadcn/ui完全ガイド — コピペで使えるReactコンポーネント集とカスタマイズ術'
 description: 'shadcn/uiの全コンポーネントを徹底解説。インストール、カスタマイズ、Next.js 15との統合、テーマ切り替え、フォームバリデーション、実践的なデザインパターンまで完全網羅します。'
 pubDate: '2025-02-06'
-tags: ['shadcn/ui', 'React', 'UI Components', 'Tailwind CSS', 'Radix UI']
+tags: ['shadcn-ui', 'React', 'UI Components', 'Tailwind CSS', 'Radix UI']
 ---
 
 shadcn/uiは、2023年に登場してから爆発的に人気を博しているReactコンポーネントライブラリです。2026年現在、Next.js、Remix、Astroなど主要フレームワークで標準的に使われています。

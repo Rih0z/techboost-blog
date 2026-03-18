@@ -308,7 +308,7 @@ const targetSkills = {
   },
   backend: {
     core: ['Node.js/Python', 'REST API設計', 'データベース最適化'],
-    cloud: ['AWS EC2/S3/RDS', 'Lambda', 'CI/CD'],
+    cloud: ['AWS EC2/S3/RDS', 'Lambda', 'CICD'],
     security: ['OWASP Top 10', '認証/認可設計']
   },
   soft: ['コードレビュー', '技術記事執筆', '勉強会登壇']
