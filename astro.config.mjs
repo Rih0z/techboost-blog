@@ -46,14 +46,46 @@ export default defineConfig({
 			filter(page) {
 				// Exclude paginated listing pages (/blog/2/, /blog/3/, etc.)
 				if (/\/blog\/\d+\/?$/.test(page)) return false;
+				// Exclude tag pages (835 pages = 50% of sitemap, wastes crawl budget)
+				if (page.includes('/blog/tag/')) return false;
+				// Exclude 301 redirect source URLs (contradicts sitemap signals)
+				const redirectSources = [
+					'/blog/tailwind-css-practical-guide',
+					'/blog/react-19-upgrade-guide',
+					'/blog/react-19-complete-guide',
+					'/blog/bun-runtime-guide-2026',
+					'/blog/supabase-guide',
+					'/blog/next-js-14-guide',
+					'/blog/typescript-5-guide',
+					'/blog/docker-compose-guide',
+					'/blog/git-advanced-guide',
+					'/blog/supabase-authentication-guide',
+					'/blog/nextjs-14-app-router-guide',
+					'/blog/react-server-components-guide',
+					'/blog/vite-5-guide',
+					'/blog/prisma-guide',
+					'/blog/astro-3-guide',
+					'/blog/bun-runtime-guide',
+					'/blog/hono-web-framework',
+					'/blog/shadcn-ui-components',
+					'/blog/vercel-ai-sdk-guide',
+					'/blog/temporal-api-javascript',
+					'/blog/drizzle-orm-v1-guide',
+					'/blog/tauri-v2-desktop-apps',
+					'/blog/biome-linter-formatter',
+					'/blog/ai-coding-tools-comparison',
+					'/blog/opentelemetry-observability-guide',
+					'/blog/github-actions-guide',
+					'/blog/react-server-components-patterns',
+					'/blog/css-anchor-positioning',
+					'/blog/val-town-serverless',
+					'/blog/redis-for-developers',
+				];
+				if (redirectSources.some(src => page.includes(src))) return false;
 				return true;
 			},
 			serialize(item) {
-				// Tag pages: lower priority
-				if (item.url.includes('/blog/tag/')) {
-					item.priority = 0.3;
-					item.changefreq = 'weekly';
-				} else if (item.url.includes('/blog/') && !item.url.endsWith('/blog/')) {
+				if (item.url.includes('/blog/') && !item.url.endsWith('/blog/')) {
 					// Use pubDate from slug for lastmod
 					const slugMatch = item.url.match(/\/blog\/(\d{4}-\d{2}-\d{2})-/);
 					if (slugMatch) {
