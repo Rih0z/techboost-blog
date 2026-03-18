@@ -1,8 +1,8 @@
 ---
 title: "エンジニアのための英語学習ロードマップ2026｜実務で使える技術英語の身につけ方"
 description: "エンジニアに必要な英語力を効率的に身につける4段階ロードマップを完全解説。技術英語基本100語リスト、公式ドキュメント読解のコツ、GitHub PR英語テンプレート、ミーティング頻出フレーズ集、外資系転職で求められるレベル別の具体的な学習法と推奨リソース一覧を紹介します。"
-pubDate: "2026-04-18"
-heroImage: '../../assets/thumbnails/2026-04-18-engineer-english-learning-roadmap-2026.jpg'
+pubDate: "2026-02-22"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "エンジニア", "英語", "school"]
 ---
 

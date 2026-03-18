@@ -1,8 +1,8 @@
 ---
 title: "エンジニア副業完全ガイド2026｜始め方・案件獲得・確定申告まで"
 description: "エンジニアの副業の始め方を完全解説。就業規則の確認チェックリスト、CrowdWorks・Lancers・ITプロパートナーズなど案件プラットフォーム比較、週10時間スケジュール例、バーンアウト防止の5つのルール、確定申告の経費計上方法まで、月5〜15万円を稼ぐ具体的なステップを紹介します。"
-pubDate: "2026-04-20"
-heroImage: '../../assets/thumbnails/2026-04-20-engineer-side-job-complete-guide-2026.jpg'
+pubDate: "2026-02-23"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "副業", "フリーランス", "エンジニア"]
 ---
 

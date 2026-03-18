@@ -1,9 +1,9 @@
 ---
 title: "ローカルLLM環境構築ガイド2026【Ollama・llama.cpp・GPU活用】"
 description: "ローカルLLMの環境構築を完全解説。Ollama・llama.cppの導入、Llama 3.1・Gemma 2・Phi-3モデル比較、GPU/CPU最適化、量子化、APIサーバー構築までTypeScript・Pythonコード付きで紹介します。"
-pubDate: "2026-08-05"
+pubDate: "2026-03-13"
 tags: ["AI", "LLM", "Ollama", "ローカルAI", "GPU"]
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+heroImage: '../../assets/thumbnails/ai-agent-development-2026.jpg'
 ---
 
 ## はじめに

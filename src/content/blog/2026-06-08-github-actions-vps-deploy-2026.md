@@ -1,7 +1,7 @@
 ---
 title: "GitHub ActionsでVPSに自動デプロイする方法2026【SSH+CI/CD】"
 description: "GitHub ActionsのCIパイプラインでVPSへのSSH自動デプロイを構築する全手順を解説。Secrets設定・SSH鍵管理・Node.js/Docker対応・Nginx再起動・Slackへのデプロイ通知まで実践ワークフローを2026年最新版で徹底解説します。"
-pubDate: "2026-06-08"
+pubDate: "2026-03-06"
 tags: ["server", "インフラ", "github"]
 heroImage: '../../assets/thumbnails/2026-06-08-github-actions-vps-deploy-2026.jpg'
 ---

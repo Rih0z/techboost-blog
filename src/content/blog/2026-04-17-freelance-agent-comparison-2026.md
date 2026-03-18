@@ -1,8 +1,8 @@
 ---
 title: "フリーランスエージェントおすすめ比較2026｜レバテック・ギークスなど7社を徹底評価"
 description: "フリーランスエンジニア向けエージェント7社をマージン率・案件数・支払いサイト・福利厚生・サポート体制で徹底比較。レバテック・ギークス・PE-BANK・Midworksなど各社の詳細レビュー、安定重視・高単価追求のおすすめ併用パターン、単価交渉のコツを解説します。"
-pubDate: "2026-04-17"
-heroImage: '../../assets/thumbnails/2026-04-17-freelance-agent-comparison-2026.jpg'
+pubDate: "2026-02-22"
+heroImage: '../../assets/thumbnails/freelance-engineer-start-guide.jpg'
 tags: ["career", "フリーランス", "エージェント", "エンジニア"]
 ---
 

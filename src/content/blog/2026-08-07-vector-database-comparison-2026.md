@@ -1,9 +1,9 @@
 ---
 title: "ベクトルデータベース比較2026【Pinecone・Weaviate・Chroma・pgvector】"
 description: "ベクトルデータベースの選び方を徹底解説。Pinecone・Weaviate・Chroma・pgvector・Qdrant・Milvusの性能比較、コスト、セットアップ方法をTypeScript・Pythonコード付きで実践的に紹介します。"
-pubDate: "2026-08-07"
+pubDate: "2026-03-14"
 tags: ["AI", "ベクトルDB", "RAG", "データベース", "LLM"]
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+heroImage: '../../assets/thumbnails/ai-agent-development-2026.jpg'
 ---
 
 ## はじめに

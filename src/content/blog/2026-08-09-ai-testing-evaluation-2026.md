@@ -1,9 +1,9 @@
 ---
 title: "AI・LLMアプリのテスト・評価手法2026【品質・ハルシネーション対策】"
 description: "AI・LLMアプリケーションのテストと評価手法を体系的に解説。プロンプト品質テスト、ハルシネーション検出、RAG評価、回帰テスト、CI/CD統合までTypeScript・Pythonコード付きで実践的に紹介します。"
-pubDate: "2026-08-09"
+pubDate: "2026-03-15"
 tags: ["AI", "LLM", "テスト", "品質保証", "ハルシネーション"]
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+heroImage: '../../assets/thumbnails/ai-agent-development-2026.jpg'
 ---
 
 ## はじめに

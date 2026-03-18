@@ -1,7 +1,7 @@
 ---
 title: "Coloso vs Udemy徹底比較2026｜料金・品質・向いている人"
 description: "ColosoとUdemyを2026年最新版で11の観点から徹底比較。料金・コース品質・学習スタイル・エンジニア向けコンテンツの違いを詳細に解説します。デザイン系はColoso、プログラミング系はUdemyなど目的別の判断基準とシーン別推奨もわかりやすく紹介。"
-pubDate: "2026-03-24"
+pubDate: "2026-02-12"
 tags: ["school", "プログラミング", "学習"]
 heroImage: '../../assets/thumbnails/2026-03-24-coloso-vs-udemy-comparison-2026.jpg'
 ---

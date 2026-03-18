@@ -1,9 +1,9 @@
 ---
 title: "AIエージェント開発入門2026【自律型AI構築フレームワーク比較】"
 description: "AIエージェント開発の基礎から実装まで解説。LangGraph・CrewAI・AutoGenのフレームワーク比較、マルチエージェント設計、ツール統合、メモリ管理をTypeScript・Pythonコード付きで実践的に紹介します。"
-pubDate: "2026-08-03"
+pubDate: "2026-03-12"
 tags: ["AI", "AIエージェント", "LangGraph", "マルチエージェント", "LLM"]
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+heroImage: '../../assets/thumbnails/ai-agent-development-2026.jpg'
 ---
 
 ## はじめに

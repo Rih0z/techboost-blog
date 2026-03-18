@@ -1,8 +1,8 @@
 ---
 title: "テックリード・EMへのキャリアパス2026｜エンジニアの次のステップを解説"
 description: "テックリードとエンジニアリングマネージャーの日常業務・必要スキルセット・年収レンジ・なり方の違いを徹底解説。ADRテンプレート、1on1ミーティング実践フレームワーク、ICとマネジメント両方のキャリアパスを経験年数別に比較。振り子キャリアと参考書籍も紹介します。"
-pubDate: "2026-04-19"
-heroImage: '../../assets/thumbnails/2026-04-19-tech-lead-engineering-manager-career-2026.jpg'
+pubDate: "2026-02-22"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "エンジニア", "テックリード", "マネジメント"]
 ---
 

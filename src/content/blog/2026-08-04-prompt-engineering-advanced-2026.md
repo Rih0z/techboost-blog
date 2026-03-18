@@ -1,9 +1,9 @@
 ---
 title: "プロンプトエンジニアリング実践ガイド2026【CoT・Few-Shot・構造化】"
 description: "プロンプトエンジニアリングの実践テクニックを体系的に解説。Chain-of-Thought・Few-Shot・構造化プロンプト・メタプロンプティングの手法とTypeScript/Pythonでの自動化実装を詳しく紹介します。"
-pubDate: "2026-08-04"
+pubDate: "2026-03-13"
 tags: ["AI", "プロンプトエンジニアリング", "LLM", "ChatGPT", "Claude"]
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+heroImage: '../../assets/thumbnails/ai-agent-development-2026.jpg'
 ---
 
 ## はじめに

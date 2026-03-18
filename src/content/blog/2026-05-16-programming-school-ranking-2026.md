@@ -1,8 +1,8 @@
 ---
 title: "プログラミングスクールおすすめランキング2026｜目的別TOP5を現役エンジニアが厳選"
 description: "2026年最新のプログラミングスクールおすすめランキングを目的別に紹介。転職成功率・コスパ・副業向け・社会人向けの4軸で厳選TOP5を現役エンジニアが本音で評価。給付金で最大70%還元の対象スクールも解説します。"
-pubDate: "2026-05-16"
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+pubDate: "2026-03-03"
+heroImage: '../../assets/thumbnails/2026-03-08-programming-school-comparison-2026.jpg'
 tags: ["school", "プログラミングスクール", "ランキング", "IT転職"]
 ---
 

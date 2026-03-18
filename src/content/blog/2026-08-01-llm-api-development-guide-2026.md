@@ -1,9 +1,9 @@
 ---
 title: "LLM APIアプリ開発入門2026【OpenAI・Claude・Gemini実装比較】"
 description: "LLM APIを使ったアプリ開発の入門ガイド。OpenAI GPT-4o・Claude 4・Gemini 2.0のAPI比較、TypeScript/Pythonでの実装例、ストリーミング・Function Calling・エラーハンドリングまで実践的に解説します。"
-pubDate: "2026-08-01"
+pubDate: "2026-03-11"
 tags: ["AI", "LLM", "API開発", "TypeScript", "Python"]
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+heroImage: '../../assets/thumbnails/ai-agent-development-2026.jpg'
 ---
 
 ## はじめに

@@ -1,8 +1,8 @@
 ---
 title: "エンジニアのスキル棚卸し・市場価値診断2026｜自己分析法"
 description: "エンジニアのスキル棚卸し方法と市場価値の診断法を徹底解説。技術スキルマトリクス、キャリアの自己分析フレームワーク、年収相場との比較、スキルギャップの特定と学習計画の立て方まで。転職・昇給交渉に直結する自己分析の完全ガイドです。"
-pubDate: "2026-07-07"
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+pubDate: "2026-03-10"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "エンジニア", "スキル", "自己分析"]
 ---
 

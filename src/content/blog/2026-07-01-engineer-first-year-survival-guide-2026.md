@@ -1,8 +1,8 @@
 ---
 title: "エンジニア1年目サバイバルガイド2026｜新人の壁と乗り越え方"
 description: "エンジニア1年目で直面する技術・人間関係・メンタルの壁を徹底解説。先輩への質問テンプレート、コードレビューの受け方、学習ロードマップ、1年目チェックリストで新人エンジニアの成長を加速させる実践ガイドです。"
-pubDate: "2026-07-01"
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+pubDate: "2026-03-07"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "エンジニア", "新人", "成長"]
 ---
 

@@ -1,8 +1,8 @@
 ---
 title: "エンジニアのチームコミュニケーション術2026｜リモート/対面"
 description: "エンジニアのチームコミュニケーション術をリモート・対面の両方で解説。Slack活用法、非同期コミュニケーション設計、会議の効率化、コンフリクトの解決法、心理的安全性の構築方法まで。チームの生産性を最大化する実践ガイドです。"
-pubDate: "2026-07-06"
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+pubDate: "2026-03-09"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "エンジニア", "コミュニケーション", "チーム"]
 ---
 

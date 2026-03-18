@@ -1,9 +1,9 @@
 ---
 title: "RAG実装完全ガイド2026【LangChain・ベクトルDB活用】"
 description: "RAG（検索拡張生成）の実装を基礎から解説。LangChain/LlamaIndexでの構築、Chroma/Pineconeベクトルデータベース活用、チャンキング戦略、リランキング、評価手法までTypeScript・Pythonコード付きで実践的に紹介します。"
-pubDate: "2026-08-02"
+pubDate: "2026-03-12"
 tags: ["AI", "RAG", "LangChain", "ベクトルDB", "LLM"]
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+heroImage: '../../assets/thumbnails/ai-agent-development-2026.jpg'
 ---
 
 ## はじめに

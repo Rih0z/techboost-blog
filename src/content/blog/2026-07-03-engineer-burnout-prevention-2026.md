@@ -1,8 +1,8 @@
 ---
 title: "エンジニアのバーンアウト防止ガイド2026｜燃え尽き症候群対策"
 description: "エンジニアの燃え尽き症候群（バーンアウト）の原因・兆候・予防法を徹底解説。仕事量の管理テクニック、メンタルヘルスのセルフチェックリスト、休息の取り方、職場環境の改善方法まで、持続可能なキャリアを築くための実践ガイドです。"
-pubDate: "2026-07-03"
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+pubDate: "2026-03-08"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "エンジニア", "メンタルヘルス", "働き方"]
 ---
 

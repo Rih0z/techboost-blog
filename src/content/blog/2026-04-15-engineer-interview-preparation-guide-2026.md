@@ -1,8 +1,8 @@
 ---
 title: "エンジニア面接対策完全ガイド2026｜技術面接・コーディングテスト攻略法"
 description: "エンジニア転職の技術面接・コーディングテスト・システム設計面接の対策を2026年最新トレンドを踏まえて網羅的に解説。STAR法による回答テクニック、頻出アルゴリズム問題の模範解答コード付き、AtCoder・LeetCode活用の4週間学習ロードマップ、逆質問の準備法まで紹介します。"
-pubDate: "2026-04-15"
-heroImage: '../../assets/thumbnails/2026-04-15-engineer-interview-preparation-guide-2026.jpg'
+pubDate: "2026-02-21"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "転職", "面接", "エンジニア"]
 ---
 

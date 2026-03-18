@@ -1,7 +1,7 @@
 ---
 title: "freee開業届2026：デジタル申請で最短5分！青色申告まで徹底解説"
 description: "freeeを使った開業届のオンライン申請方法をステップごとに解説。マイナンバーカードでのe-Tax電子申請、郵送提出の違い、青色申告承認申請書の同時提出手順、65万円控除の節税効果、開業後の銀行口座・帳簿管理まで網羅した2026年最新ガイド。"
-pubDate: "2026-04-04"
+pubDate: "2026-02-16"
 tags: ["確定申告", "フリーランス", "accounting", "freee", "開業届"]
 heroImage: '../../assets/thumbnails/2026-04-04-freee-kaigyo-todoke-guide-2026.jpg'
 ---

@@ -1,8 +1,8 @@
 ---
 title: "DMM WEBCAMP評判・口コミ2026｜料金・就職率・カリキュラムを本音レビュー"
 description: "DMM WEBCAMPの評判・口コミを2026年最新情報で徹底レビュー。COMMITコース・PROコース・SKILLSコースの料金比較、就職率98%の実態、給付金で最大70%還元の詳細、カリキュラム内容、メリット・デメリットを現役エンジニア目線で解説します。"
-pubDate: "2026-05-11"
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+pubDate: "2026-03-01"
+heroImage: '../../assets/thumbnails/2026-03-08-programming-school-comparison-2026.jpg'
 tags: ["school", "プログラミングスクール", "DMM WEBCAMP", "IT転職"]
 ---
 

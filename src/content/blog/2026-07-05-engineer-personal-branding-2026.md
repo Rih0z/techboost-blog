@@ -1,8 +1,8 @@
 ---
 title: "エンジニアのパーソナルブランディング2026｜ブログ・登壇・OSS"
 description: "エンジニアのパーソナルブランディング戦略を徹底解説。技術ブログの始め方・続け方、カンファレンス登壇の準備法、OSS貢献の始め方、SNS活用術まで。転職・副業・昇給に直結する「技術者としての認知度」の高め方がわかる完全ガイドです。"
-pubDate: "2026-07-05"
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+pubDate: "2026-03-09"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "エンジニア", "ブランディング", "技術ブログ"]
 ---
 

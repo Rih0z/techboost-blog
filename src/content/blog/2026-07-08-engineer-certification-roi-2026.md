@@ -1,8 +1,8 @@
 ---
 title: "エンジニア資格のROI分析2026｜取るべき資格ランキング"
 description: "エンジニア向け資格のROI（投資対効果）を徹底分析。AWS認定・Google Cloud・Kubernetes(CKA)・情報処理技術者試験など主要資格の学習時間・費用・年収へのインパクトを比較。キャリア目標別のおすすめ資格ランキングと効率的な学習法を解説します。"
-pubDate: "2026-07-08"
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+pubDate: "2026-03-10"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "エンジニア", "資格", "学習"]
 ---
 

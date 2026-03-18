@@ -1,8 +1,8 @@
 ---
 title: "エンジニアのポートフォリオ作成完全ガイド2026｜採用担当が見るポイント"
 description: "エンジニア転職・フリーランス案件獲得に必須のポートフォリオの作り方を完全解説。採用担当者が実際に見るポイントを踏まえ、GitHubプロフィール最適化、プロジェクト選定基準、READMEテンプレート、テスト・CI/CDの差別化要素、デザインのコツまで実践的に紹介します。"
-pubDate: "2026-04-14"
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+pubDate: "2026-02-20"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "転職", "ポートフォリオ", "エンジニア"]
 ---
 

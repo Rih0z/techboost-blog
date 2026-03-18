@@ -1,8 +1,8 @@
 ---
 title: "スタートアップエンジニアの働き方ガイド2026｜ベンチャー成功法"
 description: "スタートアップエンジニアの働き方・年収・求められるスキルを徹底解説。大企業との違い、技術選定の判断基準、少人数チームの開発戦略、ストックオプションの仕組み、ベンチャー転職チェックリストまで。スタートアップで成功する方法がわかります。"
-pubDate: "2026-07-04"
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+pubDate: "2026-03-08"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "エンジニア", "スタートアップ", "転職"]
 ---
 

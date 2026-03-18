@@ -1,9 +1,9 @@
 ---
 title: "AI倫理と責任あるAI開発ガイド2026【バイアス・プライバシー・透明性】"
 description: "AI倫理と責任あるAI開発の実践ガイド。バイアス検出と緩和、プライバシー保護、透明性・説明可能性の実装、AIガバナンスフレームワークをTypeScript・Pythonコード付きで体系的に解説します。"
-pubDate: "2026-08-10"
+pubDate: "2026-03-15"
 tags: ["AI", "AI倫理", "バイアス", "プライバシー", "責任あるAI"]
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+heroImage: '../../assets/thumbnails/ai-agent-development-2026.jpg'
 ---
 
 ## はじめに

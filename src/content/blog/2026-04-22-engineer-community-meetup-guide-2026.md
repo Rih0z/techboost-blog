@@ -1,8 +1,8 @@
 ---
 title: "エンジニアコミュニティ・勉強会活用ガイド2026｜人脈構築とスキルアップ"
 description: "エンジニア向け技術コミュニティ・勉強会の探し方と効果的な活用法を完全解説。connpassでの検索テクニック、もくもく会・LT会・カンファレンスの参加ガイド、LT初登壇テンプレート、OSSコントリビューション入門、転職に活かす人脈構築法を紹介します。"
-pubDate: "2026-04-22"
-heroImage: '../../assets/thumbnails/2026-04-22-engineer-community-meetup-guide-2026.jpg'
+pubDate: "2026-02-24"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "エンジニア", "コミュニティ", "勉強会"]
 ---
 

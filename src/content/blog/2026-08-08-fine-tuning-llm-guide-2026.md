@@ -1,9 +1,9 @@
 ---
 title: "LLMファインチューニング実践ガイド2026【LoRA・QLoRA・データ準備】"
 description: "LLMファインチューニングを基礎から解説。LoRA・QLoRAの仕組み、学習データの準備方法、Hugging Face Transformersでの実装、評価手法、コスト最適化までPython・TypeScriptコード付きで実践的に紹介します。"
-pubDate: "2026-08-08"
+pubDate: "2026-03-14"
 tags: ["AI", "LLM", "ファインチューニング", "LoRA", "機械学習"]
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+heroImage: '../../assets/thumbnails/ai-agent-development-2026.jpg'
 ---
 
 ## はじめに

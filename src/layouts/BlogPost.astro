@@ -1,83 +1,85 @@
 ---
 import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
+import type { ImageMetadata } from 'astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-import ProductCTA from '../components/ProductCTA.astro';
 import RelatedArticles from '../components/RelatedArticles.astro';
 
-type Props = CollectionEntry<'blog'>['data'] & { slug?: string };
+interface Props {
+	title: string;
+	description: string;
+	pubDate: Date;
+	updatedDate?: Date;
+	heroImage?: ImageMetadata;
+	tags?: string[];
+	slug?: string;
+}
 
-const { title, description, pubDate, updatedDate, heroImage, tags, slug = '' } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags, slug } = Astro.props;
 
-// タグベースのアフィリエイトCTA種別を判定
-const tagList = (tags as string[] | undefined) ?? [];
-const tagStr = tagList.join(' ').toLowerCase() + ' ' + title.toLowerCase() + ' ' + description.toLowerCase();
-
-type AffiliateCTAType = 'school' | 'server' | 'career' | 'accounting' | 'default';
-let affiliateCTAType: AffiliateCTAType = 'default';
-
-const tLower = tagList.map(t => t.toLowerCase());
-const hasAccounting = tLower.some(x => ['accounting', '確定申告', 'フリーランス', '会計', '税金', '経費', '青色申告', '開業届', 'freee'].includes(x))
-  || /会計|確定申告|freee|マネーフォワード|税務|節税|経費|青色申告|インボイス/.test(tagStr);
-const hasCareer = tLower.some(x => ['career', '転職', '副業', 'キャリア', 'freelance'].includes(x))
-  || /転職|キャリア|副業|フリーランス|年収|独立/.test(tagStr);
-const hasServer = tLower.some(x => ['server', 'インフラ', 'docker', 'linux', 'vps', 'devops', 'aws', 'cloud', 'kubernetes', 'nginx', 'hosting'].includes(x))
-  || /レンタルサーバー|vps|サーバー|xserver|conoha|docker|kubernetes|aws|インフラ|デプロイ/.test(tagStr);
-const hasSchool = tLower.some(x => ['school', 'プログラミングスクール', 'プログラミング学習', 'オンライン学習'].includes(x))
-  || /プログラミングスクール|スクール比較|スクールおすすめ|オンライン学習|udemy/.test(tagStr);
-
-// 優先順位: 承認済みA8.netリンクを優先（school は未承認のため最後）
-if (hasAccounting) affiliateCTAType = 'accounting';
-else if (hasServer) affiliateCTAType = 'server';
-else if (hasCareer) affiliateCTAType = 'career';
-else if (hasSchool) affiliateCTAType = 'school';
+// Build structured data (JSON-LD)
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const jsonLd = [
+	{
+		'@context': 'https://schema.org',
+		'@type': 'BlogPosting',
+		mainEntityOfPage: {
+			'@type': 'WebPage',
+			'@id': canonicalURL.toString(),
+		},
+		headline: title,
+		description: description,
+		datePublished: pubDate.toISOString(),
+		dateModified: (updatedDate ?? pubDate).toISOString(),
+		author: {
+			'@type': 'Organization',
+			name: 'TechBoost',
+			url: Astro.site?.toString(),
+		},
+		publisher: {
+			'@type': 'Organization',
+			name: 'TechBoost',
+			url: Astro.site?.toString(),
+		},
+		inLanguage: 'ja',
+		keywords: (tags ?? []).join(', '),
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'BreadcrumbList',
+		itemListElement: [
+			{
+				'@type': 'ListItem',
+				position: 1,
+				name: 'ホーム',
+				item: Astro.site?.toString(),
+			},
+			{
+				'@type': 'ListItem',
+				position: 2,
+				name: '記事一覧',
+				item: new URL('/blog/', Astro.site).toString(),
+			},
+			{
+				'@type': 'ListItem',
+				position: 3,
+				name: title,
+			},
+		],
+	},
+];
 ---
 
+<!doctype html>
 <html lang="ja">
 	<head>
 		<BaseHead title={title} description={description} image={heroImage} ogType="article" />
-		<script type="application/ld+json" set:html={JSON.stringify([
-			{
-				'@context': 'https://schema.org',
-				'@type': 'BlogPosting',
-				mainEntityOfPage: {
-					'@type': 'WebPage',
-					'@id': `https://techboostblog.com/blog/${slug}/`,
-				},
-				headline: title,
-				description: description,
-				...(heroImage ? { image: new URL(heroImage.src, 'https://techboostblog.com').href } : {}),
-				datePublished: pubDate.toISOString(),
-				dateModified: (updatedDate ?? pubDate).toISOString(),
-				author: {
-					'@type': 'Organization',
-					name: 'TechBoost',
-					url: 'https://techboostblog.com',
-				},
-				publisher: {
-					'@type': 'Organization',
-					name: 'TechBoost',
-					url: 'https://techboostblog.com',
-				},
-				inLanguage: 'ja',
-				keywords: tagList.join(', '),
-			},
-			{
-				'@context': 'https://schema.org',
-				'@type': 'BreadcrumbList',
-				itemListElement: [
-					{ '@type': 'ListItem', position: 1, name: 'ホーム', item: 'https://techboostblog.com/' },
-					{ '@type': 'ListItem', position: 2, name: '記事一覧', item: 'https://techboostblog.com/blog/' },
-					{ '@type': 'ListItem', position: 3, name: title },
-				],
-			},
-		])} />
+		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 		<style>
 			main {
-				width: calc(100% - 2em);
+				width: 100%;
 				max-width: 100%;
 				margin: 0;
 			}
@@ -104,7 +106,7 @@ else if (hasSchool) affiliateCTAType = 'school';
 				line-height: 1;
 			}
 			.title h1 {
-				margin: 0 0 0.5em 0;
+				margin: 0 0 0.5em;
 			}
 			.date {
 				margin-bottom: 0.5em;
@@ -121,9 +123,7 @@ else if (hasSchool) affiliateCTAType = 'school';
 				margin-top: 0.75rem;
 			}
 			.article-tag {
-				display: inline-flex;
-				align-items: center;
-				min-height: 44px;
+				display: inline-block;
 				padding: 0.2rem 0.6rem;
 				border-radius: 999px;
 				background: rgb(var(--gray-light));
@@ -135,11 +135,10 @@ else if (hasSchool) affiliateCTAType = 'school';
 			}
 			.article-tag:hover {
 				background: rgb(var(--accent));
-				color: white;
+				color: #fff;
 			}
-			/* Affiliate CTA */
 			.affiliate-cta {
-				margin-top: 2rem;
+				margin-top: 3rem;
 				padding: 1.5rem;
 				border-radius: 12px;
 				background: linear-gradient(135deg, rgb(var(--accent) / 0.08), rgb(var(--accent) / 0.03));
@@ -167,7 +166,7 @@ else if (hasSchool) affiliateCTAType = 'school';
 				padding: 0.5rem 1.25rem;
 				border-radius: 6px;
 				background: rgb(var(--accent));
-				color: white;
+				color: #fff;
 				font-size: 0.85rem;
 				font-weight: 600;
 				text-decoration: none;
@@ -186,25 +185,24 @@ else if (hasSchool) affiliateCTAType = 'school';
 			}
 		</style>
 	</head>
-
 	<body>
 		<Header />
 		<main>
 			<article>
 				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt={title} />}
+					{heroImage && (
+						<Image width={1020} height={510} src={heroImage} alt={title} />
+					)}
 				</div>
 				<div class="prose">
 					<div class="title">
 						<div class="date">
 							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										更新日: <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
+							{updatedDate && (
+								<div class="last-updated-on">
+									Updated: <FormattedDate date={updatedDate} />
+								</div>
+							)}
 						</div>
 						<h1>{title}</h1>
 						{tags && tags.length > 0 && (
@@ -219,110 +217,24 @@ else if (hasSchool) affiliateCTAType = 'school';
 						<hr />
 					</div>
 					<slot />
-
-					<!-- Related Articles (内部リンクSEO) -->
-					<RelatedArticles currentSlug={slug} tags={tagList} title={title} />
-
-					<!-- BOOTH Product CTA -->
-					<ProductCTA title={title} description={description} tags={tagList} />
-
-					<!-- Affiliate CTA (タグ連動型) -->
-					{affiliateCTAType === 'school' && (
-						<aside class="affiliate-cta" aria-label="おすすめプログラミングスクール">
-							<p class="affiliate-cta-title">未経験からエンジニアへ — プログラミングスクールでスキルを身につけよう</p>
-							<p class="affiliate-cta-desc">ITシュガー・Colosoなど、実践的なカリキュラムのプログラミングスクールを比較。給付金対象コースで実質負担を大幅削減できます。</p>
-							<div class="affiliate-cta-links">
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+ENI2R6+4RIG+HWAG1" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">
-									ITシュガー 無料カウンセリング
-								</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+F2ZCHE+5Q4A+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">
-									Coloso オンライン講座を見る
-								</a>
-							</div>
-							<p style="font-size:0.8em;color:#888;margin-top:8px">※本リンクにはアフィリエイトリンクが含まれます</p>
-						</aside>
-					)}
-					{affiliateCTAType === 'server' && (
-						<aside class="affiliate-cta" aria-label="おすすめレンタルサーバー">
-							<p class="affiliate-cta-title">サーバー選びで迷ったら — 国内トップシェアを比較しよう</p>
-							<p class="affiliate-cta-desc">XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。高速・安定・手厚いサポートで初心者からプロまで選ばれています。</p>
-							<div class="affiliate-cta-links">
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">
-									XServer for WordPress 詳細を見る
-								</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">
-									さくらのレンタルサーバ 詳細を見る
-								</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">
-									XServerVPS 詳細を見る
-								</a>
-							</div>
-						</aside>
-					)}
-					{affiliateCTAType === 'career' && (
-						<aside class="affiliate-cta" aria-label="エンジニア転職サポート">
-							<p class="affiliate-cta-title">エンジニア転職を成功させる — 実績豊富な転職エージェントを活用しよう</p>
-							<p class="affiliate-cta-desc">明光キャリアパートナーズ・レバテックダイレクトなど、IT特化型の転職エージェント・スカウトサービスを比較。非公開求人への応募や面接対策サポートが充実。</p>
-							<div class="affiliate-cta-links">
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">
-									明光エンジニア転職 無料登録
-								</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FK8X0Y+2JK4+4SNX5E" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">
-									レバテックダイレクト 無料登録
-								</a>
-							</div>
-						</aside>
-					)}
-					{affiliateCTAType === 'accounting' && (
-						<aside class="affiliate-cta" aria-label="会計ソフトのご案内">
-							<p class="affiliate-cta-title">確定申告・会計業務をラクにしよう — クラウド会計ソフトを無料で試す</p>
-							<p class="affiliate-cta-desc">freee・マネーフォワードなら、レシート撮影だけで帳簿作成・確定申告書の自動作成が可能。まず30日間無料トライアルから。</p>
-							<div class="affiliate-cta-links">
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ8K2+FBBEYA+3SPO+9FL80Y" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">
-									freee 無料で試す
-								</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ8K2+FCIA5U+4JGQ+BZ8OY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">
-									マネーフォワード 詳細
-								</a>
-							</div>
-						</aside>
-					)}
-					{affiliateCTAType === 'default' && (
-						<aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境">
-							<p class="affiliate-cta-title">エンジニアのキャリアアップを加速する</p>
-							<p class="affiliate-cta-desc">IT特化型の転職エージェント・スカウトサービスで非公開求人にアクセス。高速レンタルサーバーで開発環境を整備。実務で使えるチートシートも公開中。</p>
-							<div class="affiliate-cta-links">
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FK8X0Y+2JK4+4SNX5E" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">
-									レバテックダイレクト 無料登録
-								</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">
-									明光エンジニア転職 無料登録
-								</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">
-									XServer 詳細を見る
-								</a>
-							</div>
-						</aside>
-					)}
+					<div class="affiliate-cta">
+						<div class="affiliate-cta-title">エンジニアの開発効率を上げるツール</div>
+						<div class="affiliate-cta-desc">
+							TechBoostが厳選した開発ツール・チートシートで、日々のコーディングをもっと快適に。
+						</div>
+						<div class="affiliate-cta-links">
+							<a href="https://usedevtools.com/" target="_blank" rel="noopener" class="affiliate-cta-btn">
+								DevToolBox (無料)
+							</a>
+							<a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary">
+								チートシート (BOOTH)
+							</a>
+						</div>
+					</div>
 				</div>
+				<RelatedArticles currentSlug={slug} tags={tags} />
 			</article>
 		</main>
 		<Footer />
-		<script>
-			document.querySelectorAll('.affiliate-cta a[rel*="sponsored"]').forEach(link => {
-				link.addEventListener('click', () => {
-					if (typeof gtag === 'function') {
-						const ctaSection = link.closest('.affiliate-cta');
-						gtag('event', 'affiliate_click', {
-							event_category: 'monetization',
-							event_label: link.textContent?.trim() ?? '',
-							cta_type: ctaSection?.getAttribute('aria-label') ?? 'unknown',
-							link_url: link.getAttribute('href') ?? '',
-							transport_type: 'beacon',
-						});
-					}
-				});
-			});
-		</script>
 	</body>
 </html>

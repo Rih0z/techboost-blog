@@ -1,7 +1,7 @@
 ---
 title: "個人事業主の生命保険料控除完全ガイド2026"
 description: "フリーランス・個人事業主が毎年の確定申告で必ず活用すべき生命保険料控除を2026年最新版で完全解説。一般・個人年金・介護医療の3区分の控除額計算式・新旧制度の違い・節税シミュレーション・iDeCoとの組み合わせ戦略まで計算例付きで徹底説明。"
-pubDate: "2026-03-29"
+pubDate: "2026-02-14"
 tags: ["accounting", "フリーランス", "確定申告"]
 heroImage: '../../assets/thumbnails/2026-03-29-life-insurance-deduction-guide-2026.jpg'
 ---

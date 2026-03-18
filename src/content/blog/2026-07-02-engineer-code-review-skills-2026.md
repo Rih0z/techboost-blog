@@ -1,8 +1,8 @@
 ---
 title: "コードレビューの受け方・書き方完全ガイド2026｜エンジニア必読"
 description: "コードレビューの受け方・レビュアーとしての書き方を徹底解説。レビューコメントのテンプレート、PRの出し方のベストプラクティス、指摘への対応方法、チームのレビュー文化の改善法まで、実践的なノウハウを網羅した完全ガイドです。"
-pubDate: "2026-07-02"
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+pubDate: "2026-03-08"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "エンジニア", "コードレビュー", "チーム開発"]
 ---
 

@@ -1,8 +1,8 @@
 ---
 title: "30代エンジニアのキャリア設計2026｜マネジメントvs専門性"
 description: "30代エンジニアが直面するキャリアの分岐点を徹底解説。マネジメントトラック（EM/VPoE）vs 専門性トラック（IC/スペシャリスト）の比較、年収レンジ、必要スキル、転職戦略、ライフステージとの両立まで。30代でキャリアを迷うエンジニア必読のガイドです。"
-pubDate: "2026-07-10"
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+pubDate: "2026-03-11"
+heroImage: '../../assets/thumbnails/engineer-portfolio-guide-2026.jpg'
 tags: ["career", "エンジニア", "キャリア設計", "30代"]
 ---
 

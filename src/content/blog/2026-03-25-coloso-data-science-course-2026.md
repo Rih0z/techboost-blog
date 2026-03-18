@@ -1,7 +1,7 @@
 ---
 title: "ColosoデータサイエンスコースをPython×機械学習で徹底解説2026"
 description: "ColosoのデータサイエンスコースをPython学習・機械学習・実践スキルの観点から2026年版で徹底レビュー。おすすめコースと学習ロードマップをエンジニア目線で解説し、scikit-learnやPyTorchの活用法・他サービスとの比較も詳しく紹介。"
-pubDate: "2026-03-25"
+pubDate: "2026-02-12"
 tags: ["school", "データサイエンス", "プログラミング"]
 heroImage: '../../assets/thumbnails/2026-03-25-coloso-data-science-course-2026.jpg'
 ---

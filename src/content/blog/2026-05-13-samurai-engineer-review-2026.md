@@ -1,8 +1,8 @@
 ---
 title: "侍エンジニア評判・口コミ2026｜マンツーマン指導の実態・料金・転職サポート"
 description: "侍エンジニア塾の評判・口コミを2026年最新情報で徹底レビュー。完全マンツーマンの指導体制、オーダーメイドカリキュラムの実態、転職コース・副業コース・フリーランスコースの料金比較、給付金適用条件、メリット・デメリットをエンジニア目線で解説します。"
-pubDate: "2026-05-13"
-heroImage: '../../assets/thumbnails/2026-04-16-ses-vs-jisha-vs-jutaku-engineer-2026.jpg'
+pubDate: "2026-03-01"
+heroImage: '../../assets/thumbnails/2026-03-08-programming-school-comparison-2026.jpg'
 tags: ["school", "プログラミングスクール", "侍エンジニア", "IT転職"]
 ---
 

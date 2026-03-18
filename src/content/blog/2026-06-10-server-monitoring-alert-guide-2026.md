@@ -1,7 +1,7 @@
 ---
 title: "サーバー監視・アラート設定完全ガイド2026【UptimeKuma+Prometheus】"
 description: "UptimeKuma・Prometheus・AlertmanagerでVPSの死活監視とアラートを設定する全手順を解説。Grafanaダッシュボード・Slack/Discord通知・CPU/メモリ閾値アラートまで2026年最新の監視基盤構築を詳しく説明します。"
-pubDate: "2026-06-10"
+pubDate: "2026-03-07"
 tags: ["server", "インフラ", "監視"]
 heroImage: '../../assets/thumbnails/2026-06-10-server-monitoring-alert-guide-2026.jpg'
 ---

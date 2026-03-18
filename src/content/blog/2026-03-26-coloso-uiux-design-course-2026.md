@@ -1,7 +1,7 @@
 ---
 title: "ColosoのUI/UXデザインコース2026｜Figmaで学ぶ実践ガイド"
 description: "ColosoのUI/UXデザインコースをFigma・デザイン原則・実践課題の観点から2026年最新版で徹底レビュー。デザイナー転職・副業を目指す人向けにおすすめコース・学習ロードマップ・受講者口コミ・Adobe Learningとの比較まで詳しく解説します。"
-pubDate: "2026-03-26"
+pubDate: "2026-02-13"
 tags: ["school", "デザイン", "学習"]
 heroImage: '../../assets/thumbnails/2026-03-26-coloso-uiux-design-course-2026.jpg'
 ---

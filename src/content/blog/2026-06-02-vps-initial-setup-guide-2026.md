@@ -1,7 +1,7 @@
 ---
 title: "VPS初期設定完全ガイド2026【Ubuntu・SSH鍵・Nginx・SSL】"
 description: "VPS契約後にまずやるべきUbuntu初期設定を完全解説。SSH鍵認証・UFWファイアウォール・Nginxインストール・Let's EncryptによるSSL設定・fail2ban導入まで、コピペで動くコマンドで順を追って丁寧に説明します。"
-pubDate: "2026-06-02"
+pubDate: "2026-03-03"
 tags: ["server", "インフラ", "linux"]
 heroImage: '../../assets/thumbnails/2026-06-02-vps-initial-setup-guide-2026.jpg'
 ---

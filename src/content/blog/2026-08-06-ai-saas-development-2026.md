@@ -1,9 +1,9 @@
 ---
 title: "AI SaaSプロダクト開発ガイド2026【LLMを活用したWebサービス構築】"
 description: "LLMを組み込んだAI SaaSプロダクトの開発手法を解説。アーキテクチャ設計、Next.js実装、課金システム統合、コスト管理、スケーリングまでTypeScript・Pythonコード付きで実践的に紹介します。"
-pubDate: "2026-08-06"
+pubDate: "2026-03-13"
 tags: ["AI", "SaaS", "LLM", "Next.js", "プロダクト開発"]
-heroImage: '../../assets/thumbnails/2026-04-14-engineer-portfolio-creation-guide-2026.jpg'
+heroImage: '../../assets/thumbnails/ai-agent-development-2026.jpg'
 ---
 
 ## はじめに
