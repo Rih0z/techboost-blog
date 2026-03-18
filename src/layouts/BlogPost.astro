@@ -28,28 +28,6 @@ interface Props {
 
 const { title, description, pubDate, updatedDate, heroImage, tags, slug } = Astro.props;
 
-// タグベースのアフィリエイトCTA種別を判定
-const tagList = (tags as string[] | undefined) ?? [];
-const tagStr = tagList.join(' ').toLowerCase() + ' ' + title.toLowerCase() + ' ' + description.toLowerCase();
-
-type AffiliateCTAType = 'school' | 'server' | 'career' | 'accounting' | 'default';
-let affiliateCTAType: AffiliateCTAType = 'default';
-
-const tLower = tagList.map(t => t.toLowerCase());
-const hasAccounting = tLower.some(x => ['accounting', '確定申告', 'フリーランス', '会計', '税金', '経費', '青色申告', '開業届', 'freee'].includes(x))
-  || /会計|確定申告|freee|マネーフォワード|税務|節税|経費|青色申告|インボイス/.test(tagStr);
-const hasCareer = tLower.some(x => ['career', '転職', '副業', 'キャリア', 'freelance'].includes(x))
-  || /転職|キャリア|副業|フリーランス|年収|独立/.test(tagStr);
-const hasServer = tLower.some(x => ['server', 'インフラ', 'docker', 'linux', 'vps', 'devops', 'aws', 'cloud', 'kubernetes', 'nginx', 'hosting'].includes(x))
-  || /レンタルサーバー|vps|サーバー|xserver|conoha|docker|kubernetes|aws|インフラ|デプロイ/.test(tagStr);
-const hasSchool = tLower.some(x => ['school', 'プログラミングスクール', 'プログラミング学習', 'オンライン学習'].includes(x))
-  || /プログラミングスクール|スクール比較|スクールおすすめ|オンライン学習|udemy/.test(tagStr);
-
-if (hasAccounting) affiliateCTAType = 'accounting';
-else if (hasServer) affiliateCTAType = 'server';
-else if (hasCareer) affiliateCTAType = 'career';
-else if (hasSchool) affiliateCTAType = 'school';
-
 // Pick a consistent fallback based on title hash so each article gets a different one
 function simpleHash(str: string): number {
 	let hash = 0;
@@ -121,12 +99,6 @@ const jsonLd = [
 		<BaseHead title={title} description={description} image={displayImage} ogType="article" />
 		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 		<style>
-			/* === Fix #6: WCAG 2.2 Focus Indicators === */
-			*:focus-visible {
-				outline: 2px solid #0066cc;
-				outline-offset: 2px;
-				border-radius: 4px;
-			}
 			main {
 				width: 100%;
 				max-width: 100%;
@@ -172,9 +144,7 @@ const jsonLd = [
 				margin-top: 0.75rem;
 			}
 			.article-tag {
-				display: inline-flex;
-				align-items: center;
-				min-height: 44px;
+				display: inline-block;
 				padding: 0.2rem 0.6rem;
 				border-radius: 999px;
 				background: rgb(var(--gray-light));
@@ -188,13 +158,12 @@ const jsonLd = [
 				background: rgb(var(--accent));
 				color: #fff;
 			}
-			/* === Fix #3: CTA button color → Ezark Sunrise #ff6b35 === */
 			.affiliate-cta {
-				margin-top: 2rem;
+				margin-top: 3rem;
 				padding: 1.5rem;
-				border-radius: 8px;
-				background: linear-gradient(135deg, rgba(255, 107, 53, 0.06), rgba(255, 107, 53, 0.02));
-				border: 2px solid rgba(255, 107, 53, 0.2);
+				border-radius: 12px;
+				background: linear-gradient(135deg, rgb(var(--accent) / 0.08), rgb(var(--accent) / 0.03));
+				border: 1px solid rgb(var(--accent) / 0.2);
 			}
 			.affiliate-cta-title {
 				font-size: 1.1rem;
@@ -214,12 +183,10 @@ const jsonLd = [
 				gap: 0.5rem;
 			}
 			.affiliate-cta-btn {
-				display: inline-flex;
-				align-items: center;
-				min-height: 44px;
+				display: inline-block;
 				padding: 0.5rem 1.25rem;
 				border-radius: 6px;
-				background: #ff6b35;
+				background: rgb(var(--accent));
 				color: #fff;
 				font-size: 0.85rem;
 				font-weight: 600;
@@ -231,11 +198,11 @@ const jsonLd = [
 			}
 			.affiliate-cta-btn.secondary {
 				background: transparent;
-				border: 2px solid #0066cc;
-				color: #0066cc;
+				border: 1px solid rgb(var(--accent));
+				color: rgb(var(--accent));
 			}
 			.affiliate-cta-btn.secondary:hover {
-				background: rgba(0, 102, 204, 0.08);
+				background: rgb(var(--accent) / 0.08);
 			}
 		</style>
 	</head>
@@ -269,79 +236,24 @@ const jsonLd = [
 						<hr />
 					</div>
 					<slot />
-
-					{affiliateCTAType === 'school' && (
-						<aside class="affiliate-cta" aria-label="おすすめプログラミングスクール">
-							<p class="affiliate-cta-title">未経験からエンジニアへ -- プログラミングスクールでスキルを身につけよう</p>
-							<p class="affiliate-cta-desc">ITシュガー・Colosoなど、実践的なカリキュラムのプログラミングスクールを比較。給付金対象コースで実質負担を大幅削減。<a href="/blog/2026-05-16-programming-school-ranking-2026/" style="color:#0066cc;text-decoration:underline">スクールおすすめランキング2026</a>も参考にしてください。</p>
-							<div class="affiliate-cta-links">
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+ENI2R6+4RIG+HWAG1" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">ITシュガー 無料カウンセリング</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+F2ZCHE+5Q4A+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">Coloso オンライン講座を見る</a>
-							</div>
-						</aside>
-					)}
-					{affiliateCTAType === 'server' && (
-						<aside class="affiliate-cta" aria-label="おすすめレンタルサーバー">
-							<p class="affiliate-cta-title">サーバー選びで迷ったら — 国内トップシェアを比較しよう</p>
-							<p class="affiliate-cta-desc">XServer・さくらのレンタルサーバー・XServerVPS。用途と予算に合わせた最適なプランを見つけよう。</p>
-							<div class="affiliate-cta-links">
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">XServer for WordPress 詳細を見る</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FQ792Q+D8Y+6NMJL" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">さくらのレンタルサーバ 詳細を見る</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C2+2ZRJL6+5GDG+NTJWY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">XServerVPS 詳細を見る</a>
-							</div>
-						</aside>
-					)}
-					{affiliateCTAType === 'career' && (
-						<aside class="affiliate-cta" aria-label="エンジニア転職サポート">
-							<p class="affiliate-cta-title">エンジニア転職を成功させる — 実績豊富な転職エージェントを活用しよう</p>
-							<p class="affiliate-cta-desc">明光キャリアパートナーズ・レバテックダイレクトなど、IT特化型の転職エージェント・スカウトサービスを比較。</p>
-							<div class="affiliate-cta-links">
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">明光エンジニア転職 無料登録</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FK8X0Y+2JK4+4SNX5E" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">レバテックダイレクト 無料登録</a>
-							</div>
-						</aside>
-					)}
-					{affiliateCTAType === 'accounting' && (
-						<aside class="affiliate-cta" aria-label="会計ソフトのご案内">
-							<p class="affiliate-cta-title">確定申告・会計業務をラクにしよう — クラウド会計ソフトを無料で試す</p>
-							<p class="affiliate-cta-desc">freee・マネーフォワードなら、レシート撮影だけで帳簿作成・確定申告書の自動作成が可能。</p>
-							<div class="affiliate-cta-links">
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ8K2+FBBEYA+3SPO+9FL80Y" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">freee 無料で試す</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ8K2+FCIA5U+4JGQ+BZ8OY" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">マネーフォワード 詳細</a>
-							</div>
-						</aside>
-					)}
-					{affiliateCTAType === 'default' && (
-						<aside class="affiliate-cta" aria-label="エンジニアのキャリア・開発環境">
-							<p class="affiliate-cta-title">エンジニアのキャリアアップを加速する</p>
-							<p class="affiliate-cta-desc">IT特化型の転職エージェント・スカウトサービスで非公開求人にアクセス。高速レンタルサーバーで開発環境を整備。</p>
-							<div class="affiliate-cta-links">
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C1+FK8X0Y+2JK4+4SNX5E" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn">レバテックダイレクト 無料登録</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C7+9UUDBM+5P1E+5YJRM" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">明光エンジニア転職 無料登録</a>
-								<a href="https://px.a8.net/svt/ejp?a8mat=4AZ9C5+7GIK5E+CO4+3YW8WI" target="_blank" rel="noopener sponsored" class="affiliate-cta-btn secondary">XServer 詳細を見る</a>
-							</div>
-						</aside>
-					)}
+					<div class="affiliate-cta">
+						<div class="affiliate-cta-title">エンジニアの開発効率を上げるツール</div>
+						<div class="affiliate-cta-desc">
+							TechBoostが厳選した開発ツール・チートシートで、日々のコーディングをもっと快適に。
+						</div>
+						<div class="affiliate-cta-links">
+							<a href="https://usedevtools.com/" target="_blank" rel="noopener" class="affiliate-cta-btn">
+								DevToolBox (無料)
+							</a>
+							<a href="https://ezark-devtools.booth.pm/" target="_blank" rel="noopener" class="affiliate-cta-btn secondary">
+								チートシート (BOOTH)
+							</a>
+						</div>
+					</div>
 				</div>
 				<RelatedArticles currentSlug={slug} tags={tags} />
 			</article>
 		</main>
 		<Footer />
-		<script>
-			document.querySelectorAll('.affiliate-cta a[rel*="sponsored"]').forEach(link => {
-				link.addEventListener('click', () => {
-					if (typeof gtag === 'function') {
-						const ctaSection = link.closest('.affiliate-cta');
-						gtag('event', 'affiliate_click', {
-							event_category: 'monetization',
-							event_label: link.textContent?.trim() ?? '',
-							cta_type: ctaSection?.getAttribute('aria-label') ?? 'unknown',
-							link_url: link.getAttribute('href') ?? '',
-							transport_type: 'beacon',
-						});
-					}
-				});
-			});
-		</script>
 	</body>
 </html>
